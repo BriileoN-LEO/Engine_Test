@@ -1,0 +1,24 @@
+﻿{
+    "version": 3,
+  "configurePresets": [
+    {
+      "name": "x64-debug-user",
+      "displayName": "x64 Debug (User)",
+      "inherits": "windows-base",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+
+
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "SDL3": {
+          "value": "C:/Users/Briil/SDKs_libraries/SDL",
+          "type": "PATH"
+        }
+      }
+    }
+  ]
+    
+}

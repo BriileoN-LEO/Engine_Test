@@ -1,0 +1,62 @@
+#ifndef control
+#define control
+
+#include "config_window.h"
+#include "data_save.h"
+
+namespace controlMove
+{
+	extern bool detectMove;
+
+	 struct detectSDLK_code
+	{
+		static std::map<SDL_Keycode, bool> keys;
+		static std::map<SDL_Keycode, bool> keys_Color;
+		static std::map<SDL_Keycode, bool> keys_Scale;
+		static std::map<SDL_Keycode, bool> keys_Translate;
+
+		static bool detectKey(SDL_Event event);
+		static bool detectKeyColor(SDL_Event event);
+		static bool detectKeyScale(SDL_Event event);
+		static bool detectKeyTranslate(SDL_Event* event);
+		static void resetKeys();
+	};
+
+	void moveTriangle(float(&vertices)[9]);
+	void moveVec3(vec::vec3& vertex);
+
+}
+namespace controlMouse
+{
+		
+		glm::vec2 getDistanceMotionMouse();
+
+
+
+}
+namespace timeS
+{
+	class getTimeSec
+	{
+	public:
+
+		Uint64 TimeCountS{};
+		Uint64 RestTimeS{};
+		Uint64 MaxTimeS{};
+	
+		float sec{};
+		bool timeStop{ false };
+		
+		getTimeSec();
+		void setTimeSec(float time);
+		bool stopTime();
+		
+
+	};
+
+}
+
+
+
+
+#endif
