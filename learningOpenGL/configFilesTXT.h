@@ -13,3 +13,9 @@ const std::string fShader_Model_V1 = "C:/Users/Briil/source/repos/learningOpenGL
 ///IMAGES
 const std::string image_Wood = "C:/Users/Briil/source/repos/learningOpenGL/images/container.jpg";
 const std::string image_happyFace = "C:/Users/Briil/source/repos/learningOpenGL/images/awesomeface.png";
+
+/////IMAGES MINECRAFT GRASS CUBE
+
+const std::string image_MineGrass_lateral = "C:/Users/Briil/source/repos/learningOpenGL/images/CubeGrass_laterals.png";
+const std::string image_MineGrass_top = "C:/Users/Briil/source/repos/learningOpenGL/images/CubeGrass_Top.png";
+const std::string image_MineGrass_down = "C:/Users/Briil/source/repos/learningOpenGL/images/CubeGrass_Down.png";

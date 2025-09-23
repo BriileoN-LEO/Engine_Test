@@ -339,6 +339,12 @@ int main(int argc, char* argv[])
 
 	FirstModel.LoadVertexTex(image_Wood.c_str(), 0, false);
 	FirstModel.LoadVertexTex(image_happyFace.c_str(), 1, false);
+
+	////////////////////SETEAR LAS TEXTURAS MULTIPLES PARA CREAR EL CUBO DE MINECRAFT////////////////
+	FirstModel.LoadMultipleTex(image_MineGrass_lateral.c_str(), texture::textureUnits::TEXTURE0, false);
+	FirstModel.LoadMultipleTex(image_MineGrass_top.c_str(), texture::textureUnits::TEXTURE0, false);
+	FirstModel.LoadMultipleTex(image_MineGrass_down.c_str(), texture::textureUnits::TEXTURE0, false);
+
 	FirstModel.SetTextures("texture1", 0);
 	FirstModel.SetTextures("texture2", 1);
 

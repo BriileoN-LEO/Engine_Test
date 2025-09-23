@@ -295,6 +295,10 @@ namespace Vertex
 namespace texture
 {
 	textureBuild::textureBuild() {};
+	textureBuild::textureBuild(const char* data, texture::textureUnits posicion_TEX, bool flipImage)
+	{
+		loadTexPerFace(data, posicion_TEX, flipImage);
+	}
 	void textureBuild::loadData(const char* data, int posicion_TEX, Uint8& saveUnitTEX, bool flipImage)
 	{
 		if (posicion_TEX == 0)
@@ -379,7 +383,240 @@ namespace texture
 		
 		
 	}
+	void textureBuild::loadTexPerFace(const char* data, texture::textureUnits posicion_TEX, bool flipImage)
+	{
+		texture::textureUnits texU{};
+		unsigned int tex{ };
+		int width{};
+		int height{};
+		int nrChannels{};
 
+		auto setTextureUnit = [&]()
+			{
+				if (posicion_TEX == textureUnits::TEXTURE0)
+				{
+					glActiveTexture(GL_TEXTURE0);
+					glGenTextures(1, &tex);
+					glBindTexture(GL_TEXTURE_2D, tex);
+					texU = textureUnits::TEXTURE0;
+
+				}
+
+				if (posicion_TEX == textureUnits::TEXTURE1)
+				{
+					glActiveTexture(GL_TEXTURE1);
+					glGenTextures(1, &tex);
+					glBindTexture(GL_TEXTURE_2D, tex);
+					texU = textureUnits::TEXTURE1;
+				}
+
+				if (posicion_TEX == textureUnits::TEXTURE2)
+				{
+					glActiveTexture(GL_TEXTURE2);
+					glGenTextures(1, &tex);
+					glBindTexture(GL_TEXTURE_2D, tex);
+					texU = textureUnits::TEXTURE2;
+				}
+
+				if (posicion_TEX == textureUnits::TEXTURE3)
+				{
+					glActiveTexture(GL_TEXTURE3);
+					glGenTextures(1, &tex);
+					glBindTexture(GL_TEXTURE_2D, tex);
+					texU = textureUnits::TEXTURE3;
+				}
+			};
+
+		setTextureUnit();
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+		//lTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		//lTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		stbi_set_flip_vertically_on_load(flipImage);
+		unsigned char* DataT{ stbi_load(data, &width, &height, &nrChannels, 0) };
+
+		std::stringstream testData;
+
+		if (DataT)
+		{
+			std::string dataReverse{};
+
+			testData << data;
+			testData >> dataReverse;
+
+			auto dataR = dataReverse.rbegin();
+
+			std::string typeInfo{};
+
+			
+			typeInfo.push_back(dataR[2]);
+			typeInfo.push_back(dataR[1]);
+			typeInfo.push_back(dataR[0]);
+			
+
+			SDL_Log(typeInfo.c_str());
+			if (typeInfo == "jpg")
+			{
+
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,  GL_RGB, GL_UNSIGNED_BYTE, DataT);
+				glGenerateMipmap(GL_TEXTURE_2D);
+			}
+
+			else if (typeInfo == "png")
+			{
+
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, DataT);
+				glGenerateMipmap(GL_TEXTURE_2D);
+			}
+
+
+			texU_Data.emplace_back(tex, width, height, nrChannels, texU);
+		}
+
+		else
+		{
+			SDL_Log("ERRO::FAIL LOAD TEXTURE");
+		}
+
+
+		stbi_image_free(DataT);
+	}
+
+	void textureBuild::useTexurePerUnit(unsigned int textureID, texture::textureUnits texUnit)
+	{
+
+		if (texUnit == textureUnits::TEXTURE0)
+		{
+			glActiveTexture(GL_TEXTURE0);
+			SDL_Log("USE::TEXTURE0");
+		}
+
+		if (texUnit == textureUnits::TEXTURE1)
+		{
+			glActiveTexture(GL_TEXTURE1);
+	
+		}
+
+		if (texUnit == textureUnits::TEXTURE2)
+		{
+			glActiveTexture(GL_TEXTURE2);
+	
+		}
+
+		if (texUnit == textureUnits::TEXTURE3)
+		{
+			glActiveTexture(GL_TEXTURE3);
+
+		}
+
+		if (texUnit == textureUnits::TEXTURE4)
+		{
+			glActiveTexture(GL_TEXTURE4);
+
+		}
+
+		if (texUnit == textureUnits::TEXTURE5)
+		{
+			glActiveTexture(GL_TEXTURE5);
+
+		}
+
+		if (texUnit == textureUnits::TEXTURE6)
+		{
+			glActiveTexture(GL_TEXTURE6);
+
+		}
+
+		if (texUnit == textureUnits::TEXTURE7)
+		{
+			glActiveTexture(GL_TEXTURE7);
+
+		}
+
+		if (texUnit == textureUnits::TEXTURE8)
+		{
+			glActiveTexture(GL_TEXTURE8);
+		}
+
+		if (texUnit == textureUnits::TEXTURE9)
+		{
+			glActiveTexture(GL_TEXTURE9);
+	
+		}
+
+		if (texUnit == textureUnits::TEXTURE10)
+		{
+			glActiveTexture(GL_TEXTURE10);
+	
+		}
+
+		if (texUnit == textureUnits::TEXTURE11)
+		{
+			glActiveTexture(GL_TEXTURE11);
+	
+		}
+
+		if (texUnit == textureUnits::TEXTURE12)
+		{
+			glActiveTexture(GL_TEXTURE12);
+
+		}
+
+		if (texUnit == textureUnits::TEXTURE13)
+		{
+			glActiveTexture(GL_TEXTURE13);
+
+		}
+
+		if (texUnit == textureUnits::TEXTURE14)
+		{
+			glActiveTexture(GL_TEXTURE14);
+
+		}
+
+		glBindTexture(GL_TEXTURE_2D, textureID);
+
+	}
+	void textureBuild::useTextures()
+	{
+		texture::textureUnits textureUnitsCount[15]
+		{
+			texture::textureUnits::TEXTURE0,
+			texture::textureUnits::TEXTURE1,
+			texture::textureUnits::TEXTURE2,
+			texture::textureUnits::TEXTURE3,
+			texture::textureUnits::TEXTURE4,
+			texture::textureUnits::TEXTURE5,
+			texture::textureUnits::TEXTURE6,
+			texture::textureUnits::TEXTURE7,
+			texture::textureUnits::TEXTURE8,
+			texture::textureUnits::TEXTURE9,
+			texture::textureUnits::TEXTURE10,
+			texture::textureUnits::TEXTURE11,
+			texture::textureUnits::TEXTURE12,
+			texture::textureUnits::TEXTURE13,
+			texture::textureUnits::TEXTURE14,
+		};
+
+		texture::textureUnits lastTextureUnit{};
+		for (int i = 0; i < static_cast<int>(texU_Data.size()); i++)
+		{
+			lastTextureUnit = textureUnitsCount[i];
+			for (int u = 0; u < static_cast<int>(texU_Data.size()); u++)
+			{
+				if (texU_Data[u].texUnit == lastTextureUnit)
+				{
+					useTexurePerUnit(texU_Data[u].textureID, texU_Data[u].texUnit);
+					SDL_Log("USING_TEXTURE");
+				}
+
+			}
+		}
+	}
 }
 
 namespace ObjCreation
@@ -853,6 +1090,10 @@ namespace ObjCreation
 		tex.loadData(imagePath, posicionTEX, tex.textureUnits, flipImage);
 
 	}
+	void ModelCreation::LoadMultipleTex(const char* data, texture::textureUnits posicion_TEX, bool flipImage)
+	{
+		minecraftCube.emplace_back(data, posicion_TEX, flipImage);
+	}
 	void ModelCreation::SetTextures(const std::string textureName, const int textureUnit)
 	{
 		shaderColor.use();
@@ -881,14 +1122,50 @@ namespace ObjCreation
 
 			};
 
+		auto loadSingleTexture = [&]()
+			{
+				for (int i = 0; i < static_cast<int>(numberTris); i++)
+				{
+
+					shaderColor.use();
+					loadTextures();
+					vertexData.useMultipleVAO(i);
+					glDrawArrays(GL_TRIANGLES, 0, 3);
+
+				}
+			};
+
+		/////para colocar las texturas de minecraft al cubo
+		//loadSingleTexture();
+		
 		for (int i = 0; i < static_cast<int>(numberTris); i++)
 		{
+			GLuint posicion{ numberTris - 1 };
+
 			shaderColor.use();
-			loadTextures();
+			if (i < posicion - 3)
+			{
+		minecraftCube[0].useTextures();
+
+			}
+		
+			else if (i <= posicion - 2 && i >= posicion - 3)
+			{
+		minecraftCube[1].useTextures();
+
+			}
+			
+			else if (i > posicion - 2)
+			{
+		minecraftCube[2].useTextures();
+
+			}
 			vertexData.useMultipleVAO(i);
 			glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		}
+		
+
 		//lDrawArrays(GL_TRIANGLES, 0, 36);
 	}
 	void ModelCreation::renderMultipleModels(int numScene)

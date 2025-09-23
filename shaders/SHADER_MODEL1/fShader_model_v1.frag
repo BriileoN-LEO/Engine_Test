@@ -19,5 +19,6 @@ void main()
  coordTex1 = coordTexOut * texTransform1;
  coordTex2 = coordTexOut * texTransform2;
 
- FragColor = mix(texture(texture1, coordTexOut), texture(texture2, coordTexOut), 0.2);
+//ragColor = mix(texture(texture1, coordTexOut), texture(texture2, coordTexOut), 0.2);
+FragColor = texture(texture1, coordTexOut);
 }

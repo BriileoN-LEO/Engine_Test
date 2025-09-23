@@ -14,6 +14,9 @@ set(DATA_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/shaders/shader_v_v1.vs"
 "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_MODEL1/vshader_model_v1.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_MODEL1/fshader_model_v1.frag"
 "${CMAKE_CURRENT_SOURCE_DIR}/images/container.jpg"
 "${CMAKE_CURRENT_SOURCE_DIR}/images/awesomeface.png"
+"${CMAKE_CURRENT_SOURCE_DIR}/images/CubeGrass_Down.png"
+"${CMAKE_CURRENT_SOURCE_DIR}/images/CubeGrass_laterals.png"
+"${CMAKE_CURRENT_SOURCE_DIR}/images/CubeGrass_Top.png"
 )
 
 set(RUTE_COMPLETE_FILES ${DATA_FILE_PATH})
