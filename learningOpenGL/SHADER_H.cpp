@@ -88,6 +88,12 @@ namespace shading
 		glUniform1i(location, static_cast<int>(value));
 
 	}
+	void shader::setVec3(const std::string& name, glm::vec3 value) const
+	{
+		int location{ glGetUniformLocation(ID, name.c_str()) };
+		glUniform3f(location, value.x, value.y, value.z);
+	}
+
 	void shader::sumRotAng()
 	{
 		rotAng += 1;
@@ -274,6 +280,26 @@ namespace Vertex
 
 		dataVertex_Multiple.emplace_back(dataV);
 	}
+	void vertexBuild::BuildVAO_fase1(float(&verticesMulti)[9])
+	{
+		VertexData dataV_fase1;
+
+		glGenVertexArrays(1, &dataV_fase1.VAO);
+		glGenBuffers(1, &dataV_fase1.VBO);
+
+		glBindVertexArray(dataV_fase1.VAO);
+		glBindBuffer(GL_ARRAY_BUFFER, dataV_fase1.VBO);
+
+		glBufferData(GL_ARRAY_BUFFER, sizeof(verticesMulti), verticesMulti, GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+
+		dataVertex_Multiple.emplace_back(dataV_fase1);
+	}
 
 	void vertexBuild::useMultipleVAO(int posVAO)
 	{
@@ -458,7 +484,7 @@ namespace texture
 			typeInfo.push_back(dataR[0]);
 			
 
-			SDL_Log(typeInfo.c_str());
+		//	SDL_Log(typeInfo.c_str());
 			if (typeInfo == "jpg")
 			{
 
@@ -492,7 +518,7 @@ namespace texture
 		if (texUnit == textureUnits::TEXTURE0)
 		{
 			glActiveTexture(GL_TEXTURE0);
-			SDL_Log("USE::TEXTURE0");
+			//SDL_Log("USE::TEXTURE0");
 		}
 
 		if (texUnit == textureUnits::TEXTURE1)
@@ -611,7 +637,7 @@ namespace texture
 				if (texU_Data[u].texUnit == lastTextureUnit)
 				{
 					useTexurePerUnit(texU_Data[u].textureID, texU_Data[u].texUnit);
-					SDL_Log("USING_TEXTURE");
+					//SDL_Log("USING_TEXTURE");
 				}
 
 			}
@@ -1045,6 +1071,11 @@ namespace ObjCreation
 	{
 		insertVertices(vertices);
 	}
+	ModelCreation::ModelCreation(std::vector<std::array<float, 9>> vertices)
+	{
+		insertVertices_Fase1(vertices);
+	}
+
 	void ModelCreation::insertVertices(std::vector<std::array<float, 24>> vertices)
 	{
 		for (auto& ver : vertices)
@@ -1068,6 +1099,25 @@ namespace ObjCreation
 		modelVertices = vertices;
 
 	}
+	void ModelCreation::insertVertices_Fase1(std::vector<std::array<float, 9>>vertices)
+	{
+		for (auto& ver : vertices)
+		{
+			std::array<glm::vec3, 3> vertex
+			{
+				glm::vec3(ver[0], ver[1], ver[2]),
+				glm::vec3(ver[3], ver[4], ver[5]),
+				glm::vec3(ver[6], ver[7], ver[8])
+
+			};
+
+			posTriangles.emplace_back(vertex);
+			numberTris += 1;
+		}
+
+		modelVertices_fase1 = vertices;
+	}
+
 	void ModelCreation::createVAO()
 	{
 		for (auto& vertice : modelVertices)
@@ -1081,6 +1131,17 @@ namespace ObjCreation
 		}
 
 	}
+	void ModelCreation::createVAO_Fase1()
+	{
+		for (auto& ver : modelVertices_fase1)
+		{
+			float vertex[9];
+			std::copy(ver.begin(), ver.end(), vertex);
+			vertexData.BuildVAO_fase1(vertex);
+		}
+
+	}
+
 	void ModelCreation::BuildVertexShader(const char* vertexPath, const char* fragmentPath)
 	{
 		shaderColor.shaderCreation(vertexPath, fragmentPath);
@@ -1099,6 +1160,8 @@ namespace ObjCreation
 		shaderColor.use();
 		shaderColor.setInt(textureName, textureUnit);
 	}
+
+	
 	void ModelCreation::renderModel()
 	{
 		auto loadTextures = [&]()
@@ -1168,6 +1231,15 @@ namespace ObjCreation
 
 		//lDrawArrays(GL_TRIANGLES, 0, 36);
 	}
+	void ModelCreation::renderModel_Fase1()
+	{
+		for (int i = 0; i < static_cast<int>(numberTris); i++)
+		{
+			shaderColor.use();
+			vertexData.useMultipleVAO(i);
+			glDrawArrays(GL_TRIANGLES, 0, 3);
+		}
+	}
 	void ModelCreation::renderMultipleModels(int numScene)
 	{
 		auto moveZ_models = [&](int pM) -> glm::mat4
@@ -1194,7 +1266,8 @@ namespace ObjCreation
 			};
 
 		
-
+		int rotateSpeed{ 3 };
+		int rotSpeedState{};
 		for (int p = 0; p < static_cast<int>(posCubes.size() + 1); p++)
 		{
 
@@ -1214,8 +1287,17 @@ namespace ObjCreation
 				}
 				else if (numScene == 1)
 				{
+					if (rotSpeedState < rotateSpeed)
+					{
+						rotSpeedState += 1;
+					}
 
-					modelCoord.sumAng(0.1f);
+					else if (rotSpeedState == rotateSpeed)
+					{
+						modelCoord.sumAng(0.1f);
+						rotSpeedState = 0;
+					}
+
 					shaderColor.transformMat("model", rotate_ModelsPivot(p-1));
 				}
 
@@ -1229,8 +1311,8 @@ namespace ObjCreation
 
 	void ModelCreation::setPosModel(const int numModels)
 	{ 
-		glm::vec3 min{ -8.0f, -8.0f, -5.0f };
-		glm::vec3 max{ 8.0f, 8.0f, -3.0f };
+		glm::vec3 min{ -10.0f, -10.0f, -10.0f };
+		glm::vec3 max{ 10.0f, 10.0f, 10.0f };
 
 		glm::vec3 min_pivot{ -1.0f, -1.0f, -1.0f };
 		glm::vec3 max_pivot{ 1.0f, 1.0f, 1.0f };
@@ -1278,24 +1360,34 @@ namespace ObjCreation
 		shaderColor.transformMat("model", model);
 
 	}
+
+	void ModelCreation::setModelCoord(glm::mat4 model)
+	{
+		shaderColor.transformMat("model", model);
+	}
 	void ModelCreation::setModelView(glm::mat4 camView)
 	{
-		//m::mat4 view{ modelCoord.viewShaderModel() };
-		glm::mat4 view{ camView };
-		shaderColor.transformMat("view", view);
+		shaderColor.transformMat("view", camView);
 	}
-	void ModelCreation::setModelProjection()
+	void ModelCreation::setModelProjection(glm::mat4 camProjection)
 	{
-		glm::mat4 projection{ modelCoord.projectionShaderModel() };
-		shaderColor.transformMat("projection", projection);
+		shaderColor.transformMat("projection", camProjection);
 	}
-
-	void ModelCreation::setCameraTransforms()
+	
+	void ModelCreation::setPosModelTransforms(glm::vec3 posModel, glm::vec3 scaleModel, glm::vec3 pivotRot, GLfloat ang)
 	{
-		cam1.rotateCam();
-		cam1.moveCamera();
-		cam1.cameraTransform();
+		modelCoord.translateModel(posModel);
+		modelCoord.scaleModel(scaleModel);
+		modelCoord.setPivotRotModel(pivotRot);
+		modelCoord.setAngRotModel(ang);
+		modelCoord.setTransformsAll();
+		
+		setModelCoord(modelCoord.model);
+	}
+	void ModelCreation::setCameraTransforms(camera::camera1 cam1)
+	{
 		setModelView(cam1.cam);
+		setModelProjection(cam1.camProjection);
 
 	}
 
@@ -1413,6 +1505,83 @@ namespace vertexCreationData
 		0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
 		-0.5f, 0.5f,-0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f
 	};
+
+	std::array<float, 9> cube_fase1::Tri1_face1
+	{
+	  -0.5f, 0.5f, 0.5f,
+	  0.5f, 0.5f, 0.5f,
+	  -0.5f, -0.5f, 0.5f, 
+	};
+	std::array<float, 9> cube_fase1::Tri2_face1
+	{
+	  0.5f, -0.5f, 0.5f, 
+	  0.5f, 0.5f, 0.5f,
+	  -0.5f, -0.5f, 0.5f, 
+	};
+	std::array<float, 9> cube_fase1::Tri1_face2
+	{
+		0.5f, 0.5f, -0.5f, 
+		0.5f, 0.5f, 0.5f, 
+		0.5f, -0.5f, -0.5f, 
+	};
+	std::array<float, 9> cube_fase1::Tri2_face2
+	{
+		0.5f, -0.5f, 0.5f, 
+		0.5f, 0.5f, 0.5f,
+		0.5f, -0.5f, -0.5f,
+	};
+	std::array<float, 9> cube_fase1::Tri1_face3
+	{
+		0.5f, 0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f, 
+		-0.5f, 0.5f, -0.5f, 
+
+	};
+	std::array<float, 9> cube_fase1::Tri2_face3
+	{
+	  -0.5f, -0.5f,-0.5f, 
+	  0.5f, -0.5f, -0.5f,
+	 -0.5f, 0.5f, -0.5f,
+	};
+	std::array<float, 9> cube_fase1::Tri1_face4
+	{
+		-0.5f, 0.5f, -0.5f, 
+		-0.5f, -0.5f,-0.5f, 
+		-0.5f, 0.5f, 0.5f, 
+
+	};
+	std::array<float, 9> cube_fase1::Tri2_face4
+	{
+		-0.5f, -0.5f, 0.5f, 
+		-0.5f, -0.5f,-0.5f, 
+		-0.5f, 0.5f, 0.5f, 
+	};
+	std::array<float, 9> cube_fase1::Tri1_face5
+	{
+		0.5f, -0.5f, 0.5f, 
+		-0.5f,-0.5f, 0.5f, 
+		0.5f, -0.5f,-0.5f, 
+	};
+	std::array<float, 9> cube_fase1::Tri2_face5
+	{
+		-0.5f, -0.5f,-0.5f,
+		-0.5f,-0.5f, 0.5f, 
+		0.5f, -0.5f,-0.5f, 
+	};
+	std::array<float, 9> cube_fase1::Tri1_face6
+	{
+		0.5f, 0.5f,-0.5f, 
+		0.5f, 0.5f, 0.5f, 
+		-0.5f, 0.5f,-0.5f,
+
+	};
+	std::array<float, 9> cube_fase1::Tri2_face6
+	{
+		-0.5f, 0.5f, 0.5f,
+		0.5f, 0.5f, 0.5f,
+		-0.5f, 0.5f,-0.5f,
+	};
+	
 	
 
 }

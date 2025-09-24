@@ -21,4 +21,5 @@ void main()
 
 //ragColor = mix(texture(texture1, coordTexOut), texture(texture2, coordTexOut), 0.2);
 FragColor = texture(texture1, coordTexOut);
+
 }

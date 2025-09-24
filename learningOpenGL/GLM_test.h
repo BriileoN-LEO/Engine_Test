@@ -70,8 +70,10 @@ namespace transformation_basics
 	{
 	public: 
 
+		glm::mat4 model{ glm::mat4(1.0f) };
+
 		glm::vec3 translateM{ 0.0f, 0.0f, 0.0f };
-		glm::vec3 scaleS{ 0.0f, 0.0f, 0.0f };
+		glm::vec3 scaleS{ 1.0f, 1.0f, 1.0f };
 
 		glm::vec3 pivotRot{ 1.0f, 1.0f, 0.0f };
 		glm::vec3 viewOrient{ 0.0f, 0.0f, -3.0f };
@@ -86,8 +88,17 @@ namespace transformation_basics
 		void sumAng(GLfloat angSum);
 		glm::mat4 rotPivotShaderModel(glm::vec3 pivot, glm::mat4 model);
 		glm::mat4 viewPosShaderModel(glm::vec3 diferentPos, glm::mat4 model);
-		
+	
 		glm::mat4 rotatePerPivot(glm::vec3 center, glm::vec3 pivot, glm::vec3& posicionCube); /////////////////revisarrrr
+
+		////////STANDARD TRANSFORMS///////
+		void translateModel(glm::vec3 transModel);
+		void scaleModel(glm::vec3 scaleModel);
+		void setPivotRotModel(glm::vec3 pivotRotModel);
+		void setAngRotModel(GLfloat ang);
+		void rotateModel();
+		void setTransformsAll();
+		glm::mat4 getModelTransforms();
 
 	};
 
@@ -97,12 +108,15 @@ namespace camera
 {
 	class camera1
 	{
-	public: 
+	public:
 		//glm::vec3 pivotCam{ 0.0f, 0.0f, 1.0f };
 		glm::vec3 directionView{ 0.0f, 0.0f, -1.0f };
-		glm::vec3 posCam{ 0.0f, 0.0f, 3.0f};
+		glm::vec3 posCam{ 0.0f, 0.0f, 3.0f };
 
 		glm::mat4 cam{ glm::mat4(1.0f) };///transformaciones de la camera
+		glm::mat4 camProjection{ glm::mat4(1.0f) };
+
+
 		glm::mat4 camRotate{ glm::mat4(1.0f) };
 		glm::mat4 camTranslate{ glm::mat4(1.0f) };
 		GLfloat ang{};
@@ -113,13 +127,27 @@ namespace camera
 
 		const GLfloat sensitivity{ 0.01f };
 		const GLfloat speedCam{ 0.1f };
-		
+		bool moveCameraTest{};
+
+		GLfloat fovCam{ 45.0f };
+		GLfloat nearCut{};
+		GLfloat maxCut{};
+		bool cameraFovTest{};
+
 		camera1();
+		camera1(glm::vec3 posCam, GLfloat fovCam, GLfloat nearCut, GLfloat maxCut);
+
+		void setSettingsCamera(glm::vec3 posCam, GLfloat fovCam, GLfloat nearCut, GLfloat maxCut);
+
 		void rotateCam();
 		void detectRotCamMouse(glm::vec2 posMouse);
-		void moveCamera();//////////////////////////Revisar
+		void moveCamera();//// A,S,D,W PARA MOVER LA CAMARA
+		void cameraProjection(SDL_Event* event); ///ALT + RUEDA DEL MOUSE PARA HACER ZOOM
 
-		void cameraTransform();
+		void resetTest();
+
+		void controlEventsCamera();
+
 	};
 
 }

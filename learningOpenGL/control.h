@@ -14,6 +14,7 @@ namespace controlMove
 		static std::map<SDL_Keycode, bool> keys_Color;
 		static std::map<SDL_Keycode, bool> keys_Scale;
 		static std::map<SDL_Keycode, bool> keys_Translate;
+		static std::map<SDL_Keycode, bool> keys_fov;
 
 		static bool detectKey(SDL_Event event);
 		static bool detectKeyColor(SDL_Event event);
@@ -21,6 +22,7 @@ namespace controlMove
 		static bool detectKeyTranslate(SDL_Event* event);
 		static void resetKeys();
 	};
+	 
 
 	void moveTriangle(float(&vertices)[9]);
 	void moveVec3(vec::vec3& vertex);

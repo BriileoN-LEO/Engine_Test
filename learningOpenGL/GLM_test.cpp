@@ -366,6 +366,10 @@ namespace transformation_basics
 
 	}
 
+
+	/// ////////////////////////////////
+
+
 	basics_Model3D::basics_Model3D() {};
 	glm::mat4 basics_Model3D::rotShaderModelSeq()
 	{
@@ -416,20 +420,63 @@ namespace transformation_basics
 		glm::mat4 matRotPivot{ glm::mat4(1.0f) };
 		matRotPivot = glm::translate(matRotPivot, posChange);
 		matRotPivot = glm::rotate(matRotPivot, glm::radians(ang), pivot);
-		
+
 		glm::vec3 posBack{ matRotPivot * glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) };
 		posBack = center - posBack;
 
 		glm::mat4 rot{ glm::mat4(1.0f) };
 		rot = glm::translate(rot, posBack);
-		
+
 		return rot;
 	}
+
+
+	void basics_Model3D::translateModel(glm::vec3 transModel)
+	{
+		translateM = transModel;
+	}
+	void basics_Model3D::scaleModel(glm::vec3 scaleModel)
+	{
+		scaleS = scaleModel;
+	}
+	void basics_Model3D::setPivotRotModel(glm::vec3 pivotRotModel)
+	{
+		pivotRot = glm::normalize(pivotRotModel);
+	}
+	void basics_Model3D::setAngRotModel(GLfloat ang)
+	{
+		this->ang = ang;
+	}
+	void basics_Model3D::setTransformsAll()
+	{
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, translateM);
+		model = glm::scale(model, scaleS);
+		model = glm::rotate(model, ang, pivotRot);
+	}
+
+
 }
 
 namespace camera
 {
 	camera1::camera1() {}; 
+	camera1::camera1(glm::vec3 posCam, GLfloat fovCam, GLfloat nearCut, GLfloat maxCut)
+	{
+		setSettingsCamera(posCam, fovCam, nearCut, maxCut);
+
+	};
+	void camera1::setSettingsCamera(glm::vec3 posCam, GLfloat fovCam, GLfloat nearCut, GLfloat maxCut)
+	{
+		this->posCam = posCam;
+		this->fovCam = fovCam;
+		this->nearCut = nearCut;
+		this->maxCut = maxCut;
+
+		cam = glm::lookAt(posCam, this->posCam + directionView, glm::vec3(0.0f, 1.0f, 0.0f));
+		camProjection = glm::perspective(glm::radians(this->fovCam), static_cast<float>(screenSettings::screen_w) / static_cast<float>(screenSettings::screen_h), this->nearCut, this->maxCut);
+	};
+
 	void camera1::rotateCam()
 	{
 		/*
@@ -470,7 +517,7 @@ namespace camera
 		directionView.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 
 		std::string dirCam{ std::to_string(directionView.x) + '\t' + std::to_string(directionView.y) + '\t' + std::to_string(directionView.z) + '\n' };
-		SDL_Log(dirCam.c_str());
+		//SDL_Log(dirCam.c_str());
 		//SDL_Log (std::to_string(pitch).c_str());
 	}
 	void camera1::moveCamera()
@@ -486,6 +533,7 @@ namespace camera
 		//	posC.x += speedCam;
 		//	posCam.x += speedCam;
 			camTranslate = glm::translate(cam, posC);
+			moveCameraTest = true;
 		}
 		if (stateKeyBoard[SDL_SCANCODE_S] == true)
 		{
@@ -495,7 +543,9 @@ namespace camera
 			//posCam.x -= speedCam;
 
 			camTranslate = glm::translate(cam, posC);
+			moveCameraTest = true;
 		}
+
 		if (stateKeyBoard[SDL_SCANCODE_A] == true)
 		{
 			posC = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), directionView));
@@ -504,7 +554,7 @@ namespace camera
 			//posC.z += speedCam;
 			//posCam.z += speedCam;
 			camTranslate = glm::translate(cam, posC);
-
+			moveCameraTest = true;
 		}
 		if (stateKeyBoard[SDL_SCANCODE_D] == true)
 		{
@@ -515,29 +565,65 @@ namespace camera
 			//posC.z -= speedCam;
 			//posCam.z -= speedCam;
 			camTranslate = glm::translate(cam, posC);
-
+			moveCameraTest = true;
 		}
 		
 		if (stateKeyBoard[SDL_SCANCODE_SPACE] == true)
 		{
 			posCam.y -= speedCam;
 			camTranslate = glm::translate(cam, posC);
+			moveCameraTest = true;
 		}
 
 		if (stateKeyBoard[SDL_SCANCODE_LSHIFT] == true)
 		{
 			posCam.y += speedCam;
 			camTranslate = glm::translate(cam, posC);
+			moveCameraTest = true;
 		}
 
 		//SDL_Log(std::to_string(posCam.y).c_str());
 		//cam = glm::translate(cam, posCam);
 	}
-
-	void camera1::cameraTransform()
+	void camera1::cameraProjection(SDL_Event* event)
 	{
-		cam =  camRotate;
+		if (event->wheel.y < 0)
+		{
+			fovCam += 1.0f;
+		}
 
+		if (event->wheel.y > 0)
+		{
+			fovCam -= 1.0f;
+
+		}
+
+		SDL_Log(std::to_string(fovCam).c_str());
+		camProjection = glm::perspective(glm::radians(fovCam), static_cast<float>(screenSettings::screen_w) / static_cast<float>(screenSettings::screen_h), nearCut, maxCut);
+
+	};
+
+	void camera1::resetTest()
+	{
+		if (moveCameraTest == true)
+		{
+			moveCameraTest = false;
+		}
+
+		if (cameraFovTest == true)
+		{
+			cameraFovTest = false;
+		}
+
+	}
+
+	void camera1::controlEventsCamera()
+	{
+		rotateCam();
+		moveCamera();
+		
+
+		cam = camRotate;
 	}
 
 }

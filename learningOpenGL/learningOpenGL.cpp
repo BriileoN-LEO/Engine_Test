@@ -100,6 +100,12 @@ enum class scenes
 
 };
 
+enum class camState
+{
+	cameraAE = 0,
+	cameraCount = 1
+};
+
 
 int main(int argc, char* argv[])
 {
@@ -333,7 +339,7 @@ int main(int argc, char* argv[])
 	vertex.emplace_back(vertexCreationData::cube::Tri2_face5);
 	vertex.emplace_back(vertexCreationData::cube::Tri1_face6);
 	vertex.emplace_back(vertexCreationData::cube::Tri2_face6);
-	
+
 	ObjCreation::ModelCreation FirstModel(vertex);
 	FirstModel.BuildVertexShader(vShader_Model_V1.c_str(), fShader_Model_V1.c_str());
 
@@ -350,10 +356,10 @@ int main(int argc, char* argv[])
 
 	FirstModel.shaderColor.GLM_scaleTex("texTransform1", glm::vec2(1.0f, 1.0f));
 	FirstModel.shaderColor.GLM_scaleTex("texTransform2", glm::vec2(0.5f, 0.5f));
-	
+
 	FirstModel.createVAO();
-	FirstModel.setModelProjection();
-	FirstModel.setPosModel(20); 
+	//FirstModel.setModelProjection();
+	FirstModel.setPosModel(80);
 	/*
 	//1---Creacion del vertex shader
 	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -414,7 +420,34 @@ int main(int argc, char* argv[])
 	glBindVertexArray(0);
 
 	*/
+
+	//PARA CREAR UN BASIC LIGHT 
+	std::vector<std::array<float, 9>> vertexLight{};
+	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri1_face1);
+	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri2_face1);
+	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri1_face2);
+	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri2_face2);
+	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri1_face3);
+	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri2_face3);
+	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri1_face4);
+	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri2_face4);
+	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri1_face5);
+	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri2_face5);
+	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri1_face6);
+	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri2_face6);
 	
+	ObjCreation::ModelCreation BasicLight(vertexLight);
+	BasicLight.BuildVertexShader(vShader_Light_V1.c_str(), fShader_Light_V1.c_str());
+	BasicLight.createVAO_Fase1();
+	BasicLight.setPosModelTransforms(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.1f), glm::vec3(0.0f, 1.0f, 0.0f), 2.0f);
+
+	//para colocar el color del objeto y de la luz
+	BasicLight.shaderColor.use();
+	BasicLight.shaderColor.setVec3("objectColor", glm::vec3(0.5f, 4.0f, 0.2f));
+	BasicLight.shaderColor.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+	
+	camState camP{ camState::cameraAE };
+	camera::camera1 aerialCamera(glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.1f, 100.0f);
 
 	SDL_SetWindowRelativeMouseMode(gWindow, true);
 	SDL_WarpMouseInWindow(gWindow, static_cast<float>(screenSettings::screen_w) * 0.5f, static_cast<float>(screenSettings::screen_w) * 0.5f);
@@ -489,6 +522,11 @@ int main(int argc, char* argv[])
 					if (controlMove::detectSDLK_code::detectKeyTranslate(&event))
 					{
 						TexVertex.vertexTransform.detectTranslate(&event);
+
+						if (camP == camState::cameraAE)
+						{
+							aerialCamera.moveCameraTest = true;
+						}
 					}
 					
 					TexVertex.vertexTransform.detectRot(&event);
@@ -518,11 +556,35 @@ int main(int argc, char* argv[])
 					}
 
 					TexVertex.vertexTransform.resetTests();
+
+					if (camP == camState::cameraAE)
+					{
+						aerialCamera.resetTest();
+					}
+
 				}
 
 				if (event.type == SDL_EVENT_MOUSE_MOTION)
 				{
-					FirstModel.cam1.detectRotCamMouse(controlMouse::getDistanceMotionMouse());
+					//FirstModel.cam1.detectRotCamMouse(controlMouse::getDistanceMotionMouse());
+
+					if (camP == camState::cameraAE)
+					{
+						aerialCamera.detectRotCamMouse(controlMouse::getDistanceMotionMouse());
+						aerialCamera.moveCameraTest = true;
+					}
+				}
+
+				if (event.type == SDL_EVENT_MOUSE_WHEEL)
+				{
+					SDL_Keymod modStateKey = SDL_GetModState();
+					if (modStateKey & SDL_KMOD_ALT)
+					{
+						if (camP == camState::cameraAE)
+						{
+							aerialCamera.cameraProjection(&event);
+						}
+					}
 				}
 
 				if (event.key.key == SDLK_ESCAPE)
@@ -614,16 +676,23 @@ int main(int argc, char* argv[])
 				//FirstModel.setModelView(); // para actualizar el estado de la camara 
 				//FirstModel.cam1.rotateCam(); // para rotar en secuencia la camara
 
-
 				if (screenSettings::outWindow == false)
 				{
 					SDL_WarpMouseInWindow(gWindow, static_cast<float>(screenSettings::screen_w) * 0.5f, static_cast<float>(screenSettings::screen_w) * 0.5f);
-					FirstModel.setCameraTransforms();
+
+					if (camP == camState::cameraAE)
+					{
+						aerialCamera.controlEventsCamera();
+						FirstModel.setCameraTransforms(aerialCamera);
+					//	BasicLight.setCameraTransforms(aerialCamera);
+					}
+	
+		
 
 				}
-
+				//BasicLight.renderModel_Fase1();
  				FirstModel.renderMultipleModels(1);
-			
+			//	BasicLight.renderModel_Fase1();
 
 				SDL_UpdateWindowSurface(gWindow);
 				SDL_GL_SwapWindow(gWindow);

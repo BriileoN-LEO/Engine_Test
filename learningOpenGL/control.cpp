@@ -34,7 +34,6 @@ namespace controlMove
 		{SDLK_RIGHT, false},
 
 	};
-
 	bool detectSDLK_code::detectKey(SDL_Event event)
 	{
 		bool detectKey{ true };

@@ -10,6 +10,10 @@ const std::string fShader_Tex_V1 = "C:/Users/Briil/source/repos/learningOpenGL/s
 const std::string vShader_Model_V1 = "C:/Users/Briil/source/repos/learningOpenGL/shaders/SHADER_MODEL1/vShader_model_v1.vert";
 const std::string fShader_Model_V1 = "C:/Users/Briil/source/repos/learningOpenGL/shaders/SHADER_MODEL1/fShader_model_v1.frag";
 
+///LIGHT SHADERS
+const std::string vShader_Light_V1 = "C:/Users/Briil/source/repos/learningOpenGL/shaders/SHADER_LIGHT/vShader_Light_v1.vert";
+const std::string fShader_Light_V1 = "C:/Users/Briil/source/repos/learningOpenGL/shaders/SHADER_LIGHT/fShader_Light_v1.frag";
+
 ///IMAGES
 const std::string image_Wood = "C:/Users/Briil/source/repos/learningOpenGL/images/container.jpg";
 const std::string image_happyFace = "C:/Users/Briil/source/repos/learningOpenGL/images/awesomeface.png";
