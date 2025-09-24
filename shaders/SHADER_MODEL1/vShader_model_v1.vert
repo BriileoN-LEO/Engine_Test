@@ -16,7 +16,7 @@ void main()
 {
   gl_Position =  projection * view * model * vec4(aPos.xyz, 1.0);
 
- colorOut = aColor;
- coordTexOut = aCoordTex;
+  colorOut = aColor;
+  coordTexOut = aCoordTex;
 
 }

@@ -1,8 +1,8 @@
 #include "config_window.h"
 
 
-int screenSettings::screen_w{ 1920 };
-int screenSettings::screen_h{ 1080 };
+int screenSettings::screen_w{ 1700 };
+int screenSettings::screen_h{ 900 };
 bool screenSettings::detectChangeSizeWindow{ false };
 bool screenSettings::outWindow{ false };
 int screenSettings::fps{ 60 };

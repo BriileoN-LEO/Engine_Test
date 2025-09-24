@@ -99,6 +99,7 @@ namespace transformation_basics
 		float areaTriangle{ magnitudVec / 2.0f };
 
 		return areaTriangle;
+
 	}
 	glm::vec3 centerGeo(std::vector<std::pair<glm::vec3, float>> triCenter)
 	{
@@ -115,8 +116,6 @@ namespace transformation_basics
 
 		return sumCenterArea;
 	}
-
-
 
 
 	basics_posGEO::basics_posGEO() {};
@@ -452,7 +451,7 @@ namespace transformation_basics
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, translateM);
 		model = glm::scale(model, scaleS);
-		model = glm::rotate(model, ang, pivotRot);
+		//model = glm::rotate(model, ang, pivotRot);
 	}
 
 

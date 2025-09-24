@@ -10,6 +10,7 @@
 #include "control.h"
 #include "SHADER_H.h"
 #include "configFilesTXT.h"
+#include "LIGHTS_test.h"
 #include "stb_image.h"
 #include <iostream>
 #include <vector>
@@ -422,6 +423,8 @@ int main(int argc, char* argv[])
 	*/
 
 	//PARA CREAR UN BASIC LIGHT 
+
+
 	std::vector<std::array<float, 9>> vertexLight{};
 	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri1_face1);
 	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri2_face1);
@@ -436,18 +439,25 @@ int main(int argc, char* argv[])
 	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri1_face6);
 	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri2_face6);
 	
-	ObjCreation::ModelCreation BasicLight(vertexLight);
+	ObjCreation::ModelCreation BasicLight;
+	BasicLight.insertVertices_Fase1(vertexLight);
 	BasicLight.BuildVertexShader(vShader_Light_V1.c_str(), fShader_Light_V1.c_str());
+	//para colocar el color del objeto y de la luz
+
+	
+	//BasicLight.setPosModelTransforms(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.7f), glm::vec3(0.0f, 1.0f, 0.0f), 2.0f);
 	BasicLight.createVAO_Fase1();
-	BasicLight.setPosModelTransforms(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.1f), glm::vec3(0.0f, 1.0f, 0.0f), 2.0f);
+	BasicLight.setPosModelTransforms(glm::vec3(0.0f, 0.0f, -2.0f), glm::vec3(0.7f), glm::vec3(0.0f, 1.0f, 0.0f), 2.0f);
+
+	camState camP{ camState::cameraAE };
+	camera::camera1 aerialCamera(glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.1f, 100.0f);
+
+	light::light1 lightTest_01(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
 	//para colocar el color del objeto y de la luz
 	BasicLight.shaderColor.use();
 	BasicLight.shaderColor.setVec3("objectColor", glm::vec3(0.5f, 4.0f, 0.2f));
-	BasicLight.shaderColor.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-	
-	camState camP{ camState::cameraAE };
-	camera::camera1 aerialCamera(glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.1f, 100.0f);
+	BasicLight.shaderColor.setVec3("lightColor", lightTest_01.Posicion);
 
 	SDL_SetWindowRelativeMouseMode(gWindow, true);
 	SDL_WarpMouseInWindow(gWindow, static_cast<float>(screenSettings::screen_w) * 0.5f, static_cast<float>(screenSettings::screen_w) * 0.5f);
@@ -683,16 +693,17 @@ int main(int argc, char* argv[])
 					if (camP == camState::cameraAE)
 					{
 						aerialCamera.controlEventsCamera();
-						FirstModel.setCameraTransforms(aerialCamera);
-					//	BasicLight.setCameraTransforms(aerialCamera);
+					//	FirstModel.setCameraTransforms(aerialCamera);
+			         //   BasicLight.setCameraTransforms(aerialCamera);
 					}
 	
 		
 
 				}
-				//BasicLight.renderModel_Fase1();
- 				FirstModel.renderMultipleModels(1);
-			//	BasicLight.renderModel_Fase1();
+			
+ 				FirstModel.renderMultipleModels(1, aerialCamera);
+		        BasicLight.renderModel_Fase1(aerialCamera); /////////////////////////////ARREGLAR EL BASIC LIGHT
+
 
 				SDL_UpdateWindowSurface(gWindow);
 				SDL_GL_SwapWindow(gWindow);

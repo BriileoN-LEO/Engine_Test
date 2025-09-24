@@ -91,7 +91,8 @@ namespace shading
 	void shader::setVec3(const std::string& name, glm::vec3 value) const
 	{
 		int location{ glGetUniformLocation(ID, name.c_str()) };
-		glUniform3f(location, value.x, value.y, value.z);
+		glUniform3fv(location, GL_TRUE, glm::value_ptr(value));
+	
 	}
 
 	void shader::sumRotAng()
@@ -108,7 +109,7 @@ namespace shading
 	{
 		unsigned int transMat = glGetUniformLocation(ID, name.c_str());
 		glUniformMatrix4fv(transMat, 1, GL_FALSE, glm::value_ptr(valueT));
-		
+	
 	}
 
 	void shader::scaleTex(const std::string& name, vec::vec2 size) const
@@ -1162,7 +1163,7 @@ namespace ObjCreation
 	}
 
 	
-	void ModelCreation::renderModel()
+	void ModelCreation::renderModelMultiple(camera::camera1 cam, glm::mat4 model)
 	{
 		auto loadTextures = [&]()
 			{
@@ -1206,6 +1207,10 @@ namespace ObjCreation
 			GLuint posicion{ numberTris - 1 };
 
 			shaderColor.use();
+			shaderColor.transformMat("model", model);
+			setCameraTransforms(cam);
+			shaderColor.setVec3("objectColor", glm::vec3(0.8f, 0.5f, 0.4f));
+			shaderColor.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
 			if (i < posicion - 3)
 			{
 		minecraftCube[0].useTextures();
@@ -1231,16 +1236,19 @@ namespace ObjCreation
 
 		//lDrawArrays(GL_TRIANGLES, 0, 36);
 	}
-	void ModelCreation::renderModel_Fase1()
+	void ModelCreation::renderModel_Fase1(camera::camera1 cam)
 	{
 		for (int i = 0; i < static_cast<int>(numberTris); i++)
 		{
+
 			shaderColor.use();
+			setModelCoord(modelCoord.model);
+			setCameraTransforms(cam);
 			vertexData.useMultipleVAO(i);
 			glDrawArrays(GL_TRIANGLES, 0, 3);
 		}
 	}
-	void ModelCreation::renderMultipleModels(int numScene)
+	void ModelCreation::renderMultipleModels(int numScene, camera::camera1 cam)
 	{
 		auto moveZ_models = [&](int pM) -> glm::mat4
 			{
@@ -1298,12 +1306,12 @@ namespace ObjCreation
 						rotSpeedState = 0;
 					}
 
-					shaderColor.transformMat("model", rotate_ModelsPivot(p-1));
+	//				shaderColor.transformMat("model", rotate_ModelsPivot(p-1));
 				}
-
+				renderModelMultiple(cam, rotate_ModelsPivot(p - 1));
 			}
 
-			renderModel();
+			//renderModelMultiple(cam, rotate_ModelsPivot(p - 1));
 
 		}
 
@@ -1384,6 +1392,7 @@ namespace ObjCreation
 		
 		setModelCoord(modelCoord.model);
 	}
+
 	void ModelCreation::setCameraTransforms(camera::camera1 cam1)
 	{
 		setModelView(cam1.cam);

@@ -96,10 +96,9 @@ namespace transformation_basics
 		void scaleModel(glm::vec3 scaleModel);
 		void setPivotRotModel(glm::vec3 pivotRotModel);
 		void setAngRotModel(GLfloat ang);
-		void rotateModel();
+		//void rotateModel();
 		void setTransformsAll();
-		glm::mat4 getModelTransforms();
-
+	
 	};
 
 }
@@ -151,6 +150,9 @@ namespace camera
 	};
 
 }
+
+
+
 
 
 #endif GLM_test
