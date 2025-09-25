@@ -356,7 +356,7 @@ int main(int argc, char* argv[])
 	FirstModel.SetTextures("texture1", 0);
 	FirstModel.SetTextures("texture2", 1);
 
-	FirstModel.setColorModel(glm::vec3(0.5f, 0.5f, 0.4f));s
+	FirstModel.setColorModel(glm::vec3(0.5f, 0.5f, 0.4f));
 
 	FirstModel.shaderColor.GLM_scaleTex("texTransform1", glm::vec2(1.0f, 1.0f));
 	FirstModel.shaderColor.GLM_scaleTex("texTransform2", glm::vec2(0.5f, 0.5f));
@@ -455,13 +455,17 @@ int main(int argc, char* argv[])
 	camera::camera1 aerialCamera(glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.1f, 100.0f);
 
 	////Light principal
-	light::light1 lightTest_01(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.7f, 0.5f, 1.8f));
-
+	glm::vec3 purpleLight{ 0.7f, 0.5f, 1.8f };
+	light::light1 lightTest_01(glm::vec3(0.0f, 0.0f, 0.0f), purpleLight);
+	testPlay::tranformationT testTransLight;
+	glm::vec3 randomPivotL{ randomN::randomPos(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f)) };
+	testTransLight.setSettingsTransform(glm::vec3(6.0f, 6.0f, 6.0f), glm::vec3(1.0f), randomPivotL, 0.05f);
 
 	
 	testPlay::tranformationT testTranforms;
 	glm::vec3 randomPivotTestTrans{ randomN::randomPos(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f)) };
 	testTranforms.setSettingsTransform(glm::vec3(2.0f, 3.0f, 2.0f), glm::vec3(1.0f), randomPivotTestTrans, 0.1f);
+
 
 
 	//para colocar el color del objeto y de la luz
@@ -709,10 +713,11 @@ int main(int argc, char* argv[])
 		
 				}
 			
-				//FirstModel
-			testTranforms.transformUniqueModel(&FirstModel, aerialCamera, lightTest_01); /////////////Corregir este ERRORRRR
+				//FirstModelTest
+				testTransLight.transformMeshLight(&BasicLight, &lightTest_01);
+				testTranforms.transformUniqueModel(&FirstModel, aerialCamera, lightTest_01); /////////////Corregir este ERRORRRR
  				FirstModel.renderMultipleModels(1, aerialCamera, lightTest_01);/////Colocamos el light para saber la posicion del light			
-		        BasicLight.renderMeshLight(aerialCamera);
+				BasicLight.renderMeshLight(aerialCamera, lightTest_01);
 
 
 				SDL_UpdateWindowSurface(gWindow);

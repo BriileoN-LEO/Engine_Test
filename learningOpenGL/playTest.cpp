@@ -18,4 +18,15 @@ namespace testPlay
 		modelTest->setPosModelTransforms(posicion, scale, pivotRotPos, ang);
 		modelTest->renderModel(cam, lightModel);
 	}
+	void tranformationT::transformMeshLight(ObjCreation::ModelCreation* modelTest, light::light1* lightModel)
+	{
+		ang += velocityAng;
+
+		modelTest->modelCoord.translateModel(posicion);
+		modelTest->modelCoord.scaleModel(scale);
+		modelTest->modelCoord.setPivotRotModel(pivotRotPos);
+		modelTest->modelCoord.setAngRotModel(ang);
+		modelTest->modelCoord.setInverseTransformsAll();
+		lightModel->Posicion = modelTest->modelCoord.translateM;
+	}
 }

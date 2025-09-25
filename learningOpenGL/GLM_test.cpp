@@ -462,6 +462,15 @@ namespace transformation_basics
 		model = glm::scale(model, scaleS);
 		model = glm::rotate(model, ang, pivotRotPos);
 	}
+	void basics_Model3D::setInverseTransformsAll()
+	{
+		model = glm::mat4(1.0f);
+		model = glm::rotate(model, ang, pivotRotPos);
+		model = glm::scale(model, scaleS);
+		model = glm::translate(model, translateM);
+
+		translateM = model * glm::vec4(1.0f);
+	}
 
 
 }

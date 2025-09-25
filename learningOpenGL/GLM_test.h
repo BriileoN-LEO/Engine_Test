@@ -99,6 +99,7 @@ namespace transformation_basics
 		void setAngRotModel(GLfloat ang);
 		void setNormalModelMatrix();
 		void setTransformsAll();
+		void setInverseTransformsAll();
 	
 	};
 

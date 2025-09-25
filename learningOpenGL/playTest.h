@@ -19,7 +19,7 @@ namespace testPlay
 		tranformationT();
 		void setSettingsTransform(glm::vec3 posicion, glm::vec3 scale, glm::vec3 pivotRotPos, GLfloat velocityAng);
 		void transformUniqueModel(ObjCreation::ModelCreation* modelTest, camera::camera1 cam, light::light1 lightModel);
-
+		void transformMeshLight(ObjCreation::ModelCreation* modelTest, light::light1* lightModel);
 
 	};
 

@@ -1282,13 +1282,14 @@ namespace ObjCreation
 
 		}
 	}
-	void ModelCreation::renderMeshLight(light::light1 light)
+	void ModelCreation::renderMeshLight(camera::camera1 cam, light::light1 light)
 	{
 		for (int i = 0; i < static_cast<int>(numberTris); i++)
 		{
 
 			shaderColor.use();
 			setModelCoord(modelCoord.model);
+			shaderColor.setVec3("lightColor", light.Color);
 			setCameraTransforms(cam);
 			vertexData.useMultipleVAO(i);
 			glDrawArrays(GL_TRIANGLES, 0, 3);
