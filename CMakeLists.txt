@@ -55,6 +55,7 @@ add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/conf
 "learningOpenGL/SHADER_H.h" "learningOpenGL/SHADER_H.cpp"
 "learningOpenGL/GLM_test.h" "learningOpenGL/GLM_test.cpp"
 "learningOpenGL/LIGHTS_test.h" "learningOpenGL/LIGHTS_test.cpp"
+"learningOpenGL/playTest.h" "learningOpenGL/playTest.cpp"
 )
 
 target_include_directories(Learning PRIVATE "${PROJECT_BINARY_DIR}")

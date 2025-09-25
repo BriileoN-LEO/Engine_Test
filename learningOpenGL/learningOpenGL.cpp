@@ -9,6 +9,7 @@
 #include "data_save.h"
 #include "control.h"
 #include "SHADER_H.h"
+#include "playTest.h"
 #include "configFilesTXT.h"
 #include "LIGHTS_test.h"
 #include "stb_image.h"
@@ -141,7 +142,7 @@ int main(int argc, char* argv[])
 
 	};
 
-
+	
 	const char* vertexShaderSource = "#version 330 core\n"
 		"layout (location = 0) in vec3 aPos; \n"
 		"void main()\n"
@@ -325,7 +326,7 @@ int main(int argc, char* argv[])
 
 	TexVertex.shaderColor.scaleTex("scaleTexContainer", vec::vec2(1.0f, 1.0f));
 	TexVertex.shaderColor.scaleTex("scaleTexFaces", vec::vec2(0.5f, 0.5f));
-
+	
 	//Para un modelo 3D
 	std::vector<std::array<float, 24>> vertex{};
 	vertex.emplace_back(vertexCreationData::cube::Tri1_face1);
@@ -340,7 +341,7 @@ int main(int argc, char* argv[])
 	vertex.emplace_back(vertexCreationData::cube::Tri2_face5);
 	vertex.emplace_back(vertexCreationData::cube::Tri1_face6);
 	vertex.emplace_back(vertexCreationData::cube::Tri2_face6);
-
+	
 	ObjCreation::ModelCreation FirstModel(vertex);
 	FirstModel.BuildVertexShader(vShader_Model_V1.c_str(), fShader_Model_V1.c_str());
 
@@ -354,6 +355,8 @@ int main(int argc, char* argv[])
 
 	FirstModel.SetTextures("texture1", 0);
 	FirstModel.SetTextures("texture2", 1);
+
+	FirstModel.setColorModel(glm::vec3(0.5f, 0.5f, 0.4f));s
 
 	FirstModel.shaderColor.GLM_scaleTex("texTransform1", glm::vec2(1.0f, 1.0f));
 	FirstModel.shaderColor.GLM_scaleTex("texTransform2", glm::vec2(0.5f, 0.5f));
@@ -423,8 +426,6 @@ int main(int argc, char* argv[])
 	*/
 
 	//PARA CREAR UN BASIC LIGHT 
-
-
 	std::vector<std::array<float, 9>> vertexLight{};
 	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri1_face1);
 	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri2_face1);
@@ -449,14 +450,23 @@ int main(int argc, char* argv[])
 	BasicLight.createVAO_Fase1();
 	BasicLight.setPosModelTransforms(glm::vec3(0.0f, 0.0f, -2.0f), glm::vec3(0.7f), glm::vec3(0.0f, 1.0f, 0.0f), 2.0f);
 
+	///Creacion de camaras
 	camState camP{ camState::cameraAE };
 	camera::camera1 aerialCamera(glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.1f, 100.0f);
 
-	light::light1 lightTest_01(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	////Light principal
+	light::light1 lightTest_01(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.7f, 0.5f, 1.8f));
+
+
+	
+	testPlay::tranformationT testTranforms;
+	glm::vec3 randomPivotTestTrans{ randomN::randomPos(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f)) };
+	testTranforms.setSettingsTransform(glm::vec3(2.0f, 3.0f, 2.0f), glm::vec3(1.0f), randomPivotTestTrans, 0.1f);
+
 
 	//para colocar el color del objeto y de la luz
 	BasicLight.shaderColor.use();
-	BasicLight.shaderColor.setVec3("objectColor", glm::vec3(0.5f, 4.0f, 0.2f));
+	BasicLight.shaderColor.setVec3("objectColor", lightTest_01.Color);
 	BasicLight.shaderColor.setVec3("lightColor", lightTest_01.Posicion);
 
 	SDL_SetWindowRelativeMouseMode(gWindow, true);
@@ -526,7 +536,7 @@ int main(int argc, char* argv[])
 					}
 					if (controlMove::detectSDLK_code::detectKeyScale(event))
 					{
-						TexVertex.pressScaleTex(&event);
+					TexVertex.pressScaleTex(&event);
 
 					}
 					if (controlMove::detectSDLK_code::detectKeyTranslate(&event))
@@ -564,7 +574,7 @@ int main(int argc, char* argv[])
 					{
 						TexVertex.outScaleTex();
 					}
-
+					
 					TexVertex.vertexTransform.resetTests();
 
 					if (camP == camState::cameraAE)
@@ -696,19 +706,19 @@ int main(int argc, char* argv[])
 					//	FirstModel.setCameraTransforms(aerialCamera);
 			         //   BasicLight.setCameraTransforms(aerialCamera);
 					}
-	
 		
-
 				}
 			
- 				FirstModel.renderMultipleModels(1, aerialCamera);
-		        BasicLight.renderModel_Fase1(aerialCamera); /////////////////////////////ARREGLAR EL BASIC LIGHT
+				//FirstModel
+			testTranforms.transformUniqueModel(&FirstModel, aerialCamera, lightTest_01); /////////////Corregir este ERRORRRR
+ 				FirstModel.renderMultipleModels(1, aerialCamera, lightTest_01);/////Colocamos el light para saber la posicion del light			
+		        BasicLight.renderMeshLight(aerialCamera);
 
 
 				SDL_UpdateWindowSurface(gWindow);
 				SDL_GL_SwapWindow(gWindow);
-				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 				screenSettings::vSync::frameT = false;
 				screenSettings::vSync::stopTimeNS = SDL_GetTicksNS();
 			}

@@ -111,6 +111,11 @@ namespace shading
 		glUniformMatrix4fv(transMat, 1, GL_FALSE, glm::value_ptr(valueT));
 	
 	}
+	void shader::transformMat3(const std::string& name, glm::mat3 valueT) const
+	{
+		unsigned int transMat = glGetUniformLocation(ID, name.c_str());
+		glUniformMatrix3fv(transMat, 1, GL_FALSE, glm::value_ptr(valueT));
+	}
 
 	void shader::scaleTex(const std::string& name, vec::vec2 size) const
 	{
@@ -1163,7 +1168,7 @@ namespace ObjCreation
 	}
 
 	
-	void ModelCreation::renderModelMultiple(camera::camera1 cam, glm::mat4 model)
+	void ModelCreation::renderModelMultiple(camera::camera1 cam, glm::mat4 model, light::light1 light)
 	{
 		auto loadTextures = [&]()
 			{
@@ -1208,9 +1213,12 @@ namespace ObjCreation
 
 			shaderColor.use();
 			shaderColor.transformMat("model", model);
+			shaderColor.transformMat3("modelMatrix", modelCoord.normalModelMatrix);
 			setCameraTransforms(cam);
+			shaderColor.setVec3("viewPos", cam.posCam);
 			shaderColor.setVec3("objectColor", glm::vec3(0.8f, 0.5f, 0.4f));
-			shaderColor.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+			shaderColor.setVec3("lightColor", light.Color);
+			shaderColor.setVec3("lightPos", light.Posicion);
 			if (i < posicion - 3)
 			{
 		minecraftCube[0].useTextures();
@@ -1236,7 +1244,45 @@ namespace ObjCreation
 
 		//lDrawArrays(GL_TRIANGLES, 0, 36);
 	}
-	void ModelCreation::renderModel_Fase1(camera::camera1 cam)
+	void ModelCreation::renderModel(camera::camera1 cam, light::light1 light) 
+	{
+		for (int i = 0; i < static_cast<int>(numberTris); i++)
+		{
+			GLuint posicion{ numberTris - 1 };
+
+			shaderColor.use();
+			setModelCoord(modelCoord.model);
+			setCameraTransforms(cam);
+
+			//settings para la luz
+			shaderColor.transformMat3("modelMatrix", modelCoord.normalModelMatrix);
+			shaderColor.setVec3("objectColor", modelColor); ///
+			shaderColor.setVec3("lightColor", light.Color);
+			shaderColor.setVec3("lightPos", light.Posicion);
+
+			if (i < posicion - 3)
+			{
+				minecraftCube[0].useTextures();
+
+			}
+
+			else if (i <= posicion - 2 && i >= posicion - 3)
+			{
+				minecraftCube[1].useTextures();
+
+			}
+
+			else if (i > posicion - 2)
+			{
+				minecraftCube[2].useTextures();
+
+			}
+			vertexData.useMultipleVAO(i);
+			glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		}
+	}
+	void ModelCreation::renderMeshLight(light::light1 light)
 	{
 		for (int i = 0; i < static_cast<int>(numberTris); i++)
 		{
@@ -1247,8 +1293,10 @@ namespace ObjCreation
 			vertexData.useMultipleVAO(i);
 			glDrawArrays(GL_TRIANGLES, 0, 3);
 		}
+
 	}
-	void ModelCreation::renderMultipleModels(int numScene, camera::camera1 cam)
+
+	void ModelCreation::renderMultipleModels(int numScene, camera::camera1 cam, light::light1 light)
 	{
 		auto moveZ_models = [&](int pM) -> glm::mat4
 			{
@@ -1268,13 +1316,14 @@ namespace ObjCreation
 		auto rotate_ModelsPivot = [&](int pM) -> glm::mat4
 			{
 
-				glm::mat4 rotMP{ modelCoord.rotatePerPivot(glm::vec3(0.0f, 0.0f, 0.3f), pivotCubes[pM], posCubes[pM]) };
+				glm::mat4 rotMP{ modelCoord.rotatePerPivot(glm::vec3(0.0f, 0.0f, 0.0f), pivotCubes[pM], posCubes[pM]) };
+				modelCoord.setNormalModelMatrix();
 
 				return rotMP;
 			};
 
 		
-		int rotateSpeed{ 3 };
+		int rotateSpeed{ 4 };
 		int rotSpeedState{};
 		for (int p = 0; p < static_cast<int>(posCubes.size() + 1); p++)
 		{
@@ -1302,13 +1351,13 @@ namespace ObjCreation
 
 					else if (rotSpeedState == rotateSpeed)
 					{
-						modelCoord.sumAng(0.1f);
+						modelCoord.sumAng(0.07f);
 						rotSpeedState = 0;
 					}
 
 	//				shaderColor.transformMat("model", rotate_ModelsPivot(p-1));
 				}
-				renderModelMultiple(cam, rotate_ModelsPivot(p - 1));
+				renderModelMultiple(cam, rotate_ModelsPivot(p - 1), light);
 			}
 
 			//renderModelMultiple(cam, rotate_ModelsPivot(p - 1));
@@ -1382,6 +1431,12 @@ namespace ObjCreation
 		shaderColor.transformMat("projection", camProjection);
 	}
 	
+	void ModelCreation::setColorModel(glm::vec3 colorModel)
+	{
+		modelColor = colorModel;
+		shaderColor.setVec3("ObjectColor", modelColor);
+	}
+
 	void ModelCreation::setPosModelTransforms(glm::vec3 posModel, glm::vec3 scaleModel, glm::vec3 pivotRot, GLfloat ang)
 	{
 		modelCoord.translateModel(posModel);
@@ -1389,8 +1444,8 @@ namespace ObjCreation
 		modelCoord.setPivotRotModel(pivotRot);
 		modelCoord.setAngRotModel(ang);
 		modelCoord.setTransformsAll();
-		
-		setModelCoord(modelCoord.model);
+		modelCoord.setNormalModelMatrix(); ///para setear el normal matrix del mat4 model 
+		//setModelCoord(modelCoord.model);
 	}
 
 	void ModelCreation::setCameraTransforms(camera::camera1 cam1)
@@ -1439,80 +1494,81 @@ namespace ObjCreation
 namespace vertexCreationData
 {
 	
+	//AÑADIDO DE NORMALES EN EL SEGUNDO 
 	std::array<float, 24> cube::Tri1_face1
 	{
-	  -0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-	  0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+	  -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+	  0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
 	  -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f
 	};
 	std::array<float, 24> cube::Tri2_face1
 	{
-	  0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-	  0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+	  0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+	  0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
 	  -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f
 	};
 	std::array<float, 24> cube::Tri1_face2
 	{
 		0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-		0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 	};
 	std::array<float, 24> cube::Tri2_face2
 	{
 		0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 	};
 	std::array<float, 24> cube::Tri1_face3
 	{
-		0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 
-		0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 
-		-0.5f, 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+		0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, 
+		0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 
+		-0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
 
 	};
 	std::array<float, 24> cube::Tri2_face3
 	{
-	  -0.5f, -0.5f,-0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-	  0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-     -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+	  -0.5f, -0.5f,-0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+	  0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,
+     -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
 	};
 	std::array<float, 24> cube::Tri1_face4
 	{ 
-		-0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-		-0.5f, -0.5f,-0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 
-		-0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 
+		-0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f,-0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 
+		-0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 
 
 	};
 	std::array<float, 24> cube::Tri2_face4
 	{
-		-0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 
-		-0.5f, -0.5f,-0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-		-0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 
+		-0.5f, -0.5f,-0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		-0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 	};
 	std::array<float, 24> cube::Tri1_face5
 	{
-		0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-		-0.5f,-0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-		0.5f, -0.5f,-0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f
+		0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
+		-0.5f,-0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+		0.5f, -0.5f,-0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f
 	};
 	std::array<float, 24> cube::Tri2_face5
 	{
-		-0.5f, -0.5f,-0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		-0.5f,-0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-		0.5f, -0.5f,-0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f
+		-0.5f, -0.5f,-0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+		-0.5f,-0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+		0.5f, -0.5f,-0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f
 	};
 	std::array<float, 24> cube::Tri1_face6
 	{
-		0.5f, 0.5f,-0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+		0.5f, 0.5f,-0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
 		0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-		-0.5f, 0.5f,-0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f
+		-0.5f, 0.5f,-0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f
 
 	};
 	std::array<float, 24> cube::Tri2_face6
 	{
-		-0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		-0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
 		0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-		-0.5f, 0.5f,-0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f
+		-0.5f, 0.5f,-0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f
 	};
 
 	std::array<float, 9> cube_fase1::Tri1_face1

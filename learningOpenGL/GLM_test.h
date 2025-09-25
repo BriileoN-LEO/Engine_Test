@@ -71,11 +71,12 @@ namespace transformation_basics
 	public: 
 
 		glm::mat4 model{ glm::mat4(1.0f) };
+		glm::mat3 normalModelMatrix{};
 
 		glm::vec3 translateM{ 0.0f, 0.0f, 0.0f };
 		glm::vec3 scaleS{ 1.0f, 1.0f, 1.0f };
 
-		glm::vec3 pivotRot{ 1.0f, 1.0f, 0.0f };
+		glm::vec3 pivotRotPos{ 1.0f, 1.0f, 0.0f };
 		glm::vec3 viewOrient{ 0.0f, 0.0f, -3.0f };
 
 		GLfloat ang{ 0.0f };
@@ -96,7 +97,7 @@ namespace transformation_basics
 		void scaleModel(glm::vec3 scaleModel);
 		void setPivotRotModel(glm::vec3 pivotRotModel);
 		void setAngRotModel(GLfloat ang);
-		//void rotateModel();
+		void setNormalModelMatrix();
 		void setTransformsAll();
 	
 	};
@@ -143,7 +144,7 @@ namespace camera
 		void moveCamera();//// A,S,D,W PARA MOVER LA CAMARA
 		void cameraProjection(SDL_Event* event); ///ALT + RUEDA DEL MOUSE PARA HACER ZOOM
 
-		void resetTest();
+		void resetTest( );
 
 		void controlEventsCamera();
 

@@ -375,7 +375,7 @@ namespace transformation_basics
 		ang += 1.0f;
 
 		glm::mat4 modelMat{ glm::mat4(1.0f) };
-		modelMat = glm::rotate(modelMat, glm::radians(ang), pivotRot);
+		modelMat = glm::rotate(modelMat, glm::radians(ang), pivotRotPos);
 
 		return modelMat;
 	}
@@ -414,19 +414,24 @@ namespace transformation_basics
 	/////rotacion alrededor de un pivote
 	glm::mat4 basics_Model3D::rotatePerPivot(glm::vec3 center, glm::vec3 pivot, glm::vec3& posicionCube)
 	{
-		glm::vec3 posChange{ center - posicionCube };
+		glm::vec3 posChange{ glm::vec3(0.0f, 0.0f, -0.3f) - glm::normalize(posicionCube) };
+		pivot = glm::normalize(pivot);
 
 		glm::mat4 matRotPivot{ glm::mat4(1.0f) };
 		matRotPivot = glm::translate(matRotPivot, posChange);
 		matRotPivot = glm::rotate(matRotPivot, glm::radians(ang), pivot);
 
-		glm::vec3 posBack{ matRotPivot * glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) };
-		posBack = center - posBack;
+		glm::vec3 posicionConvertion{ glm::vec3(matRotPivot * glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) )};
 
-		glm::mat4 rot{ glm::mat4(1.0f) };
-		rot = glm::translate(rot, posBack);
+		glm::vec3 posBack = - posicionConvertion;
+		posBack = posicionCube - posBack;
 
-		return rot;
+		glm::vec3 translateBack{ posicionConvertion - posBack };
+
+		glm::mat4 trans{ glm::mat4(1.0f) };
+		matRotPivot = glm::translate(matRotPivot, translateBack);
+
+		return matRotPivot;
 	}
 
 
@@ -440,18 +445,22 @@ namespace transformation_basics
 	}
 	void basics_Model3D::setPivotRotModel(glm::vec3 pivotRotModel)
 	{
-		pivotRot = glm::normalize(pivotRotModel);
+		pivotRotPos = glm::normalize(pivotRotModel);
 	}
 	void basics_Model3D::setAngRotModel(GLfloat ang)
 	{
 		this->ang = ang;
+	}
+	void basics_Model3D::setNormalModelMatrix()
+	{
+		normalModelMatrix = glm::transpose(glm::inverse(model));
 	}
 	void basics_Model3D::setTransformsAll()
 	{
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, translateM);
 		model = glm::scale(model, scaleS);
-		//model = glm::rotate(model, ang, pivotRot);
+		model = glm::rotate(model, ang, pivotRotPos);
 	}
 
 
