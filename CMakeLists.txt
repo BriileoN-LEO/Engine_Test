@@ -48,25 +48,38 @@ FetchContent_Declare(
 
 )
 
+include(FetchContent)
+
+FetchContent_Declare(
+assimp
+GIT_REPOSITORY https://github.com/assimp/assimp.git
+GIT_TAG v5.4.1
+)
+
 FetchContent_MakeAvailable(glm)
+FetchContent_MakeAvailable(assimp)
 
 add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/config_window.h" "learningOpenGL/config_window.cpp" "learningOpenGL/data_save.h" "learningOpenGL/data_save.cpp"
 "learningOpenGL/control.cpp" "learningOpenGL/control.h" 
-"learningOpenGL/SHADER_H.h" "learningOpenGL/SHADER_H.cpp"
+"learningOpenGL/SHADER_H.cpp" "learningOpenGL/SHADER_H.h" 
 "learningOpenGL/GLM_test.h" "learningOpenGL/GLM_test.cpp"
 "learningOpenGL/LIGHTS_test.h" "learningOpenGL/LIGHTS_test.cpp"
 "learningOpenGL/playTest.h" "learningOpenGL/playTest.cpp"
+"learningOpenGL/Model_Assimp/ModelAssimp.cpp" "learningOpenGL/Model_Assimp/ModelAssimp.h"
 )
+
 
 target_include_directories(Learning PRIVATE "${PROJECT_BINARY_DIR}")
 target_include_directories(Learning PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/ThirdPartyLibs")
 target_include_directories(Learning PRIVATE ${glm_SOURCE_DIR})
+target_include_directories(Learning PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/learningOpenGL/Model_Assimp")
+
 
 target_link_libraries(Learning PRIVATE
 SDL3::SDL3 
 glad_source
 OpenGL::GL
-glm
+assimp
 )
 
 message(STATUS "SDL3 encontrado en: ${SDL3_DIR}")

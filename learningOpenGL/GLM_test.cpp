@@ -438,6 +438,7 @@ namespace transformation_basics
 	void basics_Model3D::translateModel(glm::vec3 transModel)
 	{
 		translateM = transModel;
+	
 	}
 	void basics_Model3D::scaleModel(glm::vec3 scaleModel)
 	{

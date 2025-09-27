@@ -14,7 +14,7 @@ namespace testPlay
 
 	void tranformationT::transformUniqueModel(ObjCreation::ModelCreation* modelTest, camera::camera1 cam, light::light1 lightModel)
 	{
-		ang += velocityAng;
+		ang += velocityAng; // para rotar el Mesh
 		modelTest->setPosModelTransforms(posicion, scale, pivotRotPos, ang);
 		modelTest->renderModel(cam, lightModel);
 	}
@@ -28,5 +28,9 @@ namespace testPlay
 		modelTest->modelCoord.setAngRotModel(ang);
 		modelTest->modelCoord.setInverseTransformsAll();
 		lightModel->Posicion = modelTest->modelCoord.translateM;
+	}
+	void tranformationT::ColorSeq(ObjCreation::ModelCreation* modelTest, light::light1* lightModel)
+	{
+
 	}
 }

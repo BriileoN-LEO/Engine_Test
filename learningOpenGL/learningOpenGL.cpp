@@ -12,6 +12,7 @@
 #include "playTest.h"
 #include "configFilesTXT.h"
 #include "LIGHTS_test.h"
+//#include "ModelAssimp.h"
 #include "stb_image.h"
 #include <iostream>
 #include <vector>
@@ -142,7 +143,7 @@ int main(int argc, char* argv[])
 
 	};
 
-	
+
 	const char* vertexShaderSource = "#version 330 core\n"
 		"layout (location = 0) in vec3 aPos; \n"
 		"void main()\n"
@@ -326,7 +327,7 @@ int main(int argc, char* argv[])
 
 	TexVertex.shaderColor.scaleTex("scaleTexContainer", vec::vec2(1.0f, 1.0f));
 	TexVertex.shaderColor.scaleTex("scaleTexFaces", vec::vec2(0.5f, 0.5f));
-	
+
 	//Para un modelo 3D
 	std::vector<std::array<float, 24>> vertex{};
 	vertex.emplace_back(vertexCreationData::cube::Tri1_face1);
@@ -341,7 +342,7 @@ int main(int argc, char* argv[])
 	vertex.emplace_back(vertexCreationData::cube::Tri2_face5);
 	vertex.emplace_back(vertexCreationData::cube::Tri1_face6);
 	vertex.emplace_back(vertexCreationData::cube::Tri2_face6);
-	
+
 	ObjCreation::ModelCreation FirstModel(vertex);
 	FirstModel.BuildVertexShader(vShader_Model_V1.c_str(), fShader_Model_V1.c_str());
 
@@ -363,7 +364,7 @@ int main(int argc, char* argv[])
 
 	FirstModel.createVAO();
 	//FirstModel.setModelProjection();
-	FirstModel.setPosModel(80);
+	FirstModel.setPosModel(200);
 	/*
 	//1---Creacion del vertex shader
 	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -439,16 +440,18 @@ int main(int argc, char* argv[])
 	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri2_face5);
 	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri1_face6);
 	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri2_face6);
-	
+
 	ObjCreation::ModelCreation BasicLight;
 	BasicLight.insertVertices_Fase1(vertexLight);
 	BasicLight.BuildVertexShader(vShader_Light_V1.c_str(), fShader_Light_V1.c_str());
 	//para colocar el color del objeto y de la luz
 
-	
+
 	//BasicLight.setPosModelTransforms(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.7f), glm::vec3(0.0f, 1.0f, 0.0f), 2.0f);
 	BasicLight.createVAO_Fase1();
-	BasicLight.setPosModelTransforms(glm::vec3(0.0f, 0.0f, -2.0f), glm::vec3(0.7f), glm::vec3(0.0f, 1.0f, 0.0f), 2.0f);
+	glm::vec3 randomPivotMesh{ randomN::randomPos(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f)) };
+	glm::vec3 randomPosLight{glm::normalize(randomN::randomPos(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f))) };
+	BasicLight.setPosModelTransforms(randomPosLight * 1.5f, glm::vec3(0.7f), randomPivotMesh, 1.0f);
 
 	///Creacion de camaras
 	camState camP{ camState::cameraAE };
@@ -457,21 +460,33 @@ int main(int argc, char* argv[])
 	////Light principal
 	glm::vec3 purpleLight{ 0.7f, 0.5f, 1.8f };
 	light::light1 lightTest_01(glm::vec3(0.0f, 0.0f, 0.0f), purpleLight);
+
 	testPlay::tranformationT testTransLight;
 	glm::vec3 randomPivotL{ randomN::randomPos(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f)) };
 	testTransLight.setSettingsTransform(glm::vec3(6.0f, 6.0f, 6.0f), glm::vec3(1.0f), randomPivotL, 0.05f);
 
-	
+
 	testPlay::tranformationT testTranforms;
 	glm::vec3 randomPivotTestTrans{ randomN::randomPos(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f)) };
 	testTranforms.setSettingsTransform(glm::vec3(2.0f, 3.0f, 2.0f), glm::vec3(1.0f), randomPivotTestTrans, 0.1f);
-
-
 
 	//para colocar el color del objeto y de la luz
 	BasicLight.shaderColor.use();
 	BasicLight.shaderColor.setVec3("objectColor", lightTest_01.Color);
 	BasicLight.shaderColor.setVec3("lightColor", lightTest_01.Posicion);
+
+	/////////////////////////CREACION DE ASSIMP MODEL///////////////////////////////////////
+	/*
+	shading::shader shaderToAssimp(  , );
+	texture::textureBuild textureAssimp{};
+	textureAssimp.loadTexUnit(, "texture_difusse", texture::textureUnits::TEXTURE0, false);
+	textureAssimp.loadTexUnit(, "texture_difusse", texture::textureUnits::TEXTURE1, false);
+	textureAssimp.loadTexUnit(, "texture_difusse", texture::textureUnits::TEXTURE2, false);
+	textureAssimp.loadTexUnit(, "texture_specular", texture::textureUnits::TEXTURE3, false);
+	textureAssimp.loadTexUnit(, "texture_specular", texture::textureUnits::TEXTURE4, false);
+
+	Assimp::Mesh firstAssimpModel(  ,   ,textureAssimp, shaderToAssimp)
+	*/
 
 	SDL_SetWindowRelativeMouseMode(gWindow, true);
 	SDL_WarpMouseInWindow(gWindow, static_cast<float>(screenSettings::screen_w) * 0.5f, static_cast<float>(screenSettings::screen_w) * 0.5f);

@@ -1,8 +1,9 @@
-#include "SHADER_H.h"
+
 #include "stb_image.h"
 #include <cmath>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "SHADER_H.h"
 
 namespace shading
 {
@@ -326,6 +327,26 @@ namespace Vertex
 
 namespace texture
 {
+
+	inline std::array<textureUnits, 15> textureUnits_Data
+	{
+		  texture::textureUnits::TEXTURE0,
+		  texture::textureUnits::TEXTURE1,
+		  texture::textureUnits::TEXTURE2,
+		  texture::textureUnits::TEXTURE3,
+		  texture::textureUnits::TEXTURE4,
+		  texture::textureUnits::TEXTURE5,
+		  texture::textureUnits::TEXTURE6,
+		  texture::textureUnits::TEXTURE7,
+		  texture::textureUnits::TEXTURE8,
+		  texture::textureUnits::TEXTURE9,
+		  texture::textureUnits::TEXTURE10,
+		  texture::textureUnits::TEXTURE11,
+		  texture::textureUnits::TEXTURE12,
+		  texture::textureUnits::TEXTURE13,
+		  texture::textureUnits::TEXTURE14,
+	};
+
 	textureBuild::textureBuild() {};
 	textureBuild::textureBuild(const char* data, texture::textureUnits posicion_TEX, bool flipImage)
 	{
@@ -423,43 +444,81 @@ namespace texture
 		int height{};
 		int nrChannels{};
 
-		auto setTextureUnit = [&]()
+		/////////Inicio de creacion de textura en unit seleccionada
+	    glActiveTexture(GL_TEXTURE0 + static_cast<int>(posicion_TEX));
+		glGenTextures(1, &tex);
+		glBindTexture(GL_TEXTURE_2D, tex);
+	 
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+		//lTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		//lTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		stbi_set_flip_vertically_on_load(flipImage);
+		unsigned char* DataT{ stbi_load(data, &width, &height, &nrChannels, 0) };
+
+		std::stringstream testData;
+
+		if (DataT)
+		{
+			std::string dataReverse{};
+
+			testData << data;
+			testData >> dataReverse;
+
+			auto dataR = dataReverse.rbegin();
+
+			std::string typeInfo{};
+			
+			typeInfo.push_back(dataR[2]);
+			typeInfo.push_back(dataR[1]);
+			typeInfo.push_back(dataR[0]);
+			
+
+		//	SDL_Log(typeInfo.c_str());
+			if (typeInfo == "jpg")
 			{
-				if (posicion_TEX == textureUnits::TEXTURE0)
-				{
-					glActiveTexture(GL_TEXTURE0);
-					glGenTextures(1, &tex);
-					glBindTexture(GL_TEXTURE_2D, tex);
-					texU = textureUnits::TEXTURE0;
 
-				}
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,  GL_RGB, GL_UNSIGNED_BYTE, DataT);
+				glGenerateMipmap(GL_TEXTURE_2D);
+			}
 
-				if (posicion_TEX == textureUnits::TEXTURE1)
-				{
-					glActiveTexture(GL_TEXTURE1);
-					glGenTextures(1, &tex);
-					glBindTexture(GL_TEXTURE_2D, tex);
-					texU = textureUnits::TEXTURE1;
-				}
+			else if (typeInfo == "png")
+			{
 
-				if (posicion_TEX == textureUnits::TEXTURE2)
-				{
-					glActiveTexture(GL_TEXTURE2);
-					glGenTextures(1, &tex);
-					glBindTexture(GL_TEXTURE_2D, tex);
-					texU = textureUnits::TEXTURE2;
-				}
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, DataT);
+				glGenerateMipmap(GL_TEXTURE_2D);
+			}
 
-				if (posicion_TEX == textureUnits::TEXTURE3)
-				{
-					glActiveTexture(GL_TEXTURE3);
-					glGenTextures(1, &tex);
-					glBindTexture(GL_TEXTURE_2D, tex);
-					texU = textureUnits::TEXTURE3;
-				}
-			};
 
-		setTextureUnit();
+			texU_Data.emplace_back(tex, width, height, nrChannels, posicion_TEX);
+		}
+
+		else
+		{
+			SDL_Log("ERRO::FAIL LOAD TEXTURE");
+		}
+
+
+		stbi_image_free(DataT);
+	}
+	void textureBuild::loadTexUnit(const char* data, const std::string name, const texture::textureUnits posicion_TEX, bool flipImage)
+	{
+
+		texture::textureUnits texU{};
+		unsigned int tex{ };
+		int width{};
+		int height{};
+		int nrChannels{};
+
+		/////////Inicio de creacion de textura en unit seleccionada
+		glActiveTexture(GL_TEXTURE0 + static_cast<int>(posicion_TEX));
+		glGenTextures(1, &tex);
+		glBindTexture(GL_TEXTURE_2D, tex);
+
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
@@ -484,17 +543,16 @@ namespace texture
 
 			std::string typeInfo{};
 
-			
 			typeInfo.push_back(dataR[2]);
 			typeInfo.push_back(dataR[1]);
 			typeInfo.push_back(dataR[0]);
-			
 
-		//	SDL_Log(typeInfo.c_str());
+
+			//	SDL_Log(typeInfo.c_str());
 			if (typeInfo == "jpg")
 			{
 
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,  GL_RGB, GL_UNSIGNED_BYTE, DataT);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, DataT);
 				glGenerateMipmap(GL_TEXTURE_2D);
 			}
 
@@ -506,16 +564,25 @@ namespace texture
 			}
 
 
-			texU_Data.emplace_back(tex, width, height, nrChannels, texU);
+			texU_Data.emplace_back(tex, name, width, height, nrChannels, posicion_TEX);
 		}
 
 		else
 		{
-			SDL_Log("ERRO::FAIL LOAD TEXTURE");
+			SDL_Log("ERROR::FAIL LOAD TEXTURE");
 		}
 
 
 		stbi_image_free(DataT);
+
+	}
+
+	void textureBuild::setTexturesUnits()
+	{
+		for (int i = 0; i < static_cast<int>(texU_Data.size()); i++)
+		{
+			texU_Data[i].texUnit = textureUnits_Data[i];
+		}
 	}
 
 	void textureBuild::useTexurePerUnit(unsigned int textureID, texture::textureUnits texUnit)
@@ -611,6 +678,38 @@ namespace texture
 		}
 
 		glBindTexture(GL_TEXTURE_2D, textureID);
+
+	}
+	void textureBuild::useTextures_PerMaterial(shading::shader* shaderID)
+	{
+		unsigned int difusseNr{ 1 };
+		unsigned int specularNr{ 1 };
+
+		for (int i = 0; i < static_cast<int>(texU_Data.size()); i++)
+		{
+			glActiveTexture(GL_TEXTURE0 + static_cast<int>(texU_Data[i].texUnit));
+
+			std::string name_Data{ texU_Data[i].type };
+		    std::string number{};
+
+			if (name_Data == "texture_diffuse")
+			{
+				number = std::to_string(difusseNr++);
+
+			}
+
+			else if (name_Data == "texture_specular")
+			{
+				number = std::to_string(specularNr++);
+
+			}
+
+			name_Data = "material." + name_Data + number;
+
+			shaderID->setInt(name_Data, i);
+			glBindTexture(GL_TEXTURE_2D, texU_Data[i].textureID);
+
+		}
 
 	}
 	void textureBuild::useTextures()
@@ -1219,6 +1318,7 @@ namespace ObjCreation
 			shaderColor.setVec3("objectColor", glm::vec3(0.8f, 0.5f, 0.4f));
 			shaderColor.setVec3("lightColor", light.Color);
 			shaderColor.setVec3("lightPos", light.Posicion);
+
 			if (i < posicion - 3)
 			{
 		minecraftCube[0].useTextures();
@@ -1352,7 +1452,7 @@ namespace ObjCreation
 
 					else if (rotSpeedState == rotateSpeed)
 					{
-						modelCoord.sumAng(0.07f);
+						modelCoord.sumAng(0.03f);
 						rotSpeedState = 0;
 					}
 
@@ -1369,8 +1469,8 @@ namespace ObjCreation
 
 	void ModelCreation::setPosModel(const int numModels)
 	{ 
-		glm::vec3 min{ -10.0f, -10.0f, -10.0f };
-		glm::vec3 max{ 10.0f, 10.0f, 10.0f };
+		glm::vec3 min{ -20.0f, -20.0f, -20.0f };
+		glm::vec3 max{ 20.0f, 20.0f, 20.0f };
 
 		glm::vec3 min_pivot{ -1.0f, -1.0f, -1.0f };
 		glm::vec3 max_pivot{ 1.0f, 1.0f, 1.0f };
