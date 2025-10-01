@@ -1,14 +1,35 @@
 #ifndef ModelAssimp
 #define ModelAssimp
 
-#include "SHADER.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include "SHADER_H.h"
+#include "stb_image.h"
 
 
 namespace Assimp
 {
+	
+	unsigned int TextureFromFile(const char* path, std::string directory, bool gamma = false);
+
+	struct shaderSettings
+	{
+		glm::vec3 objectColor{};
+		/// MATERIALS 
+		glm::vec3 ambient{};
+		glm::vec3 difusse{};
+		glm::vec3 specular{};
+		float shiness{};
+	};
+	
+	struct coordModel
+	{
+		glm::vec3 posicion{};
+		glm::vec3 scale{};
+		glm::vec3 pivotRot{};
+		GLfloat angRot{};
+	};
 
 	struct vertexD
 	{
@@ -21,6 +42,7 @@ namespace Assimp
 	{
 		unsigned int id{};
 		std::string type{};
+		aiString path{};
 	};
 	
 	class Mesh
@@ -37,14 +59,15 @@ namespace Assimp
 		std::vector<vertexD> vertices{};
 		std::vector<unsigned int> indices{};
 		texture::textureBuild textures{};
-		shading::shader shaders{};
-		transformation_basics::basics_Model3D modelCoord{};
+		transformation_basics::basics_Model3D MeshCoord{};
+		shaderSettings shaderSet{};
 
 		Mesh();
-		Mesh(std::vector<vertexD> vertices, std::vector<unsigned int> indices, std::vector<textureD> textures);
-		Mesh(std::vector<vertexD> vertices, std::vector<unsigned int> indices, texture::textureBuild textures, shading::shader shaders);
+		Mesh(std::vector<vertexD> ver, std::vector<unsigned int> indi, std::vector<textureD> texture);
 
-		void Draw(camera::camera1* cam1, light::light1* light);
+		void Draw(camera::camera1 cam1, light::light1 light, shading::shader shader);
+		void Draw_WithLights(camera::camera1 cam1, std::vector<light::light1>* pointLights, std::vector<light::DirectionalLight>* directionalLights, shading::shader shader);
+		void setMeshCoord(glm::vec3 posicionMesh, glm::vec3 scaleMesh);
 
 	};
 	
@@ -54,17 +77,21 @@ namespace Assimp
 
 		std::vector<Mesh> meshes{};
 		std::string directory{};
+		std::vector<textureD> textures_Loaded{};
+		shading::shader shaders{};
 
-		void loadModel(std::string path);
+		transformation_basics::basics_Model3D ModelCoord{};
+			
+		void loadModel(std::string path, const char* vertexPath, const char* fragmentPath, coordModel modelCoords, shaderSettings shaderSettings);
 		void processNode(aiNode* node, const aiScene* scene);
 		Mesh processMesh(aiMesh* mesh, const aiScene* scene);
-		std::vector<texture::textureBuild> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
+		std::vector<textureD> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 
 	public:
-		Model(std::string path);
-		void Draw(camera::camera1* cam1, light::light1* light);
+		Model(std::string path, const char* vertexPath, const char* fragmentPath, coordModel modelCoords, shaderSettings shaderSettings);
+	    virtual void Draw(camera::camera1 cam1, light::light1 light);
+		void setModelCoord(coordModel modelCoords);
 	};
-
 
 }
 

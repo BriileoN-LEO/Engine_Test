@@ -1,6 +1,5 @@
-﻿// learningOpenGL.cpp : Defines the entry point for the application.
-//
-#define STB_IMAGE_IMPLEMENTATION
+﻿
+
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <glad/glad.h>
@@ -12,7 +11,7 @@
 #include "playTest.h"
 #include "configFilesTXT.h"
 #include "LIGHTS_test.h"
-//#include "ModelAssimp.h"
+#include "ModelAssimp.h"
 #include "stb_image.h"
 #include <iostream>
 #include <vector>
@@ -20,6 +19,8 @@
 #include <map>
 #include <string>
 #include <cassert>
+#include <filesystem>
+
 
 
 SDL_Renderer* gRender{ nullptr };
@@ -364,7 +365,7 @@ int main(int argc, char* argv[])
 
 	FirstModel.createVAO();
 	//FirstModel.setModelProjection();
-	FirstModel.setPosModel(200);
+	FirstModel.setPosModel(50);
 	/*
 	//1---Creacion del vertex shader
 	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -450,7 +451,7 @@ int main(int argc, char* argv[])
 	//BasicLight.setPosModelTransforms(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.7f), glm::vec3(0.0f, 1.0f, 0.0f), 2.0f);
 	BasicLight.createVAO_Fase1();
 	glm::vec3 randomPivotMesh{ randomN::randomPos(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f)) };
-	glm::vec3 randomPosLight{glm::normalize(randomN::randomPos(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f))) };
+	glm::vec3 randomPosLight{ glm::normalize(randomN::randomPos(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f))) };
 	BasicLight.setPosModelTransforms(randomPosLight * 1.5f, glm::vec3(0.7f), randomPivotMesh, 1.0f);
 
 	///Creacion de camaras
@@ -459,11 +460,12 @@ int main(int argc, char* argv[])
 
 	////Light principal
 	glm::vec3 purpleLight{ 0.7f, 0.5f, 1.8f };
-	light::light1 lightTest_01(glm::vec3(0.0f, 0.0f, 0.0f), purpleLight);
+	glm::vec3 witheLight{ 1.0f, 1.0f, 1.0f };
+	light::light1 lightTest_01(glm::vec3(0.0f, 0.0f, 0.0f), witheLight);
 
 	testPlay::tranformationT testTransLight;
 	glm::vec3 randomPivotL{ randomN::randomPos(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f)) };
-	testTransLight.setSettingsTransform(glm::vec3(6.0f, 6.0f, 6.0f), glm::vec3(1.0f), randomPivotL, 0.05f);
+	testTransLight.setSettingsTransform(glm::vec3(6.0f, 6.0f, 6.0f), glm::vec3(1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.05f);
 
 
 	testPlay::tranformationT testTranforms;
@@ -476,17 +478,38 @@ int main(int argc, char* argv[])
 	BasicLight.shaderColor.setVec3("lightColor", lightTest_01.Posicion);
 
 	/////////////////////////CREACION DE ASSIMP MODEL///////////////////////////////////////
-	/*
-	shading::shader shaderToAssimp(  , );
-	texture::textureBuild textureAssimp{};
-	textureAssimp.loadTexUnit(, "texture_difusse", texture::textureUnits::TEXTURE0, false);
-	textureAssimp.loadTexUnit(, "texture_difusse", texture::textureUnits::TEXTURE1, false);
-	textureAssimp.loadTexUnit(, "texture_difusse", texture::textureUnits::TEXTURE2, false);
-	textureAssimp.loadTexUnit(, "texture_specular", texture::textureUnits::TEXTURE3, false);
-	textureAssimp.loadTexUnit(, "texture_specular", texture::textureUnits::TEXTURE4, false);
 
-	Assimp::Mesh firstAssimpModel(  ,   ,textureAssimp, shaderToAssimp)
-	*/
+	Assimp::shaderSettings ss_Model_v1
+	{
+		glm::vec3(0.8f, 0.8f, 0.8f),
+		glm::vec3(1.0f),
+		glm::vec3(1.0f),
+		glm::vec3(0.8f),
+		32.0f
+	};
+
+	testPlay::tranformationT testBackPack(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.001f);
+	Assimp::coordModel coordBackPack{ glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f), 210.0f };
+
+	std::filesystem::path pathBackpack{ backpack_Model };
+	Assimp::Model modelBackpack(pathBackpack.string(), vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), coordBackPack, ss_Model_v1);
+
+	/////////////////////CREACION DE FLOOR MODEL ///////////
+
+	Assimp::shaderSettings ss_Model_v2
+	{
+		glm::vec3(0.6f, 0.5f, 0.2f),
+		glm::vec3(0.5f),
+		glm::vec3(0.8f),
+		glm::vec3(0.5f),
+		32.0f
+
+	};
+
+	testPlay::tranformationT testFloor(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.001f);
+	Assimp::coordModel coord_FloorModel{ glm::vec3(0.0f, -2.0f, 0.0f), glm::vec3(15.0f, 1.0f, 15.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f };
+	std::filesystem::path path_FloorModel{ floor2_Model };
+	Assimp::Model model_Floor(path_FloorModel.string(), vShader_Standard_v1.c_str(), fShader_Standard_v1.c_str(), coord_FloorModel, ss_Model_v2);
 
 	SDL_SetWindowRelativeMouseMode(gWindow, true);
 	SDL_WarpMouseInWindow(gWindow, static_cast<float>(screenSettings::screen_w) * 0.5f, static_cast<float>(screenSettings::screen_w) * 0.5f);
@@ -656,13 +679,8 @@ int main(int argc, char* argv[])
 				glClear(GL_COLOR_BUFFER_BIT);
 				glEnable(GL_DEPTH_TEST);
 
-				/*
-				//7---Para dibujar el triangulo
-				glUseProgram(shaderProgram);
-				glBindVertexArray(VAO);
-				glDrawArrays(GL_TRIANGLES, 0, 3);
-				*/
-
+				
+			
 				//triangleCreation.render_Triangle();
 				//triangleCreation.render_Elements();
 
@@ -733,6 +751,16 @@ int main(int argc, char* argv[])
 				testTranforms.transformUniqueModel(&FirstModel, aerialCamera, lightTest_01); /////////////Corregir este ERRORRRR
  				FirstModel.renderMultipleModels(1, aerialCamera, lightTest_01);/////Colocamos el light para saber la posicion del light			
 				BasicLight.renderMeshLight(aerialCamera, lightTest_01);
+
+				///Draw Backpack
+				modelBackpack.Draw(aerialCamera, lightTest_01);
+				testBackPack.transformModel_test1(&coordBackPack);
+				modelBackpack.setModelCoord(coordBackPack);
+
+				///Draw Floor model
+				model_Floor.Draw(aerialCamera, lightTest_01);
+				testFloor.moveModel_Test(&coord_FloorModel);
+				model_Floor.setModelCoord(coord_FloorModel);
 
 
 				SDL_UpdateWindowSurface(gWindow);

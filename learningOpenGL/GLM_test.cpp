@@ -462,6 +462,8 @@ namespace transformation_basics
 		model = glm::translate(model, translateM);
 		model = glm::scale(model, scaleS);
 		model = glm::rotate(model, ang, pivotRotPos);
+
+		modelCurrent = model;
 	}
 	void basics_Model3D::setInverseTransformsAll()
 	{
@@ -469,6 +471,8 @@ namespace transformation_basics
 		model = glm::rotate(model, ang, pivotRotPos);
 		model = glm::scale(model, scaleS);
 		model = glm::translate(model, translateM);
+
+		modelCurrent = model;
 
 		translateM = model * glm::vec4(1.0f);
 	}
@@ -491,7 +495,9 @@ namespace camera
 		this->nearCut = nearCut;
 		this->maxCut = maxCut;
 
-		cam = glm::lookAt(posCam, this->posCam + directionView, glm::vec3(0.0f, 1.0f, 0.0f));
+		cam = glm::lookAt(posCam, posCam + directionView, glm::vec3(0.0f, 1.0f, 0.0f));
+	    //to rot cam
+	//	cam = glm::rotate(cam, 180.0f, directionView);
 		camProjection = glm::perspective(glm::radians(this->fovCam), static_cast<float>(screenSettings::screen_w) / static_cast<float>(screenSettings::screen_h), this->nearCut, this->maxCut);
 	};
 
@@ -509,8 +515,8 @@ namespace camera
 		glm::vec3 cameraUp{ glm::cross(directionView, cameraRight) };
 		cameraUp = glm::normalize(cameraUp);
 
-		camRotate = glm::lookAt(posCam, posCam + directionView, cameraUp);
-	
+		camRotate = glm::lookAt(posCam, posCam + directionView, -cameraUp);
+		//camRotate = glm::rotate(camRotate, 180.0f, directionView);
 	}
 	void camera1::detectRotCamMouse(glm::vec2 posMouse)
 	{
@@ -533,6 +539,7 @@ namespace camera
 		directionView.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
 		directionView.y = sin(glm::radians(pitch));
 		directionView.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+		directionView = glm::normalize(directionView);
 
 		std::string dirCam{ std::to_string(directionView.x) + '\t' + std::to_string(directionView.y) + '\t' + std::to_string(directionView.z) + '\n' };
 		//SDL_Log(dirCam.c_str());
@@ -567,8 +574,8 @@ namespace camera
 		if (stateKeyBoard[SDL_SCANCODE_A] == true)
 		{
 			posC = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), directionView));
-			posC -= speedCam * posC;
-			posCam -= speedCam * posC;
+			posC += speedCam * posC;
+			posCam += speedCam * posC;
 			//posC.z += speedCam;
 			//posCam.z += speedCam;
 			camTranslate = glm::translate(cam, posC);
@@ -577,8 +584,8 @@ namespace camera
 		if (stateKeyBoard[SDL_SCANCODE_D] == true)
 		{
 			posC = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), directionView));
-			posC += speedCam * posC;
-			posCam += speedCam * posC;
+			posC -= speedCam * posC;
+			posCam -= speedCam * posC;
 
 			//posC.z -= speedCam;
 			//posCam.z -= speedCam;
@@ -588,14 +595,14 @@ namespace camera
 		
 		if (stateKeyBoard[SDL_SCANCODE_SPACE] == true)
 		{
-			posCam.y -= speedCam;
+			posCam.y += speedCam;
 			camTranslate = glm::translate(cam, posC);
 			moveCameraTest = true;
 		}
 
 		if (stateKeyBoard[SDL_SCANCODE_LSHIFT] == true)
 		{
-			posCam.y += speedCam;
+			posCam.y -= speedCam;
 			camTranslate = glm::translate(cam, posC);
 			moveCameraTest = true;
 		}
@@ -639,8 +646,7 @@ namespace camera
 	{
 		rotateCam();
 		moveCamera();
-		
-
+	
 		cam = camRotate;
 	}
 

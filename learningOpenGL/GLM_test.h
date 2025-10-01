@@ -68,9 +68,12 @@ namespace transformation_basics
 	
 	class basics_Model3D
 	{
-	public: 
+	public:
+
+		glm::mat4 lastModel{ glm::mat4(1.0f) };
 
 		glm::mat4 model{ glm::mat4(1.0f) };
+		glm::mat4 modelCurrent{ glm::mat4(1.0f) };
 		glm::mat3 normalModelMatrix{};
 
 		glm::vec3 translateM{ 0.0f, 0.0f, 0.0f };
@@ -89,7 +92,7 @@ namespace transformation_basics
 		void sumAng(GLfloat angSum);
 		glm::mat4 rotPivotShaderModel(glm::vec3 pivot, glm::mat4 model);
 		glm::mat4 viewPosShaderModel(glm::vec3 diferentPos, glm::mat4 model);
-	
+
 		glm::mat4 rotatePerPivot(glm::vec3 center, glm::vec3 pivot, glm::vec3& posicionCube); /////////////////revisarrrr
 
 		////////STANDARD TRANSFORMS///////

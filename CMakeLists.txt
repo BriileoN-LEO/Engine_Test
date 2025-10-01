@@ -1,7 +1,7 @@
 ﻿# CMakeList.txt : Top-level CMake project file, do global configuration
 # and include sub-projects here.
 #
-cmake_minimum_required (VERSION 3.16)
+cmake_minimum_required (VERSION 3.21)
 
 project (Learning)
 
@@ -13,17 +13,22 @@ set(DATA_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/shaders/shader_v_v1.vs"
 "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_TEX/shader_v_Tex_v1.vs" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_TEX/shader_v_Tex_v1.fs"
 "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_MODEL1/vshader_model_v1.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_MODEL1/fshader_model_v1.frag"
 "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_LIGHT/vShader_Light_v1.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_LIGHT/fShader_Light_v1.frag"
+"${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_MODEL_T1/vShader_ModelT1.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_MODEL_T1/fShader_ModelT1.frag"
+"${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_STANDARD/vShader_Standard_v1.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_STANDARD/fShader_Standard_v1.frag"
 "${CMAKE_CURRENT_SOURCE_DIR}/images/container.jpg"
 "${CMAKE_CURRENT_SOURCE_DIR}/images/awesomeface.png"
 "${CMAKE_CURRENT_SOURCE_DIR}/images/CubeGrass_Down.png"
 "${CMAKE_CURRENT_SOURCE_DIR}/images/CubeGrass_laterals.png"
 "${CMAKE_CURRENT_SOURCE_DIR}/images/CubeGrass_Top.png"
+"C:/Users/Briil/3D_Models_Game Engine/backpack/backpack.obj"
+"C:/Users/Briil/3D_Models_Game Engine/Floor/Floor.obj"
+"C:/Users/Briil/3D_Models_Game Engine/Floor_2/Floor2.obj"
+
 )
 
 set(RUTE_COMPLETE_FILES ${DATA_FILE_PATH})
 
 configure_file(
-
   "${CMAKE_CURRENT_SOURCE_DIR}/learningOpenGL/configFilesTXT.h"
   "${PROjECT_BINARY_DIR}/configFilesTXT.h"
 
@@ -56,8 +61,7 @@ GIT_REPOSITORY https://github.com/assimp/assimp.git
 GIT_TAG v5.4.1
 )
 
-FetchContent_MakeAvailable(glm)
-FetchContent_MakeAvailable(assimp)
+FetchContent_MakeAvailable(glm assimp)
 
 add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/config_window.h" "learningOpenGL/config_window.cpp" "learningOpenGL/data_save.h" "learningOpenGL/data_save.cpp"
 "learningOpenGL/control.cpp" "learningOpenGL/control.h" 
@@ -66,6 +70,7 @@ add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/conf
 "learningOpenGL/LIGHTS_test.h" "learningOpenGL/LIGHTS_test.cpp"
 "learningOpenGL/playTest.h" "learningOpenGL/playTest.cpp"
 "learningOpenGL/Model_Assimp/ModelAssimp.cpp" "learningOpenGL/Model_Assimp/ModelAssimp.h"
+"learningOpenGL/STB_IMAGE_IMPLEMENT.cpp"
 )
 
 
@@ -73,14 +78,24 @@ target_include_directories(Learning PRIVATE "${PROJECT_BINARY_DIR}")
 target_include_directories(Learning PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/ThirdPartyLibs")
 target_include_directories(Learning PRIVATE ${glm_SOURCE_DIR})
 target_include_directories(Learning PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/learningOpenGL/Model_Assimp")
+target_include_directories(Learning PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/learningOpenGL")
 
 
 target_link_libraries(Learning PRIVATE
 SDL3::SDL3 
 glad_source
 OpenGL::GL
-assimp
+assimp::assimp
 )
+
+#add_custom_command(
+ #   TARGET Learning POST_BUILD
+ #   COMMAND ${CMAKE_COMMAND} -E copy
+  #          $<TARGET_RUNTIME_DLLS:Learning>
+  #          $<TARGET_FILE_DIR:Learning>
+  #  COMMENT "Copiando los DLLs necesarios..."
+#)
+
 
 message(STATUS "SDL3 encontrado en: ${SDL3_DIR}")
 message(STATUS "OpenGl encontrado en: ${OpenGL_DIR}")

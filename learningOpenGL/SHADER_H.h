@@ -22,6 +22,7 @@ namespace shading
 		Uint64 rotAng{};
 
 		shader();
+		shader(unsigned int ID);
 		shader(const char* vertexPath, const char* fragmentPath);
 
 		void shaderCreation(const char* vertexPath, const char* fragmentPath);
@@ -114,7 +115,24 @@ namespace texture
 		TEXTURE15 = 15,
 	};
 
-	inline std::array<textureUnits, 15> textureUnits_Data;
+	inline std::array<textureUnits, 15> textureUnits_Data
+	{
+		  texture::textureUnits::TEXTURE0,
+		  texture::textureUnits::TEXTURE1,
+		  texture::textureUnits::TEXTURE2,
+		  texture::textureUnits::TEXTURE3,
+		  texture::textureUnits::TEXTURE4,
+		  texture::textureUnits::TEXTURE5,
+		  texture::textureUnits::TEXTURE6,
+		  texture::textureUnits::TEXTURE7,
+		  texture::textureUnits::TEXTURE8,
+		  texture::textureUnits::TEXTURE9,
+		  texture::textureUnits::TEXTURE10,
+		  texture::textureUnits::TEXTURE11,
+		  texture::textureUnits::TEXTURE12,
+		  texture::textureUnits::TEXTURE13,
+		  texture::textureUnits::TEXTURE14,
+	};
 
 	struct textureData
 	{
@@ -124,6 +142,7 @@ namespace texture
 		int nrChannels{};
 		unsigned int textureID{};
 		std::string type{};
+		std::string path{};
 
 
 		textureData() {};
@@ -163,7 +182,7 @@ namespace texture
 		void setTexturesUnits(); ////Este es especial para el Model Assimp
 
 		void useTexurePerUnit(unsigned int textureID, texture::textureUnits texUnit);
-		void useTextures_PerMaterial(shading::shader* shaderID);
+		void useTextures_PerMaterial(shading::shader& shaderID);
 		void useTextures(); 
 
 	};

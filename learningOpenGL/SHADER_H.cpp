@@ -8,6 +8,11 @@
 namespace shading
 {
 	shader::shader() {};
+	shader::shader(unsigned int ID)
+	{
+		this->ID = ID;
+
+	}
 	shader::shader(const char* vertexPath, const char* fragmentPath)
 	{
 		shaderCreation(vertexPath, fragmentPath);
@@ -86,7 +91,7 @@ namespace shading
 	void shader::setFloat(const std::string& name, float value) const
 	{
 		int location{ glGetUniformLocation(ID, name.c_str()) };
-		glUniform1i(location, static_cast<int>(value));
+		glUniform1f(location, value);
 
 	}
 	void shader::setVec3(const std::string& name, glm::vec3 value) const
@@ -327,25 +332,6 @@ namespace Vertex
 
 namespace texture
 {
-
-	inline std::array<textureUnits, 15> textureUnits_Data
-	{
-		  texture::textureUnits::TEXTURE0,
-		  texture::textureUnits::TEXTURE1,
-		  texture::textureUnits::TEXTURE2,
-		  texture::textureUnits::TEXTURE3,
-		  texture::textureUnits::TEXTURE4,
-		  texture::textureUnits::TEXTURE5,
-		  texture::textureUnits::TEXTURE6,
-		  texture::textureUnits::TEXTURE7,
-		  texture::textureUnits::TEXTURE8,
-		  texture::textureUnits::TEXTURE9,
-		  texture::textureUnits::TEXTURE10,
-		  texture::textureUnits::TEXTURE11,
-		  texture::textureUnits::TEXTURE12,
-		  texture::textureUnits::TEXTURE13,
-		  texture::textureUnits::TEXTURE14,
-	};
 
 	textureBuild::textureBuild() {};
 	textureBuild::textureBuild(const char* data, texture::textureUnits posicion_TEX, bool flipImage)
@@ -680,14 +666,13 @@ namespace texture
 		glBindTexture(GL_TEXTURE_2D, textureID);
 
 	}
-	void textureBuild::useTextures_PerMaterial(shading::shader* shaderID)
+	void textureBuild::useTextures_PerMaterial(shading::shader& shaderID)
 	{
 		unsigned int difusseNr{ 1 };
 		unsigned int specularNr{ 1 };
 
 		for (int i = 0; i < static_cast<int>(texU_Data.size()); i++)
 		{
-			glActiveTexture(GL_TEXTURE0 + static_cast<int>(texU_Data[i].texUnit));
 
 			std::string name_Data{ texU_Data[i].type };
 		    std::string number{};
@@ -695,21 +680,22 @@ namespace texture
 			if (name_Data == "texture_diffuse")
 			{
 				number = std::to_string(difusseNr++);
-
+				name_Data = "Mat_" + number + "." + name_Data;
 			}
 
 			else if (name_Data == "texture_specular")
 			{
 				number = std::to_string(specularNr++);
-
+				name_Data = "Mat_" + number + "." + name_Data;
 			}
-
-			name_Data = "material." + name_Data + number;
-
-			shaderID->setInt(name_Data, i);
+			shaderID.setInt(name_Data, static_cast<int>(texU_Data[i].texUnit));
+			glActiveTexture(GL_TEXTURE0 + i);
 			glBindTexture(GL_TEXTURE_2D, texU_Data[i].textureID);
 
 		}
+
+		glActiveTexture(GL_TEXTURE0);
+		//SDL_Log(std::to_string(texU_Data.size()).c_str());
 
 	}
 	void textureBuild::useTextures()

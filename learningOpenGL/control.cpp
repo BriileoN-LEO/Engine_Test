@@ -196,7 +196,7 @@ namespace controlMouse
 		float posY{ y - (static_cast<float>(screenSettings::screen_w) * 0.5f) };
 
 		//SDL_Log(std::to_string(posX).c_str());
-		return glm::vec2(-posX, posY);
+		return glm::vec2(posX, -posY);
 	}
 }
 namespace timeS
