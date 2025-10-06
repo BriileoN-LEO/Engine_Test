@@ -623,7 +623,7 @@ namespace camera
 
 		}
 
-		SDL_Log(std::to_string(fovCam).c_str());
+		//SDL_Log(std::to_string(fovCam).c_str());
 		camProjection = glm::perspective(glm::radians(fovCam), static_cast<float>(screenSettings::screen_w) / static_cast<float>(screenSettings::screen_h), nearCut, maxCut);
 
 	};

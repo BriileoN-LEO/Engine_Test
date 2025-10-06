@@ -35,3 +35,4 @@ const std::string image_MineGrass_down = "C:/Users/Briil/source/repos/learningOp
 const std::string backpack_Model = "C:/Users/Briil/3D_Models_Game Engine/backpack/backpack.obj";
 const std::string floor_Model = "C:/Users/Briil/3D_Models_Game Engine/Floor/Floor.obj";
 const std::string floor2_Model = "C:/Users/Briil/3D_Models_Game Engine/Floor_2/Floor2.obj";
+const std::string F1_CarModel = "C:/Users/Briil/3D_Models_Game Engine/Car_Formula1/Car_Formula1.fbx";

@@ -9,10 +9,12 @@
 #include "control.h"
 #include "SHADER_H.h"
 #include "playTest.h"
-#include "configFilesTXT.h"
 #include "LIGHTS_test.h"
 #include "ModelAssimp.h"
 #include "stb_image.h"
+#include "render/configFilesTXT.h"
+#include "Render/RenderData.h"
+#include "Render/Render.h"
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -20,8 +22,6 @@
 #include <string>
 #include <cassert>
 #include <filesystem>
-
-
 
 SDL_Renderer* gRender{ nullptr };
 SDL_GLContext contextOpenGl;
@@ -128,6 +128,7 @@ int main(int argc, char* argv[])
 
 	int controlScene{};
 
+	/*
 	std::vector<vec::vec3> vertices
 	{
 		{-0.3f, -0.3f, 0.0f},
@@ -328,188 +329,155 @@ int main(int argc, char* argv[])
 
 	TexVertex.shaderColor.scaleTex("scaleTexContainer", vec::vec2(1.0f, 1.0f));
 	TexVertex.shaderColor.scaleTex("scaleTexFaces", vec::vec2(0.5f, 0.5f));
-
-	//Para un modelo 3D
-	std::vector<std::array<float, 24>> vertex{};
-	vertex.emplace_back(vertexCreationData::cube::Tri1_face1);
-	vertex.emplace_back(vertexCreationData::cube::Tri2_face1);
-	vertex.emplace_back(vertexCreationData::cube::Tri1_face2);
-	vertex.emplace_back(vertexCreationData::cube::Tri2_face2);
-	vertex.emplace_back(vertexCreationData::cube::Tri1_face3);
-	vertex.emplace_back(vertexCreationData::cube::Tri2_face3);
-	vertex.emplace_back(vertexCreationData::cube::Tri1_face4);
-	vertex.emplace_back(vertexCreationData::cube::Tri2_face4);
-	vertex.emplace_back(vertexCreationData::cube::Tri1_face5);
-	vertex.emplace_back(vertexCreationData::cube::Tri2_face5);
-	vertex.emplace_back(vertexCreationData::cube::Tri1_face6);
-	vertex.emplace_back(vertexCreationData::cube::Tri2_face6);
-
-	ObjCreation::ModelCreation FirstModel(vertex);
-	FirstModel.BuildVertexShader(vShader_Model_V1.c_str(), fShader_Model_V1.c_str());
-
-	FirstModel.LoadVertexTex(image_Wood.c_str(), 0, false);
-	FirstModel.LoadVertexTex(image_happyFace.c_str(), 1, false);
-
-	////////////////////SETEAR LAS TEXTURAS MULTIPLES PARA CREAR EL CUBO DE MINECRAFT////////////////
-	FirstModel.LoadMultipleTex(image_MineGrass_lateral.c_str(), texture::textureUnits::TEXTURE0, false);
-	FirstModel.LoadMultipleTex(image_MineGrass_top.c_str(), texture::textureUnits::TEXTURE0, false);
-	FirstModel.LoadMultipleTex(image_MineGrass_down.c_str(), texture::textureUnits::TEXTURE0, false);
-
-	FirstModel.SetTextures("texture1", 0);
-	FirstModel.SetTextures("texture2", 1);
-
-	FirstModel.setColorModel(glm::vec3(0.5f, 0.5f, 0.4f));
-
-	FirstModel.shaderColor.GLM_scaleTex("texTransform1", glm::vec2(1.0f, 1.0f));
-	FirstModel.shaderColor.GLM_scaleTex("texTransform2", glm::vec2(0.5f, 0.5f));
-
-	FirstModel.createVAO();
-	//FirstModel.setModelProjection();
-	FirstModel.setPosModel(50);
-	/*
-	//1---Creacion del vertex shader
-	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
-	glCompileShader(vertexShader);
-	register_Errors::testCompileShader(vertexShader, "VERTEX");
-
-	//2---Creacion del Fragment shader
-	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
-	glCompileShader(fragmentShader);
-	register_Errors::testCompileShader(fragmentShader, "FRAGMENT");
-
-	//3---Linkear los shaders con el programShader
-	unsigned int shaderProgram;
-	shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-
-	int testProgram;
-	glGetShaderiv(shaderProgram, GL_LINK_STATUS, &testProgram);
-	if (!testProgram)
-	{
-		char infoLog[512];
-		glGetShaderInfoLog(shaderProgram, sizeof(infoLog), nullptr, infoLog);
-		SDL_Log("ERROR::SHADER::PROGRAM::COMPILATION_FAILED");
-
-	}
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-
-	//4---creacion de los vertices
-	float vec[]
-	{
-		-0.5f, -0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-		0.0f, 0.5f, 0.0f
-
-	};
-
-	//5---Creacion del VBO(vertex buffer objects) y VAO(vertex array objects)
-	unsigned int VBO;
-	unsigned int VAO;
-
-	glGenVertexArrays(1, &VAO); //se crea primero el vertexArray
-	glGenBuffers(1, &VBO);
-
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vec), vec, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	//6---Parar liberar el Buffer y el VertexArray
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-
 	*/
 
-	//PARA CREAR UN BASIC LIGHT 
-	std::vector<std::array<float, 9>> vertexLight{};
-	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri1_face1);
-	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri2_face1);
-	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri1_face2);
-	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri2_face2);
-	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri1_face3);
-	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri2_face3);
-	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri1_face4);
-	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri2_face4);
-	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri1_face5);
-	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri2_face5);
-	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri1_face6);
-	vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri2_face6);
+	/*
+		//Para un modelo 3D
+		std::vector<std::array<float, 24>> vertex{};
+		vertex.emplace_back(vertexCreationData::cube::Tri1_face1);
+		vertex.emplace_back(vertexCreationData::cube::Tri2_face1);
+		vertex.emplace_back(vertexCreationData::cube::Tri1_face2);
+		vertex.emplace_back(vertexCreationData::cube::Tri2_face2);
+		vertex.emplace_back(vertexCreationData::cube::Tri1_face3);
+		vertex.emplace_back(vertexCreationData::cube::Tri2_face3);
+		vertex.emplace_back(vertexCreationData::cube::Tri1_face4);
+		vertex.emplace_back(vertexCreationData::cube::Tri2_face4);
+		vertex.emplace_back(vertexCreationData::cube::Tri1_face5);
+		vertex.emplace_back(vertexCreationData::cube::Tri2_face5);
+		vertex.emplace_back(vertexCreationData::cube::Tri1_face6);
+		vertex.emplace_back(vertexCreationData::cube::Tri2_face6);
 
-	ObjCreation::ModelCreation BasicLight;
-	BasicLight.insertVertices_Fase1(vertexLight);
-	BasicLight.BuildVertexShader(vShader_Light_V1.c_str(), fShader_Light_V1.c_str());
-	//para colocar el color del objeto y de la luz
+		ObjCreation::ModelCreation FirstModel(vertex);
+		FirstModel.BuildVertexShader(vShader_Model_V1.c_str(), fShader_Model_V1.c_str());
+
+		FirstModel.LoadVertexTex(image_Wood.c_str(), 0, false);
+		FirstModel.LoadVertexTex(image_happyFace.c_str(), 1, false);
+
+		////////////////////SETEAR LAS TEXTURAS MULTIPLES PARA CREAR EL CUBO DE MINECRAFT////////////////
+		FirstModel.LoadMultipleTex(image_MineGrass_lateral.c_str(), texture::textureUnits::TEXTURE0, false);
+		FirstModel.LoadMultipleTex(image_MineGrass_top.c_str(), texture::textureUnits::TEXTURE0, false);
+		FirstModel.LoadMultipleTex(image_MineGrass_down.c_str(), texture::textureUnits::TEXTURE0, false);
+
+		FirstModel.SetTextures("texture1", 0);
+		FirstModel.SetTextures("texture2", 1);
+
+		FirstModel.setColorModel(glm::vec3(0.5f, 0.5f, 0.4f));
+
+		FirstModel.shaderColor.GLM_scaleTex("texTransform1", glm::vec2(1.0f, 1.0f));
+		FirstModel.shaderColor.GLM_scaleTex("texTransform2", glm::vec2(0.5f, 0.5f));
+
+		FirstModel.createVAO();
+		//FirstModel.setModelProjection();
+		FirstModel.setPosModel(50);
+
+		//PARA CREAR UN BASIC LIGHT
+		std::vector<std::array<float, 9>> vertexLight{};
+		vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri1_face1);
+		vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri2_face1);
+		vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri1_face2);
+		vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri2_face2);
+		vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri1_face3);
+		vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri2_face3);
+		vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri1_face4);
+		vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri2_face4);
+		vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri1_face5);
+		vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri2_face5);
+		vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri1_face6);
+		vertexLight.emplace_back(vertexCreationData::cube_fase1::Tri2_face6);
+
+		ObjCreation::ModelCreation BasicLight;
+		BasicLight.insertVertices_Fase1(vertexLight);
+		BasicLight.BuildVertexShader(vShader_Light_V1.c_str(), fShader_Light_V1.c_str());
+		//para colocar el color del objeto y de la luz
 
 
-	//BasicLight.setPosModelTransforms(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.7f), glm::vec3(0.0f, 1.0f, 0.0f), 2.0f);
-	BasicLight.createVAO_Fase1();
-	glm::vec3 randomPivotMesh{ randomN::randomPos(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f)) };
-	glm::vec3 randomPosLight{ glm::normalize(randomN::randomPos(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f))) };
-	BasicLight.setPosModelTransforms(randomPosLight * 1.5f, glm::vec3(0.7f), randomPivotMesh, 1.0f);
+		//BasicLight.setPosModeslTransforms(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.7f), glm::vec3(0.0f, 1.0f, 0.0f), 2.0f);
+		BasicLight.createVAO_Fase1();
+		glm::vec3 randomPivotMesh{ randomN::randomPos(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f)) };
+		glm::vec3 randomPosLight{ glm::normalize(randomN::randomPos(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f))) };
+		BasicLight.setPosModelTransforms(randomPosLight * 1.5f, glm::vec3(0.7f), randomPivotMesh, 1.0f);
 
-	///Creacion de camaras
+		///Creacion de camaras
+		camState camP{ camState::cameraAE };
+		camera::camera1 aerialCamera(glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.1f, 100.0f);
+
+		////Point Light principal
+		glm::vec3 purpleLight{ 0.7f, 0.5f, 1.8f };
+		glm::vec3 witheLight{ 1.0f, 1.0f, 1.0f };
+		glm::vec3 green_blue{ 1.02f, 1.18f, 1.44f };
+		light::light1 lightTest_01(glm::vec3(0.0f, 0.0f, 0.0f), green_blue);
+		lightTest_01.setAttenuation(1.0f, 0.0035f, 0.0032f);
+
+		testPlay::tranformationT testTransLight;
+		glm::vec3 randomPivotL{ randomN::randomPos(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f)) };
+		testTransLight.setSettingsTransform(glm::vec3(6.0f, 6.0f, 6.0f), glm::vec3(1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.05f);
+
+
+		testPlay::tranformationT testTranforms;
+		glm::vec3 randomPivotTestTrans{ randomN::randomPos(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f)) };
+		testTranforms.setSettingsTransform(glm::vec3(2.0f, 3.0f, 2.0f), glm::vec3(1.0f), randomPivotTestTrans, 0.1f);
+
+		//para colocar el color del objeto y de la luz
+		BasicLight.shaderColor.use();
+		BasicLight.shaderColor.setVec3("objectColor", lightTest_01.Color);
+		BasicLight.shaderColor.setVec3("lightColor", lightTest_01.Posicion);
+
+		/////////////////////////CREACION DE ASSIMP MODEL///////////////////////////////////////
+
+		Assimp::shaderSettings ss_Model_v1
+		{
+			glm::vec3(0.8f, 0.8f, 0.8f),
+			glm::vec3(1.0f),
+			glm::vec3(1.0f),
+			glm::vec3(0.8f),
+			32.0f
+		};
+
+		testPlay::tranformationT testBackPack(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.001f);
+		Assimp::coordModel coordBackPack{ glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f), 210.0f };
+
+		std::filesystem::path pathBackpack{ backpack_Model };
+		Assimp::Model modelBackpack(pathBackpack.string(), vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), coordBackPack, ss_Model_v1);
+
+		/////////////////////CREACION DE FLOOR MODEL ///////////
+
+		Assimp::shaderSettings ss_Model_v2
+		{
+			glm::vec3(0.5f, 0.5f, 0.5f),
+			glm::vec3(0.5f),
+			glm::vec3(0.8f),
+			glm::vec3(0.5f),
+			64.0f
+
+		};
+
+		testPlay::tranformationT testFloor(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.001f);
+		Assimp::coordModel coord_FloorModel{ glm::vec3(0.0f, -2.0f, 0.0f), glm::vec3(15.0f, 1.0f, 15.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f };
+		std::filesystem::path path_FloorModel{ floor2_Model };
+		Assimp::Model model_Floor(path_FloorModel.string(), vShader_Standard_v1.c_str(), fShader_Standard_v1.c_str(), coord_FloorModel, ss_Model_v2);
+		*/
+		////////////////CREACION DE MI DIRECTIONAL LIGHT/////////////////////////////////////
+
+		//light::DirectionalLight directionalLight_1(glm::vec3(0.0f, -1.0f, 2.0f), glm::vec3(0.3f, 0.3f, 0.3f));
+
+		////////////////CREACION DE A LOT OF LIGHTS/////////////////////////////
+		/*
+		glm::vec3 purpleLight{ 0.7f, 0.5f, 1.8f };
+		glm::vec3 witheLight{ 1.0f, 1.0f, 1.0f };
+		glm::vec3 green_blue{ 1.02f, 1.18f, 1.44f };
+
+		light::light1 lightTest_01(glm::vec3(0.0f, 0.0f, 0.0f), green_blue);
+		lightTest_01.setAttenuation(1.0f, 0.0035f, 0.0032f);
+
+		testPlay::tranformationT testTransLight;
+		glm::vec3 randomPivotL{ randomN::randomPos(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f)) };
+		testTransLight.setSettingsTransform(glm::vec3(6.0f, 6.0f, 6.0f), glm::vec3(1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.05f);
+		*/
+
 	camState camP{ camState::cameraAE };
-	camera::camera1 aerialCamera(glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.1f, 100.0f);
-
-	////Light principal
-	glm::vec3 purpleLight{ 0.7f, 0.5f, 1.8f };
-	glm::vec3 witheLight{ 1.0f, 1.0f, 1.0f };
-	light::light1 lightTest_01(glm::vec3(0.0f, 0.0f, 0.0f), witheLight);
-
-	testPlay::tranformationT testTransLight;
-	glm::vec3 randomPivotL{ randomN::randomPos(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f)) };
-	testTransLight.setSettingsTransform(glm::vec3(6.0f, 6.0f, 6.0f), glm::vec3(1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.05f);
-
-
-	testPlay::tranformationT testTranforms;
-	glm::vec3 randomPivotTestTrans{ randomN::randomPos(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f)) };
-	testTranforms.setSettingsTransform(glm::vec3(2.0f, 3.0f, 2.0f), glm::vec3(1.0f), randomPivotTestTrans, 0.1f);
-
-	//para colocar el color del objeto y de la luz
-	BasicLight.shaderColor.use();
-	BasicLight.shaderColor.setVec3("objectColor", lightTest_01.Color);
-	BasicLight.shaderColor.setVec3("lightColor", lightTest_01.Posicion);
-
-	/////////////////////////CREACION DE ASSIMP MODEL///////////////////////////////////////
-
-	Assimp::shaderSettings ss_Model_v1
-	{
-		glm::vec3(0.8f, 0.8f, 0.8f),
-		glm::vec3(1.0f),
-		glm::vec3(1.0f),
-		glm::vec3(0.8f),
-		32.0f
-	};
-
-	testPlay::tranformationT testBackPack(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.001f);
-	Assimp::coordModel coordBackPack{ glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f), 210.0f };
-
-	std::filesystem::path pathBackpack{ backpack_Model };
-	Assimp::Model modelBackpack(pathBackpack.string(), vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), coordBackPack, ss_Model_v1);
-
-	/////////////////////CREACION DE FLOOR MODEL ///////////
-
-	Assimp::shaderSettings ss_Model_v2
-	{
-		glm::vec3(0.6f, 0.5f, 0.2f),
-		glm::vec3(0.5f),
-		glm::vec3(0.8f),
-		glm::vec3(0.5f),
-		32.0f
-
-	};
-
-	testPlay::tranformationT testFloor(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.001f);
-	Assimp::coordModel coord_FloorModel{ glm::vec3(0.0f, -2.0f, 0.0f), glm::vec3(15.0f, 1.0f, 15.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f };
-	std::filesystem::path path_FloorModel{ floor2_Model };
-	Assimp::Model model_Floor(path_FloorModel.string(), vShader_Standard_v1.c_str(), fShader_Standard_v1.c_str(), coord_FloorModel, ss_Model_v2);
+	RenderData_Set::set_AllObjects();
+	cameras::setCameras();
+	testPlay::setTransformation_Objects();
 
 	SDL_SetWindowRelativeMouseMode(gWindow, true);
 	SDL_WarpMouseInWindow(gWindow, static_cast<float>(screenSettings::screen_w) * 0.5f, static_cast<float>(screenSettings::screen_w) * 0.5f);
@@ -564,35 +532,35 @@ int main(int argc, char* argv[])
 							controlMove::detectMove = true;
 						}
 
-						playingTest::moveRecSeq_Key(seqTriangles, event);
+						//	playingTest::moveRecSeq_Key(seqTriangles, event);
 
 					}
 					if (!controlMove::detectSDLK_code::detectKeyColor(event))
 					{
-						if (shading::changeColorTest == false)
+						if (shading_2::changeColorTest == false)
 						{
-							shading::changeColorTest = true;
+							shading_2::changeColorTest = true;
 
 						}
-	
+
 					}
 					if (controlMove::detectSDLK_code::detectKeyScale(event))
 					{
-					TexVertex.pressScaleTex(&event);
+						//	TexVertex.pressScaleTex(&event);
 
 					}
 					if (controlMove::detectSDLK_code::detectKeyTranslate(&event))
 					{
-						TexVertex.vertexTransform.detectTranslate(&event);
+						//					TexVertex.vertexTransform.detectTranslate(&event);
 
 						if (camP == camState::cameraAE)
 						{
-							aerialCamera.moveCameraTest = true;
+							cameras::aerialCamera.moveCameraTest = true;
 						}
 					}
-					
-					TexVertex.vertexTransform.detectRot(&event);
-					TexVertex.vertexTransform.detectScale(&event);
+
+					//			TexVertex.vertexTransform.detectRot(&event);
+					//			TexVertex.vertexTransform.detectScale(&event);
 
 				}
 
@@ -606,22 +574,23 @@ int main(int argc, char* argv[])
 						controlMove::detectMove = false;
 					}
 
-					if (shading::changeColorTest == true)
+					if (shading_2::changeColorTest == true)
 					{
-						shading::changeColorTest = false;
+						shading_2::changeColorTest = false;
 
 					}
 
-					if (TexVertex.scaleTest == true)
-					{
-						TexVertex.outScaleTex();
-					}
-					
-					TexVertex.vertexTransform.resetTests();
+
+					//	if (TexVertex.scaleTest == true)
+						//{
+					//		TexVertex.outScaleTex();
+					//	}
+
+					//	TexVertex.vertexTransform.resetTests();
 
 					if (camP == camState::cameraAE)
 					{
-						aerialCamera.resetTest();
+						cameras::aerialCamera.resetTest();
 					}
 
 				}
@@ -632,8 +601,8 @@ int main(int argc, char* argv[])
 
 					if (camP == camState::cameraAE)
 					{
-						aerialCamera.detectRotCamMouse(controlMouse::getDistanceMotionMouse());
-						aerialCamera.moveCameraTest = true;
+						cameras::aerialCamera.detectRotCamMouse(controlMouse::getDistanceMotionMouse());
+						cameras::aerialCamera.moveCameraTest = true;
 					}
 				}
 
@@ -644,7 +613,7 @@ int main(int argc, char* argv[])
 					{
 						if (camP == camState::cameraAE)
 						{
-							aerialCamera.cameraProjection(&event);
+							cameras::aerialCamera.cameraProjection(&event);
 						}
 					}
 				}
@@ -661,7 +630,7 @@ int main(int argc, char* argv[])
 					screenSettings::outWindow = true;
 					SDL_SetWindowRelativeMouseMode(gWindow, false);
 				}
-				
+
 				if (screenSettings::outWindow == true && event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
 				{
 					screenSettings::outWindow = false;
@@ -674,64 +643,10 @@ int main(int argc, char* argv[])
 
 			if (screenSettings::vSync::frameT == true)
 			{
-		
+
 				glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 				glClear(GL_COLOR_BUFFER_BIT);
 				glEnable(GL_DEPTH_TEST);
-
-				
-			
-				//triangleCreation.render_Triangle();
-				//triangleCreation.render_Elements();
-
-				/////////////////////////SCENES//////////////////////////////////
-				/*
-				if (scenesChange[controlScene] == scenes::distintFragmentShader_2)
-				{
-					tri_1.render_Triangle();
-					tri_2.render_Triangle();
-					tri_3.render_Triangle();
-				}
-
-				if (scenesChange[controlScene] == scenes::distintPos_3)
-				{
-					if (shading::changeColorTest == true)
-					{
-						shading::changeColorUniform_Keys(&multiplesTriangles.shaderProgram, "colorVertex", multiplesTriangles.colorTriangle);
-
-					}
-
-					multiplesTriangles.renderAlotTriangles(multiplePoints, sizeTriangle);
-				}
-
-				if (scenesChange[controlScene] == scenes::seqTriangles_4)
-				{
-					playingTest::rectangles_Sequence(seqTriangles);
-					playingTest::moveSeqRectangle(seqTriangles);
-				}
-
-				if (scenesChange[controlScene] == scenes::colorTriangle_5)
-				{
-					ColorVertex.render_VertexArrays();
-
-				}
-
-				if (scenesChange[controlScene] == scenes::VertexColorChange_6)
-				{
-					ColorVertexPath.render_VertexColor();
-
-				}
-				
-		        */
-//		TexVertex.detectTranfomrsVertex(); ///////////////Transformacion con vertex
-			//exVertex.detectTransformShader(); //////////////Transformacion con shaders
-			//exVertex.render_VertexTex();
-				
-				//FirstModel.setRotModelCoord();
-				//FirstModel.renderModel();
-
-				//FirstModel.setModelView(); // para actualizar el estado de la camara 
-				//FirstModel.cam1.rotateCam(); // para rotar en secuencia la camara
 
 				if (screenSettings::outWindow == false)
 				{
@@ -739,29 +654,44 @@ int main(int argc, char* argv[])
 
 					if (camP == camState::cameraAE)
 					{
-						aerialCamera.controlEventsCamera();
-					//	FirstModel.setCameraTransforms(aerialCamera);
-			         //   BasicLight.setCameraTransforms(aerialCamera);
+						cameras::aerialCamera.controlEventsCamera();
 					}
-		
+
 				}
-			
+
+
+				/*
+				std::vector<light::light1> pointLights
+				{
+					lightTest_01
+				};
+
+				std::vector<light::DirectionalLight> directionalLights
+				{
+					directionalLight_1
+				};
+
 				//FirstModelTest
 				testTransLight.transformMeshLight(&BasicLight, &lightTest_01);
-				testTranforms.transformUniqueModel(&FirstModel, aerialCamera, lightTest_01); /////////////Corregir este ERRORRRR
- 				FirstModel.renderMultipleModels(1, aerialCamera, lightTest_01);/////Colocamos el light para saber la posicion del light			
+				testTranforms.transformUniqueModel(&FirstModel, aerialCamera, lightTest_01);
+				FirstModel.renderMultipleModels(1, aerialCamera, lightTest_01);/////Colocamos el light para saber la posicion del light
 				BasicLight.renderMeshLight(aerialCamera, lightTest_01);
 
 				///Draw Backpack
-				modelBackpack.Draw(aerialCamera, lightTest_01);
+				//modelBackpack.Draw(aerialCamera, lightTest_01);
+				modelBackpack.Draw_WL(aerialCamera, pointLights, directionalLights);
 				testBackPack.transformModel_test1(&coordBackPack);
 				modelBackpack.setModelCoord(coordBackPack);
 
 				///Draw Floor model
-				model_Floor.Draw(aerialCamera, lightTest_01);
+				//model_Floor.Draw(aerialCamera, lightTest_01);
+				model_Floor.Draw_WL(aerialCamera, pointLights, directionalLights); ///para renderizar con directional lights
 				testFloor.moveModel_Test(&coord_FloorModel);
 				model_Floor.setModelCoord(coord_FloorModel);
+				*/
 
+				render::renderAll();
+				testPlay::renderTranformations_Objects();
 
 				SDL_UpdateWindowSurface(gWindow);
 				SDL_GL_SwapWindow(gWindow);
@@ -774,74 +704,14 @@ int main(int argc, char* argv[])
 			screenSettings::vSync::countTimeRender();
 
 		}
-		
-}
 
-multiplesTriangles.destroy();
-SDL_GL_DestroyContext(contextOpenGl);
-SDL_DestroyWindow(gWindow);
-SDL_Quit();
-
-	return 0;
-	
-
-	/*
-	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-		std::cerr << "Error al inicializar SDL: " << SDL_GetError() << std::endl;
-		return 1;
 	}
 
-	// 3. Añade la bandera SDL_WINDOW_OPENGL al crear la ventana
-	SDL_Window* window = SDL_CreateWindow("Hola OpenGL", 800, 600, SDL_WINDOW_OPENGL);
-	if (!window) {
-		std::cerr << "Error al crear la ventana: " << SDL_GetError() << std::endl;
-		SDL_Quit();
-		return 1;
-	}
-
-	// 4. Crea el contexto de OpenGL, que une OpenGL con tu ventana
-	SDL_GLContext context = SDL_GL_CreateContext(window);
-	if (!context) {
-		std::cerr << "Error al crear el contexto de OpenGL: " << SDL_GetError() << std::endl;
-		SDL_DestroyWindow(window);
-		SDL_Quit();
-		return 1;
-	}
-
-	// 5. ¡Paso CRÍTICO! Inicializa GLAD después de crear el contexto
-	if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-		std::cerr << "Error al inicializar GLAD" << std::endl;
-	//DL_GL_DeleteContext(context);
-		SDL_DestroyWindow(window);
-		SDL_Quit();
-		return 1;
-	}
-
-	std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
-
-	// --- Bucle principal ---
-	bool running = true;
-	while (running) {
-		SDL_Event event;
-		while (SDL_PollEvent(&event)) {
-			if (event.type == SDL_EVENT_QUIT) {
-				running = false;
-			}
-		}
-
-		// 6. Usa funciones de OpenGL para limpiar la pantalla
-		glClearColor(0.1f, 0.2f, 0.4f, 1.0f); // Azul oscuro
-		glClear(GL_COLOR_BUFFER_BIT);
-
-		// 7. Intercambia los buffers para mostrar lo que dibujaste
-		SDL_GL_SwapWindow(window);
-	}
-
-	// --- Limpieza ---
-//DL_GL_DeleteContext(context);
-	SDL_DestroyWindow(window);
+	//multiplesTriangles.destroy();
+	destroy::destroyModels();
+	SDL_GL_DestroyContext(contextOpenGl);
+	SDL_DestroyWindow(gWindow);
 	SDL_Quit();
 
 	return 0;
-	*/
 }

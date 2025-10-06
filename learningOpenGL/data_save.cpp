@@ -26,7 +26,7 @@ namespace register_Errors
 {
 	void testCompileShader(unsigned int shader, std::string type, Uint8 typeTest)
 	{
-		int test_Shader;
+		int test_Shader{};
 
 		if (typeTest == 0)
 		{
@@ -379,7 +379,7 @@ namespace vertexCreation
 	}
 }
 
-namespace shading
+namespace shading_2
 {
 	bool changeColorTest = false;
 	void changeColorUniform_Keys(unsigned int* shaderProgram, std::string colorLocation, vec::rgb3& color)

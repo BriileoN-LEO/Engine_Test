@@ -66,8 +66,9 @@ namespace Assimp
 		Mesh(std::vector<vertexD> ver, std::vector<unsigned int> indi, std::vector<textureD> texture);
 
 		void Draw(camera::camera1 cam1, light::light1 light, shading::shader shader);
-		void Draw_WithLights(camera::camera1 cam1, std::vector<light::light1>* pointLights, std::vector<light::DirectionalLight>* directionalLights, shading::shader shader);
+		void Draw_WithLights(camera::camera1 cam1, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights, shading::shader shader);
 		void setMeshCoord(glm::vec3 posicionMesh, glm::vec3 scaleMesh);
+		void destroyMesh();
 
 	};
 	
@@ -81,16 +82,25 @@ namespace Assimp
 		shading::shader shaders{};
 
 		transformation_basics::basics_Model3D ModelCoord{};
-			
+		
 		void loadModel(std::string path, const char* vertexPath, const char* fragmentPath, coordModel modelCoords, shaderSettings shaderSettings);
 		void processNode(aiNode* node, const aiScene* scene);
 		Mesh processMesh(aiMesh* mesh, const aiScene* scene);
 		std::vector<textureD> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 
 	public:
+		coordModel ModelGlobal_Coord{};
+
+		Model();
 		Model(std::string path, const char* vertexPath, const char* fragmentPath, coordModel modelCoords, shaderSettings shaderSettings);
-	    virtual void Draw(camera::camera1 cam1, light::light1 light);
+	    void Draw(camera::camera1 cam1, light::light1 light);
+		void Draw_WL(camera::camera1 cam1, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights);
+		void destroyModel();
+
 		void setModelCoord(coordModel modelCoords);
+		void SetShinessTex_Mesh(int numMesh, float valueShiness);
+		int numMeshes();
+		void refresh_ModelCoord();
 	};
 
 }

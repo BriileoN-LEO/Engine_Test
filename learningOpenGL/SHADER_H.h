@@ -144,7 +144,6 @@ namespace texture
 		std::string type{};
 		std::string path{};
 
-
 		textureData() {};
 		textureData(unsigned int textureID, std::string type, texture::textureUnits texUnit) : textureID(textureID), type(type), texUnit(texUnit) {};
 		textureData(unsigned int textureID, int width, int height, int nrChannels, texture::textureUnits texUnit) : 
@@ -170,6 +169,7 @@ namespace texture
 		};
 
 		std::vector<textureData> texU_Data{};
+		float shiness{};
 
 		Uint8 textureUnits{};
 
@@ -348,11 +348,11 @@ namespace ObjCreation
 		void LoadMultipleTex(const char* data, texture::textureUnits posicion_TEX, bool flipImage);
 		void SetTextures(const std::string textureName, const int textureUnit);
 
-		void renderModelMultiple(camera::camera1 cam, glm::mat4 model, light::light1 light);	
+		void renderModelMultiple(camera::camera1 cam, glm::mat4 model, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights);
 		void renderModel(camera::camera1 cam, light::light1 light);
 		void renderMeshLight(camera::camera1 cam, light::light1 light);
 
-		void renderMultipleModels(int numScene, camera::camera1 cam, light::light1 light);
+		void renderMultipleModels(int numScene, camera::camera1 cam, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights);
 
 		void setPosModel(const int numModels);
 

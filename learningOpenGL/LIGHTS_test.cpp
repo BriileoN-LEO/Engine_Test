@@ -13,19 +13,38 @@ namespace light
 		Posicion = lightPosicion;
 		Color = lightColor;
 	}
+	void light1::setAttenuation(float constant, float linear, float quadratic)
+	{
+		this->constant = constant;
+		this->linear = linear;
+		this->quadratic = quadratic;
+	}
+	void light1::setMatProperties(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
+	{
+		Mat.ambient = ambient;
+		Mat.diffuse = diffuse;
+		Mat.specular = specular;
+	}
 
 	DirectionalLight::DirectionalLight() {};
-	DirectionalLight::DirectionalLight(lightShader LS_set, posicion pos, color color)
+	DirectionalLight::DirectionalLight(direction Direction, color color)
 	{
-		set_DirectionalLight(LS_set, pos, color);
+		set_DirectionalLight(Direction, color);
 	}
 
-	void DirectionalLight::set_DirectionalLight(lightShader LS_set, posicion pos, color color)
+	void DirectionalLight::set_DirectionalLight(direction Direction, color Color)
 	{
-		lightShader_set = LS_set;
-		Posicion = pos;
-		Color = color;
+		this->Direction = glm::normalize(Direction);
+		this->Color = Color;
 	}
+	void DirectionalLight::setMatProperties(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
+	{
+		Mat.ambient = ambient;
+		Mat.diffuse = diffuse;
+		Mat.specular = specular;
+	}
+
+	
 	inline void duplicate_Lights(std::vector<posicion> posLights, auto& typeLight, auto& meshLight)
 	{
 

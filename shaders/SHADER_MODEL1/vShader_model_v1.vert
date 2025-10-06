@@ -8,7 +8,6 @@ out vec3 Normal;
 out vec3 FragPos;
 out vec2 coordTexOut;
 
-
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
@@ -18,7 +17,7 @@ uniform mat3 modelMatrix;
 //uniform vec3 objectColor;
 //uniform vec3 lightColor;
 
-//uniform vec3 lightPos;
+//uniform vec3 lightPos;s
 //uniform vec3 viewPos;
 
 

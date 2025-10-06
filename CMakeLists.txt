@@ -23,13 +23,13 @@ set(DATA_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/shaders/shader_v_v1.vs"
 "C:/Users/Briil/3D_Models_Game Engine/backpack/backpack.obj"
 "C:/Users/Briil/3D_Models_Game Engine/Floor/Floor.obj"
 "C:/Users/Briil/3D_Models_Game Engine/Floor_2/Floor2.obj"
-
+"C:/Users/Briil/3D_Models_Game Engine/Car_Formula1/Car_Formula1.fbx"
 )
 
 set(RUTE_COMPLETE_FILES ${DATA_FILE_PATH})
 
 configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/learningOpenGL/configFilesTXT.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/learningOpenGL/Render/configFilesTXT.h"
   "${PROjECT_BINARY_DIR}/configFilesTXT.h"
 
 )
@@ -70,6 +70,8 @@ add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/conf
 "learningOpenGL/LIGHTS_test.h" "learningOpenGL/LIGHTS_test.cpp"
 "learningOpenGL/playTest.h" "learningOpenGL/playTest.cpp"
 "learningOpenGL/Model_Assimp/ModelAssimp.cpp" "learningOpenGL/Model_Assimp/ModelAssimp.h"
+"learningOpenGL/Render/Render.cpp" "learningOpenGL/Render/Render.h"
+"learningOpenGL/Render/RenderData.cpp" "learningOpenGL/Render/RenderData.h"
 "learningOpenGL/STB_IMAGE_IMPLEMENT.cpp"
 )
 

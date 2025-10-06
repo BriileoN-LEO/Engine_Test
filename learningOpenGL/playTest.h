@@ -31,7 +31,11 @@ namespace testPlay
 		void ColorSeq(ObjCreation::ModelCreation* modelTest, light::light1* lightModel);
 	};
 
-
+	tranformationT getTranformationT_randomPivot(glm::vec3 posicion, glm::vec3 scale, GLfloat ang, GLfloat velocityAng);
+	tranformationT getTranformationT_radial(glm::vec3 posicion, glm::vec3 scale, glm::vec3 pivotRotPos, GLfloat ang, GLfloat velocityAng);
+	
+	const void setTransformation_Objects();
+	void renderTranformations_Objects();
 }
 
 #endif playTest

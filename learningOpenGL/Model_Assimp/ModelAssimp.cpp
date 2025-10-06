@@ -142,8 +142,8 @@ namespace Assimp
 		glBindVertexArray(0);
 
 	}
-	void Mesh::Draw_WithLights(camera::camera1 cam1, std::vector<light::light1>* pointLights, std::vector<light::DirectionalLight>* directionalLights, shading::shader shader)
-	{
+	void Mesh::Draw_WithLights(camera::camera1 cam1,  std::vector<light::light1>& pointLights,  std::vector<light::DirectionalLight>& directionalLights, shading::shader shader)
+	{ 
 		shader.use();
 
 		shader.transformMat("model", MeshCoord.model);
@@ -151,45 +151,75 @@ namespace Assimp
 		shader.transformMat("projection", cam1.camProjection);
 		shader.setVec3("objectColor", shaderSet.objectColor);
 
-		if (pointLights != nullptr)
+
+		if (static_cast<int>(pointLights.size()) > 0)
 		{
-			int pointLight_pos{ 1 };
-			
-			for (auto& pL : *pointLights)
+
+			for (int i = 0; i < static_cast<int>(pointLights.size()); i++)
 			{
-				std::string pL_name{ "pointLight_" + std::to_string(pointLight_pos++) };
-				shader.setVec3(pL_name, pL.Color);
-				shader.setVec3(pL_name, pL.Posicion);
+				std::string pL_name{ "pointLights_Array[" + std::to_string(i) + "]" };
+
+				std::string pL_color{ pL_name + ".lightColor" };
+				std::string pL_Posicion{ pL_name + ".lightPos" };
+				std::string pL_constant{ pL_name + ".constant" };
+				std::string pL_linear{ pL_name + ".linear" };
+				std::string pL_quadratic{ pL_name + ".quadratic" };
+				std::string pL_ambient{ pL_name + ".ambient" };
+				std::string pL_diffuse{ pL_name + ".diffuse" };
+				std::string pL_specular{ pL_name + ".specular" };
+				 
+				shader.setVec3(pL_color, pointLights[i].Color);
+				shader.setVec3(pL_Posicion, pointLights[i].Posicion);
+				shader.setFloat(pL_constant, pointLights[i].constant);
+				shader.setFloat(pL_linear, pointLights[i].linear);
+				shader.setFloat(pL_quadratic, pointLights[i].quadratic);
+				shader.setVec3(pL_ambient, pointLights[i].Mat.ambient);
+				shader.setVec3(pL_diffuse, pointLights[i].Mat.diffuse);
+				shader.setVec3(pL_specular, pointLights[i].Mat.specular);
 
 			}
 		}
-		
+
 		////////////Corregir aqui y revisar si funciona nullptr
-		if (directionalLights != nullptr)
+		if (static_cast<int>(directionalLights.size()) > 0)
 		{
 			int dirLight_pos{ 1 };
 
-			for (auto& dL : *directionalLights)
+			for (int i = 0; i < static_cast<int>(directionalLights.size()); i++)
 			{
+				//for (auto& dL : *directionalLights)
+				//{
 				std::string dL_name{ "directionalLight_" + std::to_string(dirLight_pos++) };
-				std::string dL_color{ dL_name + '.' + "lightColor" };
-				std::string dL_posicion{ dL_name + '.' + "lightDir" };
-				shader.setVec3(dL_color, dL.Color);
-				shader.setVec3(dL_posicion, dL.Posicion);
+			//	std::string dL_color{ dL_name + ".lightColor" };
+				std::string dL_direction{ dL_name + ".lightDir" };
+				std::string dL_ambient{ dL_name + ".ambient" };
+				std::string dL_diffuse{ dL_name + "diffuse" };
+				std::string dL_specular{ dL_name + ".specular" };
+
+				//shader.setVec3(dL_color, directionalLights[i].Color);
+				shader.setVec3(dL_direction, directionalLights[i].Direction);
+				shader.setVec3(dL_ambient, directionalLights[i].Mat.ambient);
+				shader.setVec3(dL_diffuse, directionalLights[i].Mat.diffuse);
+				shader.setVec3(dL_specular, directionalLights[i].Mat.specular);
+				
 
 			}
 
 		}
 
 
-		shader.setVec3("Mat.ambient", shaderSet.ambient);
-		shader.setVec3("Mat.difusse", shaderSet.difusse);
-		shader.setVec3("Mat.specular", shaderSet.specular);
-		shader.setFloat("Mat.shiness", shaderSet.shiness);
-
-		if (static_cast<int>(textures.texU_Data.size()) > 0)
+		if (!textures.texU_Data.empty())
 		{
 			textures.useTextures_PerMaterial(shader);
+		
+		}
+		
+		else if (textures.texU_Data.empty())
+		{ 
+			shader.setVec3("Mat.ambient", shaderSet.ambient);
+			shader.setVec3("Mat.difusse", shaderSet.difusse);
+			shader.setVec3("Mat.specular", shaderSet.specular);
+			shader.setFloat("Mat.shiness", shaderSet.shiness);
 		}
 
 		shader.setVec3("viewPos", cam1.posCam);
@@ -210,6 +240,11 @@ namespace Assimp
 		MeshCoord.scaleModel(scaleMesh);
 		MeshCoord.setInverseTransformsAll();
 	}
+	void Mesh::destroyMesh()
+	{
+		glDeleteVertexArrays(1, &VAO);
+		glDeleteBuffers(1, &VBO);
+	}
 
 	void Model::loadModel(std::string path, const char* vertexPath, const char* fragmentPath, coordModel modelCoords, shaderSettings shaderSettings)
 	{
@@ -218,6 +253,7 @@ namespace Assimp
 
 		//set transform Model General
 		setModelCoord(modelCoords);
+		ModelGlobal_Coord = modelCoords;
 
 		//import all Assimp
 		Assimp::Importer importer;
@@ -364,6 +400,8 @@ namespace Assimp
 		return tex;
 
 	}
+
+	Model::Model() {};
 	Model::Model(std::string path, const char* vertexPath, const char* fragmentPath, coordModel modelCoords, shaderSettings shaderSettings)
 	{
 		loadModel(path, vertexPath, fragmentPath, modelCoords, shaderSettings);
@@ -389,12 +427,60 @@ namespace Assimp
 
 		
 	}
+	void Model::Draw_WL(camera::camera1 cam1,  std::vector<light::light1>& pointLights,  std::vector<light::DirectionalLight>& directionalLights)
+	{
+
+		for (int i = 0; i < static_cast<int>(meshes.size()); i++)
+		{
+			if (ModelCoord.model != ModelCoord.lastModel)
+			{
+				meshes[i].MeshCoord.model = ModelCoord.model * meshes[i].MeshCoord.modelCurrent;
+				//meshes[i].MeshCoord.model = ModelCoord.modelCurrent;
+				meshes[i].MeshCoord.setNormalModelMatrix();
+				meshes[i].MeshCoord.lastModel = meshes[i].MeshCoord.model;
+			}
+
+			meshes[i].Draw_WithLights(cam1, pointLights, directionalLights, shaders);
+
+		}
+
+		ModelCoord.lastModel = ModelCoord.model;
+
+
+	}
+	void Model::destroyModel()
+	{
+		for(int i = 0; i < static_cast<int>(meshes.size()); i++)
+		{ 
+			meshes[i].destroyMesh();
+		}
+		glDeleteProgram(shaders.ID);
+	}
+
 	void Model::setModelCoord(coordModel modelCoords)
 	{
 		ModelCoord.translateModel(modelCoords.posicion);
 		ModelCoord.scaleModel(modelCoords.scale);
 		ModelCoord.setPivotRotModel(modelCoords.pivotRot);
 		ModelCoord.setAngRotModel(modelCoords.angRot);
+		ModelCoord.setTransformsAll();
+		ModelCoord.setNormalModelMatrix();
+	}
+	void Model::SetShinessTex_Mesh(int numMesh, float valueShiness)
+	{
+		meshes[numMesh].textures.shiness = valueShiness;
+
+	}
+	int Model::numMeshes()
+	{
+		return static_cast<int>(meshes.size());
+	}
+	void Model::refresh_ModelCoord()
+	{
+		ModelCoord.translateModel(ModelGlobal_Coord.posicion);
+		ModelCoord.scaleModel(ModelGlobal_Coord.scale);
+		ModelCoord.setPivotRotModel(ModelGlobal_Coord.pivotRot);
+		ModelCoord.setAngRotModel(ModelGlobal_Coord.angRot);
 		ModelCoord.setTransformsAll();
 		ModelCoord.setNormalModelMatrix();
 	}

@@ -147,7 +147,7 @@ namespace vertexCreation
 	void creatingTwoTriangles(triangle& triangle_1, vec::vec3 posCenter, const char* vertexShaderSource, const char* fragmentShaderSource);
 
 }
-namespace shading
+namespace shading_2
 {
 	extern bool changeColorTest;
 

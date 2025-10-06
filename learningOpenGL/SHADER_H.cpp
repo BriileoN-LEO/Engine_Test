@@ -689,6 +689,10 @@ namespace texture
 				name_Data = "Mat_" + number + "." + name_Data;
 			}
 			shaderID.setInt(name_Data, static_cast<int>(texU_Data[i].texUnit));
+
+			std::string shinessSet{ "Mat_" + number + ".shiness" };
+			shaderID.setFloat(shinessSet, shiness);
+
 			glActiveTexture(GL_TEXTURE0 + i);
 			glBindTexture(GL_TEXTURE_2D, texU_Data[i].textureID);
 
@@ -696,7 +700,6 @@ namespace texture
 
 		glActiveTexture(GL_TEXTURE0);
 		//SDL_Log(std::to_string(texU_Data.size()).c_str());
-
 	}
 	void textureBuild::useTextures()
 	{
@@ -1251,9 +1254,8 @@ namespace ObjCreation
 		shaderColor.use();
 		shaderColor.setInt(textureName, textureUnit);
 	}
-
 	
-	void ModelCreation::renderModelMultiple(camera::camera1 cam, glm::mat4 model, light::light1 light)
+	void ModelCreation::renderModelMultiple(camera::camera1 cam, glm::mat4 model, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights)
 	{
 		auto loadTextures = [&]()
 			{
@@ -1301,9 +1303,66 @@ namespace ObjCreation
 			shaderColor.transformMat3("modelMatrix", modelCoord.normalModelMatrix);
 			setCameraTransforms(cam);
 			shaderColor.setVec3("viewPos", cam.posCam);
+
+			if (static_cast<int>(pointLights.size()) > 0)
+			{
+				int numPointLight{ 0 };
+				for (auto& PL : pointLights)
+				{
+					std::string set{ "pointLights_Array[" + std::to_string(numPointLight) + "]." };
+
+					std::string setLightPos{ set + "lightPos" };
+					std::string setConstant{ set + "constant" };
+					std::string setLinear{ set + "linear" };
+					std::string setQuadratic{ set + "quadratic" };
+					std::string setAmbient{ set + "ambient" }; 
+					std::string setDiffuse{ set + "diffuse" };
+					std::string setSpecular{ set + "specular" };
+	
+					shaderColor.setVec3(setLightPos, PL.Posicion);
+					shaderColor.setFloat(setConstant, PL.constant);
+					shaderColor.setFloat(setLinear, PL.linear);
+					shaderColor.setFloat(setQuadratic, PL.quadratic);
+
+					shaderColor.setVec3(setAmbient, PL.Mat.ambient);
+					shaderColor.setVec3(setDiffuse, PL.Mat.diffuse);
+					shaderColor.setVec3(setSpecular, PL.Mat.specular);
+
+
+					numPointLight++;
+				}
+
+			}
+
+			if (static_cast<int>(directionalLights.size()) > 0)
+			{
+				int dirLight_pos{ 1 };
+
+				for (int i = 0; i < static_cast<int>(directionalLights.size()); i++)
+				{
+					//for (auto& dL : *directionalLights)
+					//{
+					std::string dL_name{ "directionalLight_" + std::to_string(dirLight_pos++) };
+		
+					std::string dL_direction{ dL_name + ".lightDir" };
+					std::string dL_ambient{ dL_name + ".ambient" };
+					std::string dL_difusse{ dL_name + ".diffuse" };
+					std::string dL_specular{ dL_name + ".specular" };
+
+					shaderColor.setVec3(dL_direction, directionalLights[i].Direction);
+					shaderColor.setVec3(dL_ambient, directionalLights[i].Mat.ambient);
+					shaderColor.setVec3(dL_difusse, directionalLights[i].Mat.diffuse);
+					shaderColor.setVec3(dL_specular, directionalLights[i].Mat.specular);
+
+				}
+
+			}
+
 			shaderColor.setVec3("objectColor", glm::vec3(0.8f, 0.5f, 0.4f));
-			shaderColor.setVec3("lightColor", light.Color);
-			shaderColor.setVec3("lightPos", light.Posicion);
+			shaderColor.setVec3("Mat.ambient", glm::vec3(0.5f) );
+			shaderColor.setVec3("Mat.difusse", glm::vec3(0.8f) );
+			shaderColor.setVec3("Mat.specular", glm::vec3(0.5f) );
+			shaderColor.setFloat("Mat.shiness", 64.0f);
 
 			if (i < posicion - 3)
 			{
@@ -1383,7 +1442,7 @@ namespace ObjCreation
 
 	}
 
-	void ModelCreation::renderMultipleModels(int numScene, camera::camera1 cam, light::light1 light)
+	void ModelCreation::renderMultipleModels(int numScene, camera::camera1 cam, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights)
 	{
 		auto moveZ_models = [&](int pM) -> glm::mat4
 			{
@@ -1444,7 +1503,7 @@ namespace ObjCreation
 
 	//				shaderColor.transformMat("model", rotate_ModelsPivot(p-1));
 				}
-				renderModelMultiple(cam, rotate_ModelsPivot(p - 1), light);
+				renderModelMultiple(cam, rotate_ModelsPivot(p - 1), pointLights, directionalLights);
 			}
 
 			//renderModelMultiple(cam, rotate_ModelsPivot(p - 1));
@@ -1455,8 +1514,8 @@ namespace ObjCreation
 
 	void ModelCreation::setPosModel(const int numModels)
 	{ 
-		glm::vec3 min{ -20.0f, -20.0f, -20.0f };
-		glm::vec3 max{ 20.0f, 20.0f, 20.0f };
+		glm::vec3 min{ -40.0f, -40.0f, -40.0f };
+		glm::vec3 max{ 40.0f, 40.0f, 40.0f };
 
 		glm::vec3 min_pivot{ -1.0f, -1.0f, -1.0f };
 		glm::vec3 max_pivot{ 1.0f, 1.0f, 1.0f };
