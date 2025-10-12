@@ -110,6 +110,13 @@ namespace transformation_basics
 
 namespace camera
 {
+	enum class camState
+	{
+		cameraAE = 0,
+		cameraCount = 1
+	};
+
+
 	class camera1
 	{
 	public:
@@ -120,14 +127,14 @@ namespace camera
 		glm::mat4 cam{ glm::mat4(1.0f) };///transformaciones de la camera
 		glm::mat4 camProjection{ glm::mat4(1.0f) };
 
-
 		glm::mat4 camRotate{ glm::mat4(1.0f) };
 		glm::mat4 camTranslate{ glm::mat4(1.0f) };
 		GLfloat ang{};
 
-
 		GLfloat yaw{};
 		GLfloat pitch{};
+		glm::vec3 cameraUp{};
+		glm::vec3 cameraRight{};
 
 		const GLfloat sensitivity{ 0.01f };
 		const GLfloat speedCam{ 0.1f };
@@ -140,6 +147,11 @@ namespace camera
 
 		camera1();
 		camera1(glm::vec3 posCam, GLfloat fovCam, GLfloat nearCut, GLfloat maxCut);
+		
+		camera1 operator=(const camera1& cam)
+		{
+			return cam;
+		}
 
 		void setSettingsCamera(glm::vec3 posCam, GLfloat fovCam, GLfloat nearCut, GLfloat maxCut);
 

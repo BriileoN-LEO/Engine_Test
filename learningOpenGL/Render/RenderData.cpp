@@ -2,12 +2,24 @@
 
 namespace RenderData_Set
 {
-
+	using matSettings = light::lightShader;
+	 
 	std::map<std::string, ObjCreation::ModelCreation> ModelCreation_D{};
 	std::map<std::string, Assimp::Model> AssimpModel_D{};
 	std::vector<ObjCreation::ModelCreation> MeshLights_MCD{};
 	std::vector<light::light1> pointLights_D{};
 	std::vector<light::DirectionalLight> directionalLights_D{};
+	std::map<std::string, light::SpotLight> spotLights_D{};
+	
+	namespace stencilTest
+	{
+		shading::shader stencilTest_shader{};
+		individualComp::singleTriangle triangleStencil{};
+		const void setStencilTest_Shader()
+		{
+			stencilTest_shader.shaderCreation(vShader_StencilTest.c_str(), fShader_StencilTest.c_str());
+		}
+	}
 
 	const std::map<std::string, ObjCreation::ModelCreation> setModelCreation_Data()
 	{
@@ -59,7 +71,7 @@ namespace RenderData_Set
 	}
 	const std::map<std::string, Assimp::Model> setModel_Data()
 	{
-	
+
 		Assimp::shaderSettings ss_Model_v1
 		{
 			glm::vec3(0.8f, 0.8f, 0.8f),
@@ -70,8 +82,17 @@ namespace RenderData_Set
 		};
 		Assimp::coordModel coordBackPack{ glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f), 210.0f };
 
+		unsigned int aiProcessFlags_BP{ aiProcess_Triangulate
+			| aiProcess_FlipUVs
+			| aiProcess_ImproveCacheLocality
+			| aiProcess_CalcTangentSpace
+			| aiProcess_GenSmoothNormals
+			| aiProcess_GenNormals
+			| aiProcess_SortByPType };
+
+
 		std::filesystem::path pathBackpack{ backpack_Model };
-		Assimp::Model modelBackpack(pathBackpack.string(), vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), coordBackPack, ss_Model_v1);
+		Assimp::Model modelBackpack(pathBackpack.string(), vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), coordBackPack, ss_Model_v1, aiProcessFlags_BP);
 		int numMeshes{ modelBackpack.numMeshes() };
 		for (int i = 0; i < numMeshes; i++)
 		{
@@ -92,12 +113,40 @@ namespace RenderData_Set
 
 		Assimp::coordModel coord_FloorModel{ glm::vec3(0.0f, -5.0f, 0.0f), glm::vec3(15.0f, 1.0f, 15.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f };
 		std::filesystem::path path_FloorModel{ floor2_Model };
-		Assimp::Model model_Floor(path_FloorModel.string(), vShader_Standard_v1.c_str(), fShader_Standard_v1.c_str(), coord_FloorModel, ss_Model_v2);
+		Assimp::Model model_Floor(path_FloorModel.string(), vShader_Standard_v1.c_str(), fShader_Standard_v1.c_str(), coord_FloorModel, ss_Model_v2, aiProcessFlags_BP);
+
+		//////////////////Creacion de la lampara de mano////////////////////////
+
+		Assimp::shaderSettings ss_FlashLight
+		{
+			glm::vec3(0.5f, 0.5f, 0.5f),
+			glm::vec3(0.5f),
+			glm::vec3(0.8f),
+			glm::vec3(0.5f),
+			32.0f
+		};
+
+		unsigned int aiProcessFlags_FL{ aiProcess_Triangulate
+			| aiProcess_FlipUVs
+			| aiProcess_ImproveCacheLocality
+			| aiProcess_CalcTangentSpace
+			| aiProcess_GenSmoothNormals
+			| aiProcess_GenNormals
+			| aiProcess_SortByPType
+			| aiProcess_FlipWindingOrder };
+		
+		Assimp::coordModel coord_FlashLight{ glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.001f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f };
+		std::filesystem::path path_FlashLight{ flashLight_Model };
+		Assimp::Model model_FlashLight(path_FlashLight.string(), vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), coord_FlashLight, ss_FlashLight, aiProcessFlags_BP);
+
+
+        ///////////////// 
 
 		std::map<std::string, Assimp::Model> AssimpModels
 		{
 			{"backPack", modelBackpack},
-			{"Floor", model_Floor}
+			{"Floor", model_Floor},
+			{"FlashLight", model_FlashLight}
 		};
 
 		return AssimpModels;
@@ -310,15 +359,35 @@ namespace RenderData_Set
 		glm::vec3 white_Color{ 1.0f, 1.0f, 1.0f };
 
 		light::DirectionalLight directionalLight_1(glm::vec3(0.0f, -1.0f, 2.0f), glm::vec3(0.1f, 0.1f, 0.1f));
-		directionalLight_1.setMatProperties(white_Color * 0.3f, white_Color * 0.3f, white_Color * 0.3f);
+		directionalLight_1.setMatProperties(white_Color * 0.1f, white_Color * 0.1f, white_Color * 0.1f);
 
 		std::vector<light::DirectionalLight> DirectionalLights
-		{
+	 	{
 			directionalLight_1
 		};
 
 
 		return DirectionalLights;
+	}
+	const std::map<std::string, light::SpotLight> setSpotLights()
+	{
+		matSettings matSP_1
+		{
+		  glm::vec3(0.0f),
+		  glm::vec3(0.92f, 0.83f, 0.38f),
+		  glm::vec3(0.92f, 0.83f, 0.38f),
+		};
+
+	//	glm::vec3 whiteLight{ 1.0f, 1.0f, 1.0f };
+		light::SpotLight spotLight_1(glm::vec3(0.0f), glm::vec3(0.0f, 0.0f, -0.1f), matSP_1, 17.5f, 21.5f);
+		spotLight_1.setAttenuation(1.0f, 0.8f, 0.0035f);
+	
+		std::map<std::string, light::SpotLight> spotLights
+		{
+			{"FlashLight_SpotLight", spotLight_1}
+		};
+
+		return spotLights;
 	}
 	void setSettings_FileShader(const char* fragmentShader_Path, std::vector<std::string> values)
 	{
@@ -393,6 +462,7 @@ namespace RenderData_Set
 		
 		std::string numberPointLights{ "#define NUM_POINT_LIGHTS " + std::to_string(pointLights_D.size()) };
 		std::string numberDirectionalLights{ "#define NUM_DIRECTIONAL_LIGHTS " + std::to_string(directionalLights_D.size()) };
+		std::string numberSpotLights{ "#define NUM_SPOT_LIGHTS " + std::to_string(spotLights_D.size()) };
 
 		std::vector<std::string> setSettings_Filer
 		{
@@ -411,8 +481,10 @@ namespace RenderData_Set
 	{
 		pointLights_D = setPointLights();
 		directionalLights_D = setDirectionalLights();
+		spotLights_D = setSpotLights();
 
 		insertSettings_FileShader();
+		stencilTest::setStencilTest_Shader();
 
 		ModelCreation_D = setModelCreation_Data();
 		AssimpModel_D = setModel_Data();
@@ -422,12 +494,21 @@ namespace RenderData_Set
 
 namespace cameras
 {
+	std::string name_CurrentCamera{};
+	camera::camera1 aerialCamera{};
+	camera::camera1 currentCamera{};
 
-	extern camera::camera1 aerialCamera{};
-
-	 void setCameras()
+	void setCameras()
 	{
-		 aerialCamera.setSettingsCamera(glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.1f, 100.0f);
+		aerialCamera.setSettingsCamera(glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.001f, 100.0f);
+		currentCamera = aerialCamera;
+		name_CurrentCamera = "aerialCamera";
+
+	}
+	void updateStateCurrentCamera()
+	{
+		currentCamera = aerialCamera;
+		name_CurrentCamera = "aerialCamera";
 
 	}
 

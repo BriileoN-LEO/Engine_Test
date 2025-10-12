@@ -63,9 +63,38 @@ namespace light
 		void setMatProperties(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular);
 
 	};
+
+	class SpotLight
+	{
+	public:
+
+		posicion Posicion{};
+		direction Direction{};
+		lightShader Mat{};
+
+		float cutOff{};
+		float outerCutOff{}; 
+		float constant{};
+		float linear{};
+		float quadratic{};
+
+		bool stateLight{ true };
+
+		SpotLight();
+		SpotLight(posicion Posicion, direction Direction, lightShader Mat, float cutOff, float outerCutOff);
+
+		void updateLight(posicion Posicion, direction Direction);
+		void setAttenuation(float constant, float linear, float quadratic);
+		void setMatProperties(lightShader Mat);
+		
+
+	};
+
+
 	
 	inline void duplicate_Lights(std::vector<posicion> posLights, auto& typeLight, auto& meshLight); /// hacer un testeo despues 
 	//inline void setFile_PointLights();
+  
 
 }
 

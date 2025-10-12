@@ -1255,7 +1255,7 @@ namespace ObjCreation
 		shaderColor.setInt(textureName, textureUnit);
 	}
 	
-	void ModelCreation::renderModelMultiple(camera::camera1 cam, glm::mat4 model, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights)
+	void ModelCreation::renderModelMultiple(camera::camera1 cam, glm::mat4 model, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights, std::map<std::string, light::SpotLight>& spotLights)
 	{
 		auto loadTextures = [&]()
 			{
@@ -1274,8 +1274,6 @@ namespace ObjCreation
 					glActiveTexture(GL_TEXTURE1);
 					glBindTexture(GL_TEXTURE_2D, tex.texture[1]);
 				}
-
-
 			};
 
 		auto loadSingleTexture = [&]()
@@ -1355,6 +1353,44 @@ namespace ObjCreation
 					shaderColor.setVec3(dL_specular, directionalLights[i].Mat.specular);
 
 				}
+
+			}
+
+			if (static_cast<int>(spotLights.size()) > 0)
+			{
+				int sL_i{};
+
+				for (auto& spotLight : spotLights)
+				{
+					std::string sL_name{ "spotLights_Array[" + std::to_string(sL_i) + "]" };
+
+					std::string sL_Posicion{ sL_name + ".lightPos" };
+					std::string sL_Direction{ sL_name + ".lightDir" };
+					std::string sL_cutOff{ sL_name + ".cutOff" };
+					std::string sL_outerCutOff{ sL_name + ".outerCutOff" };
+					std::string sL_constant{ sL_name + ".constant" };
+					std::string sL_linear{ sL_name + ".linear" };
+					std::string sL_quadratic{ sL_name + ".quadratic" };
+					std::string sL_ambient{ sL_name + ".ambient" };
+					std::string sL_diffuse{ sL_name + ".diffuse" };
+					std::string sL_specular{ sL_name + ".specular" };
+					std::string sL_lightState{ sL_name + ".lightState" };
+
+					shaderColor.setVec3(sL_Posicion, spotLight.second.Posicion);
+					shaderColor.setVec3(sL_Direction, spotLight.second.Direction);
+					shaderColor.setFloat(sL_cutOff, glm::cos(glm::radians(spotLight.second.cutOff)));
+					shaderColor.setFloat(sL_outerCutOff, glm::cos(glm::radians(spotLight.second.outerCutOff)));
+					shaderColor.setFloat(sL_constant, spotLight.second.constant);
+					shaderColor.setFloat(sL_linear, spotLight.second.linear);
+					shaderColor.setFloat(sL_quadratic, spotLight.second.quadratic);
+					shaderColor.setVec3(sL_ambient, spotLight.second.Mat.ambient);
+					shaderColor.setVec3(sL_diffuse, spotLight.second.Mat.diffuse);
+					shaderColor.setVec3(sL_specular, spotLight.second.Mat.specular);
+					shaderColor.setBool(sL_lightState, spotLight.second.stateLight);
+
+					sL_i++;
+				}
+
 
 			}
 
@@ -1442,7 +1478,7 @@ namespace ObjCreation
 
 	}
 
-	void ModelCreation::renderMultipleModels(int numScene, camera::camera1 cam, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights)
+	void ModelCreation::renderMultipleModels(int numScene, camera::camera1 cam, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights, std::map<std::string, light::SpotLight>& spotLights)
 	{
 		auto moveZ_models = [&](int pM) -> glm::mat4
 			{
@@ -1482,7 +1518,7 @@ namespace ObjCreation
 
 			}
 			
-			else if(p > 0)
+			else if (p > 0)
 			{
 				if (numScene == 0)
 				{
@@ -1501,9 +1537,9 @@ namespace ObjCreation
 						rotSpeedState = 0;
 					}
 
-	//				shaderColor.transformMat("model", rotate_ModelsPivot(p-1));
+					//				shaderColor.transformMat("model", rotate_ModelsPivot(p-1));
 				}
-				renderModelMultiple(cam, rotate_ModelsPivot(p - 1), pointLights, directionalLights);
+				renderModelMultiple(cam, rotate_ModelsPivot(p - 1), pointLights, directionalLights, spotLights);
 			}
 
 			//renderModelMultiple(cam, rotate_ModelsPivot(p - 1));

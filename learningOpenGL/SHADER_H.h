@@ -348,11 +348,11 @@ namespace ObjCreation
 		void LoadMultipleTex(const char* data, texture::textureUnits posicion_TEX, bool flipImage);
 		void SetTextures(const std::string textureName, const int textureUnit);
 
-		void renderModelMultiple(camera::camera1 cam, glm::mat4 model, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights);
+		void renderModelMultiple(camera::camera1 cam, glm::mat4 model, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights, std::map<std::string, light::SpotLight>& spotLights);
 		void renderModel(camera::camera1 cam, light::light1 light);
 		void renderMeshLight(camera::camera1 cam, light::light1 light);
 
-		void renderMultipleModels(int numScene, camera::camera1 cam, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights);
+		void renderMultipleModels(int numScene, camera::camera1 cam, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights, std::map<std::string, light::SpotLight>& spotLights);
 
 		void setPosModel(const int numModels);
 

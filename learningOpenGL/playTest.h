@@ -38,4 +38,16 @@ namespace testPlay
 	void renderTranformations_Objects();
 }
 
+namespace camera_Transforms
+{
+	void attachObject_Cam(transformation_basics::basics_Model3D& N, camera::camera1& cam);
+	void setAllTranforms_Cam();
+}
+
+namespace light_Transforms
+{
+	void spotLight_AttachLintern(light::SpotLight& spotToAttach, transformation_basics::basics_Model3D& posicionModel);	
+	void setAllTranforms_light();
+}
+
 #endif playTest

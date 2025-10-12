@@ -488,6 +488,7 @@ namespace camera
 		setSettingsCamera(posCam, fovCam, nearCut, maxCut);
 
 	};
+
 	void camera1::setSettingsCamera(glm::vec3 posCam, GLfloat fovCam, GLfloat nearCut, GLfloat maxCut)
 	{
 		this->posCam = posCam;
@@ -509,10 +510,12 @@ namespace camera
 		camRot = glm::translate(camRot, glm::vec3(0.0f, 0.0f, -0.3f));
 		camRot = glm::rotate(camRot, ang, pivotCam);
 	*/
-		glm::vec3 cameraRight{ glm::cross(directionView, glm::vec3(0.0f, 1.0f, 0.0f)) };
+		cameraRight = glm::cross(directionView, glm::vec3(0.0f, 1.0f, 0.0f));
+	//lm::vec3 cameraRight{ glm::cross(directionView, glm::vec3(0.0f, 1.0f, 0.0f)) }; ///colocar este para hacer la rotacion del objeto con la camara
 		cameraRight = glm::normalize(cameraRight);
 		
-		glm::vec3 cameraUp{ glm::cross(directionView, cameraRight) };
+		cameraUp = glm::cross(directionView, cameraRight);
+//glm::vec3 cameraUp{ glm::cross(directionView, cameraRight) };
 		cameraUp = glm::normalize(cameraUp);
 
 		camRotate = glm::lookAt(posCam, posCam + directionView, -cameraUp);

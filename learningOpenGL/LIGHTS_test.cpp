@@ -45,6 +45,33 @@ namespace light
 	}
 
 	
+	SpotLight::SpotLight() {};
+	SpotLight::SpotLight(posicion Posicion, direction Direction, lightShader Mat, float cutOff, float outerCutOff)
+	{
+		this->Posicion = Posicion;
+		this->Direction = Direction;
+		this->Mat = Mat;
+		this->cutOff = cutOff;
+		this->outerCutOff = outerCutOff;
+	}
+
+	void SpotLight::updateLight(posicion Posicion, direction Direction)
+	{
+		this->Posicion = Posicion;
+		this->Direction = Direction;
+	}
+	void SpotLight::setAttenuation(float constant, float linear, float quadratic)
+	{
+		this->constant = constant;
+		this->linear = linear;
+		this->quadratic = quadratic;
+
+	}
+	void SpotLight::setMatProperties(lightShader Mat)
+	{
+		this->Mat = Mat; 
+	}
+
 	inline void duplicate_Lights(std::vector<posicion> posLights, auto& typeLight, auto& meshLight)
 	{
 

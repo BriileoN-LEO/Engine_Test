@@ -1,5 +1,4 @@
 ﻿
-
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <glad/glad.h>
@@ -47,7 +46,7 @@ void init()
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
+		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
 		gWindow = SDL_CreateWindow("LearningOpenGL", screenSettings::screen_w, screenSettings::screen_h, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE); //Creacion de la ventana
 
@@ -104,18 +103,13 @@ enum class scenes
 
 };
 
-enum class camState
-{
-	cameraAE = 0,
-	cameraCount = 1
-};
 
 
 int main(int argc, char* argv[])
 {
 	init();
 
-	glViewport(0, 0, screenSettings::screen_w, screenSettings::screen_h);
+	openGL_render::viewportSet(0, 0, screenSettings::screen_w, screenSettings::screen_h);
 
 	scenes scenesChange[static_cast<int>(scenes::sizeScenes)]
 	{
@@ -474,14 +468,16 @@ int main(int argc, char* argv[])
 		testTransLight.setSettingsTransform(glm::vec3(6.0f, 6.0f, 6.0f), glm::vec3(1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.05f);
 		*/
 
-	camState camP{ camState::cameraAE };
+    camera::camState camP{ camera::camState::cameraAE };
 	RenderData_Set::set_AllObjects();
 	cameras::setCameras();
 	testPlay::setTransformation_Objects();
 
 	SDL_SetWindowRelativeMouseMode(gWindow, true);
 	SDL_WarpMouseInWindow(gWindow, static_cast<float>(screenSettings::screen_w) * 0.5f, static_cast<float>(screenSettings::screen_w) * 0.5f);
-	screenSettings::vSync::inFPS(screenSettings::fps);
+	screenSettings::vSync::inFPS(screenSettings::fps); 
+
+	openGL_render::setGlobalRender_OpenGL();
 
 	if (correct_init == true)
 	{
@@ -553,11 +549,28 @@ int main(int argc, char* argv[])
 					{
 						//					TexVertex.vertexTransform.detectTranslate(&event);
 
-						if (camP == camState::cameraAE)
+						if (camP == camera::camState::cameraAE)
 						{
 							cameras::aerialCamera.moveCameraTest = true;
 						}
 					}
+
+					if (event.key.key == SDLK_F) ////Temporal para controlar el apagado y encendido de la luz
+					{
+						if (RenderData_Set::spotLights_D["FlashLight_SpotLight"].stateLight == true)
+						{
+							RenderData_Set::spotLights_D["FlashLight_SpotLight"].stateLight = false;
+
+						}
+
+						else if (RenderData_Set::spotLights_D["FlashLight_SpotLight"].stateLight == false)
+						{
+							RenderData_Set::spotLights_D["FlashLight_SpotLight"].stateLight = true;
+
+						}
+
+					}
+
 
 					//			TexVertex.vertexTransform.detectRot(&event);
 					//			TexVertex.vertexTransform.detectScale(&event);
@@ -588,7 +601,7 @@ int main(int argc, char* argv[])
 
 					//	TexVertex.vertexTransform.resetTests();
 
-					if (camP == camState::cameraAE)
+					if (camP == camera::camState::cameraAE)
 					{
 						cameras::aerialCamera.resetTest();
 					}
@@ -599,7 +612,7 @@ int main(int argc, char* argv[])
 				{
 					//FirstModel.cam1.detectRotCamMouse(controlMouse::getDistanceMotionMouse());
 
-					if (camP == camState::cameraAE)
+					if (camP == camera::camState::cameraAE)
 					{
 						cameras::aerialCamera.detectRotCamMouse(controlMouse::getDistanceMotionMouse());
 						cameras::aerialCamera.moveCameraTest = true;
@@ -611,7 +624,7 @@ int main(int argc, char* argv[])
 					SDL_Keymod modStateKey = SDL_GetModState();
 					if (modStateKey & SDL_KMOD_ALT)
 					{
-						if (camP == camState::cameraAE)
+						if (camP == camera::camState::cameraAE)
 						{
 							cameras::aerialCamera.cameraProjection(&event);
 						}
@@ -643,18 +656,16 @@ int main(int argc, char* argv[])
 
 			if (screenSettings::vSync::frameT == true)
 			{
-
-				glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-				glClear(GL_COLOR_BUFFER_BIT);
-				glEnable(GL_DEPTH_TEST);
+				openGL_render::clearOpenGL();
 
 				if (screenSettings::outWindow == false)
 				{
 					SDL_WarpMouseInWindow(gWindow, static_cast<float>(screenSettings::screen_w) * 0.5f, static_cast<float>(screenSettings::screen_w) * 0.5f);
 
-					if (camP == camState::cameraAE)
+					if (camP == camera::camState::cameraAE)
 					{
 						cameras::aerialCamera.controlEventsCamera();
+				//camera_Transforms::attachObject_Cam(RenderData_Set::AssimpModel_D["FlashLight"].ModelCoord, cameras::aerialCamera);
 					}
 
 				}
@@ -690,13 +701,17 @@ int main(int argc, char* argv[])
 				model_Floor.setModelCoord(coord_FloorModel);
 				*/
 
-				render::renderAll();
-				testPlay::renderTranformations_Objects();
+				//render::renderAll();
+				//testPlay::renderTranformations_Objects();
 
+				stencil_test::renderStencilTest();
+				testPlay::renderTranformations_Objects();
+				cameras::updateStateCurrentCamera();
+			
 				SDL_UpdateWindowSurface(gWindow);
 				SDL_GL_SwapWindow(gWindow);
 
-				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 				screenSettings::vSync::frameT = false;
 				screenSettings::vSync::stopTimeNS = SDL_GetTicksNS();
 			}

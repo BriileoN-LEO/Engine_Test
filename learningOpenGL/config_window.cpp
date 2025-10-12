@@ -1,11 +1,11 @@
 #include "config_window.h"
 
-
 int screenSettings::screen_w{ 1920 };
 int screenSettings::screen_h{ 1080 };
 bool screenSettings::detectChangeSizeWindow{ false };
 bool screenSettings::outWindow{ false };
 int screenSettings::fps{ 60 };
+glm::vec4 viewportOpenGL{};
 
 void screenSettings::framebuffer_size_callback(SDL_Window* window)
 {
