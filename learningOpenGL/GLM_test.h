@@ -23,6 +23,7 @@ namespace transformation_basics
 	glm::vec3 centroidObj(std::vector<glm::vec3> Obj);
 	float areaTriangle(std::array<glm::vec3, 3> triangle);
 	glm::vec3 centerGeo(std::vector<std::pair<glm::vec3, float>> triCenter);
+	glm::vec3 calcCenterGeo(std::vector<glm::vec3> vertex);
 
 	//hacer la seccion de random Numbers
 	
@@ -81,13 +82,22 @@ namespace transformation_basics
 
 		glm::vec3 pivotRotPos{ 1.0f, 1.0f, 0.0f };
 		glm::vec3 viewOrient{ 0.0f, 0.0f, -3.0f };
+		
+		glm::vec3 posModel_Base{};
+		glm::vec3 posModel{};
 
 		GLfloat ang{ 0.0f };
+
 
 		basics_Model3D();
 		glm::mat4 rotShaderModelSeq();
 		glm::mat4 viewShaderModel();
 		glm::mat4 projectionShaderModel();
+		
+		basics_Model3D operator=(const basics_Model3D& coordModel)
+		{
+			return coordModel;
+		}
 
 		void sumAng(GLfloat angSum);
 		glm::mat4 rotPivotShaderModel(glm::vec3 pivot, glm::mat4 model);
@@ -96,6 +106,8 @@ namespace transformation_basics
 		glm::mat4 rotatePerPivot(glm::vec3 center, glm::vec3 pivot, glm::vec3& posicionCube); /////////////////revisarrrr
 
 		////////STANDARD TRANSFORMS///////
+		void refreshCenter_Pos();
+
 		void translateModel(glm::vec3 transModel);
 		void scaleModel(glm::vec3 scaleModel);
 		void setPivotRotModel(glm::vec3 pivotRotModel);

@@ -28,11 +28,38 @@ namespace controlMove
 	void moveVec3(vec::vec3& vertex);
 
 }
+
+namespace ControlScenarios
+{
+	enum class stateScenarios
+	{
+		normalSceneario = 0,
+		stencilTestAll = 1,
+		detectAABB = 2
+
+	};
+	
+	enum class scenarioAABB
+	{
+		Model = 0,
+		Mesh = 1,
+		Triangle = 2
+
+	};
+
+	extern stateScenarios scene;
+	extern scenarioAABB sceneAABB;
+
+	extern std::map<SDL_Keycode, stateScenarios> stateScene;
+
+	void detectScenario_Key(SDL_Event* event);
+	void controlSubScenearios();
+
+
+}
 namespace controlMouse
 {
-		
 		glm::vec2 getDistanceMotionMouse();
-
 
 
 }

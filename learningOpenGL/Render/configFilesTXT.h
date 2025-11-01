@@ -23,6 +23,14 @@ const std::string fShader_Light_V1 = "C:/Users/Briil/source/repos/learningOpenGL
 const std::string vShader_StencilTest = "C:/Users/Briil/source/repos/learningOpenGL/shaders/SHADER_STENCIL_TEST/vShader_stencil_test.vert";
 const std::string fShader_StencilTest = "C:/Users/Briil/source/repos/learningOpenGL/shaders/SHADER_STENCIL_TEST/fShader_stencil_test.frag";
 
+///AABB SHADERS
+const std::string vShader_AABB_All = "C:/Users/Briil/source/repos/learningOpenGL/shaders/SHADERS_AABB/vShader_AABB_All.vert";
+const std::string fShader_AABB_All = "C:/Users/Briil/source/repos/learningOpenGL/shaders/SHADERS_AABB/fShader_AABB_All.frag";
+
+//2D_UI SHADERS
+const std::string vShader_Pointer = "C:/Users/Briil/source/repos/learningOpenGL/shaders/SHADER_UI/vShader_Pointer.vert";
+const std::string fShader_Pointer = "C:/Users/Briil/source/repos/learningOpenGL/shaders/SHADER_UI/fShader_Pointer.frag";
+
 ///IMAGES
 const std::string image_Wood = "C:/Users/Briil/source/repos/learningOpenGL/images/container.jpg";
 const std::string image_happyFace = "C:/Users/Briil/source/repos/learningOpenGL/images/awesomeface.png";
@@ -33,6 +41,10 @@ const std::string image_MineGrass_lateral = "C:/Users/Briil/source/repos/learnin
 const std::string image_MineGrass_top = "C:/Users/Briil/source/repos/learningOpenGL/images/CubeGrass_Top.png";
 const std::string image_MineGrass_down = "C:/Users/Briil/source/repos/learningOpenGL/images/CubeGrass_Down.png";
 
+///IMAGENES DEL PASTO
+const std::string image_Grass = "C:/Users/Briil/source/repos/learningOpenGL/images/grass.png";
+const std::string image_GlassWindow = "C:/Users/Briil/source/repos/learningOpenGL/images/simple_glassWindow.png";
+
 ///PATH MODEL 
 
 const std::string backpack_Model = "C:/Users/Briil/3D_Models_Game Engine/backpack/backpack.obj";
@@ -40,3 +52,6 @@ const std::string floor_Model = "C:/Users/Briil/3D_Models_Game Engine/Floor/Floo
 const std::string floor2_Model = "C:/Users/Briil/3D_Models_Game Engine/Floor_2/Floor2.obj";
 const std::string F1_CarModel = "C:/Users/Briil/3D_Models_Game Engine/Car_Formula1/Car_Formula1.fbx";
 const std::string flashLight_Model = "C:/Users/Briil/3D_Models_Game Engine/flash-light-17mb/FlashLight/FlashLight.obj";
+
+const std::string campo_01 = "C:/Users/Briil/3D_Models_Game Engine/Campo/Campo_Floor.obj";
+const std::string vegetacion_01 = "C:/Users/Briil/3D_Models_Game Engine/vegetacion_01/vegetacion_01.obj";

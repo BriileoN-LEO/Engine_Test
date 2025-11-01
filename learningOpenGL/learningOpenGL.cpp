@@ -14,6 +14,7 @@
 #include "render/configFilesTXT.h"
 #include "Render/RenderData.h"
 #include "Render/Render.h"
+#include "collision/ScreenHit.h"
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -108,6 +109,7 @@ enum class scenes
 int main(int argc, char* argv[])
 {
 	init();
+
 
 	openGL_render::viewportSet(0, 0, screenSettings::screen_w, screenSettings::screen_h);
 
@@ -469,8 +471,8 @@ int main(int argc, char* argv[])
 		*/
 
     camera::camState camP{ camera::camState::cameraAE };
-	RenderData_Set::set_AllObjects();
 	cameras::setCameras();
+	RenderData_Set::set_AllObjects();
 	testPlay::setTransformation_Objects();
 
 	SDL_SetWindowRelativeMouseMode(gWindow, true);
@@ -478,6 +480,8 @@ int main(int argc, char* argv[])
 	screenSettings::vSync::inFPS(screenSettings::fps); 
 
 	openGL_render::setGlobalRender_OpenGL();
+
+//penGL_render::setGlobalRender_OpenGL();
 
 	if (correct_init == true)
 	{
@@ -571,6 +575,7 @@ int main(int argc, char* argv[])
 
 					}
 
+					ControlScenarios::detectScenario_Key(&event);
 
 					//			TexVertex.vertexTransform.detectRot(&event);
 					//			TexVertex.vertexTransform.detectScale(&event);
@@ -701,13 +706,29 @@ int main(int argc, char* argv[])
 				model_Floor.setModelCoord(coord_FloorModel);
 				*/
 
-				//render::renderAll();
-				//testPlay::renderTranformations_Objects();
+				/*
+				refresh_Models::refreshAll_Models();
+				AABB::updateCoordAABB_All();
+				ScreenCalc_Hit::calc_IntersectALL();
+				*/
+				//AABB::updateCoordAABB_All();
 
-				stencil_test::renderStencilTest();
-				testPlay::renderTranformations_Objects();
+				//render::renderAll();
+
+
+		//		stencil_test::renderStencilTest();
+				//testPlay::renderTranformations_Objects();
+		//		AABB::updateCoordAABB_All();
 				cameras::updateStateCurrentCamera();
 			
+				refresh_Models::refreshAll_Models();
+				AABB::updateCoordAABB_All();
+				ScreenCalc_Hit::calc_IntersectALL();
+
+				render::renderAll();
+
+				testPlay::renderTranformations_Objects();
+
 				SDL_UpdateWindowSurface(gWindow);
 				SDL_GL_SwapWindow(gWindow);
 

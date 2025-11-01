@@ -11,7 +11,29 @@
 namespace Assimp
 {
 
-	unsigned int TextureFromFile(const char* path, std::string directory, bool gamma = false);
+	unsigned int TextureFromFile(const char* path, std::string directory = "", bool gamma = false);
+
+	enum class renderSeq
+	{
+		renderNear = 0,
+		renderFar = 1
+	};
+
+
+	struct structMesh_Data
+	{
+		std::string subNameMesh{};
+		glm::vec3 posicion{};
+		std::vector<glm::vec3> verticesPos{};
+		glm::mat4 model{};
+	};
+
+	struct structModelName
+	{
+		std::string nameModel{};
+		std::string nameMesh{};
+		bool changeStateSelection{};
+	};
 
 	struct shaderSettings
 	{
@@ -56,19 +78,28 @@ namespace Assimp
 
 	public:
 
+		std::string nameMesh{}; ///Este nombre servira para linkear con las acciones del bounding box
 		std::vector<vertexD> vertices{};
 		std::vector<unsigned int> indices{};
 		texture::textureBuild textures{};
+
 		transformation_basics::basics_Model3D MeshCoord{};
+		std::vector<glm::vec3> verticesPos{};
 		shaderSettings shaderSet{};
+
+		renderSeq renderP{};
 
 		Mesh();
 		Mesh(std::vector<vertexD> ver, std::vector<unsigned int> indi, std::vector<textureD> texture);
 
 		void Draw(camera::camera1 cam1, light::light1 light, shading::shader shader);
-		void Draw_WithLights(camera::camera1 cam1, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights, std::map<std::string, light::SpotLight>& spotLights, shading::shader shader);
+		void Draw_WithLights(shading::shader& shader);
 		void Draw_Alone();
+		void Draw_WithoutModel(shading::shader& shader);
+		void build_PreDraw(shading::shader& shader);
+
 		void setMeshCoord(glm::vec3 posicionMesh, glm::vec3 scaleMesh);
+		void updateVerticesPos();
 		void destroyMesh();
 
 	};
@@ -88,18 +119,30 @@ namespace Assimp
 		std::vector<textureD> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 
 	public:
+
+		std::string nameModel{};	//Nombre global del modelo
 		transformation_basics::basics_Model3D ModelCoord{};
 		coordModel ModelGlobal_Coord{};
 
 		Model();
 		Model(std::string path, const char* vertexPath, const char* fragmentPath, coordModel modelCoords, shaderSettings shaderSettings, unsigned int processFlags);
 		void Draw(camera::camera1 cam1, light::light1 light);
-		void Draw_WL(camera::camera1 cam1, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights, std::map<std::string, light::SpotLight>& spotLights);
+		void Draw_WL();
+		void DrawSingleMesh(std::string nameMesh, int shaderOp);
+		void DrawExcludeMesh(std::string nameMesh);
 		void destroyModel();
 
+		void updateModel();
+		void setNameModel(const std::string name);
 		void setModelCoord(coordModel modelCoords);
 		void SetShinessTex_Mesh(int numMesh, float valueShiness);
+		void SetOrderRender_Mesh(const std::string nameMesh, renderSeq renderOrder);
+		void BlendModeTexture_Mesh(const std::string nameMesh, bool op);
+
+		void SetTexture_Mesh(const char* pathTexture, std::string nameMesh, texture::typeTextures tex);
+	
 		std::vector<Mesh>& outMeshes();
+		shading::shader& outShader();
 		int numMeshes();
 		void refresh_ModelCoord();
 	};
@@ -116,22 +159,51 @@ namespace individualComp
 		unsigned int VAO{};
 		unsigned int VBO{};
 		std::vector<Assimp::vertexD> vertex{};
-		std::unique_ptr<texture::textureBuild> textures{ nullptr };
-		std::unique_ptr<shading::shader> shaders{ nullptr };
-		std::unique_ptr<transformation_basics::basics_Model3D> MeshCoord{ nullptr };
+		texture::textureBuild texture{};
+		shading::shader shader{};
+		transformation_basics::basics_Model3D MeshCoord{};
+		glm::vec3 centroidTriangle{};
+		
 		Assimp::shaderSettings shaderSet{};
+		Assimp::structModelName name{};
 
 		singleTriangle();
-		singleTriangle(std::vector<Assimp::vertexD> vertex, texture::textureBuild& texture, shading::shader& shader);
-		void setTriangle(std::vector<Assimp::vertexD> vertex, texture::textureBuild& texture, shading::shader& shader);
-		void setMeshCoord(transformation_basics::basics_Model3D& Coord);
+		singleTriangle(std::vector<Assimp::vertexD> vertex);
+		void setTriangle(std::vector<Assimp::vertexD> vertex);
+		void insertTriangle();
 		void setShaderSettings(Assimp::shaderSettings shader);
+
 		void draw();
+		void drawTest_2();
+		void drawSelection();
+
+		void updateTexture();
+		void updateModel();
 		void destroy();
     };
 
+	class Multiple_AssimpMesh
+	{
+	public:
+
+		Assimp::structModelName name{};
+		std::vector<Assimp::structMesh_Data> setDataMesh_Multi{};
+		bool ActiveMesh{ false };
+
+		Multiple_AssimpMesh();
+		Multiple_AssimpMesh(Assimp::structModelName meshToCopy, std::vector<glm::vec3> quantityMesh);
+
+		void setMultipleMesh(Assimp::structModelName meshToCopy, std::vector<glm::vec3> quantityMesh);
+		void drawMultipleMesh();
+		
+		
+
+
+	};
+
 
 }
+
 
 
 

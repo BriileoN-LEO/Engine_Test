@@ -332,6 +332,23 @@ namespace Vertex
 
 namespace texture
 {
+	std::map<typeTextures, std::string> typeTexture
+	{
+		{typeTextures::diffuse, "texture_diffuse"},
+		{typeTextures::specular, "texture_specular"}
+	};
+
+	void textureData::setTextureData(unsigned int textureID, std::string path)
+	{
+		this->textureID = textureID;
+		this->path = path;
+	}
+
+	void textureData::destroy()
+	{
+		glDeleteTextures(1, &textureID);
+
+	}
 
 	textureBuild::textureBuild() {};
 	textureBuild::textureBuild(const char* data, texture::textureUnits posicion_TEX, bool flipImage)
@@ -365,21 +382,21 @@ namespace texture
 			}
 		}
 
-	
+
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-	//lTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	//lTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		//lTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		//lTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		
-		
+
+
 		stbi_set_flip_vertically_on_load(flipImage);
 		unsigned char* DataT = stbi_load(data, &width, &height, &nrChannels, 0);
-		
+
 
 		std::stringstream tasteData;
-		
+
 
 		//data = stbi_load(data, &width, &height, &nrChannels, 0);
 		if (DataT)
@@ -390,7 +407,7 @@ namespace texture
 			tasteData >> tipeInfo;
 
 			auto tipeR = tipeInfo.rbegin();
-			
+
 			std::string new_Info{};
 			new_Info.push_back(tipeR[2]);
 			new_Info.push_back(tipeR[1]);;
@@ -412,15 +429,15 @@ namespace texture
 			}
 
 		}
-		
+
 		else
 		{
 			SDL_Log("ERRO::FAIL LOAD TEXTURE");
 		}
 
 		stbi_image_free(DataT);
-		
-		
+
+
 	}
 	void textureBuild::loadTexPerFace(const char* data, texture::textureUnits posicion_TEX, bool flipImage)
 	{
@@ -431,10 +448,10 @@ namespace texture
 		int nrChannels{};
 
 		/////////Inicio de creacion de textura en unit seleccionada
-	    glActiveTexture(GL_TEXTURE0 + static_cast<int>(posicion_TEX));
+		glActiveTexture(GL_TEXTURE0 + static_cast<int>(posicion_TEX));
 		glGenTextures(1, &tex);
 		glBindTexture(GL_TEXTURE_2D, tex);
-	 
+
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
@@ -458,17 +475,17 @@ namespace texture
 			auto dataR = dataReverse.rbegin();
 
 			std::string typeInfo{};
-			
+
 			typeInfo.push_back(dataR[2]);
 			typeInfo.push_back(dataR[1]);
 			typeInfo.push_back(dataR[0]);
-			
 
-		//	SDL_Log(typeInfo.c_str());
+
+			//	SDL_Log(typeInfo.c_str());
 			if (typeInfo == "jpg")
 			{
 
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,  GL_RGB, GL_UNSIGNED_BYTE, DataT);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, DataT);
 				glGenerateMipmap(GL_TEXTURE_2D);
 			}
 
@@ -561,6 +578,27 @@ namespace texture
 
 		stbi_image_free(DataT);
 
+	}
+
+	void textureBuild::insertTexture(unsigned int textureID, std::string path, std::string typeTexture)
+	{
+		bool existType{ false };
+
+		for (int i = 0; i < static_cast<int>(texU_Data.size()); i++)
+		{
+			if (texU_Data[i].type == typeTexture)
+			{
+				texU_Data[i].destroy();
+				texU_Data[i].setTextureData(textureID, path);
+				existType = true;
+				break;
+			}
+		}
+
+		if (existType == false)
+		{
+			texU_Data.emplace_back(textureID, typeTexture, path, textureUnits_Data[static_cast<int>(texU_Data.size())]);
+		}
 	}
 
 	void textureBuild::setTexturesUnits()
@@ -737,6 +775,19 @@ namespace texture
 			}
 		}
 	}
+	void textureBuild::destroy()
+	{
+		for (auto& delTex : texU_Data)
+		{
+			delTex.destroy();
+
+		}
+
+		texU_Data.clear();
+		texU_Data.shrink_to_fit();
+
+	}
+
 }
 
 namespace ObjCreation

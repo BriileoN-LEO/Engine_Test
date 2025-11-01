@@ -216,34 +216,36 @@ namespace camera_Transforms
   
 	void attachObject_Cam(transformation_basics::basics_Model3D& modelPos, camera::camera1& cam)
 	{
-	
-		float rad_Pitch{ glm::radians(-cam.pitch) };
-		float rad_Yaw{ glm::radians(-cam.yaw + 90.0f) };
+		if (screenSettings::outWindow == false)
+		{
+			float rad_Pitch{ glm::radians(-cam.pitch) };
+			float rad_Yaw{ glm::radians(-cam.yaw + 90.0f) };
 
-		////////////////////////////////////
-		glm::vec3 posicionObject_2{-0.1f, -0.1f, 0.0f };
+			////////////////////////////////////
+			glm::vec3 posicionObject_2{ -0.1f, -0.1f, 0.0f };
 
-		glm::qua quaY = glm::angleAxis(rad_Pitch, glm::normalize(glm::vec3(1.0f, 0.0f, 0.0f)));
-		glm::qua quaX = glm::angleAxis(rad_Yaw, glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
+			glm::qua quaY = glm::angleAxis(rad_Pitch, glm::normalize(glm::vec3(1.0f, 0.0f, 0.0f)));
+			glm::qua quaX = glm::angleAxis(rad_Yaw, glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
 
-		SDL_Log(std::to_string(rad_Yaw).c_str());
+			//SDL_Log(std::to_string(rad_Yaw).c_str());
 
-		glm::qua combieneRotQua{ quaX * quaY };
-		
-		glm::mat4 rot_Yaw{ glm::toMat4(quaX) };
-		glm::mat4 rot_Pitch{ glm::toMat4(quaY) };
+			//glm::qua combieneRotQua{ quaX * quaY };
 
-		glm::mat4 rot_Model{ rot_Yaw * rot_Pitch };
+			glm::mat4 rot_Yaw{ glm::toMat4(quaX) };
+			glm::mat4 rot_Pitch{ glm::toMat4(quaY) };
 
-		glm::mat4 posModel{ glm::mat4(1.0f) };
-		posModel = glm::translate(posModel, cam.posCam);
-		posModel = posModel * rot_Model;
-		posModel = glm::translate(posModel, posicionObject_2);
-		posModel = glm::scale(posModel, glm::vec3(0.01f));
-		
-		modelPos.translateM = cam.posCam - posicionObject_2;
-		modelPos.viewOrient = cam.directionView; // Probablemente cambiar para la posicion del flashLight
-		modelPos.model = posModel;
+			glm::mat4 rot_Model{ rot_Yaw * rot_Pitch };
+
+			glm::mat4 posModel{ glm::mat4(1.0f) };
+			posModel = glm::translate(posModel, cam.posCam);
+			posModel = posModel * rot_Model;
+			posModel = glm::translate(posModel, posicionObject_2);
+			posModel = glm::scale(posModel, glm::vec3(0.01f));
+
+			modelPos.translateM = cam.posCam - posicionObject_2;
+			modelPos.viewOrient = cam.directionView; // Probablemente cambiar para la posicion del flashLight
+			modelPos.model = posModel;
+		}
 	}
 
 	void setAllTranforms_Cam()

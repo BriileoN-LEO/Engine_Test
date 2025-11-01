@@ -134,6 +134,14 @@ namespace texture
 		  texture::textureUnits::TEXTURE14,
 	};
 
+	enum class typeTextures
+	{
+		diffuse = 0,
+		specular = 1
+	};
+	
+	extern std::map<typeTextures, std::string> typeTexture;
+
 	struct textureData
 	{
 		texture::textureUnits texUnit{};
@@ -146,11 +154,15 @@ namespace texture
 
 		textureData() {};
 		textureData(unsigned int textureID, std::string type, texture::textureUnits texUnit) : textureID(textureID), type(type), texUnit(texUnit) {};
+		textureData(unsigned int textureID, std::string type, std::string path, texture::textureUnits texUnit) : textureID(textureID), type(type), texUnit(texUnit) {};
 		textureData(unsigned int textureID, int width, int height, int nrChannels, texture::textureUnits texUnit) : 
 			textureID(textureID), width(width), height(height), nrChannels(nrChannels), texUnit(texUnit) {};
 		textureData(unsigned int textureID, std::string type, int width, int height, int nrChannels, texture::textureUnits texUnit) :
 			textureID(textureID), type(type), width(width), height(height), nrChannels(nrChannels), texUnit(texUnit) {
 		};
+
+		void setTextureData(unsigned int textureID, std::string path);
+		void destroy();
 	};
 
 	class textureBuild
@@ -170,6 +182,7 @@ namespace texture
 
 		std::vector<textureData> texU_Data{};
 		float shiness{};
+		bool active_BlendMode{}; ////Para activar el blendMode si se quiere activar.
 
 		Uint8 textureUnits{};
 
@@ -179,11 +192,14 @@ namespace texture
 		void loadTexPerFace(const char* data, texture::textureUnits posicion_TEX, bool flipImage);
 		void loadTexUnit(const char* data, const std::string name, const texture::textureUnits posicion_TEX, bool flipImage);
 
+		void insertTexture(unsigned int textureID, std::string path, std::string typeTexture);
+
 		void setTexturesUnits(); ////Este es especial para el Model Assimp
 
 		void useTexurePerUnit(unsigned int textureID, texture::textureUnits texUnit);
 		void useTextures_PerMaterial(shading::shader& shaderID);
 		void useTextures(); 
+		void destroy();
 
 	};
 

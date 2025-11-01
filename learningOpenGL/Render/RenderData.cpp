@@ -1,20 +1,26 @@
 #include "RenderData.h"
+#include "Collision/ScreenHit.h"
+//#include "2D_UI/2D_ScreenPlayer.h"
 
 namespace RenderData_Set
 {
 	using matSettings = light::lightShader;
-	 
+	  
 	std::map<std::string, ObjCreation::ModelCreation> ModelCreation_D{};
 	std::map<std::string, Assimp::Model> AssimpModel_D{};
 	std::vector<ObjCreation::ModelCreation> MeshLights_MCD{};
+
 	std::vector<light::light1> pointLights_D{};
 	std::vector<light::DirectionalLight> directionalLights_D{};
 	std::map<std::string, light::SpotLight> spotLights_D{};
+
+	std::vector<screenUI::pointerScreen> pointUI_D{};
 	
+	std::vector<individualComp::Multiple_AssimpMesh>multi_AssimpModel{};
+
 	namespace stencilTest
 	{
 		shading::shader stencilTest_shader{};
-		individualComp::singleTriangle triangleStencil{};
 		const void setStencilTest_Shader()
 		{
 			stencilTest_shader.shaderCreation(vShader_StencilTest.c_str(), fShader_StencilTest.c_str());
@@ -93,6 +99,7 @@ namespace RenderData_Set
 
 		std::filesystem::path pathBackpack{ backpack_Model };
 		Assimp::Model modelBackpack(pathBackpack.string(), vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), coordBackPack, ss_Model_v1, aiProcessFlags_BP);
+		modelBackpack.setNameModel("backPack");
 		int numMeshes{ modelBackpack.numMeshes() };
 		for (int i = 0; i < numMeshes; i++)
 		{
@@ -114,6 +121,7 @@ namespace RenderData_Set
 		Assimp::coordModel coord_FloorModel{ glm::vec3(0.0f, -5.0f, 0.0f), glm::vec3(15.0f, 1.0f, 15.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f };
 		std::filesystem::path path_FloorModel{ floor2_Model };
 		Assimp::Model model_Floor(path_FloorModel.string(), vShader_Standard_v1.c_str(), fShader_Standard_v1.c_str(), coord_FloorModel, ss_Model_v2, aiProcessFlags_BP);
+		model_Floor.setNameModel("Floor");
 
 		//////////////////Creacion de la lampara de mano////////////////////////
 
@@ -137,15 +145,77 @@ namespace RenderData_Set
 		
 		Assimp::coordModel coord_FlashLight{ glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.001f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f };
 		std::filesystem::path path_FlashLight{ flashLight_Model };
-		Assimp::Model model_FlashLight(path_FlashLight.string(), vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), coord_FlashLight, ss_FlashLight, aiProcessFlags_BP);
+		Assimp::Model model_FlashLight(path_FlashLight.string(), vShader_Standard_v1.c_str(), fShader_Standard_v1.c_str(), coord_FlashLight, ss_FlashLight, aiProcessFlags_FL);
+		model_FlashLight.setNameModel("FlashLight");
+
+
+		///////////////////Creacion de plantas//////////////////////////
+		
+		unsigned int aiProcessFlags_CV{ aiProcess_Triangulate
+			| aiProcess_FlipUVs
+			| aiProcess_ImproveCacheLocality
+			| aiProcess_CalcTangentSpace
+			| aiProcess_GenSmoothNormals
+			| aiProcess_GenNormals
+			| aiProcess_SortByPType
+			| aiProcess_FlipWindingOrder };
+
+
+		Assimp::shaderSettings ss_Campo01
+		{
+			glm::vec3(0.5f, 0.5f, 0.5f),
+			glm::vec3(0.5f),
+			glm::vec3(0.8f),
+			glm::vec3(0.5f),
+			32.0f
+		};
+
+		Assimp::coordModel coord_Campo01{ glm::vec3(0.0f, -10.0f, 0.0f), glm::vec3(2.0f), glm::vec3(1.0f), 0.0f };
+		std::filesystem::path path_campo_01{ campo_01 };
+		Assimp::Model model_Campo01(path_campo_01.string(), vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), coord_Campo01, ss_Campo01, aiProcessFlags_CV);
+		model_Campo01.setNameModel("CampoVegetacion");
+//		model_Campo01.SetTexture_Mesh(
+
+
+
+		Assimp::shaderSettings ss_Plant01
+		{
+			glm::vec3(0.5f, 0.5f, 0.5f),
+			glm::vec3(0.5f),
+			glm::vec3(0.8f),
+			glm::vec3(0.5f),
+			32.0f
+		};
+
+		unsigned int aiProcessFlags_PL{ aiProcess_Triangulate
+	| aiProcess_FlipUVs
+	| aiProcess_ImproveCacheLocality
+	| aiProcess_CalcTangentSpace
+	| aiProcess_GenSmoothNormals
+	| aiProcess_GenNormals
+	| aiProcess_SortByPType
+	| aiProcess_FlipWindingOrder };
+
+
+		Assimp::coordModel coord_Plant01{ glm::vec3(0.0f, -5.0f, 0.0f), glm::vec3(2.0f), glm::vec3(1.0f), 0.0f };
+		std::filesystem::path path_plant_01{ vegetacion_01 };
+		Assimp::Model model_Plant01(path_plant_01.string(), vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), coord_Plant01, ss_Plant01, aiProcessFlags_PL);
+		model_Plant01.setNameModel("plant01");
+		model_Plant01.SetTexture_Mesh(image_GlassWindow.c_str(), "plant01_1", texture::typeTextures::diffuse);
+		model_Plant01.SetOrderRender_Mesh("plant01_1", Assimp::renderSeq::renderFar);
+		model_Plant01.BlendModeTexture_Mesh("plant01_1", true);
+
 
 
         ///////////////// 
 
 		std::map<std::string, Assimp::Model> AssimpModels
 		{
+			{"CampoVegetacion", model_Campo01},
+			{"plant01", model_Plant01},
 			{"backPack", modelBackpack},
-			{"Floor", model_Floor},
+		//	{"Floor", model_Floor},
+			//{"CampoVegetacion", model_Campo01},
 			{"FlashLight", model_FlashLight}
 		};
 
@@ -389,6 +459,54 @@ namespace RenderData_Set
 
 		return spotLights;
 	}
+	const std::vector<screenUI::pointerScreen> setPointUI_2D()
+	{
+
+		glm::vec3 posScreen{ screenUI::screenWorldPos::getScreenPos(static_cast<float>(screenSettings::screen_w) * 0.5f, static_cast<float>(screenSettings::screen_h) * 0.5f, 0.0f) };
+		posScreen = cameras::aerialCamera.posCam - posScreen;  //para normalizar la posicion en 0 del punto 
+		posScreen *= 2.0f;
+
+		glm::vec3 pointColor{ 0.5f, 0.8f, 0.7f };
+		float size{ 5.0f };
+		screenUI::pointerScreen centerPoint_UI(vShader_Pointer.c_str(), fShader_Pointer.c_str(), size, glm::vec3(0.0f), pointColor);
+
+		std::vector<screenUI::pointerScreen> PointsUI
+		{
+			centerPoint_UI
+		};
+		
+		return PointsUI;
+	}
+	const std::vector<individualComp::Multiple_AssimpMesh> setMulti_AssimpModel()
+	{
+		////Aqui colocar el seteo de los objetos que contendran Multiples Models
+		Assimp::structModelName sM_Plant01
+		{
+			"plant01",
+			"plant01_1",
+			true
+		};	
+
+		std::vector<glm::vec3> pos_Plant01
+		{
+			{4.0f, 5.0f, 2.0f},
+			{3.0f, 5.0f, 1.0f},
+			{2.0f, 5.0f, 3.0f},
+			{2.5f, 5.0f, 4.0f},
+			{4.5f, 5.0f, 1.0f},
+			{1.0f, 5.0f, 3.0f},
+		};
+
+		individualComp::Multiple_AssimpMesh plant01(sM_Plant01, pos_Plant01);
+
+		std::vector<individualComp::Multiple_AssimpMesh> multiMesh
+		{
+			plant01
+		};
+
+		return multiMesh;
+	}
+
 	void setSettings_FileShader(const char* fragmentShader_Path, std::vector<std::string> values)
 	{
 
@@ -476,6 +594,7 @@ namespace RenderData_Set
 
 
 	}
+
 	
 	const void set_AllObjects()
 	{
@@ -489,6 +608,17 @@ namespace RenderData_Set
 		ModelCreation_D = setModelCreation_Data();
 		AssimpModel_D = setModel_Data();
 		MeshLights_MCD = setMeshLight_ModelCreation_Data();
+
+
+		multi_AssimpModel = setMulti_AssimpModel();
+
+		//Creacion del boundingBox
+		AABB::create_BoundingBox_Mesh();
+		//AABB::test_BoundingBos();
+		AABB::setShader_AABB();
+
+		pointUI_D = setPointUI_2D();
+
 	}
 }
 
@@ -500,7 +630,7 @@ namespace cameras
 
 	void setCameras()
 	{
-		aerialCamera.setSettingsCamera(glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.001f, 100.0f);
+		aerialCamera.setSettingsCamera(glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.001, 100.0f);
 		currentCamera = aerialCamera;
 		name_CurrentCamera = "aerialCamera";
 

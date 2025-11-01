@@ -2,12 +2,6 @@
 #define config_window
 
 #include "learningOpenGL.h"
-
-extern int screenSettings::screen_w;
-extern int screenSettings::screen_h;
-extern bool screenSettings::detectChangeSizeWindow;
-extern bool screenSettings::outWindow;
-extern int screenSettings::fps;
 extern glm::vec4 viewportOpenGL;
 
 namespace screenSettings

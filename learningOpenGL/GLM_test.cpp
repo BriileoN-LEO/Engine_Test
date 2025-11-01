@@ -44,6 +44,7 @@ namespace randomN
 
 namespace transformation_basics
 {
+
 	glm::vec3 centroidObj(std::vector<glm::vec3> Obj)
 	{
 		GLuint numVertices = static_cast<GLuint>(Obj.size());
@@ -116,7 +117,31 @@ namespace transformation_basics
 
 		return sumCenterArea;
 	}
+	glm::vec3 calcCenterGeo(std::vector<glm::vec3> vertex)
+	{
+		std::vector<std::pair<glm::vec3, float>>tris{};
 
+		for (int i = 0; i < vertex.size(); i++)
+		{
+			std::vector<glm::vec3> tri
+			{
+				vertex[i],
+				vertex[i + 1],
+				vertex[i + 2]
+			};
+			
+			glm::vec3 centroidTri{ centroidObj(tri) };
+
+			std::array<glm::vec3, 3> arrayTri{ tri[0], tri[1], tri[2] };
+			float areaTri{ areaTriangle(arrayTri) };
+
+			tris.emplace_back(std::pair<glm::vec3, float>(centroidTri, areaTri));
+
+			i += 2;
+		}
+
+		return centerGeo(tris);
+	}
 
 	basics_posGEO::basics_posGEO() {};
 	basics_posGEO::~basics_posGEO() {};
@@ -434,6 +459,17 @@ namespace transformation_basics
 		return matRotPivot;
 	}
 
+	void basics_Model3D::refreshCenter_Pos()
+	{
+
+		glm::mat4 matPos{ glm::mat4(1.0f) };
+		matPos = glm::translate(matPos, posModel_Base);
+
+		matPos = model * matPos;
+
+		posModel = glm::vec3(matPos[3].x, matPos[3].y, matPos[3].z);
+
+	}
 
 	void basics_Model3D::translateModel(glm::vec3 transModel)
 	{

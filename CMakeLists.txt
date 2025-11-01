@@ -16,16 +16,22 @@ set(DATA_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/shaders/shader_v_v1.vs"
 "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_MODEL_T1/vShader_ModelT1.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_MODEL_T1/fShader_ModelT1.frag"
 "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_STANDARD/vShader_Standard_v1.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_STANDARD/fShader_Standard_v1.frag"
 "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_STENCIL_TEST/vShader_stencil_test.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_STENCIL_TEST/fShader_stencil_test.frag"
+"${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADERS_AABB/vShader_AABB_All.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADERS_AABB/fShader_AABB_All.frag"
+"${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_UI/vShader_Pointer.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_UI/fShader_Pointer.frag"
 "${CMAKE_CURRENT_SOURCE_DIR}/images/container.jpg"
 "${CMAKE_CURRENT_SOURCE_DIR}/images/awesomeface.png"
 "${CMAKE_CURRENT_SOURCE_DIR}/images/CubeGrass_Down.png"
 "${CMAKE_CURRENT_SOURCE_DIR}/images/CubeGrass_laterals.png"
 "${CMAKE_CURRENT_SOURCE_DIR}/images/CubeGrass_Top.png"
+"${CMAKE_CURRENT_SOURCE_DIR}/images/grass.png"
+"${CMAKE_CURRENT_SOURCE_DIR}/images/simple_glassWindow.png"
 "C:/Users/Briil/3D_Models_Game Engine/backpack/backpack.obj"
 "C:/Users/Briil/3D_Models_Game Engine/Floor/Floor.obj"
 "C:/Users/Briil/3D_Models_Game Engine/Floor_2/Floor2.obj"
 "C:/Users/Briil/3D_Models_Game Engine/Car_Formula1/Car_Formula1.fbx"
 "C:/Users/Briil/3D_Models_Game Engine/flash-light-17mb/FlashLight/FlashLight.obj"
+"C:/Users/Briil/3D_Models_Game Engine/Campo/Campo_Floor.obj"
+"C:/Users/Briil/3D_Models_Game Engine/vegetacion_01/vegetacion_01.obj"
 )
 
 set(RUTE_COMPLETE_FILES ${DATA_FILE_PATH})
@@ -75,6 +81,8 @@ add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/conf
 "learningOpenGL/Render/Render.cpp" "learningOpenGL/Render/Render.h"
 "learningOpenGL/Render/RenderData.cpp" "learningOpenGL/Render/RenderData.h"
 "learningOpenGL/Collision/ScreenHit.cpp" "learningOpenGL/Collision/ScreenHit.h"
+"learningOpenGL/Collision/CollisionAABB.cpp" "learningOpenGL/Collision/CollisionAABB.h"
+"learningOpenGL/2D_UI/2D_screenPlayer.cpp" "learningOpenGL/2D_UI/2D_screenPlayer.h"
 "learningOpenGL/STB_IMAGE_IMPLEMENT.cpp"
 )
 

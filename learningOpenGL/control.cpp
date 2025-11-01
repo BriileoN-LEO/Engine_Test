@@ -183,7 +183,68 @@ namespace controlMove
 		}
 	}
 
+
 }
+
+namespace ControlScenarios
+{
+
+	stateScenarios scene{ stateScenarios::normalSceneario };
+	scenarioAABB sceneAABB{ scenarioAABB::Triangle };
+
+	std::map<SDL_Keycode, stateScenarios> scenarios
+	{
+		{SDLK_N, stateScenarios::normalSceneario}, //normalScenario ---- N
+		{SDLK_P, stateScenarios::stencilTestAll}, //stencilTestAll ---- P
+		{SDLK_L, stateScenarios::detectAABB} //detectAABB ---- L
+
+	};
+
+	void detectScenario_Key(SDL_Event* event)
+	{
+		if (scenarios.find(event->key.key) != scenarios.end())
+		{
+			if (scene != scenarios[event->key.key])
+			{
+				scene = scenarios[event->key.key];
+		    }
+		
+			else if (scene == scenarios[event->key.key])
+			{
+				controlSubScenearios();
+
+			}
+
+		}
+
+	}
+
+	void controlSubScenearios()
+	{
+		if (scene == stateScenarios::detectAABB)
+		{
+			if (sceneAABB == scenarioAABB::Triangle)
+			{
+				sceneAABB = scenarioAABB::Mesh;
+			}
+			
+			else if (sceneAABB == scenarioAABB::Mesh)
+			{
+				sceneAABB = scenarioAABB::Model;
+
+			}
+
+			else if (sceneAABB == scenarioAABB::Model)
+			{
+				sceneAABB = scenarioAABB::Triangle;
+			}
+		}
+
+	}
+
+
+}
+
 namespace controlMouse
 {
 	glm::vec2 getDistanceMotionMouse()
