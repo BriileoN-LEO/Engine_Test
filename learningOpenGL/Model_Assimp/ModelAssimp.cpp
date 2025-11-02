@@ -3,12 +3,12 @@
 #include "Render/RenderData.h"
 
 
-namespace Assimp
+namespace Assimp_D
 {
 	unsigned int TextureFromFile(const char* path, std::string directory, bool gamma)
 	{
 	
-		std::string pa= std::string(path);
+		std::string pa = std::string(path);
 
 		if (directory != "")
 		{
@@ -17,10 +17,10 @@ namespace Assimp
 		}
 
 
-		int width;
-		int height;
-		int nrChannels;
-		unsigned int texID;
+		int width{};
+		int height{};
+		int nrChannels{};
+		unsigned int texID{};
 
 		glGenTextures(1, &texID);
 
@@ -31,7 +31,6 @@ namespace Assimp
 
 		if (DataT)
 		{
-
 			GLenum format{};
 			if (nrChannels == 1)
 			{
@@ -71,6 +70,52 @@ namespace Assimp
 
 
 		return texID;
+	}
+
+	unsigned int TextureFromData(unsigned char* dataTexture, int width, int height, int nrChannels)
+	{
+		unsigned int id{};
+		if (dataTexture)
+		{
+
+			GLenum format{};
+			if (nrChannels == 1)
+			{
+				format = GL_RED;
+
+			}
+
+			if (nrChannels == 3)
+			{
+				format = GL_RGB;
+
+			}
+
+			if (nrChannels == 4)
+			{
+				format = GL_RGBA;
+
+			}
+
+			glBindTexture(GL_TEXTURE_2D, id);
+			glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, dataTexture);
+			glGenerateMipmap(GL_TEXTURE_2D);
+
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			stbi_image_free(dataTexture);
+		}
+
+		else
+		{
+			SDL_Log("ERROR::NOT LOAD::TEXTURE");
+			stbi_image_free(dataTexture);
+		}
+
+		return id;
 	}
 
 	Mesh::Mesh() {};
@@ -138,6 +183,36 @@ namespace Assimp
 		setupMesh();
 
 	}
+
+	Mesh::Mesh(Assimp_D::loadToCPU::MeshData_loadCPU loadData)
+	{
+		nameMesh = loadData.nameMesh;
+		vertices = loadData.vertices;
+		indices = loadData.indices;
+
+		for (auto& vertex : vertices)
+		{
+			verticesPos.emplace_back(vertex.posicion);
+
+		}
+
+		MeshCoord.posModel_Base = transformation_basics::calcCenterGeo(verticesPos);
+		MeshCoord.posModel = MeshCoord.posModel_Base;
+
+		int seqUnit{};
+		for (auto& texLoad : loadData.textures)
+		{
+			unsigned int texID{ TextureFromData(texLoad.dataTexture, texLoad.width, texLoad.height, texLoad.nrChannels) };
+			textures.texU_Data.emplace_back(texID, texLoad.typeTexture, texLoad.path, texture::textureUnits_Data[seqUnit]);
+			seqUnit++;
+		}
+
+		renderP = renderSeq::renderNear;
+
+		setupMesh();
+
+	}
+
 	void Mesh::setupMesh()
 	{
 		glGenVertexArrays(1, &VAO);
@@ -610,6 +685,28 @@ namespace Assimp
 		glDeleteBuffers(1, &VBO);
 	}
 
+
+	void Model::loadModel_CPU(Assimp_D::loadToCPU::ModelData_loadCPU model)
+	{
+		nameModel = model.nameModel;
+		directory = model.directory;
+
+		for (auto& meshData : model.Meshes_LoadCPU)
+		{
+			meshes.emplace_back(meshData);
+		}
+
+		for (int i = 0; i < static_cast<int>(meshes.size()); i++)
+		{
+			meshes[i].setMeshCoord(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+			meshes[i].MeshCoord.model = ModelCoord.model * meshes[i].MeshCoord.model;
+			meshes[i].MeshCoord.setNormalModelMatrix();
+			//meshes[i].MeshCoord.nameModel = 
+			//meshes[i].shaderSet = shaderSettings;
+
+		}
+
+	}
 	void Model::loadModel(std::string path, const char* vertexPath, const char* fragmentPath, coordModel modelCoords, shaderSettings shaderSettings, unsigned int processFlags)
 	{
 		//IMPORT SHADER
@@ -622,6 +719,7 @@ namespace Assimp
 		//import all Assimp
 		Assimp::Importer importer;
 //		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+	
 
 		const aiScene* scene = importer.ReadFile(path, processFlags);
 		 
@@ -690,12 +788,12 @@ namespace Assimp
 
 			else
 			{
-				texCoords = glm::vec2(0.0f, 0.0f);
+			//	texCoords = glm::vec2(0.0f, 0.0f);
 				SDL_Log("ERROR::TEXTURE_COORDS::NOT_FIND");
 			}
 
 			vertices.emplace_back(vertex, normals, texCoords);
-			SDL_Log(std::to_string(texCoords.x).c_str());
+			//SDL_Log(std::to_string(texCoords.x).c_str());
 		}
 		
 		for (int i = 0; i < mesh->mNumFaces; i++)
@@ -714,8 +812,7 @@ namespace Assimp
 	
 			std::vector<textureD> difusseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
 		
-			shaders.use();
-
+//			shaders.use();
 
 			textures.insert(textures.end(), difusseMaps.begin(), difusseMaps.end());
 			
@@ -743,7 +840,7 @@ namespace Assimp
 
 			for (int i = 0; i < static_cast<int>(textures_Loaded.size()); i++)
 			{
-				if (std::strcmp(textures_Loaded[i].type.c_str(), str.C_Str()) == 0)
+				  if (std::strcmp(textures_Loaded[i].type.c_str(), str.C_Str()) == 0)
 				{
 					tex.emplace_back(textures_Loaded[i]);
 					skip = true;
@@ -773,6 +870,21 @@ namespace Assimp
 	Model::Model(std::string path, const char* vertexPath, const char* fragmentPath, coordModel modelCoords, shaderSettings shaderSettings, unsigned int processFlags)
 	{
 		loadModel(path, vertexPath, fragmentPath, modelCoords, shaderSettings, processFlags);
+	}
+	Model::Model(loadToCPU::ModelData_loadCPU model)
+	{
+		loadModel_CPU(model);
+	}
+	void Model::setModelSettings(coordModel modelCoords, shaderSettings shaderSettings)
+	{
+		//set transform Model General
+		setModelCoord(modelCoords);
+		ModelGlobal_Coord = modelCoords;
+		for (int i = 0; i < static_cast<int>(meshes.size()); i++)
+		{
+			meshes[i].shaderSet = shaderSettings;
+		}
+
 	}
 	void Model::Draw(camera::camera1 cam1, light::light1 light)
 	{
@@ -955,6 +1067,7 @@ namespace Assimp
 	}
 	void Model::BlendModeTexture_Mesh(const std::string nameMesh, bool op)
 	{
+		
 		for (auto& mesh : meshes)
 		{
 			if (nameMesh == mesh.nameMesh)
@@ -965,7 +1078,10 @@ namespace Assimp
 
 		}
 	}
-
+	void Model::loadTemporalShaders(const char* vertexPath, const char* fragmentPath)
+	{
+		shaders.shaderCreation(vertexPath, fragmentPath);
+	}
 
 	std::vector<Mesh>& Model::outMeshes()
 	{
@@ -989,16 +1105,217 @@ namespace Assimp
 		ModelCoord.setNormalModelMatrix();
 	}
 	
+
+	namespace loadToCPU
+	{
+		TextureData_File LoadTextureFromFile(const char* path, std::string directory, std::string typeTexture, bool gamma)
+		{
+			std::string pa = std::string(path);
+
+			if (directory != "")
+			{
+				pa = directory + "/" + pa;
+				SDL_Log(pa.c_str());
+			}
+
+			int width{};
+			int height{};
+			int nrChannels{};
+			unsigned char* DataT = stbi_load(pa.c_str(), &width, &height, &nrChannels, 0);
+
+			stbi_set_flip_vertically_on_load(true);
+
+			return TextureData_File(pa, typeTexture, DataT, width, height, nrChannels);
+		}
+
+		std::queue<ModelData_loadCPU> modelsData{};
+		std::atomic<int> atomic_CounterModel{ 0 };
+		std::atomic<bool> flagsAtomic{ false };
+		std::atomic<bool> finishLoadALL{ false };
+		std::mutex mutexModel;
+		int sizeModels_Count{};
+
+		void loadModelsThread(std::vector<insertProcessModel> models)
+		{
+
+			for (auto& loadModel : models)
+			{
+
+				ModelData_loadCPU modelAssimp{ processModel(loadModel) };
+
+				{
+					std::lock_guard<std::mutex> lock(mutexModel);
+					modelsData.push(modelAssimp);
+
+				}
+
+				atomic_CounterModel++;
+
+			}
+
+			flagsAtomic = true;
+		}
+
+		ModelData_loadCPU processModel(insertProcessModel dataModel)
+		{
+			ModelData_loadCPU data_Out{};
+
+			Assimp::Importer importer;
+			
+			const aiScene* scene = importer.ReadFile(dataModel.path, dataModel.flagsProcessModel);
+
+			if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+			{
+				std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << '\n';
+				return ModelData_loadCPU();
+			}
+
+			data_Out.nameModel = dataModel.nameModel;
+			data_Out.directory = dataModel.path.substr(0, dataModel.path.find_last_of('/'));
+
+			std::vector<MeshData_loadCPU> dataMeshes{};
+			processNode(scene->mRootNode, scene, dataMeshes, data_Out.directory, data_Out.nameModel);
+
+			data_Out.Meshes_LoadCPU = dataMeshes;
+
+			return data_Out;
+		}
+		void processNode(aiNode* node, const aiScene* scene, std::vector<MeshData_loadCPU>& meshes, std::string directory, std::string nameModel)
+		{
+			int countMeshName{1};
+			for (int i = 0; i < node->mNumMeshes; i++)
+			{
+				std::string nameMesh{ nameModel + "_" + std::to_string(countMeshName) };
+				aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+				meshes.emplace_back(processMesh(mesh, scene, directory, nameMesh));
+				countMeshName++;
+			}
+
+			for (int i = 0; i < node->mNumChildren; i++)
+			{
+				processNode(node->mChildren[i], scene, meshes, directory, nameModel);
+
+			}
+		}
+		MeshData_loadCPU processMesh(aiMesh* mesh, const aiScene* scene, std::string directory, std::string nameMesh)
+		{
+			std::vector<vertexD> vertices{};
+			std::vector<unsigned int> indices{};
+			std::vector<TextureData_File> textures{};
+
+			for (int i = 0; i < mesh->mNumVertices; i++)
+			{
+				glm::vec3 vert{};
+
+				vert.x = mesh->mVertices[i].x;
+				vert.y = mesh->mVertices[i].y;
+				vert.z = mesh->mVertices[i].z;
+
+				glm::vec3 normals{};
+
+				normals.x = mesh->mNormals[i].x;
+				normals.y = mesh->mNormals[i].y;
+				normals.z = mesh->mNormals[i].z;
+
+				glm::vec2 texCoords{};
+
+				if (mesh->HasTextureCoords(0))
+				{
+					texCoords.x = mesh->mTextureCoords[0][i].x;
+					texCoords.y = mesh->mTextureCoords[0][i].y;
+				}
+
+				else
+				{
+					SDL_Log("ERROR::NOT::TEXCOORDS");
+				}
+
+				vertices.emplace_back(vertexD(vert, normals, texCoords));
+			}
+
+
+			for (int i = 0; i < mesh->mNumFaces; i++)
+			{
+				aiFace Face = mesh->mFaces[i];
+
+				for (int f = 0; f < Face.mNumIndices; f++)
+				{
+					indices.emplace_back(Face.mIndices[f]);
+				}
+			}
+
+
+
+			if (mesh->mMaterialIndex >= 0)
+			{
+				aiMaterial* material{ scene->mMaterials[mesh->mMaterialIndex] };
+
+				std::vector<TextureData_File> difusseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse", directory);
+
+				//			shaders.use();
+
+				textures.insert(textures.end(), difusseMaps.begin(), difusseMaps.end());
+
+				std::vector<TextureData_File> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular", directory);
+
+				textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+			}
+
+			return MeshData_loadCPU(nameMesh, vertices, indices, textures);
+
+		}
+
+		std::vector<TextureData_File> loadMaterialTextures(aiMaterial* mat, aiTextureType matType, std::string typeName, std::string directory)
+		{
+			std::vector<TextureData_File> tex{};
+			std::vector<TextureData_File> tex_Loaded{};
+			//aiGetMaterialTexture()
+			for (int i = 0; i < mat->GetTextureCount(matType); i++)
+			{
+				aiString str{};
+				mat->GetTexture(matType, i, &str);
+				textureD texture{};
+				bool skip{ false };
+
+				for (int i = 0; i < static_cast<int>(tex_Loaded.size()); i++)
+				{
+					if (std::strcmp(tex_Loaded[i].path.c_str(), str.C_Str()) == 0)
+					{
+						//tex.emplace_back(tex_Loaded[i]);
+						skip = true;
+						break;
+					}
+
+				}
+
+				if (!skip)
+				{
+				
+					TextureData_File texture{ LoadTextureFromFile(str.C_Str(), directory, typeName) };
+					tex.emplace_back(texture);
+					tex_Loaded.emplace_back(texture);
+					SDL_Log(texture.typeTexture.c_str());
+
+				}
+			}
+
+			return tex;
+		}
+
+	}
+
+
+
 }
 
 namespace individualComp
 {
 	singleTriangle::singleTriangle() {};
-	singleTriangle::singleTriangle(std::vector<Assimp::vertexD> vertex)
+	singleTriangle::singleTriangle(std::vector<Assimp_D::vertexD> vertex)
 	{
 		setTriangle(vertex);
 	}
-	void singleTriangle::setTriangle(std::vector<Assimp::vertexD> vertex)
+	void singleTriangle::setTriangle(std::vector<Assimp_D::vertexD> vertex)
 	{
 	    if (!this->vertex.empty())
 		{
@@ -1022,22 +1339,22 @@ namespace individualComp
 		glBindVertexArray(VAO);
 
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, vertex.size() * sizeof(Assimp::vertexD), &vertex[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, vertex.size() * sizeof(Assimp_D::vertexD), &vertex[0], GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Assimp::vertexD), (void*)0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Assimp_D::vertexD), (void*)0);
 
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Assimp::vertexD), (void*)offsetof(Assimp::vertexD, Normal));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Assimp_D::vertexD), (void*)offsetof(Assimp_D::vertexD, Normal));
 
 		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Assimp::vertexD), (void*)offsetof(Assimp::vertexD, TexCoord));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Assimp_D::vertexD), (void*)offsetof(Assimp_D::vertexD, TexCoord));
 
 		glBindVertexArray(0);
 
 	}
 
-	void singleTriangle::setShaderSettings(Assimp::shaderSettings shader)
+	void singleTriangle::setShaderSettings(Assimp_D::shaderSettings shader)
 	{
 		shaderSet = shader;
 	}
@@ -1168,7 +1485,7 @@ namespace individualComp
 	}
 	void singleTriangle::drawTest_2()
 	{
-		std::vector<Assimp::Mesh>& meshes{ RenderData_Set::AssimpModel_D[name.nameModel].outMeshes() };
+		std::vector<Assimp_D::Mesh>& meshes{ RenderData_Set::AssimpModel_D[name.nameModel].outMeshes() };
 
 		for (int i = 0; i < static_cast<int>(meshes.size()); i++)
 		{
@@ -1189,7 +1506,7 @@ namespace individualComp
 
 	void singleTriangle::drawSelection()
 	{
-		std::vector<Assimp::Mesh>& meshes{ RenderData_Set::AssimpModel_D[name.nameModel].outMeshes() };
+		std::vector<Assimp_D::Mesh>& meshes{ RenderData_Set::AssimpModel_D[name.nameModel].outMeshes() };
 		glm::mat4 model{ glm::mat4(1.0f) };
 
 		for (auto& mesh : meshes)
@@ -1219,7 +1536,7 @@ namespace individualComp
 
 	void singleTriangle::updateTexture()
 	{
-		std::unique_ptr<std::vector<Assimp::Mesh>> meshes{ std::make_unique<std::vector<Assimp::Mesh>>(RenderData_Set::AssimpModel_D[name.nameModel].outMeshes()) };
+		std::unique_ptr<std::vector<Assimp_D::Mesh>> meshes{ std::make_unique<std::vector<Assimp_D::Mesh>>(RenderData_Set::AssimpModel_D[name.nameModel].outMeshes()) };
 		for (int i = 0; i < static_cast<int>(meshes->size()); i++)
 		{
 			if (meshes->at(i).nameMesh == name.nameMesh)
@@ -1232,7 +1549,7 @@ namespace individualComp
 	}
 	void singleTriangle::updateModel()
 	{
-		std::unique_ptr<std::vector<Assimp::Mesh>> meshes{ std::make_unique<std::vector<Assimp::Mesh>>(RenderData_Set::AssimpModel_D[name.nameModel].outMeshes()) };
+		std::unique_ptr<std::vector<Assimp_D::Mesh>> meshes{ std::make_unique<std::vector<Assimp_D::Mesh>>(RenderData_Set::AssimpModel_D[name.nameModel].outMeshes()) };
 		for (int i = 0; i < static_cast<int>(meshes->size()); i++)
 		{
 			if (meshes->at(i).nameMesh == name.nameMesh)
@@ -1256,15 +1573,15 @@ namespace individualComp
 
 
 	Multiple_AssimpMesh::Multiple_AssimpMesh() {};
-	Multiple_AssimpMesh::Multiple_AssimpMesh(Assimp::structModelName meshToCopy, std::vector<glm::vec3> quantityMesh)
+	Multiple_AssimpMesh::Multiple_AssimpMesh(Assimp_D::structModelName meshToCopy, std::vector<glm::vec3> quantityMesh)
 	{
 		setMultipleMesh(meshToCopy, quantityMesh);
 
 	};
 
-	void Multiple_AssimpMesh::setMultipleMesh(Assimp::structModelName meshToCopy, std::vector<glm::vec3> quantityMesh)
+	void Multiple_AssimpMesh::setMultipleMesh(Assimp_D::structModelName meshToCopy, std::vector<glm::vec3> quantityMesh)
 	{
-		std::vector<Assimp::Mesh>& meshes{ RenderData_Set::AssimpModel_D[meshToCopy.nameModel].outMeshes() };
+		std::vector<Assimp_D::Mesh>& meshes{ RenderData_Set::AssimpModel_D[meshToCopy.nameModel].outMeshes() };
 
 
 		///Para colocar la copia de los meshes
@@ -1331,7 +1648,7 @@ namespace individualComp
 							{
 								int posicionInMesh{};
 
-								if (mesh.renderP == Assimp::renderSeq::renderFar)
+								if (mesh.renderP == Assimp_D::renderSeq::renderFar)
 								{
 									posicionInMesh = static_cast<int>(setDataMesh_Multi.size()) - 1 ;
 								}
@@ -1345,11 +1662,11 @@ namespace individualComp
 									
 										if (distLenght_seq < distLenght_Current)
 										{
-											if (mesh.renderP == Assimp::renderSeq::renderNear)
+											if (mesh.renderP == Assimp_D::renderSeq::renderNear)
 											{
 												posicionInMesh++;
 											}
-											else if (mesh.renderP == Assimp::renderSeq::renderFar)
+											else if (mesh.renderP == Assimp_D::renderSeq::renderFar)
 											{
 												posicionInMesh--;
 											}

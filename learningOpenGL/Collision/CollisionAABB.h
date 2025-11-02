@@ -38,7 +38,7 @@ namespace AABB
 	{
 	public:
 
-		Assimp::structModelName nameAABB{}; //Linkearlo con el mesh indicado
+		Assimp_D::structModelName nameAABB{}; //Linkearlo con el mesh indicado
 		unsigned int VAO{};
 		unsigned int VBO{};
 
@@ -52,8 +52,8 @@ namespace AABB
 		shading::shader shaderAABB{};
 		
 		BoundingBox();
-		BoundingBox(Assimp::structModelName nameAABB, std::vector<glm::vec3> vertAABB, boxAABB box_Coord, std::map<std::string, triAABB> boxTrisAABB);
-		void loadBoundingBox(Assimp::structModelName nameAABB, std::vector<glm::vec3> vertAABB, boxAABB box_Coord, std::map<std::string, triAABB> boxTrisAABB);
+		BoundingBox(Assimp_D::structModelName nameAABB, std::vector<glm::vec3> vertAABB, boxAABB box_Coord, std::map<std::string, triAABB> boxTrisAABB);
+		void loadBoundingBox(Assimp_D::structModelName nameAABB, std::vector<glm::vec3> vertAABB, boxAABB box_Coord, std::map<std::string, triAABB> boxTrisAABB);
 		void setUpBox();
 		void draw();
 		void destroy();
@@ -77,7 +77,7 @@ namespace AABB
 namespace data_HitAABB
 {
 	//extern Assimp::structModelName nameModel_Stencil;
-	extern std::pair<Assimp::structModelName, AABB::numberVertSelected> selectedObj;
+	extern std::pair<Assimp_D::structModelName, AABB::numberVertSelected> selectedObj;
 	extern individualComp::singleTriangle triangleStencil;
 	extern bool renderSelection;
 }

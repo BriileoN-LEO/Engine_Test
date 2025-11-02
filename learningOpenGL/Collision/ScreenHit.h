@@ -23,12 +23,12 @@ namespace ScreenCalc_Hit
 	};
 
 	//extern Assimp::Model* currentSelect; std::vector<Assimp::structModelName>
-	extern std::vector<Assimp::structModelName> nameMesh_Hit;
+	extern std::vector<Assimp_D::structModelName> nameMesh_Hit;
 
 	std::map<std::string, glm::vec3> calculateWorldCoord_WindowPos();
 
 	void calculateIntersect_Objects(); 
-	bool calc_IntersectTriangleMesh(std::vector< Assimp::structModelName>& Mesh, glm::vec3 nearPt, glm::vec3 direction_R);
+	bool calc_IntersectTriangleMesh(std::vector<Assimp_D::structModelName>& Mesh, glm::vec3 nearPt, glm::vec3 direction_R);
 	void calc_IntersectAABB();
 	void calc_IntersectALL();
 }

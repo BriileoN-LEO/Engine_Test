@@ -45,6 +45,13 @@ namespace shading
 		
 		void destroy();
 	};
+
+	namespace loadToCPU	
+	{
+
+
+	}
+   
 }
 namespace Vertex
 {
@@ -154,7 +161,7 @@ namespace texture
 
 		textureData() {};
 		textureData(unsigned int textureID, std::string type, texture::textureUnits texUnit) : textureID(textureID), type(type), texUnit(texUnit) {};
-		textureData(unsigned int textureID, std::string type, std::string path, texture::textureUnits texUnit) : textureID(textureID), type(type), texUnit(texUnit) {};
+		textureData(unsigned int textureID, std::string type, std::string path, texture::textureUnits texUnit) : textureID(textureID), type(type), path(path), texUnit(texUnit) {};
 		textureData(unsigned int textureID, int width, int height, int nrChannels, texture::textureUnits texUnit) : 
 			textureID(textureID), width(width), height(height), nrChannels(nrChannels), texUnit(texUnit) {};
 		textureData(unsigned int textureID, std::string type, int width, int height, int nrChannels, texture::textureUnits texUnit) :

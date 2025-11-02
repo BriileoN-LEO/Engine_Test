@@ -13,13 +13,14 @@
 namespace RenderData_Set
 {
 	extern std::map<std::string, ObjCreation::ModelCreation> ModelCreation_D;
-	extern std::map<std::string, Assimp::Model> AssimpModel_D;
+	extern std::map<std::string, Assimp_D::Model> AssimpModel_D;
 	extern std::vector<ObjCreation::ModelCreation> MeshLights_MCD;
 	extern std::vector<light::light1> pointLights_D;
 	extern std::vector<light::DirectionalLight> directionalLights_D;
 	extern std::map<std::string, light::SpotLight> spotLights_D;
 	extern std::vector<screenUI::pointerScreen> pointUI_D;
-	extern std::vector<individualComp::Multiple_AssimpMesh>multi_AssimpModel;
+	extern std::vector<individualComp::Multiple_AssimpMesh> multi_AssimpModel;
+	extern std::map<std::string, shading::shader>shader_D;
 
 	namespace stencilTest
 	{
@@ -28,7 +29,14 @@ namespace RenderData_Set
 	}
 
 	const std::map<std::string, ObjCreation::ModelCreation> setModelCreation_Data();
-	const std::map<std::string, Assimp::Model> setModel_Data();
+
+	const std::map<std::string, Assimp_D::Model> setModel_Data();
+
+
+	const void loadCPU_Model_Data();
+	const void insertData_toModel(); 
+	const void insertSetting_toModel();////Continuar aqui para ir insertando los modelos 3D 
+
 	const std::vector<ObjCreation::ModelCreation> setMeshLight_ModelCreation_Data();
 	const std::vector<light::light1> setPointLights();
 	const std::vector<light::DirectionalLight> setDirectionalLights();

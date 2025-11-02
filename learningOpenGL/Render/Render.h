@@ -14,7 +14,6 @@ namespace render
 	 void renderAll();
 }
 
-
 namespace openGL_render
 {
 	void setGlobalRender_OpenGL();

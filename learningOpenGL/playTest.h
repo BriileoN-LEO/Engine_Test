@@ -25,8 +25,8 @@ namespace testPlay
 		void setSettingsTransform(glm::vec3 posicion, glm::vec3 scale, glm::vec3 pivotRotPos, GLfloat velocityAng);
 		void transformUniqueModel(ObjCreation::ModelCreation* modelTest, camera::camera1 cam, light::light1 lightModel);
 		void transformMeshLight(ObjCreation::ModelCreation* modelTest, light::light1* lightModel);
-		void transformModel_test1(Assimp::coordModel* coordM);
-		void moveModel_Test(Assimp::coordModel* coordM);
+		void transformModel_test1(Assimp_D::coordModel* coordM);
+		void moveModel_Test(Assimp_D::coordModel* coordM);
 
 		void ColorSeq(ObjCreation::ModelCreation* modelTest, light::light1* lightModel);
 	};

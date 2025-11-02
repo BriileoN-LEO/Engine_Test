@@ -19,3 +19,9 @@
 #include <utility>
 #include <tuple>
 #include <array>
+#include <thread>
+#include <stdexcept>
+#include <functional>
+#include <atomic>
+#include <queue>
+#include <mutex>

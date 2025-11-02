@@ -73,7 +73,7 @@ namespace opScreenHit
 
 namespace ScreenCalc_Hit
 {
-	std::vector<Assimp::structModelName> nameMesh_Hit{};
+	std::vector<Assimp_D::structModelName> nameMesh_Hit{};
 
 	std::array<selectObjParts, 3> selectedParts
 	{
@@ -156,7 +156,7 @@ namespace ScreenCalc_Hit
 		
 		for(auto& dataModels : RenderData_Set::AssimpModel_D)
 		{
-			std::vector<Assimp::Mesh> meshesModel{ dataModels.second.outMeshes() };
+			std::vector<Assimp_D::Mesh> meshesModel{ dataModels.second.outMeshes() };
 			for (int i = 0; i < static_cast<int>(meshesModel.size()); i++)
 			{
 				int numberTriangles{ static_cast<int>(meshesModel[i].vertices.size()) / 3 };
@@ -196,18 +196,18 @@ namespace ScreenCalc_Hit
 		}
 
 	}
-	bool calc_IntersectTriangleMesh(std::vector<Assimp::structModelName>& Mesh, glm::vec3 nearPt, glm::vec3 direction_R)
+	bool calc_IntersectTriangleMesh(std::vector<Assimp_D::structModelName>& Mesh, glm::vec3 nearPt, glm::vec3 direction_R)
 	{
 		bool intersectSuccessful{ false };
 		AABB::numberVertSelected numberVert{};
-		std::vector<Assimp::vertexD> vertex{};
+		std::vector<Assimp_D::vertexD> vertex{};
 		vertex.resize(3);
 		float dist{ 200.0f };
 		int meshSelected{};
 
 		for (int m = 0; m < static_cast<int>(Mesh.size()); m++)
 		{
-			std::vector<Assimp::Mesh>& meshes{ RenderData_Set::AssimpModel_D[Mesh[m].nameModel].outMeshes()};
+			std::vector<Assimp_D::Mesh>& meshes{ RenderData_Set::AssimpModel_D[Mesh[m].nameModel].outMeshes()};
 
 			for (auto& mesh : meshes)
 			{
@@ -302,7 +302,7 @@ namespace ScreenCalc_Hit
 					data_HitAABB::triangleStencil.shader = RenderData_Set::AssimpModel_D[Mesh[meshSelected].nameModel].outShader();
 					data_HitAABB::triangleStencil.name = Mesh[meshSelected];
 					//data_HitAABB::triangleStencil.MeshCoord = mesh.MeshCoord;
-					data_HitAABB::selectedObj = std::pair<Assimp::structModelName, AABB::numberVertSelected>(Mesh[meshSelected], numberVert);
+					data_HitAABB::selectedObj = std::pair<Assimp_D::structModelName, AABB::numberVertSelected>(Mesh[meshSelected], numberVert);
 				}
 
 
@@ -324,7 +324,7 @@ namespace ScreenCalc_Hit
 				data_HitAABB::triangleStencil.shader = RenderData_Set::AssimpModel_D[Mesh[meshSelected].nameModel].outShader();
 				//	}
 
-				data_HitAABB::selectedObj = std::pair<Assimp::structModelName, AABB::numberVertSelected>(Mesh[meshSelected], numberVert);
+				data_HitAABB::selectedObj = std::pair<Assimp_D::structModelName, AABB::numberVertSelected>(Mesh[meshSelected], numberVert);
 
 			}
 		}
@@ -342,8 +342,8 @@ namespace ScreenCalc_Hit
 		direction_R = glm::normalize(direction_R);
 		std::string nameModel_Intersect{};
 
-		std::vector<std::pair<Assimp::structModelName, float>> distances_AABB{};
-		std::vector< Assimp::structModelName> namesIntersectAABB{};
+		std::vector<std::pair<Assimp_D::structModelName, float>> distances_AABB{};
+		std::vector< Assimp_D::structModelName> namesIntersectAABB{};
 
 
 		for (auto& AABB_box : AABB::meshBoundingBox)
@@ -361,7 +361,7 @@ namespace ScreenCalc_Hit
 					if (correctIntersect == true)
 					{
 						float dist = glm::distance(pointCollision, coord_PointScreen["nearPoint"]);
-						distances_AABB.emplace_back(std::pair<Assimp::structModelName, float>(AABB_box.nameAABB, t));
+						distances_AABB.emplace_back(std::pair<Assimp_D::structModelName, float>(AABB_box.nameAABB, t));
 						namesIntersectAABB.emplace_back(AABB_box.nameAABB);
 						//SDL_Log(std::string("CORRECT::INTERSECTION---" + AABB_box.nameAABB.nameMesh).c_str());
 					}

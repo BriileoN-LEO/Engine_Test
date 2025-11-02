@@ -1,5 +1,6 @@
 #include "Render.h"
 #include "RenderData.h"
+//#include "playTest.h"
 //#include "Collision/ScreenHit.h"
 
 
@@ -31,7 +32,7 @@ namespace render
 		{
 			if (modelSearch.second.nameModel != excludeModel)
 			{
-				std::vector<Assimp::Mesh>& meshesSearch{ modelSearch.second.outMeshes() };
+				std::vector<Assimp_D::Mesh>& meshesSearch{ modelSearch.second.outMeshes() };
 
 				for (auto& meshS : meshesSearch)
 				{
@@ -41,11 +42,11 @@ namespace render
 
 						switch (meshS.renderP)
 						{
-						case Assimp::renderSeq::renderNear:
+						case Assimp_D::renderSeq::renderNear:
 							meshesNear.emplace(meshS.nameMesh, dist);
 							break;
 
-						case Assimp::renderSeq::renderFar:
+						case Assimp_D::renderSeq::renderFar:
 							meshesFar.emplace(meshS.nameMesh, dist);
 							break;
 						}
@@ -89,7 +90,7 @@ namespace render
 
 			 for (auto& renderMesh : RenderData_Set::AssimpModel_D)
 			 {
-				 std::vector<Assimp::Mesh>& meshesSearch{ renderMesh.second.outMeshes() };
+				 std::vector<Assimp_D::Mesh>& meshesSearch{ renderMesh.second.outMeshes() };
 
 				 for (auto& mesh : meshesSearch)
 				 {
@@ -131,7 +132,7 @@ namespace render
 			
 			for (auto& renderMesh : RenderData_Set::AssimpModel_D)
 			{
-				std::vector<Assimp::Mesh>& meshesSearch{ renderMesh.second.outMeshes() };
+				std::vector<Assimp_D::Mesh>& meshesSearch{ renderMesh.second.outMeshes() };
 
 				for (auto& mesh : meshesSearch)
 				{
@@ -258,6 +259,10 @@ namespace render
 
 
 }
+
+
+
+
 
 namespace openGL_render
 {
@@ -394,7 +399,7 @@ namespace renderSelection
 			glStencilMask(0x00);
 			//	glDisable(GL_DEPTH_TEST);
 
-			std::vector<Assimp::Mesh>& meshesData{ RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel].outMeshes() };
+			std::vector<Assimp_D::Mesh>& meshesData{ RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel].outMeshes() };
 			glm::mat4 modelMat{ glm::mat4(1.0f) };
 
 			RenderData_Set::stencilTest::stencilTest_shader.use();
@@ -465,7 +470,7 @@ namespace renderSelection
 			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 			glStencilMask(0x00);
 
-			std::vector<Assimp::Mesh>& Meshes{ RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel].outMeshes() };
+			std::vector<Assimp_D::Mesh>& Meshes{ RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel].outMeshes() };
 			for (auto& mesh : Meshes)
 			{
 				RenderData_Set::stencilTest::stencilTest_shader.use();
@@ -577,7 +582,7 @@ namespace stencil_test
 			
 			if (pass == false)
 			{
-				std::vector<Assimp::Mesh>& meshesData{ renderMAD.second.outMeshes() };
+				std::vector<Assimp_D::Mesh>& meshesData{ renderMAD.second.outMeshes() };
 				for (auto& meshes : meshesData)
 				{
 					glm::mat4 modelMesh = glm::mat4(1.0f);

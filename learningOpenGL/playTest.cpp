@@ -36,7 +36,7 @@ namespace testPlay
 		modelTest->modelCoord.setInverseTransformsAll();
 		lightModel->Posicion = modelTest->modelCoord.translateM;
 	}
-	void tranformationT::transformModel_test1(Assimp::coordModel* coordM)
+	void tranformationT::transformModel_test1(Assimp_D::coordModel* coordM)
 	{
 		ang += velocityAng;
 
@@ -77,7 +77,7 @@ namespace testPlay
 
 
 	}
-	void tranformationT::moveModel_Test(Assimp::coordModel* coordM)
+	void tranformationT::moveModel_Test(Assimp_D::coordModel* coordM)
 	{
 		const bool* stateKeys = SDL_GetKeyboardState(nullptr);
 

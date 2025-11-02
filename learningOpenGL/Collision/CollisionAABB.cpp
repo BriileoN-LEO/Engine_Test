@@ -7,11 +7,11 @@ namespace AABB
 {
 
 	BoundingBox::BoundingBox() {};
-	BoundingBox::BoundingBox(Assimp::structModelName nameAABB, std::vector<glm::vec3> vertAABB, boxAABB box_Coord, std::map<std::string, triAABB> boxTrisAABB)
+	BoundingBox::BoundingBox(Assimp_D::structModelName nameAABB, std::vector<glm::vec3> vertAABB, boxAABB box_Coord, std::map<std::string, triAABB> boxTrisAABB)
 	{
 		loadBoundingBox(nameAABB, vertAABB, box_Coord, boxTrisAABB);
 	}
-	void BoundingBox::loadBoundingBox(Assimp::structModelName nameAABB, std::vector<glm::vec3> vertAABB, boxAABB box_Coord, std::map<std::string, triAABB> boxTrisAABB)
+	void BoundingBox::loadBoundingBox(Assimp_D::structModelName nameAABB, std::vector<glm::vec3> vertAABB, boxAABB box_Coord, std::map<std::string, triAABB> boxTrisAABB)
 	{
 		this->nameAABB = nameAABB;
 		this->vertAABB = vertAABB;
@@ -44,7 +44,7 @@ namespace AABB
 	{
 		shaderAABB.use();
 		
-		std::vector<Assimp::Mesh>& meshes_AABB{ RenderData_Set::AssimpModel_D[nameAABB.nameModel].outMeshes() };
+		std::vector<Assimp_D::Mesh>& meshes_AABB{ RenderData_Set::AssimpModel_D[nameAABB.nameModel].outMeshes() };
 		bool notFind{ true };
 		for (auto& f_mesh : meshes_AABB)
 		{ 
@@ -349,7 +349,7 @@ namespace AABB
 			
 			if (existBoundingBox == false)
 			{
-				std::vector<Assimp::Mesh>& Meshes{ Model.second.outMeshes() };
+				std::vector<Assimp_D::Mesh>& Meshes{ Model.second.outMeshes() };
 
 
 				for (int i = 0; i < static_cast<int>(Meshes.size()); i++)
@@ -405,7 +405,7 @@ namespace AABB
 
 					std::pair<std::vector<glm::vec3>, boxAABB> box{ calcBox(minPos, maxPos) };
 					std::map<std::string, triAABB> trisAABB{ calcTrisAABB(box.second) }; ////////cambio de inicializacion
-					Assimp::structModelName name
+					Assimp_D::structModelName name
 					{
 						Model.second.nameModel,
 						Meshes[i].nameMesh, //REVISAR
@@ -431,7 +431,7 @@ namespace AABB
 		glm::vec3 vert7{ -1.0f, -1.0f, -1.0f };
 		glm::vec3 vert8{ 1.0f, -1.0f, -1.0f };
 
-		Assimp::structModelName name
+		Assimp_D::structModelName name
 		{
 			"panchito",
 			"panchito_Jr",
@@ -454,14 +454,14 @@ namespace AABB
 	void updateCoordAABB_All()
 	{
 		std::string last_Model{};
-		std::unique_ptr<std::vector<Assimp::Mesh>> currentMeshes{ nullptr };
+		std::unique_ptr<std::vector<Assimp_D::Mesh>> currentMeshes{ nullptr };
 
 		for (auto& AABB_box : meshBoundingBox)
 		{
 			if (AABB_box.nameAABB.nameModel != last_Model)
 			{
 				currentMeshes.reset();
-				currentMeshes = std::make_unique<std::vector<Assimp::Mesh>>(RenderData_Set::AssimpModel_D[AABB_box.nameAABB.nameModel].outMeshes());
+				currentMeshes = std::make_unique<std::vector<Assimp_D::Mesh>>(RenderData_Set::AssimpModel_D[AABB_box.nameAABB.nameModel].outMeshes());
 				last_Model = AABB_box.nameAABB.nameModel;
 			}
 
@@ -486,7 +486,7 @@ namespace AABB
 namespace data_HitAABB
 {
 //	Assimp::structModelName nameModel_Stencil{};
-	std::pair<Assimp::structModelName, AABB::numberVertSelected> selectedObj{};
+	std::pair<Assimp_D::structModelName, AABB::numberVertSelected> selectedObj{};
 	individualComp::singleTriangle triangleStencil{};
 	bool renderSelection{};
 }

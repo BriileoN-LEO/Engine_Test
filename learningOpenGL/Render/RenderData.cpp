@@ -1,5 +1,6 @@
 #include "RenderData.h"
 #include "Collision/ScreenHit.h"
+#include "playTest.h"
 //#include "2D_UI/2D_ScreenPlayer.h"
 
 namespace RenderData_Set
@@ -7,7 +8,7 @@ namespace RenderData_Set
 	using matSettings = light::lightShader;
 	  
 	std::map<std::string, ObjCreation::ModelCreation> ModelCreation_D{};
-	std::map<std::string, Assimp::Model> AssimpModel_D{};
+	std::map<std::string, Assimp_D::Model> AssimpModel_D{};
 	std::vector<ObjCreation::ModelCreation> MeshLights_MCD{};
 
 	std::vector<light::light1> pointLights_D{};
@@ -15,8 +16,10 @@ namespace RenderData_Set
 	std::map<std::string, light::SpotLight> spotLights_D{};
 
 	std::vector<screenUI::pointerScreen> pointUI_D{};
-	
 	std::vector<individualComp::Multiple_AssimpMesh>multi_AssimpModel{};
+
+	std::map<std::string, shading::shader>shader_D;
+
 
 	namespace stencilTest
 	{
@@ -75,10 +78,10 @@ namespace RenderData_Set
 
 		return ModelCreation_Mesh;
 	}
-	const std::map<std::string, Assimp::Model> setModel_Data()
+	const std::map<std::string, Assimp_D::Model> setModel_Data()
 	{
 
-		Assimp::shaderSettings ss_Model_v1
+		Assimp_D::shaderSettings ss_Model_v1
 		{
 			glm::vec3(0.8f, 0.8f, 0.8f),
 			glm::vec3(1.0f),
@@ -86,7 +89,7 @@ namespace RenderData_Set
 			glm::vec3(0.8f),
 			32.0f
 		};
-		Assimp::coordModel coordBackPack{ glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f), 210.0f };
+		Assimp_D::coordModel coordBackPack{ glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f), 210.0f };
 
 		unsigned int aiProcessFlags_BP{ aiProcess_Triangulate
 			| aiProcess_FlipUVs
@@ -98,7 +101,7 @@ namespace RenderData_Set
 
 
 		std::filesystem::path pathBackpack{ backpack_Model };
-		Assimp::Model modelBackpack(pathBackpack.string(), vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), coordBackPack, ss_Model_v1, aiProcessFlags_BP);
+		Assimp_D::Model modelBackpack(pathBackpack.string(), vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), coordBackPack, ss_Model_v1, aiProcessFlags_BP);
 		modelBackpack.setNameModel("backPack");
 		int numMeshes{ modelBackpack.numMeshes() };
 		for (int i = 0; i < numMeshes; i++)
@@ -108,7 +111,7 @@ namespace RenderData_Set
 
 		/////////////////////CREACION DE FLOOR MODEL ///////////
 
-		Assimp::shaderSettings ss_Model_v2
+		Assimp_D::shaderSettings ss_Model_v2
 		{
 			glm::vec3(0.5f, 0.5f, 0.5f),
 			glm::vec3(0.5f),
@@ -118,14 +121,14 @@ namespace RenderData_Set
 
 		};
 
-		Assimp::coordModel coord_FloorModel{ glm::vec3(0.0f, -5.0f, 0.0f), glm::vec3(15.0f, 1.0f, 15.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f };
+		Assimp_D::coordModel coord_FloorModel{ glm::vec3(0.0f, -5.0f, 0.0f), glm::vec3(15.0f, 1.0f, 15.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f };
 		std::filesystem::path path_FloorModel{ floor2_Model };
-		Assimp::Model model_Floor(path_FloorModel.string(), vShader_Standard_v1.c_str(), fShader_Standard_v1.c_str(), coord_FloorModel, ss_Model_v2, aiProcessFlags_BP);
+		Assimp_D::Model model_Floor(path_FloorModel.string(), vShader_Standard_v1.c_str(), fShader_Standard_v1.c_str(), coord_FloorModel, ss_Model_v2, aiProcessFlags_BP);
 		model_Floor.setNameModel("Floor");
 
 		//////////////////Creacion de la lampara de mano////////////////////////
 
-		Assimp::shaderSettings ss_FlashLight
+		Assimp_D::shaderSettings ss_FlashLight
 		{
 			glm::vec3(0.5f, 0.5f, 0.5f),
 			glm::vec3(0.5f),
@@ -143,9 +146,9 @@ namespace RenderData_Set
 			| aiProcess_SortByPType
 			| aiProcess_FlipWindingOrder };
 		
-		Assimp::coordModel coord_FlashLight{ glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.001f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f };
+		Assimp_D::coordModel coord_FlashLight{ glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.001f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f };
 		std::filesystem::path path_FlashLight{ flashLight_Model };
-		Assimp::Model model_FlashLight(path_FlashLight.string(), vShader_Standard_v1.c_str(), fShader_Standard_v1.c_str(), coord_FlashLight, ss_FlashLight, aiProcessFlags_FL);
+		Assimp_D::Model model_FlashLight(path_FlashLight.string(), vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), coord_FlashLight, ss_FlashLight, aiProcessFlags_FL);
 		model_FlashLight.setNameModel("FlashLight");
 
 
@@ -161,7 +164,7 @@ namespace RenderData_Set
 			| aiProcess_FlipWindingOrder };
 
 
-		Assimp::shaderSettings ss_Campo01
+		Assimp_D::shaderSettings ss_Campo01
 		{
 			glm::vec3(0.5f, 0.5f, 0.5f),
 			glm::vec3(0.5f),
@@ -170,15 +173,15 @@ namespace RenderData_Set
 			32.0f
 		};
 
-		Assimp::coordModel coord_Campo01{ glm::vec3(0.0f, -10.0f, 0.0f), glm::vec3(2.0f), glm::vec3(1.0f), 0.0f };
+		Assimp_D::coordModel coord_Campo01{ glm::vec3(0.0f, -10.0f, 0.0f), glm::vec3(2.0f), glm::vec3(1.0f), 0.0f };
 		std::filesystem::path path_campo_01{ campo_01 };
-		Assimp::Model model_Campo01(path_campo_01.string(), vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), coord_Campo01, ss_Campo01, aiProcessFlags_CV);
+		Assimp_D::Model model_Campo01(path_campo_01.string(), vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), coord_Campo01, ss_Campo01, aiProcessFlags_CV);
 		model_Campo01.setNameModel("CampoVegetacion");
 //		model_Campo01.SetTexture_Mesh(
 
 
 
-		Assimp::shaderSettings ss_Plant01
+		Assimp_D::shaderSettings ss_Plant01
 		{
 			glm::vec3(0.5f, 0.5f, 0.5f),
 			glm::vec3(0.5f),
@@ -197,30 +200,218 @@ namespace RenderData_Set
 	| aiProcess_FlipWindingOrder };
 
 
-		Assimp::coordModel coord_Plant01{ glm::vec3(0.0f, -5.0f, 0.0f), glm::vec3(2.0f), glm::vec3(1.0f), 0.0f };
+		Assimp_D::coordModel coord_Plant01{ glm::vec3(0.0f, -5.0f, 0.0f), glm::vec3(2.0f), glm::vec3(1.0f), 0.0f };
 		std::filesystem::path path_plant_01{ vegetacion_01 };
-		Assimp::Model model_Plant01(path_plant_01.string(), vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), coord_Plant01, ss_Plant01, aiProcessFlags_PL);
+		Assimp_D::Model model_Plant01(path_plant_01.string(), vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), coord_Plant01, ss_Plant01, aiProcessFlags_PL);
 		model_Plant01.setNameModel("plant01");
 		model_Plant01.SetTexture_Mesh(image_GlassWindow.c_str(), "plant01_1", texture::typeTextures::diffuse);
-		model_Plant01.SetOrderRender_Mesh("plant01_1", Assimp::renderSeq::renderFar);
+		model_Plant01.SetOrderRender_Mesh("plant01_1", Assimp_D::renderSeq::renderFar);
 		model_Plant01.BlendModeTexture_Mesh("plant01_1", true);
-
-
 
         ///////////////// 
 
-		std::map<std::string, Assimp::Model> AssimpModels
+		std::map<std::string, Assimp_D::Model> AssimpModels
 		{
 			{"CampoVegetacion", model_Campo01},
 			{"plant01", model_Plant01},
 			{"backPack", modelBackpack},
 		//	{"Floor", model_Floor},
-			//{"CampoVegetacion", model_Campo01},
 			{"FlashLight", model_FlashLight}
 		};
 
 		return AssimpModels;
 	}
+
+	const void loadCPU_Model_Data()
+	{
+		unsigned int aiProcessFlags{ aiProcess_Triangulate
+		| aiProcess_FlipUVs
+		| aiProcess_ImproveCacheLocality
+		| aiProcess_CalcTangentSpace
+		| aiProcess_GenSmoothNormals
+		| aiProcess_GenNormals
+		| aiProcess_SortByPType };
+
+		std::filesystem::path pathBackpack{ backpack_Model };
+		Assimp_D::loadToCPU::insertProcessModel back_Pack
+		{
+			"backPack",
+	    	pathBackpack.string(),
+			aiProcessFlags
+
+		};
+
+		std::filesystem::path path_FloorModel{ floor2_Model };
+		Assimp_D::loadToCPU::insertProcessModel Floor
+		{
+			"Floor",
+			path_FloorModel.string(),
+			aiProcessFlags
+
+		};
+
+
+		std::filesystem::path path_FlashLight{ flashLight_Model };
+		Assimp_D::loadToCPU::insertProcessModel FlashLight
+		{
+			"FlashLight",
+			path_FlashLight.string(),
+			aiProcessFlags
+
+		};
+
+
+		std::filesystem::path path_campo_01{ campo_01 };
+		Assimp_D::loadToCPU::insertProcessModel CampoVegetacion
+		{
+			"CampoVegetacion",
+			path_campo_01.string(),
+			aiProcessFlags
+
+		};
+
+		std::filesystem::path path_plant_01{ vegetacion_01 };
+		Assimp_D::loadToCPU::insertProcessModel plant01
+		{
+			"plant01",
+			path_plant_01.string(),
+			aiProcessFlags
+
+		};
+
+
+		std::vector<Assimp_D::loadToCPU::insertProcessModel> models
+		{
+			back_Pack,
+			//Floor,
+			FlashLight,
+			CampoVegetacion,
+			plant01
+
+		};
+
+		Assimp_D::loadToCPU::sizeModels_Count = static_cast<int>(models.size());
+
+		std::thread loadThread_Models(Assimp_D::loadToCPU::loadModelsThread, models);
+		
+		loadThread_Models.detach();
+
+	}
+	const void insertData_toModel()
+	{
+		if (Assimp_D::loadToCPU::atomic_CounterModel > 0)
+		{
+			Assimp_D::loadToCPU::mutexModel.lock();
+			
+			if (!Assimp_D::loadToCPU::modelsData.empty())
+			{
+				Assimp_D::loadToCPU::ModelData_loadCPU model{ Assimp_D::loadToCPU::modelsData.front() };
+				
+				Assimp_D::loadToCPU::modelsData.pop();
+
+				Assimp_D::loadToCPU::mutexModel.unlock();
+
+				Assimp_D::loadToCPU::atomic_CounterModel --;
+
+				AssimpModel_D.emplace(model.nameModel, Assimp_D::Model(model));
+
+			}
+			else
+			{
+				Assimp_D::loadToCPU::mutexModel.unlock();
+			}
+
+		}
+		
+		if (Assimp_D::loadToCPU::flagsAtomic == true)
+		{
+			if (static_cast<int>(AssimpModel_D.size()) == Assimp_D::loadToCPU::sizeModels_Count)
+			{
+				Assimp_D::loadToCPU::finishLoadALL = true;
+			}
+		}
+
+	}
+
+	const void insertSetting_toModel()
+	{
+		if (Assimp_D::loadToCPU::finishLoadALL == true)
+		{
+
+			Assimp_D::shaderSettings ss_Model_v1
+			{
+				glm::vec3(0.8f, 0.8f, 0.8f),
+				glm::vec3(1.0f),
+				glm::vec3(1.0f),
+				glm::vec3(0.8f),
+				32.0f
+			};
+			Assimp_D::coordModel coordBackPack{ glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f), 210.0f };
+			AssimpModel_D["backPack"].setModelSettings(coordBackPack, ss_Model_v1);
+			AssimpModel_D["backPack"].loadTemporalShaders(vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
+
+			///////////////////////
+
+			Assimp_D::shaderSettings ss_Model_v2
+			{
+				glm::vec3(0.5f, 0.5f, 0.5f),
+				glm::vec3(0.5f),
+				glm::vec3(0.8f),
+				glm::vec3(0.5f),
+				64.0f
+
+			};
+			Assimp_D::coordModel coord_FloorModel{ glm::vec3(0.0f, -5.0f, 0.0f), glm::vec3(15.0f, 1.0f, 15.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f };
+			AssimpModel_D["Floor"].setModelSettings(coord_FloorModel, ss_Model_v2);
+			AssimpModel_D["Floor"].loadTemporalShaders(vShader_Standard_v1.c_str(), fShader_Standard_v1.c_str());
+
+			/////////////////////////
+
+			Assimp_D::shaderSettings ss_FlashLight
+			{
+				glm::vec3(0.5f, 0.5f, 0.5f),
+				glm::vec3(0.5f),
+				glm::vec3(0.8f),
+				glm::vec3(0.5f),
+				32.0f
+			};
+			Assimp_D::coordModel coord_FlashLight{ glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.001f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f };
+			AssimpModel_D["FlashLight"].setModelSettings(coord_FlashLight, ss_FlashLight);
+			AssimpModel_D["FlashLight"].loadTemporalShaders(vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
+
+			///////////////////////////
+
+			Assimp_D::shaderSettings ss_Campo01
+			{
+				glm::vec3(0.5f, 0.5f, 0.5f),
+				glm::vec3(0.5f),
+				glm::vec3(0.8f),
+				glm::vec3(0.5f),
+				32.0f
+			};
+			Assimp_D::coordModel coord_Campo01{ glm::vec3(0.0f, -10.0f, 0.0f), glm::vec3(2.0f), glm::vec3(1.0f), 0.0f };
+			AssimpModel_D["CampoVegetacion"].setModelSettings(coord_FlashLight, ss_FlashLight);
+			AssimpModel_D["CampoVegetacion"].loadTemporalShaders(vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
+
+			Assimp_D::shaderSettings ss_Plant01
+			{
+				glm::vec3(0.5f, 0.5f, 0.5f),
+				glm::vec3(0.5f),
+				glm::vec3(0.8f),
+				glm::vec3(0.5f),
+				32.0f
+			};
+			Assimp_D::coordModel coord_Plant01{ glm::vec3(0.0f, -5.0f, 0.0f), glm::vec3(2.0f), glm::vec3(1.0f), 0.0f };
+			AssimpModel_D["plant01"].setModelSettings(coord_FlashLight, ss_FlashLight);
+			AssimpModel_D["plant01"].SetTexture_Mesh(image_GlassWindow.c_str(), "plant01_1", texture::typeTextures::diffuse);
+			AssimpModel_D["plant01"].SetOrderRender_Mesh("plant01_1", Assimp_D::renderSeq::renderFar);
+			AssimpModel_D["plant01"].BlendModeTexture_Mesh("plant01_1", true);
+			AssimpModel_D["plant01"].loadTemporalShaders(vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
+
+			testPlay::setTransformation_Objects();
+		}
+	}
+
 	const std::vector<ObjCreation::ModelCreation> setMeshLight_ModelCreation_Data()
 	{
 
@@ -480,7 +671,7 @@ namespace RenderData_Set
 	const std::vector<individualComp::Multiple_AssimpMesh> setMulti_AssimpModel()
 	{
 		////Aqui colocar el seteo de los objetos que contendran Multiples Models
-		Assimp::structModelName sM_Plant01
+		Assimp_D::structModelName sM_Plant01
 		{
 			"plant01",
 			"plant01_1",
