@@ -5,13 +5,14 @@
 namespace render
 {
 	void render_ModelCreation_D();
+	void render_classicModelAssimp_D();
 	void render_ModelAssimp_D(std::string excludedMesh = "", std::string excludeModel = "");
 	void render_MultiAssimp_D();
-	 void render_MeshLights_D();
-	 void render_AABB();
-	 void render_Points();
+	void render_MeshLights_D();
+	void render_AABB();
+	void render_Points();
 
-	 void renderAll();
+	void renderAll();
 }
 
 namespace openGL_render

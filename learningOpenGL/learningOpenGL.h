@@ -25,3 +25,4 @@
 #include <atomic>
 #include <queue>
 #include <mutex>
+#include <functional>

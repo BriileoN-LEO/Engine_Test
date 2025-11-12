@@ -14,6 +14,7 @@
 
 namespace shading
 {
+
 	class shader
 	{
 	public:
@@ -46,12 +47,26 @@ namespace shading
 		void destroy();
 	};
 
-	namespace loadToCPU	
+	namespace loadToCPU
 	{
+		struct shaderData_loadCPU
+		{
+			std::string nameShader{};
+			const char* vertexShader_name{nullptr};
+			const char* fragmentShader_name{nullptr};
+		};
 
+		extern std::queue<shaderData_loadCPU> shaderData;
+		extern std::atomic<int> atomic_CounterShader;
+		extern std::atomic<int> atomic_sizeShader;
+		extern std::atomic<bool> flagsAtomic;
+		extern std::atomic<bool> finishLoadShaders;
+		extern std::mutex mutexShader;
+
+		void loadShadersThread(std::vector<shaderData_loadCPU> shaders_Data);
 
 	}
-   
+
 }
 namespace Vertex
 {

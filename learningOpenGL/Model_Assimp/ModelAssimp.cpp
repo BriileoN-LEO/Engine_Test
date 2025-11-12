@@ -97,6 +97,8 @@ namespace Assimp_D
 
 			}
 
+			glGenTextures(1, &id);
+
 			glBindTexture(GL_TEXTURE_2D, id);
 			glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, dataTexture);
 			glGenerateMipmap(GL_TEXTURE_2D);
@@ -186,7 +188,7 @@ namespace Assimp_D
 
 	Mesh::Mesh(Assimp_D::loadToCPU::MeshData_loadCPU loadData)
 	{
-		nameMesh = loadData.nameMesh;
+		//nameMesh = loadData.nameMesh;
 		vertices = loadData.vertices;
 		indices = loadData.indices;
 
@@ -200,12 +202,23 @@ namespace Assimp_D
 		MeshCoord.posModel = MeshCoord.posModel_Base;
 
 		int seqUnit{};
+
+		for (int i = 0; i < static_cast<int>(loadData.textures.size()); i++)
+		{
+			unsigned int texID{ TextureFromData(loadData.textures[i].dataTexture, loadData.textures[i].width, loadData.textures[i].height, loadData.textures[i].nrChannels)};
+			textures.texU_Data.emplace_back(texture::textureData(texID, loadData.textures[i].typeTexture, loadData.textures[i].path, texture::textureUnits_Data[seqUnit]));
+			seqUnit++;
+
+		}
+
+		/*
 		for (auto& texLoad : loadData.textures)
 		{
 			unsigned int texID{ TextureFromData(texLoad.dataTexture, texLoad.width, texLoad.height, texLoad.nrChannels) };
-			textures.texU_Data.emplace_back(texID, texLoad.typeTexture, texLoad.path, texture::textureUnits_Data[seqUnit]);
+			textures.texU_Data.emplace_back(texture::textureData(texID, texLoad.typeTexture, texLoad.path, texture::textureUnits_Data[seqUnit]));
 			seqUnit++;
 		}
+		*/
 
 		renderP = renderSeq::renderNear;
 
@@ -236,7 +249,7 @@ namespace Assimp_D
 		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vertexD), (void*)offsetof(vertexD,TexCoord));
 		
-		//glBindBuffer(GL_ARRAY_BUFFER, 0);
+		//glBindBuffer(GL_ARRAY_BUFFER,S 0);
 		glBindVertexArray(0);
 
 
@@ -380,11 +393,14 @@ namespace Assimp_D
 		if (!textures.texU_Data.empty())
 		{
 			textures.useTextures_PerMaterial(shader);
-		
+			shader.setBool("NotTexture", false);
+			//SDL_Log("USING::TEXTURES");
 		}
 
-		else if (textures.texU_Data.empty())
+		else
 		{
+			shader.setBool("NotTexture", true);
+			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 		
@@ -516,7 +532,14 @@ namespace Assimp_D
 		if (!textures.texU_Data.empty())
 		{
 			textures.useTextures_PerMaterial(shader);
+			shader.setBool("NotTexture", false);
+		}
 
+		else
+		{
+			shader.setBool("NotTexture", true);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 
 		shader.setVec3("Mat.ambient", shaderSet.ambient);
@@ -638,7 +661,14 @@ namespace Assimp_D
 		if (!textures.texU_Data.empty())
 		{
 			textures.useTextures_PerMaterial(shader);
+			shader.setBool("NotTexture", false);
+		}
 
+		else
+		{
+			shader.setBool("NotTexture", true);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 
 		shader.setVec3("Mat.ambient", shaderSet.ambient);
@@ -690,14 +720,18 @@ namespace Assimp_D
 	{
 		nameModel = model.nameModel;
 		directory = model.directory;
+		nameShader = model.nameShader;
 
 		for (auto& meshData : model.Meshes_LoadCPU)
 		{
-			meshes.emplace_back(meshData);
+			meshes.emplace_back(Mesh(meshData));
 		}
 
 		for (int i = 0; i < static_cast<int>(meshes.size()); i++)
 		{
+			std::string nameMeshNew{ nameModel + "_" + std::to_string(i + 1) };
+			meshes[i].nameMesh = nameMeshNew;
+
 			meshes[i].setMeshCoord(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 			meshes[i].MeshCoord.model = ModelCoord.model * meshes[i].MeshCoord.model;
 			meshes[i].MeshCoord.setNormalModelMatrix();
@@ -899,7 +933,7 @@ namespace Assimp_D
 				meshes[i].MeshCoord.lastModel = meshes[i].MeshCoord.model;
 			}
 
-			meshes[i].Draw(cam1, light, shaders);
+			meshes[i].Draw(cam1, light, RenderData_Set::shader_D[nameShader]);
 
 		}
 
@@ -911,7 +945,8 @@ namespace Assimp_D
 	{
 		for (int i = 0; i < static_cast<int>(meshes.size()); i++)
 		{
-			meshes[i].Draw_WithLights(shaders);
+			//meshes[i].Draw_WithLights(shaders); //DESACTIVADO TEMPORALMENTERE
+			meshes[i].Draw_WithLights(RenderData_Set::shader_D[nameShader]);
 		}
 
 	}
@@ -928,7 +963,8 @@ namespace Assimp_D
 
 				else if (shaderOp == 1)
 				{
-					meshes[i].Draw_WithLights(shaders);
+					//meshes[i].Draw_WithLights(shaders);//DESACTIVADO TEMPORALMENTE
+					meshes[i].Draw_WithLights(RenderData_Set::shader_D[nameShader]);
 				}
 			}
 		}
@@ -1125,15 +1161,54 @@ namespace Assimp_D
 
 			stbi_set_flip_vertically_on_load(true);
 
-			return TextureData_File(pa, typeTexture, DataT, width, height, nrChannels);
+			return TextureData_File(typeTexture, pa, std::move(DataT), width, height, nrChannels);
 		}
 
 		std::queue<ModelData_loadCPU> modelsData{};
-		std::atomic<int> atomic_CounterModel{ 0 };
-		std::atomic<bool> flagsAtomic{ false };
-		std::atomic<bool> finishLoadALL{ false };
+		std::atomic<int> atomic_CounterModel(0);
+		std::atomic<int> atomic_sizeModels(0);
+		std::atomic<bool> flagsAtomic(false);
+		std::atomic<bool> finishLoadModels(false);
 		std::mutex mutexModel;
-		int sizeModels_Count{};
+
+		std::vector<TextureData_File> loadMatTextures(aiMaterial* mat, aiTextureType matType, std::string typeName, std::string directory)
+		{
+			std::vector<TextureData_File> tex{};
+			std::vector<TextureData_File> tex_Loaded{};
+			//aiGetMaterialTexture()
+			for (int i = 0; i < mat->GetTextureCount(matType); i++)
+			{
+				aiString str{};
+				mat->GetTexture(matType, i, &str);
+				textureD texture{};
+				bool skip{ false };
+
+				SDL_Log(str.C_Str());
+
+				for (int i = 0; i < static_cast<int>(tex_Loaded.size()); i++)
+				{
+					if (std::strcmp(tex_Loaded[i].path.c_str(), str.C_Str()) == 0)
+					{
+						skip = true;
+						break;
+					}
+
+				}
+
+				if (!skip)
+				{
+
+					TextureData_File texture{ LoadTextureFromFile(str.C_Str(), directory, typeName) };
+					tex.emplace_back(texture);
+					tex_Loaded.emplace_back(texture);
+					SDL_Log(texture.typeTexture.c_str());
+
+				}
+			}
+
+			return tex;
+		}
+
 
 		void loadModelsThread(std::vector<insertProcessModel> models)
 		{
@@ -1150,7 +1225,7 @@ namespace Assimp_D
 				}
 
 				atomic_CounterModel++;
-
+				//atomic_sizeModels.fetch_add(1);
 			}
 
 			flagsAtomic = true;
@@ -1161,8 +1236,9 @@ namespace Assimp_D
 			ModelData_loadCPU data_Out{};
 
 			Assimp::Importer importer;
-			
-			const aiScene* scene = importer.ReadFile(dataModel.path, dataModel.flagsProcessModel);
+
+			std::filesystem::path pathModel{ dataModel.path };
+			const aiScene* scene = importer.ReadFile(pathModel.string(), dataModel.flagsProcessModel);
 
 			if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 			{
@@ -1171,33 +1247,35 @@ namespace Assimp_D
 			}
 
 			data_Out.nameModel = dataModel.nameModel;
+			data_Out.nameShader = dataModel.nameShader;
 			data_Out.directory = dataModel.path.substr(0, dataModel.path.find_last_of('/'));
 
 			std::vector<MeshData_loadCPU> dataMeshes{};
-			processNode(scene->mRootNode, scene, dataMeshes, data_Out.directory, data_Out.nameModel);
+			processNode(scene->mRootNode, scene, dataMeshes, data_Out.directory);
 
 			data_Out.Meshes_LoadCPU = dataMeshes;
 
 			return data_Out;
 		}
-		void processNode(aiNode* node, const aiScene* scene, std::vector<MeshData_loadCPU>& meshes, std::string directory, std::string nameModel)
+		void processNode(aiNode* node, const aiScene* scene, std::vector<MeshData_loadCPU>& meshes, std::string directory)
 		{
-			int countMeshName{1};
+			int countMeshName{ 1 };
 			for (int i = 0; i < node->mNumMeshes; i++)
 			{
-				std::string nameMesh{ nameModel + "_" + std::to_string(countMeshName) };
 				aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-				meshes.emplace_back(processMesh(mesh, scene, directory, nameMesh));
+				meshes.emplace_back(processMesh(mesh, scene, directory));
 				countMeshName++;
+				//SDL_Log(nameMesh.c_str());
 			}
 
 			for (int i = 0; i < node->mNumChildren; i++)
 			{
-				processNode(node->mChildren[i], scene, meshes, directory, nameModel);
+				processNode(node->mChildren[i], scene, meshes, directory);
 
 			}
+
 		}
-		MeshData_loadCPU processMesh(aiMesh* mesh, const aiScene* scene, std::string directory, std::string nameMesh)
+		MeshData_loadCPU processMesh(aiMesh* mesh, const aiScene* scene, std::string directory)
 		{
 			std::vector<vertexD> vertices{};
 			std::vector<unsigned int> indices{};
@@ -1250,61 +1328,23 @@ namespace Assimp_D
 			{
 				aiMaterial* material{ scene->mMaterials[mesh->mMaterialIndex] };
 
-				std::vector<TextureData_File> difusseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse", directory);
+				std::vector<TextureData_File> difusseMaps{ loadMatTextures(material, aiTextureType_DIFFUSE, "texture_diffuse", directory) };
 
 				//			shaders.use();
 
 				textures.insert(textures.end(), difusseMaps.begin(), difusseMaps.end());
 
-				std::vector<TextureData_File> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular", directory);
+				std::vector<TextureData_File> specularMaps{ loadMatTextures(material, aiTextureType_SPECULAR, "texture_specular", directory) };
 
 				textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 			}
 
-			return MeshData_loadCPU(nameMesh, vertices, indices, textures);
+			return MeshData_loadCPU(vertices, indices, textures);
 
 		}
 
-		std::vector<TextureData_File> loadMaterialTextures(aiMaterial* mat, aiTextureType matType, std::string typeName, std::string directory)
-		{
-			std::vector<TextureData_File> tex{};
-			std::vector<TextureData_File> tex_Loaded{};
-			//aiGetMaterialTexture()
-			for (int i = 0; i < mat->GetTextureCount(matType); i++)
-			{
-				aiString str{};
-				mat->GetTexture(matType, i, &str);
-				textureD texture{};
-				bool skip{ false };
-
-				for (int i = 0; i < static_cast<int>(tex_Loaded.size()); i++)
-				{
-					if (std::strcmp(tex_Loaded[i].path.c_str(), str.C_Str()) == 0)
-					{
-						//tex.emplace_back(tex_Loaded[i]);
-						skip = true;
-						break;
-					}
-
-				}
-
-				if (!skip)
-				{
-				
-					TextureData_File texture{ LoadTextureFromFile(str.C_Str(), directory, typeName) };
-					tex.emplace_back(texture);
-					tex_Loaded.emplace_back(texture);
-					SDL_Log(texture.typeTexture.c_str());
-
-				}
-			}
-
-			return tex;
-		}
 
 	}
-
-
 
 }
 
@@ -1491,7 +1531,8 @@ namespace individualComp
 		{
 			if (meshes[i].nameMesh == name.nameMesh)
 			{
-				shading::shader& shader{ RenderData_Set::AssimpModel_D[name.nameModel].outShader() };
+				//shading::shader& shader{ RenderData_Set::AssimpModel_D[name.nameModel].outShader() };///DESACTIVADO TEMPORALMENTE
+				shading::shader& shader{ RenderData_Set::shader_D[RenderData_Set::AssimpModel_D[name.nameModel].nameShader]};
 				meshes[i].build_PreDraw(shader);
 				//SDL_Log("ENCONTRADO::SHADER");
 				break;
@@ -1569,7 +1610,6 @@ namespace individualComp
 		glDeleteVertexArrays(1, &VAO);
 		glDeleteBuffers(1, &VBO);
 	}
-
 
 
 	Multiple_AssimpMesh::Multiple_AssimpMesh() {};
@@ -1686,7 +1726,8 @@ namespace individualComp
 										///////AQUI CONTINUAR
 										if (nameMesh == meshCopy.subNameMesh)
 										{
-											shading::shader& shader_Set{ model_Assimp.second.outShader() };
+											//shading::shader& shader_Set{ model_Assimp.second.outShader() };
+											shading::shader& shader_Set{ RenderData_Set::shader_D[model_Assimp.second.nameShader]};
 
 											shader_Set.use();
 											shader_Set.transformMat("model", meshCopy.model);

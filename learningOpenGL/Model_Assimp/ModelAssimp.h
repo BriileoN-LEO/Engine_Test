@@ -91,7 +91,6 @@ namespace Assimp_D
 
 		struct MeshData_loadCPU
 		{
-			std::string nameMesh{};
 			std::vector<vertexD> vertices{};
 			std::vector<unsigned int> indices{};
 			std::vector<TextureData_File> textures{};
@@ -100,6 +99,7 @@ namespace Assimp_D
 		struct ModelData_loadCPU
 		{
 			std::string nameModel{};
+			std::string nameShader{};
 			std::string directory{};
 			std::vector<MeshData_loadCPU> Meshes_LoadCPU{};
 		};
@@ -108,28 +108,29 @@ namespace Assimp_D
 		{
 			std::string nameModel{};
 			std::string path{};
+			std::string nameShader{};
 			unsigned int flagsProcessModel{};
 
 		};
 
 		extern std::queue<ModelData_loadCPU> modelsData;
 		extern std::atomic<int> atomic_CounterModel;
+		extern std::atomic<int> atomic_sizeModels;
 		extern std::atomic<bool> flagsAtomic;
-		extern std::atomic<bool> finishLoadALL;
+		extern std::atomic<bool> finishLoadModels;
 		extern std::mutex mutexModel;
-		extern int sizeModels_Count;
 
 
 		TextureData_File LoadTextureFromFile(const char* path, std::string directory = "", std::string typeTexture = "", bool gamma = false);
 
+		std::vector<TextureData_File> loadMatTextures(aiMaterial* mat, aiTextureType matType, std::string typeName, std::string directory);
 
 		void loadModelsThread(std::vector<insertProcessModel> models);
 
 		ModelData_loadCPU processModel(insertProcessModel dataModel);
-		void processNode(aiNode* node, const aiScene* scene, std::vector<MeshData_loadCPU>& meshes, std::string directory, std::string nameModel);
-		MeshData_loadCPU processMesh(aiMesh* mesh, const aiScene* scene, std::string directory, std::string nameMesh);
+		void processNode(aiNode* node, const aiScene* scene, std::vector<MeshData_loadCPU>& meshes, std::string directory);
+		MeshData_loadCPU processMesh(aiMesh* mesh, const aiScene* scene, std::string directory);
 
-		std::vector<TextureData_File> loadMaterialTextures(aiMaterial* mat, aiTextureType matType, std::string typeName, std::string directory);
 
 	}
 
@@ -189,9 +190,11 @@ namespace Assimp_D
 
 	public:
 
-		std::string nameModel{};	//Nombre global del modelo
+		std::string nameModel{};
+		std::string nameShader{};   //Nombre global del modelo
 		transformation_basics::basics_Model3D ModelCoord{};
 		coordModel ModelGlobal_Coord{};
+
 
 		Model();
 		Model(std::string path, const char* vertexPath, const char* fragmentPath, coordModel modelCoords, shaderSettings shaderSettings, unsigned int processFlags);

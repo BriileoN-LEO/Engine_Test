@@ -4,9 +4,12 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "SHADER_H.h"
+#include "Render/RenderData.h"
 
 namespace shading
 {
+
+
 	shader::shader() {};
 	shader::shader(unsigned int ID)
 	{
@@ -142,6 +145,33 @@ namespace shading
 		glDeleteProgram(ID);
 	}
 
+	namespace loadToCPU
+	{
+		std::queue<shaderData_loadCPU> shaderData{};
+		std::atomic<int> atomic_CounterShader(0);
+		std::atomic<int> atomic_sizeShader(0);
+		std::atomic<bool> flagsAtomic(false);
+		std::atomic<bool> finishLoadShaders(false);
+		std::mutex mutexShader;
+
+		void loadShadersThread(std::vector<shaderData_loadCPU> shaders_Data)
+		{
+			for (auto& shaders : shaders_Data)
+			{ 
+				{
+					std::lock_guard<std::mutex> lock(mutexShader);
+					shaderData.push(shaders);
+
+				}
+
+				atomic_CounterShader++;
+				//atomic_sizeShader++;
+			}
+
+			flagsAtomic = true;
+
+		}
+	}
 }
 
 namespace Vertex
@@ -621,13 +651,13 @@ namespace texture
 		if (texUnit == textureUnits::TEXTURE1)
 		{
 			glActiveTexture(GL_TEXTURE1);
-	
+
 		}
 
 		if (texUnit == textureUnits::TEXTURE2)
 		{
 			glActiveTexture(GL_TEXTURE2);
-	
+
 		}
 
 		if (texUnit == textureUnits::TEXTURE3)
@@ -668,19 +698,19 @@ namespace texture
 		if (texUnit == textureUnits::TEXTURE9)
 		{
 			glActiveTexture(GL_TEXTURE9);
-	
+
 		}
 
 		if (texUnit == textureUnits::TEXTURE10)
 		{
 			glActiveTexture(GL_TEXTURE10);
-	
+
 		}
 
 		if (texUnit == textureUnits::TEXTURE11)
 		{
 			glActiveTexture(GL_TEXTURE11);
-	
+
 		}
 
 		if (texUnit == textureUnits::TEXTURE12)
@@ -713,30 +743,92 @@ namespace texture
 		{
 
 			std::string name_Data{ texU_Data[i].type };
-		    std::string number{};
+			std::string name_TexTest{};
+			std::string number{};
 
 			if (name_Data == "texture_diffuse")
 			{
 				number = std::to_string(difusseNr++);
 				name_Data = "Mat_" + number + "." + name_Data;
+				name_TexTest = "Mat_" + number + "." + "use_texture_diffuse";
+				shaderID.setBool(name_TexTest, 1);
 			}
 
 			else if (name_Data == "texture_specular")
 			{
 				number = std::to_string(specularNr++);
 				name_Data = "Mat_" + number + "." + name_Data;
+				name_TexTest = "Mat_" + number + "." + "use_texture_specular";
+				shaderID.setBool(name_TexTest, 1);
 			}
-			shaderID.setInt(name_Data, static_cast<int>(texU_Data[i].texUnit));
 
-			std::string shinessSet{ "Mat_" + number + ".shiness" };
-			shaderID.setFloat(shinessSet, shiness);
 
+			//shaderID.setInt(name_Data, static_cast<int>(texU_Data[i].texUnit));
+			shaderID.setInt(name_Data, i);
 			glActiveTexture(GL_TEXTURE0 + i);
 			glBindTexture(GL_TEXTURE_2D, texU_Data[i].textureID);
 
 		}
 
-		glActiveTexture(GL_TEXTURE0);
+		//glActiveTexture(GL_TEXTURE0);
+
+
+		int totalMat{};
+		if (difusseNr != specularNr)
+		{
+			int totalSizeTex{ static_cast<int>(texU_Data.size()) };
+
+			if (difusseNr < specularNr)
+			{
+				for (int i = difusseNr; i < specularNr; i++)
+				{
+					std::string diffName{ std::to_string(i) };
+					diffName = "Mat_" + diffName + "texture_diffuse";
+					std::string name_TexTest{ "Mat_" + std::to_string(i) + "." + "use_texture_diffuse" };
+
+					shaderID.setBool(name_TexTest, 0);
+					shaderID.setInt(diffName, totalSizeTex);
+					glActiveTexture(GL_TEXTURE0 + totalSizeTex);
+					glBindTexture(GL_TEXTURE_2D, 0);
+
+					totalSizeTex++;
+				}
+
+				totalMat = specularNr;
+
+
+			}
+
+			if (specularNr < difusseNr)
+			{
+				for (int i = specularNr; i < difusseNr; i++)
+				{
+					std::string specName{ std::to_string(i) };
+					specName = "Mat_" + specName + "texture_specular";
+					std::string name_TexTest{ "Mat_" + std::to_string(i) + "." + "use_texture_specular" };
+
+					shaderID.setBool(name_TexTest, 0);
+					shaderID.setInt(specName, totalSizeTex);
+					glActiveTexture(GL_TEXTURE0 + totalSizeTex);
+					glBindTexture(GL_TEXTURE_2D, 0);
+
+					totalSizeTex++;
+
+				}
+				totalMat = difusseNr;
+			}
+
+
+		}
+
+		for (int i = 1; i < totalMat+1; i++)
+		{
+			std::string shinessSet{ "Mat_" + std::to_string(i) + ".shiness"};
+			shaderID.setFloat(shinessSet, shiness);
+
+		}
+
+
 		//SDL_Log(std::to_string(texU_Data.size()).c_str());
 	}
 	void textureBuild::useTextures()

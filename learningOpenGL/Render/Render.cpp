@@ -14,6 +14,14 @@ namespace render
 		}
 	}
 
+	void render_classicModelAssimp_D()
+	{
+		for (auto& renderMAD : RenderData_Set::AssimpModel_D)
+			{
+				renderMAD.second.Draw_WL();
+		    }
+	}
+
 	void render_ModelAssimp_D(std::string excludedMesh, std::string excludeModel)
 	 {
 		
@@ -96,7 +104,9 @@ namespace render
 				 {
 					 if (mesh.nameMesh == meshToRender)
 					 {
-						 mesh.Draw_WithLights(renderMesh.second.outShader());
+					
+						 mesh.Draw_WithLights(RenderData_Set::shader_D[renderMesh.second.nameShader]);
+						// mesh.Draw_WithLights(renderMesh.second.outShader()); //DESACTIVADO TEMPORALMENTE
 						 breakLoop = true;
 						 break;
 					 }
@@ -145,8 +155,9 @@ namespace render
 
 					if (mesh.nameMesh == meshToRender)
 					{
-						shading::shader& shaderUse{ renderMesh.second.outShader() };
-						mesh.Draw_WithLights(shaderUse);
+						mesh.Draw_WithLights(RenderData_Set::shader_D[renderMesh.second.nameShader]);
+						//shading::shader& shaderUse{ renderMesh.second.outShader() };
+						//mesh.Draw_WithLights(shaderUse);
 						breakLoop = true;
 						break;
 					}
@@ -214,9 +225,10 @@ namespace render
 		if (ControlScenarios::scene == ControlScenarios::stateScenarios::normalSceneario)
 		{
 			render_Points();
+			//render_classicModelAssimp_D();
 			render_ModelCreation_D();
-			render_ModelAssimp_D();
-			render_MultiAssimp_D();
+			render_ModelAssimp_D();///LISTO_NEW_SHADER
+			render_MultiAssimp_D();///LISTO_NEW_SHADER
 			render_MeshLights_D();	
 			render_AABB();
 		//	data_HitAABB::triangleStencil.drawTest_2();
@@ -226,7 +238,7 @@ namespace render
 		else if (ControlScenarios::scene == ControlScenarios::stateScenarios::stencilTestAll)
 		{
 			render_Points();
-			stencil_test::renderStencilTest();
+			stencil_test::renderStencilTest();///LISTO_NEW_SHADER
 		   // render_AABB();
 		}
 
@@ -235,21 +247,21 @@ namespace render
 			if (ControlScenarios::sceneAABB == ControlScenarios::scenarioAABB::Triangle)
 			{
 				render_Points();
-				renderSelection::renderSelection_Triangle();
+				renderSelection::renderSelection_Triangle();///LISTO_NEW_SHADER
 		
 			}
 
 			if (ControlScenarios::sceneAABB == ControlScenarios::scenarioAABB::Mesh)
 			{
 				render_Points();
-				renderSelection::renderSelection_Mesh();
+				renderSelection::renderSelection_Mesh();///LISTO_NEW_SHADER
 		
 			}
 
 			if (ControlScenarios::sceneAABB == ControlScenarios::scenarioAABB::Model)
 			{
 				render_Points();
-				renderSelection::renderSelection_Model();
+				renderSelection::renderSelection_Model();///LISTO_NEW_SHADER
 			
 			}
  
@@ -355,7 +367,7 @@ namespace renderSelection
 
 			glStencilFunc(GL_ALWAYS, 1, 0xFF);
 			glStencilMask(0xFF);
-			data_HitAABB::triangleStencil.drawTest_2();
+			data_HitAABB::triangleStencil.drawTest_2(); ///LISTO_NEW_SHADER
 
 
 			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
@@ -393,7 +405,7 @@ namespace renderSelection
 			glStencilFunc(GL_ALWAYS, 1, 0xFF);
 			glStencilMask(0xFF);
 
-			RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel].DrawSingleMesh(data_HitAABB::selectedObj.first.nameMesh, 1);
+			RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel].DrawSingleMesh(data_HitAABB::selectedObj.first.nameMesh, 1);///LISTO_NEW_SHADER
 
 			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 			glStencilMask(0x00);
@@ -403,6 +415,7 @@ namespace renderSelection
 			glm::mat4 modelMat{ glm::mat4(1.0f) };
 
 			RenderData_Set::stencilTest::stencilTest_shader.use();
+
 			for (auto& mesh : meshesData)
 			{
 				if (mesh.nameMesh == data_HitAABB::selectedObj.first.nameMesh)
@@ -423,7 +436,7 @@ namespace renderSelection
 
 			RenderData_Set::stencilTest::stencilTest_shader.setInt("selectionStencil", 0);
 
-			RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel].DrawSingleMesh(data_HitAABB::selectedObj.first.nameMesh, 0);
+			RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel].DrawSingleMesh(data_HitAABB::selectedObj.first.nameMesh, 0);///LISTO_NEW_SHADER
 
 			glStencilMask(0xFF);
 			glStencilFunc(GL_ALWAYS, 1, 0xFF);
@@ -497,7 +510,7 @@ namespace renderSelection
 
 			}
 		   */
-			render::render_ModelAssimp_D("", data_HitAABB::selectedObj.first.nameModel); //Exclude Model
+			render::render_ModelAssimp_D("", data_HitAABB::selectedObj.first.nameModel); //Exclude Model ///LISTO_NEW_SHADER
 
 			render::render_ModelCreation_D();
 			render::render_MeshLights_D();
@@ -529,7 +542,7 @@ namespace stencil_test
 
 		glStencilMask(0x00);
 		std::string back_Excluded{ "Floor" };
-		RenderData_Set::AssimpModel_D[back_Excluded].Draw_WL();
+		RenderData_Set::AssimpModel_D[back_Excluded].Draw_WL(); //LISTO_NEW_SHADER
 		render::render_ModelCreation_D();
 		render::render_MeshLights_D();
 

@@ -19,6 +19,7 @@ namespace RenderData_Set
 	std::vector<individualComp::Multiple_AssimpMesh>multi_AssimpModel{};
 
 	std::map<std::string, shading::shader>shader_D;
+	std::atomic<bool> finishLoadALL{ false };
 
 
 	namespace stencilTest
@@ -232,49 +233,54 @@ namespace RenderData_Set
 		| aiProcess_GenNormals
 		| aiProcess_SortByPType };
 
-		std::filesystem::path pathBackpack{ backpack_Model };
+	//	std::filesystem::path pathBackpack{ backpack_Model };
 		Assimp_D::loadToCPU::insertProcessModel back_Pack
 		{
 			"backPack",
-	    	pathBackpack.string(),
+			backpack_Model,
+			"shaderT1",
 			aiProcessFlags
 
 		};
 
-		std::filesystem::path path_FloorModel{ floor2_Model };
+		//std::filesystem::path path_FloorModel{ floor2_Model };
 		Assimp_D::loadToCPU::insertProcessModel Floor
 		{
-			"Floor",
-			path_FloorModel.string(),
+			"Floor",	
+			floor2_Model,
+			"shaderT1",
 			aiProcessFlags
 
 		};
 
 
-		std::filesystem::path path_FlashLight{ flashLight_Model };
+		//std::filesystem::path path_FlashLight{ flashLight_Model };
 		Assimp_D::loadToCPU::insertProcessModel FlashLight
 		{
 			"FlashLight",
-			path_FlashLight.string(),
+			flashLight_Model,
+			"shaderT1",
 			aiProcessFlags
 
 		};
 
 
-		std::filesystem::path path_campo_01{ campo_01 };
+	//	std::filesystem::path path_campo_01{ campo_01 };
 		Assimp_D::loadToCPU::insertProcessModel CampoVegetacion
 		{
 			"CampoVegetacion",
-			path_campo_01.string(),
+			campo_01,
+			"shaderT1",
 			aiProcessFlags
 
 		};
 
-		std::filesystem::path path_plant_01{ vegetacion_01 };
+		//std::filesystem::path path_plant_01{ vegetacion_01 };
 		Assimp_D::loadToCPU::insertProcessModel plant01
 		{
 			"plant01",
-			path_plant_01.string(),
+			vegetacion_01,
+			"shaderT1",
 			aiProcessFlags
 
 		};
@@ -290,7 +296,9 @@ namespace RenderData_Set
 
 		};
 
-		Assimp_D::loadToCPU::sizeModels_Count = static_cast<int>(models.size());
+		Assimp_D::loadToCPU::atomic_sizeModels.fetch_add(static_cast<int>(models.size()));
+
+		//std::cout << Assimp_D::loadToCPU::atomic_sizeModels.load() << '\n';
 
 		std::thread loadThread_Models(Assimp_D::loadToCPU::loadModelsThread, models);
 		
@@ -299,7 +307,9 @@ namespace RenderData_Set
 	}
 	const void insertData_toModel()
 	{
-		if (Assimp_D::loadToCPU::atomic_CounterModel > 0)
+		int actual_countSizeModel{ Assimp_D::loadToCPU::atomic_CounterModel.load() };
+
+		if (actual_countSizeModel > 0)
 		{
 			Assimp_D::loadToCPU::mutexModel.lock();
 			
@@ -311,10 +321,11 @@ namespace RenderData_Set
 
 				Assimp_D::loadToCPU::mutexModel.unlock();
 
-				Assimp_D::loadToCPU::atomic_CounterModel --;
+				Assimp_D::loadToCPU::atomic_CounterModel--;
 
 				AssimpModel_D.emplace(model.nameModel, Assimp_D::Model(model));
 
+				std::cout << "LOADING::MODEL---->" << model.nameModel << '\n';
 			}
 			else
 			{
@@ -323,21 +334,22 @@ namespace RenderData_Set
 
 		}
 		
-		if (Assimp_D::loadToCPU::flagsAtomic == true)
+		if (Assimp_D::loadToCPU::flagsAtomic.load())
 		{
-			if (static_cast<int>(AssimpModel_D.size()) == Assimp_D::loadToCPU::sizeModels_Count)
+			int actual_sizeModels{ Assimp_D::loadToCPU::atomic_sizeModels.load() };
+			//std::cout << "finishLoad::" << actual_sizeModels << '\n';
+
+			if (static_cast<int>(AssimpModel_D.size()) == actual_sizeModels)
 			{
-				Assimp_D::loadToCPU::finishLoadALL = true;
+				Assimp_D::loadToCPU::finishLoadModels.store(true);
+				///std::cout << "finishLoad::" << Assimp_D::loadToCPU::finishLoadModels.load() << '\n';
+				//Assimp_D::loadToCPU::flagsAtomic = false;
 			}
 		}
 
 	}
-
 	const void insertSetting_toModel()
 	{
-		if (Assimp_D::loadToCPU::finishLoadALL == true)
-		{
-
 			Assimp_D::shaderSettings ss_Model_v1
 			{
 				glm::vec3(0.8f, 0.8f, 0.8f),
@@ -348,7 +360,7 @@ namespace RenderData_Set
 			};
 			Assimp_D::coordModel coordBackPack{ glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f), 210.0f };
 			AssimpModel_D["backPack"].setModelSettings(coordBackPack, ss_Model_v1);
-			AssimpModel_D["backPack"].loadTemporalShaders(vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
+			//AssimpModel_D["backPack"].loadTemporalShaders(vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
 
 			///////////////////////
 
@@ -363,7 +375,7 @@ namespace RenderData_Set
 			};
 			Assimp_D::coordModel coord_FloorModel{ glm::vec3(0.0f, -5.0f, 0.0f), glm::vec3(15.0f, 1.0f, 15.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f };
 			AssimpModel_D["Floor"].setModelSettings(coord_FloorModel, ss_Model_v2);
-			AssimpModel_D["Floor"].loadTemporalShaders(vShader_Standard_v1.c_str(), fShader_Standard_v1.c_str());
+			//AssimpModel_D["Floor"].loadTemporalShaders(vShader_Standard_v1.c_str(), fShader_Standard_v1.c_str());
 
 			/////////////////////////
 
@@ -377,7 +389,7 @@ namespace RenderData_Set
 			};
 			Assimp_D::coordModel coord_FlashLight{ glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.001f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f };
 			AssimpModel_D["FlashLight"].setModelSettings(coord_FlashLight, ss_FlashLight);
-			AssimpModel_D["FlashLight"].loadTemporalShaders(vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
+			//AssimpModel_D["FlashLight"].loadTemporalShaders(vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
 
 			///////////////////////////
 
@@ -390,8 +402,8 @@ namespace RenderData_Set
 				32.0f
 			};
 			Assimp_D::coordModel coord_Campo01{ glm::vec3(0.0f, -10.0f, 0.0f), glm::vec3(2.0f), glm::vec3(1.0f), 0.0f };
-			AssimpModel_D["CampoVegetacion"].setModelSettings(coord_FlashLight, ss_FlashLight);
-			AssimpModel_D["CampoVegetacion"].loadTemporalShaders(vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
+			AssimpModel_D["CampoVegetacion"].setModelSettings(coord_Campo01, ss_Campo01);
+			//AssimpModel_D["CampoVegetacion"].loadTemporalShaders(vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
 
 			Assimp_D::shaderSettings ss_Plant01
 			{
@@ -402,16 +414,85 @@ namespace RenderData_Set
 				32.0f
 			};
 			Assimp_D::coordModel coord_Plant01{ glm::vec3(0.0f, -5.0f, 0.0f), glm::vec3(2.0f), glm::vec3(1.0f), 0.0f };
-			AssimpModel_D["plant01"].setModelSettings(coord_FlashLight, ss_FlashLight);
+			AssimpModel_D["plant01"].setModelSettings(coord_Plant01, ss_Plant01);
 			AssimpModel_D["plant01"].SetTexture_Mesh(image_GlassWindow.c_str(), "plant01_1", texture::typeTextures::diffuse);
 			AssimpModel_D["plant01"].SetOrderRender_Mesh("plant01_1", Assimp_D::renderSeq::renderFar);
 			AssimpModel_D["plant01"].BlendModeTexture_Mesh("plant01_1", true);
-			AssimpModel_D["plant01"].loadTemporalShaders(vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
+			//AssimpModel_D["plant01"].loadTemporalShaders(vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
 
 			testPlay::setTransformation_Objects();
-		}
+
+			//Assimp_D::loadToCPU::finishLoadModels = false;
 	}
 
+	const void loadCPU_Shader()
+	{
+		shading::loadToCPU::shaderData_loadCPU shaderT1("shaderT1", vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
+		shading::loadToCPU::shaderData_loadCPU shaderStandard("shaderStandard", vShader_Standard_v1.c_str(), fShader_Standard_v1.c_str());
+
+		std::vector<shading::loadToCPU::shaderData_loadCPU> shadersLoad
+		{
+			shaderT1,
+			shaderStandard,
+		};
+
+		shading::loadToCPU::atomic_sizeShader.fetch_add(static_cast<int>(shadersLoad.size()));
+
+		std::thread loadShader_Thread(shading::loadToCPU::loadShadersThread, shadersLoad);
+
+		loadShader_Thread.detach();
+	}
+	const void insertData_toShader()
+	{
+		int atomic_CounterShader{ shading::loadToCPU::atomic_CounterShader.load() };
+
+		if (atomic_CounterShader > 0)
+		{
+			shading::loadToCPU::mutexShader.lock();
+
+			if (!shading::loadToCPU::shaderData.empty())
+			{
+
+				shading::loadToCPU::shaderData_loadCPU shaD{ shading::loadToCPU::shaderData.front() };
+
+				shading::loadToCPU::shaderData.pop();
+
+				shading::loadToCPU::mutexShader.unlock();
+
+				shading::loadToCPU::atomic_CounterShader--;
+
+				shader_D.emplace(shaD.nameShader, shading::shader(shaD.vertexShader_name, shaD.fragmentShader_name));
+			   
+				std::cout << "LOADING::SHADER---->" << shaD.nameShader << '\n';
+			}
+
+			else
+			{
+				shading::loadToCPU::mutexShader.unlock();
+			}
+		}
+
+		if (shading::loadToCPU::flagsAtomic.load() == true)
+		{
+			int actualSize_counterShader{ shading::loadToCPU::atomic_sizeShader.load() };
+
+			if (static_cast<int>(shader_D.size()) == actualSize_counterShader)
+			{
+				shading::loadToCPU::finishLoadShaders.store(true);
+				//shading::loadToCPU::flagsAtomic = false;
+			}
+		
+
+		}
+
+	}
+
+	const void loadAll_DataCPU()
+	{
+		running_LoadingModels<void()>(loadCPU_Model_Data);
+		running_LoadingShaders<void()>(loadCPU_Shader);
+	}
+	
 	const std::vector<ObjCreation::ModelCreation> setMeshLight_ModelCreation_Data()
 	{
 
@@ -776,7 +857,8 @@ namespace RenderData_Set
 		std::vector<std::string> setSettings_Filer
 		{
 			numberPointLights,
-			numberDirectionalLights
+			numberDirectionalLights,
+			numberSpotLights
 		};
 
 		setSettings_FileShader(fShader_ModelT1.c_str(), setSettings_Filer);
@@ -787,7 +869,7 @@ namespace RenderData_Set
 	}
 
 	
-	const void set_AllObjects()
+	const void set_AllObjects()   /////////Cambiar esta funcion para que pueda utilizar la nueva carga de Modelos
 	{
 		pointLights_D = setPointLights();
 		directionalLights_D = setDirectionalLights();
@@ -797,9 +879,8 @@ namespace RenderData_Set
 		stencilTest::setStencilTest_Shader();
 
 		ModelCreation_D = setModelCreation_Data();
-		AssimpModel_D = setModel_Data();
+		//AssimpModel_D = setModel_Data();   ////DESACTIVADO TEMPORALMENTE
 		MeshLights_MCD = setMeshLight_ModelCreation_Data();
-
 
 		multi_AssimpModel = setMulti_AssimpModel();
 
@@ -811,6 +892,25 @@ namespace RenderData_Set
 		pointUI_D = setPointUI_2D();
 
 	}
+	const void running_AllObjects()
+	{
+		loadAll_DataCPU();
+
+		while (!finishLoadALL.load())
+		{
+			//std::cout << "START_LOADED" << '\n';
+			if (Assimp_D::loadToCPU::finishLoadModels.load() == true && shading::loadToCPU::finishLoadShaders.load() == true)
+			{
+				std::cout << "START_LOADED" << '\n';
+				set_AllObjects();
+				finishLoadALL = true;
+			}
+
+		}
+
+
+	}
+	
 }
 
 namespace cameras

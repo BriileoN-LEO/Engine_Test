@@ -472,7 +472,8 @@ int main(int argc, char* argv[])
 
     camera::camState camP{ camera::camState::cameraAE };
 	cameras::setCameras();
-	RenderData_Set::set_AllObjects();
+	//RenderData_Set::set_AllObjects(); DESACTIVADO TEMPORALMENTE
+	RenderData_Set::running_AllObjects();
 	testPlay::setTransformation_Objects();
 
 	SDL_SetWindowRelativeMouseMode(gWindow, true);
@@ -719,15 +720,20 @@ int main(int argc, char* argv[])
 		//		stencil_test::renderStencilTest();
 				//testPlay::renderTranformations_Objects();
 		//		AABB::updateCoordAABB_All();
-				cameras::updateStateCurrentCamera();
-			
-				refresh_Models::refreshAll_Models();
-				AABB::updateCoordAABB_All();
-				ScreenCalc_Hit::calc_IntersectALL();
+	
+				if (RenderData_Set::finishLoadALL == true)
+				{
 
-				render::renderAll();
+					cameras::updateStateCurrentCamera();
 
-				testPlay::renderTranformations_Objects();
+					refresh_Models::refreshAll_Models();
+					AABB::updateCoordAABB_All();
+					ScreenCalc_Hit::calc_IntersectALL();
+
+					render::renderAll();
+
+					testPlay::renderTranformations_Objects();
+				}
 
 				SDL_UpdateWindowSurface(gWindow);
 				SDL_GL_SwapWindow(gWindow);
