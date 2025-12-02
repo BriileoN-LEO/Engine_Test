@@ -9,6 +9,7 @@
 #include "configFilesTXT.h"
 #include "Collision/CollisionAABB.h"
 #include "2D_UI/2D_ScreenPlayer.h"
+#include "frameBuffers.h"
 
 namespace RenderData_Set
 {
@@ -22,6 +23,18 @@ namespace RenderData_Set
 	extern std::vector<individualComp::Multiple_AssimpMesh> multi_AssimpModel;
 	extern std::map<std::string, shading::shader> shader_D;
 	extern std::atomic<bool> finishLoadALL;
+	extern std::map<std::string, frameBuff::frameBuffer> frameBuffers_D;
+	extern frameBuff::frameBuffer testFrameBuffer;
+
+
+
+	namespace skybox_D
+	{
+		extern std::map<std::string, sky::cubeMap_Skybox> skyBoxes_D;
+		extern std::unique_ptr<sky::cubeMap_Skybox> currentSkyBox_D;
+		extern std::string nameSkybox;
+		const std::map<std::string, sky::cubeMap_Skybox> setSkyBoxes_D();
+	}
 
 	namespace stencilTest
 	{
@@ -99,6 +112,8 @@ namespace RenderData_Set
 	const std::map<std::string, light::SpotLight> setSpotLights();
 	const std::vector<screenUI::pointerScreen> setPointUI_2D();
 	const std::vector<individualComp::Multiple_AssimpMesh> setMulti_AssimpModel();
+	const std::map<std::string, frameBuff::frameBuffer> setFrameBuffers();
+
 
 	void setSettings_FileShader(const char* fragmentShader_Path, std::vector<std::string> values);
 	void insertSettings_FileShader();
@@ -117,6 +132,9 @@ namespace cameras
 	extern camera::camera1 currentCamera;
 	void setCameras();
 	void updateStateCurrentCamera();
+
+	void startInvertCurrentCamera();
+	void endInvertCurrentCamera();
 
 }
 

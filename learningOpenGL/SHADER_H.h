@@ -364,6 +364,16 @@ namespace ObjCreation
 		std::vector<std::array<glm::vec3, 3>> posTriangles{};
 
 		std::vector<glm::vec3> posCubes{};
+
+		std::vector<glm::quat> lastRot{};
+		std::vector<glm::vec3> lastPos_01{};
+
+		std::vector<glm::quat> newRot{};
+		std::vector<glm::vec3> newPos_01{};
+
+		//std::vector<glm::mat4> multipleModels{};
+		//std::vector<glm::vec3> lastPos{};
+
 		std::vector<glm::vec3> pivotCubes{};
 		//td::map<float, bool> moveZ{};
 		std::map<int, std::pair<float, bool>> moveZ{};
@@ -387,10 +397,13 @@ namespace ObjCreation
 		void SetTextures(const std::string textureName, const int textureUnit);
 
 		void renderModelMultiple(camera::camera1 cam, glm::mat4 model, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights, std::map<std::string, light::SpotLight>& spotLights);
+		void drawModelMultiple(camera::camera1 cam, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights, std::map<std::string, light::SpotLight>& spotLights, double& alpha);
 		void renderModel(camera::camera1 cam, light::light1 light);
 		void renderMeshLight(camera::camera1 cam, light::light1 light);
 
-		void renderMultipleModels(int numScene, camera::camera1 cam, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights, std::map<std::string, light::SpotLight>& spotLights);
+		void renderMultipleModels(int numScene, camera::camera1 cam, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights, std::map<std::string, light::SpotLight>& spotLights, double& alphaInterpolation);
+		void updateMultipleModels();
+
 
 		void setPosModel(const int numModels);
 

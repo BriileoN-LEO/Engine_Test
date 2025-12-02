@@ -3,6 +3,8 @@
 #include "playTest.h"
 //#include "2D_UI/2D_ScreenPlayer.h"
 
+
+
 namespace RenderData_Set
 {
 	using matSettings = light::lightShader;
@@ -21,6 +23,40 @@ namespace RenderData_Set
 	std::map<std::string, shading::shader>shader_D;
 	std::atomic<bool> finishLoadALL{ false };
 
+	std::map<std::string, frameBuff::frameBuffer> frameBuffers_D{};
+	frameBuff::frameBuffer testFrameBuffer{};
+
+	namespace skybox_D
+	{
+		std::map<std::string, sky::cubeMap_Skybox> skyBoxes_D{};
+		std::unique_ptr<sky::cubeMap_Skybox> currentSkyBox_D{};
+		std::string nameSkybox{};
+
+		const std::map<std::string, sky::cubeMap_Skybox> setSkyBoxes_D()
+		{
+			std::vector<std::string> nameFiles
+			{
+				"right.jpg",
+				"left.jpg",
+				"top.jpg",
+				"bottom.jpg",
+				"front.jpg",
+				"back.jpg"
+			};
+
+			sky::cubeMap_Skybox skyBox_Day("skyBox_day", skyBox_Directory_01, nameFiles, "shaderSkybox_01");
+
+			std::map<std::string, sky::cubeMap_Skybox> SB
+			{
+				{"skyBox_day", skyBox_Day}
+			};
+
+
+			return SB;
+		}
+
+	}
+
 
 	namespace stencilTest
 	{
@@ -30,6 +66,8 @@ namespace RenderData_Set
 			stencilTest_shader.shaderCreation(vShader_StencilTest.c_str(), fShader_StencilTest.c_str());
 		}
 	}
+
+	
 
 	const std::map<std::string, ObjCreation::ModelCreation> setModelCreation_Data()
 	{
@@ -285,6 +323,14 @@ namespace RenderData_Set
 
 		};
 
+		Assimp_D::loadToCPU::insertProcessModel mirror_01
+		{
+			"mirror_01",
+			vegetacion_01,
+			"shaderT1",
+			aiProcessFlags
+		};
+
 
 		std::vector<Assimp_D::loadToCPU::insertProcessModel> models
 		{
@@ -292,7 +338,9 @@ namespace RenderData_Set
 			//Floor,
 			FlashLight,
 			CampoVegetacion,
-			plant01
+			plant01,
+			mirror_01
+
 
 		};
 
@@ -413,12 +461,18 @@ namespace RenderData_Set
 				glm::vec3(0.5f),
 				32.0f
 			};
-			Assimp_D::coordModel coord_Plant01{ glm::vec3(0.0f, -5.0f, 0.0f), glm::vec3(2.0f), glm::vec3(1.0f), 0.0f };
+			Assimp_D::coordModel coord_Plant01{ glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(2.0f), glm::vec3(1.0f), 0.0f };
 			AssimpModel_D["plant01"].setModelSettings(coord_Plant01, ss_Plant01);
 			AssimpModel_D["plant01"].SetTexture_Mesh(image_GlassWindow.c_str(), "plant01_1", texture::typeTextures::diffuse);
 			AssimpModel_D["plant01"].SetOrderRender_Mesh("plant01_1", Assimp_D::renderSeq::renderFar);
 			AssimpModel_D["plant01"].BlendModeTexture_Mesh("plant01_1", true);
 			//AssimpModel_D["plant01"].loadTemporalShaders(vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
+
+			//////Model para el cristal
+			Assimp_D::coordModel coord_Mirror_01{ glm::vec3(0.0f, 0.0f, -20.0f), glm::vec3(15.0f), glm::vec3(1.0f), 0.0f };
+			AssimpModel_D["mirror_01"].setModelSettings(coord_Mirror_01, ss_Plant01);
+
+
 
 			testPlay::setTransformation_Objects();
 
@@ -429,11 +483,17 @@ namespace RenderData_Set
 	{
 		shading::loadToCPU::shaderData_loadCPU shaderT1("shaderT1", vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
 		shading::loadToCPU::shaderData_loadCPU shaderStandard("shaderStandard", vShader_Standard_v1.c_str(), fShader_Standard_v1.c_str());
+		shading::loadToCPU::shaderData_loadCPU shaderFramebuffer("shaderFramebuffer", vShader_Framebuffer_V01.c_str(), fShader_Framebuffer_V01.c_str());
+		shading::loadToCPU::shaderData_loadCPU shaderPoint("shaderPoint", vShader_Pointer.c_str(), fShader_Pointer.c_str());
+		shading::loadToCPU::shaderData_loadCPU shaderSkybox_01("shaderSkybox_01", vShader_Skybox_V01.c_str(), fShader_Skybox_V01.c_str());
 
 		std::vector<shading::loadToCPU::shaderData_loadCPU> shadersLoad
 		{
 			shaderT1,
 			shaderStandard,
+			shaderFramebuffer,
+			shaderPoint,
+			shaderSkybox_01
 		};
 
 		shading::loadToCPU::atomic_sizeShader.fetch_add(static_cast<int>(shadersLoad.size()));
@@ -740,11 +800,16 @@ namespace RenderData_Set
 
 		glm::vec3 pointColor{ 0.5f, 0.8f, 0.7f };
 		float size{ 5.0f };
-		screenUI::pointerScreen centerPoint_UI(vShader_Pointer.c_str(), fShader_Pointer.c_str(), size, glm::vec3(0.0f), pointColor);
+		screenUI::pointerScreen centerPoint_UI("shaderPoint", size, glm::vec3(0.0f), pointColor);
+		
+		glm::vec3 pointColor_02{ 0.4, 0.5, 0.8 };
+	
+		screenUI::pointerScreen pointDirPlane("shaderPoint", 20.0f, glm::vec3(0.0f), pointColor_02);
 
 		std::vector<screenUI::pointerScreen> PointsUI
 		{
-			centerPoint_UI
+			centerPoint_UI,
+			pointDirPlane
 		};
 		
 		return PointsUI;
@@ -777,6 +842,23 @@ namespace RenderData_Set
 		};
 
 		return multiMesh;
+	}
+
+	const std::map<std::string, frameBuff::frameBuffer> setFrameBuffers()
+	{
+		frameBuff::frameBuffer frameBufferScreen("screen", frameBuff::typeFrameBuffer::bufferScreen);
+
+		Assimp_D::structModelName nameFrameBuff_01("mirror_01", "mirror_01_1");
+		frameBuff::frameBuffer frameBufferModel_01("mirror_01", frameBuff::typeFrameBuffer::bufferAssimp, nameFrameBuff_01);
+
+		std::map<std::string, frameBuff::frameBuffer> FB
+		{
+			//{"screen", frameBufferScreen},
+			{"mirror_01", frameBufferModel_01}
+
+		};
+
+		return FB;
 	}
 
 	void setSettings_FileShader(const char* fragmentShader_Path, std::vector<std::string> values)
@@ -884,6 +966,10 @@ namespace RenderData_Set
 
 		multi_AssimpModel = setMulti_AssimpModel();
 
+		skybox_D::skyBoxes_D = skybox_D::setSkyBoxes_D();
+		//skybox_D::currentSkyBox_D = std::make_unique<sky::cubeMap_Skybox>(skybox_D::skyBoxes_D["skyBox_day"]);
+		skybox_D::nameSkybox = "skyBox_day";
+
 		//Creacion del boundingBox
 		AABB::create_BoundingBox_Mesh();
 		//AABB::test_BoundingBos();
@@ -891,6 +977,8 @@ namespace RenderData_Set
 
 		pointUI_D = setPointUI_2D();
 
+		testFrameBuffer.loadFrameBuffer();
+		frameBuffers_D = setFrameBuffers();
 	}
 	const void running_AllObjects()
 	{
@@ -931,6 +1019,18 @@ namespace cameras
 		currentCamera = aerialCamera;
 		name_CurrentCamera = "aerialCamera";
 
+	}
+
+	void startInvertCurrentCamera()
+	{
+		aerialCamera.yaw += 180.0f;
+		aerialCamera.updateCameraOut();
+	}
+
+	void endInvertCurrentCamera()
+	{
+		aerialCamera.yaw -= 180.0f;
+		aerialCamera.updateCameraOut();
 	}
 
 }

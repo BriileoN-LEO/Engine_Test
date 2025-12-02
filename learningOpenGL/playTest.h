@@ -36,6 +36,7 @@ namespace testPlay
 	
 	const void setTransformation_Objects();
 	void renderTranformations_Objects();
+	void transformation_handCamara();
 }
 
 namespace camera_Transforms

@@ -18,6 +18,12 @@ namespace randomN
 
 }
 
+namespace reflectionMatrixOP
+{
+	glm::mat4 calcReflectMatrix(glm::vec3 cameraPos, glm::vec3 pointPlane, glm::vec3 planeNormal, glm::vec3 cameraUp, glm::vec3 cameraViewTarget);
+	glm::mat4 calcObliqueProjection(glm::mat4 originalProjectionMat, glm::mat4 reflectMatrix, glm::vec3 planePoint, glm::vec3 planeNormal);
+}
+
 namespace transformation_basics
 {
 	glm::vec3 centroidObj(std::vector<glm::vec3> Obj);
@@ -77,8 +83,13 @@ namespace transformation_basics
 		glm::mat4 modelCurrent{ glm::mat4(1.0f) };
 		glm::mat3 normalModelMatrix{};
 
-		glm::vec3 translateM{ 0.0f, 0.0f, 0.0f };
-		glm::vec3 scaleS{ 1.0f, 1.0f, 1.0f };
+		glm::vec3 translateM{};
+		glm::vec3 scaleS{ 1.0f };
+		glm::quat rotateR{};
+
+		glm::vec3 lastTranslateM{};
+		glm::vec3 lastScaleS{ 1.0f };
+		glm::quat lastRotateR{};
 
 		glm::vec3 pivotRotPos{ 1.0f, 1.0f, 0.0f };
 		glm::vec3 viewOrient{ 0.0f, 0.0f, -3.0f };
@@ -103,7 +114,8 @@ namespace transformation_basics
 		glm::mat4 rotPivotShaderModel(glm::vec3 pivot, glm::mat4 model);
 		glm::mat4 viewPosShaderModel(glm::vec3 diferentPos, glm::mat4 model);
 
-		glm::mat4 rotatePerPivot(glm::vec3 center, glm::vec3 pivot, glm::vec3& posicionCube); /////////////////revisarrrr
+		glm::mat4 rotatePerPivot(glm::vec3 center, glm::vec3 pivot, glm::vec3& posicionCube, glm::quat& lastRot, glm::vec3& lastPos_01); /////////////////revisarrrr
+		void rotatePerPivot_Temporal(glm::vec3 center, glm::vec3 pivot, glm::vec3& posicionCube, glm::quat& lastRot, glm::vec3& lastPos_01, glm::quat&newRot, glm::vec3& newPos_01);
 
 		////////STANDARD TRANSFORMS///////
 		void refreshCenter_Pos();
@@ -119,6 +131,7 @@ namespace transformation_basics
 	};
 
 }
+
 
 namespace camera
 {
@@ -148,8 +161,8 @@ namespace camera
 		glm::vec3 cameraUp{};
 		glm::vec3 cameraRight{};
 
-		const GLfloat sensitivity{ 0.01f };
-		const GLfloat speedCam{ 0.1f };
+		GLfloat sensitivity{ 0.01f };
+		GLfloat speedCam{ 0.1f };
 		bool moveCameraTest{};
 
 		GLfloat fovCam{ 45.0f };
@@ -160,11 +173,37 @@ namespace camera
 		camera1();
 		camera1(glm::vec3 posCam, GLfloat fovCam, GLfloat nearCut, GLfloat maxCut);
 		
-		camera1 operator=(const camera1& cam)
+		
+		camera1 operator=(const camera1& came)
 		{
-			return cam;
-		}
+		
+			directionView = came.directionView;
+			posCam = came.posCam;
 
+			cam = came.cam;///transformaciones de la camera
+			camProjection = came.camProjection;
+
+			camRotate = came.camRotate;
+			camTranslate = came.camTranslate;
+			ang = came.ang;
+
+			yaw = came.yaw;
+			pitch = came.pitch;
+			cameraUp = came.cameraUp;
+			cameraRight = came.cameraRight;
+
+			sensitivity = came.sensitivity;
+			speedCam = came.speedCam;
+			moveCameraTest = came.moveCameraTest;
+
+			fovCam = came.fovCam;
+			nearCut = came.nearCut;
+			maxCut = came.maxCut;
+			cameraFovTest = came.cameraFovTest;
+
+			return *this;
+		}
+		
 		void setSettingsCamera(glm::vec3 posCam, GLfloat fovCam, GLfloat nearCut, GLfloat maxCut);
 
 		void rotateCam();
@@ -172,9 +211,11 @@ namespace camera
 		void moveCamera();//// A,S,D,W PARA MOVER LA CAMARA
 		void cameraProjection(SDL_Event* event); ///ALT + RUEDA DEL MOUSE PARA HACER ZOOM
 
-		void resetTest( );
+		void resetTest();
 
+		void updateCameraOut();
 		void controlEventsCamera();
+		void updateSettingsCam(glm::mat4 camView, glm::mat4 camProjection);
 
 	};
 

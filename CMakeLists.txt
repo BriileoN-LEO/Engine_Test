@@ -18,6 +18,8 @@ set(DATA_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/shaders/shader_v_v1.vs"
 "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_STENCIL_TEST/vShader_stencil_test.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_STENCIL_TEST/fShader_stencil_test.frag"
 "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADERS_AABB/vShader_AABB_All.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADERS_AABB/fShader_AABB_All.frag"
 "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_UI/vShader_Pointer.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_UI/fShader_Pointer.frag"
+"${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_FRAMEBUFFER/vShader_framebuffer_V01.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_FRAMEBUFFER/fShader_framebuffer_V01.frag"
+"${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_SKYBOX/vShader_skybox_v1.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_SKYBOX/fShader_skybox_v1.frag"
 "${CMAKE_CURRENT_SOURCE_DIR}/images/container.jpg"
 "${CMAKE_CURRENT_SOURCE_DIR}/images/awesomeface.png"
 "${CMAKE_CURRENT_SOURCE_DIR}/images/CubeGrass_Down.png"
@@ -83,6 +85,8 @@ add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/conf
 "learningOpenGL/Collision/ScreenHit.cpp" "learningOpenGL/Collision/ScreenHit.h"
 "learningOpenGL/Collision/CollisionAABB.cpp" "learningOpenGL/Collision/CollisionAABB.h"
 "learningOpenGL/2D_UI/2D_screenPlayer.cpp" "learningOpenGL/2D_UI/2D_screenPlayer.h"
+"learningOpenGL/Render/frameBuffers.cpp" "learningOpenGL/Render/frameBuffers.h"
+"learningOpenGL/threadSystem/thread_System.h" "learningOpenGL/threadSystem/thread_System.cpp"
 "learningOpenGL/STB_IMAGE_IMPLEMENT.cpp"
 )
 

@@ -13,6 +13,38 @@
 #include <queue>
 #include <mutex>
 
+
+namespace sky
+{
+
+	class cubeMap_Skybox
+	{
+	private:
+
+		std::string name{};
+		std::string nameShader{};
+
+		unsigned int VAO{};
+		unsigned int VBO{};
+
+		unsigned int textureID{};
+
+
+	public:
+		
+		cubeMap_Skybox();
+		cubeMap_Skybox(std::string name, std::string directory_Tex, std::vector<std::string> nameFiles, std::string nameShader);
+		
+		void loadTexture_Skybox_Seq(std::string directory_Tex, std::vector<std::string> nameFiles);
+		void loadCube();
+		void draw_Skybox();
+
+	};
+
+
+}
+
+
 namespace Assimp_D
 {
 	////////////
@@ -24,6 +56,20 @@ namespace Assimp_D
 	{
 		renderNear = 0,
 		renderFar = 1
+	};
+	enum class excludedOP
+	{
+		exclude_complete_model = 0,
+		exclude_only_meshes = 1,
+
+	};
+
+	struct excluded_Obj
+	{
+		excludedOP exclude_Type{};
+		std::string nameModel{};
+		std::vector<std::string> nameMeshes{};
+	
 	};
 
 	struct structMesh_Data
@@ -38,7 +84,7 @@ namespace Assimp_D
 	{
 		std::string nameModel{};
 		std::string nameMesh{};
-		bool changeStateSelection{};
+		[[maybe_unused]] bool changeStateSelection{};
 	};
 
 	struct shaderSettings
@@ -86,8 +132,8 @@ namespace Assimp_D
 			int width{};
 			int height{};
 			int nrChannels{};
-
 		};
+
 
 		struct MeshData_loadCPU
 		{
@@ -152,6 +198,7 @@ namespace Assimp_D
 
 		transformation_basics::basics_Model3D MeshCoord{};
 		std::vector<glm::vec3> verticesPos{};
+		std::vector<glm::vec3> normalsPos{}; ///ESTA ES LA POSICION GLOBAL DE LAS NORMALES
 		shaderSettings shaderSet{};
 
 		renderSeq renderP{};
@@ -166,6 +213,7 @@ namespace Assimp_D
 		void Draw_Alone();
 		void Draw_WithoutModel(shading::shader& shader);
 		void build_PreDraw(shading::shader& shader);
+		unsigned int& outVAO();
 
 		void setMeshCoord(glm::vec3 posicionMesh, glm::vec3 scaleMesh);
 		void updateVerticesPos();

@@ -23,6 +23,14 @@ namespace screenUI
 
 		setPointer();
 	};
+	pointerScreen::pointerScreen(std::string nameShader, float size, glm::vec3 posPointer, glm::vec3 colorPointer)
+	{
+		this->nameShader = nameShader;
+		sizePoint = size;
+		this->posPointer = posPointer;
+		this->colorPointer = colorPointer;
+		setPointer();
+	}
 	void pointerScreen::setPointer()
 	{
 		
@@ -43,14 +51,14 @@ namespace screenUI
 
 	void pointerScreen::drawPoint()
 	{
-	
-
-		shaderPointer.use();
-		shaderPointer.transformMat("model", model);
-		shaderPointer.transformMat("view", cameras::aerialCamera.cam);
-		shaderPointer.transformMat("projection", cameras::aerialCamera.camProjection);
-		shaderPointer.setFloat("sizePointer", sizePoint);
-		shaderPointer.setVec3("PointColor", colorPointer);
+		shading::shader& shaderPt{ RenderData_Set::shader_D[nameShader] };
+		shaderPt.use();
+		shaderPt.use();
+		shaderPt.transformMat("model", model);
+		shaderPt.transformMat("view", cameras::aerialCamera.cam);
+		shaderPt.transformMat("projection", cameras::aerialCamera.camProjection);
+		shaderPt.setFloat("sizePointer", sizePoint);
+		shaderPt.setVec3("PointColor", colorPointer);
 
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_POINTS, 0, 1);
@@ -100,6 +108,14 @@ namespace screenUI
 		model = translateModelPos;
 	//	posPointer = posModel;
 		
+
+	}
+	void pointerScreen::updatePos(glm::vec3 posPointer)
+	{
+		glm::mat4 matPos{ glm::mat4(1.0f) };
+		matPos = glm::translate(matPos, posPointer);
+		
+		model = matPos;
 
 	}
 

@@ -15,6 +15,7 @@
 #include "Render/RenderData.h"
 #include "Render/Render.h"
 #include "collision/ScreenHit.h"
+#include "threadSystem/thread_System.h"
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -470,7 +471,7 @@ int main(int argc, char* argv[])
 		testTransLight.setSettingsTransform(glm::vec3(6.0f, 6.0f, 6.0f), glm::vec3(1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.05f);
 		*/
 
-    camera::camState camP{ camera::camState::cameraAE };
+	camera::camState camP{ camera::camState::cameraAE };
 	cameras::setCameras();
 	//RenderData_Set::set_AllObjects(); DESACTIVADO TEMPORALMENTE
 	RenderData_Set::running_AllObjects();
@@ -478,14 +479,20 @@ int main(int argc, char* argv[])
 
 	SDL_SetWindowRelativeMouseMode(gWindow, true);
 	SDL_WarpMouseInWindow(gWindow, static_cast<float>(screenSettings::screen_w) * 0.5f, static_cast<float>(screenSettings::screen_w) * 0.5f);
-	screenSettings::vSync::inFPS(screenSettings::fps); 
+	//screenSettings::vSync::inFPS(screenSettings::fps); 
 
 	openGL_render::setGlobalRender_OpenGL();
 
 //penGL_render::setGlobalRender_OpenGL();
+	 
+	//threadSystem::ControlPhysics_System ControlPhysics_Events(60);
+	threadSystem::ControlPhysics_Events.initializeThread(60);
+	screenSettings::vSync syncFPS(screenSettings::fps);
+	syncFPS.syncThread_Time(threadSystem::ControlPhysics_Events.cv_start, threadSystem::ControlPhysics_Events.startSystem);
 
 	if (correct_init == true)
 	{
+
 		SDL_Event event;
 		bool loopEvent{ false };
 
@@ -660,21 +667,34 @@ int main(int argc, char* argv[])
 
 			}
 
-			if (screenSettings::vSync::frameT == true)
+			//ControlPhysics_Events.update_ControlSystem();
+
+			//cameras::updateStateCurrentCamera();
+
+
+			///CONTROL DE EVENTS CAMERA.
+			if (screenSettings::outWindow == false)
+			{
+				SDL_WarpMouseInWindow(gWindow, static_cast<float>(screenSettings::screen_w) * 0.5f, static_cast<float>(screenSettings::screen_w) * 0.5f);
+
+				if (camP == camera::camState::cameraAE)
+				{
+					cameras::aerialCamera.controlEventsCamera();
+					//camera_Transforms::attachObject_Cam(RenderData_Set::AssimpModel_D["FlashLight"].ModelCoord, cameras::aerialCamera);
+				}
+
+			}
+		//	refresh_Models::refreshUI_point();
+
+			//ControlPhysics_Events.update_ControlSystem();
+			threadSystem::ControlPhysics_Events.controlExternal_System();
+
+			if (syncFPS.frameT == true)
 			{
 				openGL_render::clearOpenGL();
 
-				if (screenSettings::outWindow == false)
-				{
-					SDL_WarpMouseInWindow(gWindow, static_cast<float>(screenSettings::screen_w) * 0.5f, static_cast<float>(screenSettings::screen_w) * 0.5f);
-
-					if (camP == camera::camState::cameraAE)
-					{
-						cameras::aerialCamera.controlEventsCamera();
-				//camera_Transforms::attachObject_Cam(RenderData_Set::AssimpModel_D["FlashLight"].ModelCoord, cameras::aerialCamera);
-					}
-
-				}
+				threadSystem::ControlPhysics_Events.timeInterpolation.loopAcomulator();
+				////AQUI IBA LA SECCION DE CONTROL DE EVENTS CAMERA.
 
 
 				/*
@@ -716,40 +736,47 @@ int main(int argc, char* argv[])
 
 				//render::renderAll();
 
-
 		//		stencil_test::renderStencilTest();
 				//testPlay::renderTranformations_Objects();
 		//		AABB::updateCoordAABB_All();
 	
 				if (RenderData_Set::finishLoadALL == true)
 				{
+					//ControlPhysics_Events.update_ControlSystem();
 
+					//testPlay::renderTranformations_Objects();
 					cameras::updateStateCurrentCamera();
-
+					refresh_Models::refreshUI_point();
+					//refresh_Models::refreshUI_point();
+					testPlay::transformation_handCamara();
 					refresh_Models::refreshAll_Models();
-					AABB::updateCoordAABB_All();
-					ScreenCalc_Hit::calc_IntersectALL();
-
-					render::renderAll();
-
-					testPlay::renderTranformations_Objects();
+				    //AABB::updateCoordAABB_All();
+					//ScreenCalc_Hit::calc_IntersectALL();
+					
+					render::renderPhase();
+					refresh_Models::refreshAll_LastModels();
+					//testPlay::renderTranformations_Objects();
 				}
+				
+
+				//openGL_render::secondClearOpenGL();
 
 				SDL_UpdateWindowSurface(gWindow);
 				SDL_GL_SwapWindow(gWindow);
 
 				//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-				screenSettings::vSync::frameT = false;
-				screenSettings::vSync::stopTimeNS = SDL_GetTicksNS();
+				syncFPS.frameT = false;
+				syncFPS.stopTimeNS = SDL_GetTicksNS();
 			}
 
-			screenSettings::vSync::countTimeRender();
+			syncFPS.countTimeRender();
 
 		}
 
 	}
 
 	//multiplesTriangles.destroy();
+	threadSystem::ControlPhysics_Events.destroy();
 	destroy::destroyModels();
 	SDL_GL_DestroyContext(contextOpenGl);
 	SDL_DestroyWindow(gWindow);

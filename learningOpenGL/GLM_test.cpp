@@ -1,6 +1,5 @@
 #include "GLM_test.h"
 
-
 namespace randomN
 {
 	inline std::mt19937 generateRand()
@@ -41,6 +40,58 @@ namespace randomN
 
 }
 
+
+namespace reflectionMatrixOP
+{
+	glm::mat4 calcReflectMatrix(glm::vec3 cameraPos, glm::vec3 pointPlane, glm::vec3 planeNormal, glm::vec3 cameraUp, glm::vec3 cameraViewTarget)
+	{
+		glm::vec3 reflectedToCam{ cameraPos - pointPlane };
+		reflectedToCam = glm::reflect(reflectedToCam, planeNormal);
+		glm::vec3 reflectedPos{ pointPlane + reflectedToCam };
+
+		glm::vec3 reflectedToTarget{ cameraViewTarget - pointPlane };
+		reflectedToTarget = glm::reflect(reflectedToTarget, planeNormal);
+		glm::vec3 reflectedTarget{ pointPlane + reflectedToTarget };
+
+		glm::vec3 reflectedUp{ glm::reflect(cameraUp, planeNormal) };
+
+		glm::mat4 reflectViewMatrix
+		{
+			glm::lookAt(reflectedPos, reflectedTarget, reflectedUp)
+		};
+		///CONTINUAR AQUI
+		return reflectViewMatrix;
+	}
+
+	glm::mat4 calcObliqueProjection(glm::mat4 originalProjectionMat, glm::mat4 reflectMatrix, glm::vec3 planePoint, glm::vec3 planeNormal)
+	{
+		float w{ -glm::dot(planeNormal, planePoint) };
+		glm::vec4 planeEq{ glm::vec4(planeNormal, w) };
+
+		glm::mat4 viewInverseTranspose{ glm::transpose(glm::inverse(reflectMatrix)) };
+		glm::vec4 viewSpacePlane{ viewInverseTranspose * planeEq };
+
+		glm::vec4 q
+		{
+			(glm::sign(viewSpacePlane.x) + originalProjectionMat[2][0] / originalProjectionMat[0][0]),
+			(glm::sign(viewSpacePlane.y) + originalProjectionMat[2][1] / originalProjectionMat[1][1]),
+			-1.0f,
+			(1.0f + originalProjectionMat[2][2]) / originalProjectionMat[2][3]
+		};
+
+		glm::vec4 c{ viewSpacePlane * (2.0f / glm::dot(viewSpacePlane, q)) };
+
+		glm::mat4 obliqueProjection{ originalProjectionMat };
+
+		obliqueProjection[0][2] = c.x;
+		obliqueProjection[1][2] = c.y;
+		obliqueProjection[2][2] = c.z + 1.0f;
+		obliqueProjection[3][2] = c.w;
+
+		return obliqueProjection;
+	}
+
+}
 
 namespace transformation_basics
 {
@@ -437,27 +488,57 @@ namespace transformation_basics
 	}
 
 	/////rotacion alrededor de un pivote
-	glm::mat4 basics_Model3D::rotatePerPivot(glm::vec3 center, glm::vec3 pivot, glm::vec3& posicionCube)
+	glm::mat4 basics_Model3D::rotatePerPivot(glm::vec3 center, glm::vec3 pivot, glm::vec3& posicionCube, glm::quat& lastRot, glm::vec3& lastPos_01)
 	{
 		glm::vec3 posChange{ glm::vec3(0.0f, 0.0f, -0.3f) - glm::normalize(posicionCube) };
 		pivot = glm::normalize(pivot);
 
 		glm::mat4 matRotPivot{ glm::mat4(1.0f) };
 		matRotPivot = glm::translate(matRotPivot, posChange);
-		matRotPivot = glm::rotate(matRotPivot, glm::radians(ang), pivot);
+
+		glm::qua rot{ glm::angleAxis(glm::radians(ang), pivot) };
+		//lastRot = rot;
+		//glm::qua rotInterpolate = glm::slerp(lastRot, rot, (float)alphaInterpolation);
+
+		//std::cout << static_cast<float>(alphaInterpolation) << '\n';
+
+		matRotPivot = glm::rotate(matRotPivot, glm::radians(ang), pivot); //INTERPOLAR ESTA ROTACION /////////////
+	//	matRotPivot = glm::mat4_cast(rotInterpolate) * matRotPivot;
+		
+
 
 		glm::vec3 posicionConvertion{ glm::vec3(matRotPivot * glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) )};
 
-		glm::vec3 posBack = - posicionConvertion;
-		posBack = posicionCube - posBack;
+		//glm::vec3 posBack = - posicionConvertion;
+		glm::vec3 posBack = posicionCube + posicionConvertion;
 
 		glm::vec3 translateBack{ posicionConvertion - posBack };
 
-		glm::mat4 trans{ glm::mat4(1.0f) };
+		//glm::vec3 translateBack_Interpolate{ glm::mix(lastPos_01, translateBack, (float)alphaInterpolation) };
+	//	lastPos_01 = translateBack;
+
 		matRotPivot = glm::translate(matRotPivot, translateBack);
+	
 
 		return matRotPivot;
 	}
+	void basics_Model3D::rotatePerPivot_Temporal(glm::vec3 center, glm::vec3 pivot, glm::vec3& posicionCube, glm::quat& lastRot, glm::vec3& lastPos_01, glm::quat& newRot, glm::vec3& newPos_01)
+	{
+		lastRot = newRot;
+		lastPos_01 = newPos_01;
+
+		glm::vec3 posChange{ glm::vec3(0.0f, 0.0f, -0.3f) - posicionCube};
+	
+		newPos_01 = posChange;
+
+		pivot = glm::normalize(pivot);
+		glm::qua rot{ glm::angleAxis(glm::radians(ang), pivot) };
+
+		newRot = rot;
+
+	}
+
+
 
 	void basics_Model3D::refreshCenter_Pos()
 	{
@@ -580,7 +661,7 @@ namespace camera
 		directionView.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 		directionView = glm::normalize(directionView);
 
-		std::string dirCam{ std::to_string(directionView.x) + '\t' + std::to_string(directionView.y) + '\t' + std::to_string(directionView.z) + '\n' };
+//		std::string dirCam{ std::to_string(directionView.x) + '\t' + std::to_string(directionView.y) + '\t' + std::to_string(directionView.z) + '\n' };
 		//SDL_Log(dirCam.c_str());
 		//SDL_Log (std::to_string(pitch).c_str());
 	}
@@ -681,12 +762,30 @@ namespace camera
 
 	}
 
+	void camera1::updateCameraOut()
+	{
+		directionView.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+		directionView.y = sin(glm::radians(pitch));
+		directionView.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+		directionView = glm::normalize(directionView);
+		rotateCam();
+		cam = camRotate;
+		camProjection = glm::perspective(glm::radians(fovCam), static_cast<float>(screenSettings::screen_w) / static_cast<float>(screenSettings::screen_h), nearCut, maxCut);
+
+
+	}
 	void camera1::controlEventsCamera()
 	{
 		rotateCam();
 		moveCamera();
 	
 		cam = camRotate;
+	}
+	
+	void camera1::updateSettingsCam(glm::mat4 camView, glm::mat4 camProjection)
+	{
+		cam = camView;
+		this->camProjection = camProjection;
 	}
 
 }

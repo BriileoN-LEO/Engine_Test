@@ -2,6 +2,8 @@
 #define config_window
 
 #include "learningOpenGL.h"
+
+
 extern glm::vec4 viewportOpenGL;
 
 namespace screenSettings
@@ -21,14 +23,16 @@ namespace screenSettings
 	{
 	public:
 		
-		static Uint64 maxNS_PerSecond;
-		static Uint64 count_Time;
-		static Uint64 stopTimeNS; 
-		static bool frameT;
+		Uint64 maxNS_PerSecond{};
+		Uint64 count_Time{};
+		Uint64 stopTimeNS{};
+		bool frameT{ false };
 
-		static void inFPS(int fps);
-		static void countTimeRender();
-	
+		 void inFPS(int fps);
+		 void countTimeRender();
+		 void resetTime();
+		 void syncThread_Time(std::condition_variable& unlock_Mutex, bool& start);
+
 	};
 
 }

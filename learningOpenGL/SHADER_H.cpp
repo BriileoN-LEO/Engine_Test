@@ -43,7 +43,8 @@ namespace shading
 		}
 		catch (std::ifstream::failure e)
 		{
-			std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ";
+			std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ\n" <<
+				vertexPath << '\n';
 			//std::cout << e.what();
 		}
 
@@ -442,7 +443,7 @@ namespace texture
 			new_Info.push_back(tipeR[2]);
 			new_Info.push_back(tipeR[1]);;
 			new_Info.push_back(tipeR[0]);
-			SDL_Log(new_Info.c_str());
+	//SDL_Log(new_Info.c_str());
 
 
 			if (new_Info == "jpg")
@@ -1568,6 +1569,151 @@ namespace ObjCreation
 
 		//lDrawArrays(GL_TRIANGLES, 0, 36);
 	}
+	void ModelCreation::drawModelMultiple(camera::camera1 cam, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights, std::map<std::string, light::SpotLight>& spotLights, double& alpha)
+	{
+		for (int s = 0; s < static_cast<int>(posCubes.size()); s++)
+		{
+			for (int i = 0; i < static_cast<int>(numberTris); i++)
+			{
+				GLuint posicion{ numberTris - 1 };
+
+				shaderColor.use();
+
+				glm::qua rot{ glm::slerp(lastRot[s], newRot[s], (float)alpha) };
+				glm::vec3 translatePos{ glm::mix(lastPos_01[s], newPos_01[s], (float)(alpha)) };
+				
+				glm::mat4 model{ glm::mat4(1.0f) };	
+				model = glm::translate(model, translatePos);
+				model = glm::mat4_cast(rot) * model;
+
+				shaderColor.transformMat("model", model);
+				shaderColor.transformMat3("modelMatrix", modelCoord.normalModelMatrix);
+				setCameraTransforms(cam);
+				shaderColor.setVec3("viewPos", cam.posCam);
+
+				if (static_cast<int>(pointLights.size()) > 0)
+				{
+					int numPointLight{ 0 };
+					for (auto& PL : pointLights)
+					{
+						std::string set{ "pointLights_Array[" + std::to_string(numPointLight) + "]." };
+
+						std::string setLightPos{ set + "lightPos" };
+						std::string setConstant{ set + "constant" };
+						std::string setLinear{ set + "linear" };
+						std::string setQuadratic{ set + "quadratic" };
+						std::string setAmbient{ set + "ambient" };
+						std::string setDiffuse{ set + "diffuse" };
+						std::string setSpecular{ set + "specular" };
+
+						shaderColor.setVec3(setLightPos, PL.Posicion);
+						shaderColor.setFloat(setConstant, PL.constant);
+						shaderColor.setFloat(setLinear, PL.linear);
+						shaderColor.setFloat(setQuadratic, PL.quadratic);
+
+						shaderColor.setVec3(setAmbient, PL.Mat.ambient);
+						shaderColor.setVec3(setDiffuse, PL.Mat.diffuse);
+						shaderColor.setVec3(setSpecular, PL.Mat.specular);
+
+
+						numPointLight++;
+					}
+
+				}
+
+				if (static_cast<int>(directionalLights.size()) > 0)
+				{
+					int dirLight_pos{ 1 };
+
+					for (int i = 0; i < static_cast<int>(directionalLights.size()); i++)
+					{
+						//for (auto& dL : *directionalLights)
+						//{
+						std::string dL_name{ "directionalLight_" + std::to_string(dirLight_pos++) };
+
+						std::string dL_direction{ dL_name + ".lightDir" };
+						std::string dL_ambient{ dL_name + ".ambient" };
+						std::string dL_difusse{ dL_name + ".diffuse" };
+						std::string dL_specular{ dL_name + ".specular" };
+
+						shaderColor.setVec3(dL_direction, directionalLights[i].Direction);
+						shaderColor.setVec3(dL_ambient, directionalLights[i].Mat.ambient);
+						shaderColor.setVec3(dL_difusse, directionalLights[i].Mat.diffuse);
+						shaderColor.setVec3(dL_specular, directionalLights[i].Mat.specular);
+
+					}
+
+				}
+
+				if (static_cast<int>(spotLights.size()) > 0)
+				{
+					int sL_i{};
+
+					for (auto& spotLight : spotLights)
+					{
+						std::string sL_name{ "spotLights_Array[" + std::to_string(sL_i) + "]" };
+
+						std::string sL_Posicion{ sL_name + ".lightPos" };
+						std::string sL_Direction{ sL_name + ".lightDir" };
+						std::string sL_cutOff{ sL_name + ".cutOff" };
+						std::string sL_outerCutOff{ sL_name + ".outerCutOff" };
+						std::string sL_constant{ sL_name + ".constant" };
+						std::string sL_linear{ sL_name + ".linear" };
+						std::string sL_quadratic{ sL_name + ".quadratic" };
+						std::string sL_ambient{ sL_name + ".ambient" };
+						std::string sL_diffuse{ sL_name + ".diffuse" };
+						std::string sL_specular{ sL_name + ".specular" };
+						std::string sL_lightState{ sL_name + ".lightState" };
+
+						shaderColor.setVec3(sL_Posicion, spotLight.second.Posicion);
+						shaderColor.setVec3(sL_Direction, spotLight.second.Direction);
+						shaderColor.setFloat(sL_cutOff, glm::cos(glm::radians(spotLight.second.cutOff)));
+						shaderColor.setFloat(sL_outerCutOff, glm::cos(glm::radians(spotLight.second.outerCutOff)));
+						shaderColor.setFloat(sL_constant, spotLight.second.constant);
+						shaderColor.setFloat(sL_linear, spotLight.second.linear);
+						shaderColor.setFloat(sL_quadratic, spotLight.second.quadratic);
+						shaderColor.setVec3(sL_ambient, spotLight.second.Mat.ambient);
+						shaderColor.setVec3(sL_diffuse, spotLight.second.Mat.diffuse);
+						shaderColor.setVec3(sL_specular, spotLight.second.Mat.specular);
+						shaderColor.setBool(sL_lightState, spotLight.second.stateLight);
+
+						sL_i++;
+					}
+
+
+				}
+
+				shaderColor.setVec3("objectColor", glm::vec3(0.8f, 0.5f, 0.4f));
+				shaderColor.setVec3("Mat.ambient", glm::vec3(0.5f));
+				shaderColor.setVec3("Mat.difusse", glm::vec3(0.8f));
+				shaderColor.setVec3("Mat.specular", glm::vec3(0.5f));
+				shaderColor.setFloat("Mat.shiness", 64.0f);
+
+				if (i < posicion - 3)
+				{
+					minecraftCube[0].useTextures();
+
+				}
+
+				else if (i <= posicion - 2 && i >= posicion - 3)
+				{
+					minecraftCube[1].useTextures();
+
+				}
+
+				else if (i > posicion - 2)
+				{
+					minecraftCube[2].useTextures();
+
+				}
+				vertexData.useMultipleVAO(i);
+				glDrawArrays(GL_TRIANGLES, 0, 3);
+
+			}
+		}
+
+	}
+
 	void ModelCreation::renderModel(camera::camera1 cam, light::light1 light) 
 	{
 		for (int i = 0; i < static_cast<int>(numberTris); i++)
@@ -1621,7 +1767,7 @@ namespace ObjCreation
 
 	}
 
-	void ModelCreation::renderMultipleModels(int numScene, camera::camera1 cam, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights, std::map<std::string, light::SpotLight>& spotLights)
+	void ModelCreation::renderMultipleModels(int numScene, camera::camera1 cam, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights, std::map<std::string, light::SpotLight>& spotLights, double& alphaInterpolation)
 	{
 		auto moveZ_models = [&](int pM) -> glm::mat4
 			{
@@ -1641,7 +1787,7 @@ namespace ObjCreation
 		auto rotate_ModelsPivot = [&](int pM) -> glm::mat4
 			{
 
-				glm::mat4 rotMP{ modelCoord.rotatePerPivot(glm::vec3(0.0f, 0.0f, 0.0f), pivotCubes[pM], posCubes[pM]) };
+				glm::mat4 rotMP{ modelCoord.rotatePerPivot(glm::vec3(0.0f, 0.0f, 0.0f), pivotCubes[pM], posCubes[pM], lastRot[pM], lastPos_01[pM])};
 				modelCoord.setNormalModelMatrix();
 
 				return rotMP;
@@ -1682,7 +1828,9 @@ namespace ObjCreation
 
 					//				shaderColor.transformMat("model", rotate_ModelsPivot(p-1));
 				}
-				renderModelMultiple(cam, rotate_ModelsPivot(p - 1), pointLights, directionalLights, spotLights);
+             
+				glm::mat4 posModel{ rotate_ModelsPivot(p - 1) };
+				renderModelMultiple(cam, posModel, pointLights, directionalLights, spotLights);
 			}
 
 			//renderModelMultiple(cam, rotate_ModelsPivot(p - 1));
@@ -1690,6 +1838,18 @@ namespace ObjCreation
 		}
 
 	}
+	void ModelCreation::updateMultipleModels()
+	{
+
+		modelCoord.sumAng(0.1f);
+
+		for (int i = 0; i < static_cast<int>(posCubes.size()); i++)
+		{
+			modelCoord.rotatePerPivot_Temporal(glm::vec3(0.0f, 0.0f, 0.0f), pivotCubes[i], posCubes[i], lastRot[i], lastPos_01[i], newRot[i], newPos_01[i]);
+			modelCoord.setNormalModelMatrix();  ////testear si las luces son correctas si no cambiar cada vez que se hace render
+		}
+	}
+
 
 	void ModelCreation::setPosModel(const int numModels)
 	{ 
@@ -1718,7 +1878,11 @@ namespace ObjCreation
 			moveZ.emplace(i, std::make_pair(randZ, false));
 		}
 
-
+		lastRot.resize(numModels);
+		lastPos_01.resize(numModels);
+		newRot.resize(numModels);
+		newPos_01.resize(numModels);
+		//multipleModels.resize(numModels);
 	}
 
 	void ModelCreation::calculateCenterBOX()

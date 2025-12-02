@@ -1,50 +1,82 @@
 #include "Render.h"
 #include "RenderData.h"
+#include "threadSystem/thread_System.h"
 //#include "playTest.h"
 //#include "Collision/ScreenHit.h"
 
 
 namespace render
 {
-	void render_ModelCreation_D() 
-	 {
-		for(auto& renderMCD : RenderData_Set::ModelCreation_D)
+	void render_ModelCreation_D()
+	{
+		for (auto& renderMCD : RenderData_Set::ModelCreation_D)
 		{
-			renderMCD.second.renderMultipleModels(1, cameras::aerialCamera, RenderData_Set::pointLights_D, RenderData_Set::directionalLights_D, RenderData_Set::spotLights_D);
+			//renderMCD.second.renderMultipleModels(1, cameras::aerialCamera, RenderData_Set::pointLights_D, RenderData_Set::directionalLights_D, RenderData_Set::spotLights_D, threadSystem::ControlPhysics_Events.timeInterpolation.alpha);
+			renderMCD.second.drawModelMultiple(cameras::aerialCamera, RenderData_Set::pointLights_D, RenderData_Set::directionalLights_D, RenderData_Set::spotLights_D, threadSystem::ControlPhysics_Events.timeInterpolation.alpha);
 		}
 	}
 
 	void render_classicModelAssimp_D()
 	{
 		for (auto& renderMAD : RenderData_Set::AssimpModel_D)
-			{
-				renderMAD.second.Draw_WL();
-		    }
+		{
+			renderMAD.second.Draw_WL();
+		}
 	}
 
-	void render_ModelAssimp_D(std::string excludedMesh, std::string excludeModel)
-	 {
-		
-//		for (auto& renderMAD : RenderData_Set::AssimpModel_D)
-//		{
-//			renderMAD.second.Draw_WL();
-//		}
+	void render_ModelAssimp_D(std::vector<Assimp_D::excluded_Obj> excluded_Objs)
+	{
+
+		//		for (auto& renderMAD : RenderData_Set::AssimpModel_D)
+		//		{
+		//			renderMAD.second.Draw_WL();
+		//		}
 
 
-		///////RESOLVER AQUIIII AHHHHHHS 
+				///////RESOLVER AQUIIII AHHHHHHS 
 
 		std::map<std::string, float> meshesNear{};
 		std::map<std::string, float> meshesFar{};
 
+
 		for (auto& modelSearch : RenderData_Set::AssimpModel_D)
 		{
-			if (modelSearch.second.nameModel != excludeModel)
+			bool pass_excluded_model{};
+
+			for (auto excludedModel : excluded_Objs)
+			{
+				if (modelSearch.second.nameModel == excludedModel.nameModel && excludedModel.exclude_Type == Assimp_D::excludedOP::exclude_complete_model)
+				{
+					pass_excluded_model = true;
+				}
+			}
+
+			if (pass_excluded_model == false)
 			{
 				std::vector<Assimp_D::Mesh>& meshesSearch{ modelSearch.second.outMeshes() };
 
 				for (auto& meshS : meshesSearch)
 				{
-					if (meshS.nameMesh != excludedMesh)
+					bool pass_excluded_mesh{};
+
+					for (auto excludedModel : excluded_Objs)
+					{
+						if (modelSearch.second.nameModel == excludedModel.nameModel)
+						{
+							for (auto excludedMesh : excludedModel.nameMeshes)
+							{
+								if (meshS.nameMesh == excludedMesh && excludedModel.exclude_Type == Assimp_D::excludedOP::exclude_only_meshes)
+								{
+									pass_excluded_mesh = true;
+
+								}
+
+							}
+						}
+
+					}
+
+					if (pass_excluded_mesh == false)
 					{
 						float dist{ glm::distance(meshS.MeshCoord.posModel, cameras::aerialCamera.posCam) };
 
@@ -76,47 +108,47 @@ namespace render
 		}
 
 
-		float minNear{};		
+		float minNear{};
 
 		for (int i = 0; i < static_cast<int>(meshesNear.size()); i++)
 		{
 			std::string meshToRender{};
 			float maxNear{ 10000 };
 
-			 for(auto& meshNear : meshesNear)
-			 {
-				 if (meshNear.second < maxNear && meshNear.second > minNear)
-				 {
-					 maxNear = meshNear.second;
-					 meshToRender = meshNear.first;
-				 }
+			for (auto& meshNear : meshesNear)
+			{
+				if (meshNear.second < maxNear && meshNear.second > minNear)
+				{
+					maxNear = meshNear.second;
+					meshToRender = meshNear.first;
+				}
 
-			 }
+			}
 
-			 minNear = maxNear;
-			 bool breakLoop{ false };
+			minNear = maxNear;
+			bool breakLoop{ false };
 
-			 for (auto& renderMesh : RenderData_Set::AssimpModel_D)
-			 {
-				 std::vector<Assimp_D::Mesh>& meshesSearch{ renderMesh.second.outMeshes() };
+			for (auto& renderMesh : RenderData_Set::AssimpModel_D)
+			{
+				std::vector<Assimp_D::Mesh>& meshesSearch{ renderMesh.second.outMeshes() };
 
-				 for (auto& mesh : meshesSearch)
-				 {
-					 if (mesh.nameMesh == meshToRender)
-					 {
-					
-						 mesh.Draw_WithLights(RenderData_Set::shader_D[renderMesh.second.nameShader]);
+				for (auto& mesh : meshesSearch)
+				{
+					if (mesh.nameMesh == meshToRender)
+					{
+
+						mesh.Draw_WithLights(RenderData_Set::shader_D[renderMesh.second.nameShader]);
 						// mesh.Draw_WithLights(renderMesh.second.outShader()); //DESACTIVADO TEMPORALMENTE
-						 breakLoop = true;
-						 break;
-					 }
-				 }
+						breakLoop = true;
+						break;
+					}
+				}
 
-				 if (breakLoop == true)
-				 {
-					 break;
-				 }
-			 }
+				if (breakLoop == true)
+				{
+					break;
+				}
+			}
 		}
 
 		float maxDist{ 10000 };
@@ -128,7 +160,7 @@ namespace render
 
 			for (auto& meshFar : meshesFar)
 			{
-				if(meshFar.second > currentDist && meshFar.second < maxDist)
+				if (meshFar.second > currentDist && meshFar.second < maxDist)
 				{
 					currentDist = meshFar.second;
 					meshToRender = meshFar.first;
@@ -139,7 +171,7 @@ namespace render
 
 			maxDist = currentDist;
 			bool breakLoop{ false };
-			
+
 			for (auto& renderMesh : RenderData_Set::AssimpModel_D)
 			{
 				std::vector<Assimp_D::Mesh>& meshesSearch{ renderMesh.second.outMeshes() };
@@ -176,15 +208,16 @@ namespace render
 					break;
 				}
 			}
-			
+
 
 		}
-	
+
 
 	}
 
 	void render_MultiAssimp_D()
 	{
+
 		for (auto& multiAssimp_D : RenderData_Set::multi_AssimpModel)
 		{
 			multiAssimp_D.drawMultipleMesh();
@@ -220,25 +253,51 @@ namespace render
 
 	}
 
+	void render_Skybox()
+	{
+		//RenderData_Set::skybox_D::currentSkyBox_D->draw_Skybox();
+		RenderData_Set::skybox_D::skyBoxes_D[RenderData_Set::skybox_D::nameSkybox].draw_Skybox();
+	}
+
 	void renderAll()
 	{
+
+
 		if (ControlScenarios::scene == ControlScenarios::stateScenarios::normalSceneario)
 		{
+			std::vector<Assimp_D::excluded_Obj> excluded_NormalScenario
+			{
+				Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
+			};
+
+
+			//render_Skybox();
+
 			render_Points();
 			//render_classicModelAssimp_D();
 			render_ModelCreation_D();
-			render_ModelAssimp_D();///LISTO_NEW_SHADER
+			render_ModelAssimp_D(excluded_NormalScenario);///LISTO_NEW_SHADER
 			render_MultiAssimp_D();///LISTO_NEW_SHADER
 			render_MeshLights_D();	
 			render_AABB();
+
+			render_Skybox();
 		//	data_HitAABB::triangleStencil.drawTest_2();
 	
 		}
 
 		else if (ControlScenarios::scene == ControlScenarios::stateScenarios::stencilTestAll)
 		{
+			std::vector<Assimp_D::excluded_Obj> excluded_Stencil
+			{
+				Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
+				Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "Floor"),
+				
+			};
+
 			render_Points();
 			stencil_test::renderStencilTest();///LISTO_NEW_SHADER
+			render_Skybox();
 		   // render_AABB();
 		}
 
@@ -246,35 +305,83 @@ namespace render
 		{
 			if (ControlScenarios::sceneAABB == ControlScenarios::scenarioAABB::Triangle)
 			{
+
+				std::vector<Assimp_D::excluded_Obj> excluded_triangle
+				{
+					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
+
+				};
+
 				render_Points();
-				renderSelection::renderSelection_Triangle();///LISTO_NEW_SHADER
+				renderSelection::renderSelection_Triangle(excluded_triangle);///LISTO_NEW_SHADER
+				render_Skybox();
 		
 			}
 
 			if (ControlScenarios::sceneAABB == ControlScenarios::scenarioAABB::Mesh)
 			{
+				std::vector<Assimp_D::excluded_Obj> excluded_Mesh
+				{
+					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
+
+					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_only_meshes, data_HitAABB::selectedObj.first.nameModel, 
+						std::vector<std::string>({data_HitAABB::selectedObj.first.nameMesh}))
+
+				};
+
 				render_Points();
-				renderSelection::renderSelection_Mesh();///LISTO_NEW_SHADER
+				renderSelection::renderSelection_Mesh(excluded_Mesh);///LISTO_NEW_SHADER
+				render_Skybox();
 		
 			}
 
 			if (ControlScenarios::sceneAABB == ControlScenarios::scenarioAABB::Model)
 			{
+				std::vector<Assimp_D::excluded_Obj> excluded_Model
+				{
+					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
+
+					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, data_HitAABB::selectedObj.first.nameModel)
+				};
+
+
 				render_Points();
-				renderSelection::renderSelection_Model();///LISTO_NEW_SHADER
+				renderSelection::renderSelection_Model(excluded_Model);///LISTO_NEW_SHADER
+				render_Skybox();
 			
 			}
  
 		}
 
 	}
+	void renderInvertAll()
+	{
+		//cameras::startInvertCurrentCamera();
 
+		cameras::startInvertCurrentCamera();
+		renderAll();
+		cameras::endInvertCurrentCamera();
+
+	}
+	void renderPlanarReflection()
+	{
+
+		frameBuff_Obj::set_PlanarReflection_Dir(RenderData_Set::frameBuffers_D["mirror_01"].dataBuffer.nameAssimp.nameMesh, cameras::aerialCamera);
+		render::renderAll();
+		cameras::aerialCamera.updateCameraOut();
+
+	}
+
+	void renderPhase()
+	{
+		render::renderPlanarReflection(); ///Para renderizar el espejo invertido.
+		openGL_render::secondClearOpenGL();
+		render::renderAll();
+     	RenderData_Set::frameBuffers_D["mirror_01"].useFrameBufferModel();
+
+	}
 
 }
-
-
-
-
 
 namespace openGL_render
 {
@@ -327,10 +434,24 @@ namespace openGL_render
 
 	void clearOpenGL()
 	{
-		glEnable(GL_DEPTH_TEST);
+	//RenderData_Set::testFrameBuffer.bindFrameBuffer();
+		RenderData_Set::frameBuffers_D["mirror_01"].bindFrameBuffer();  ///se blindea el Framebuffer para recibir el render 
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glEnable(GL_DEPTH_TEST);
+
+	}
+	void secondClearOpenGL()
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+//		RenderData_Set::frameBuffers_D["Mirror"].useFrameBufferModel();
+		
+	    
 
 	}
 
@@ -347,7 +468,7 @@ namespace openGL_render
 
 namespace renderSelection
 {
-	void renderSelection_Triangle()
+	void renderSelection_Triangle(std::vector<Assimp_D::excluded_Obj> excluded_Objs)
 	{
 	
 		if (data_HitAABB::renderSelection == true)
@@ -372,7 +493,8 @@ namespace renderSelection
 
 			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 			glStencilMask(0x00);
-			render::render_ModelAssimp_D();
+			render::render_ModelAssimp_D(excluded_Objs);
+			render::render_MultiAssimp_D();
 			render::render_ModelCreation_D();
 			render::render_MeshLights_D();
 			
@@ -391,13 +513,14 @@ namespace renderSelection
 
 		else
 		{
-			render::render_ModelAssimp_D();
+			render::render_ModelAssimp_D(excluded_Objs);
+			render::render_MultiAssimp_D();
 			render::render_ModelCreation_D();
 			render::render_MeshLights_D();
 		}
 
 	}
-	void renderSelection_Mesh()  ////////CONTINUAR AQUI
+	void renderSelection_Mesh(std::vector<Assimp_D::excluded_Obj> excluded_Objs)  ////////CONTINUAR AQUI
 	{
 
 		if (data_HitAABB::renderSelection == true)
@@ -457,8 +580,11 @@ namespace renderSelection
 
 			}
 			*/
-			render::render_ModelAssimp_D(data_HitAABB::selectedObj.first.nameMesh); ///ExcludeMesh
 
+
+			//render::render_ModelAssimp_D(data_HitAABB::selectedObj.first.nameMesh); ///ExcludeMesh
+			render::render_ModelAssimp_D(excluded_Objs);
+			render::render_MultiAssimp_D();
 			render::render_ModelCreation_D();
 			render::render_MeshLights_D();
 		}
@@ -466,11 +592,12 @@ namespace renderSelection
 		else
 		{
 			render::render_ModelCreation_D();
+			render::render_MultiAssimp_D();
 			render::render_ModelAssimp_D();
 			render::render_MeshLights_D();
 		}
 	}
-	void renderSelection_Model()
+	void renderSelection_Model(std::vector<Assimp_D::excluded_Obj> excluded_Objs)
 	{
 
 		if (data_HitAABB::renderSelection == true)
@@ -510,8 +637,9 @@ namespace renderSelection
 
 			}
 		   */
-			render::render_ModelAssimp_D("", data_HitAABB::selectedObj.first.nameModel); //Exclude Model ///LISTO_NEW_SHADER
-
+			//render::render_ModelAssimp_D("", data_HitAABB::selectedObj.first.nameModel); //Exclude Model ///LISTO_NEW_SHADER
+			render::render_ModelAssimp_D(excluded_Objs);
+			render::render_MultiAssimp_D();
 			render::render_ModelCreation_D();
 			render::render_MeshLights_D();
 
@@ -520,6 +648,7 @@ namespace renderSelection
 		else
 		{
 			render::render_ModelCreation_D();
+			render::render_MultiAssimp_D();
 			render::render_ModelAssimp_D();
 			render::render_MeshLights_D();
 
@@ -535,7 +664,7 @@ namespace renderSelection
 namespace stencil_test
 {
 
-	void renderStencilTest()
+	void renderStencilTest(std::vector<Assimp_D::excluded_Obj> excluded_Objs)
 	{
 		
 		//calculateAllScreenHit();
@@ -561,7 +690,7 @@ namespace stencil_test
 		}
 		*/
 
-		render::render_ModelAssimp_D("", back_Excluded);
+		render::render_ModelAssimp_D(excluded_Objs);
 			
 		
 		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
@@ -630,18 +759,38 @@ namespace refresh_Models
 			renderMAD.second.updateModel();
 		}
 
-
+		//RenderData_Set::pointUI_D[0].updatePoint();
+		
+		/*
 		for (auto& renderPoint : RenderData_Set::pointUI_D)
 		{
 			renderPoint.updatePoint();
 
 		}
+		*/
 	}
-	
+	void refreshUI_point()
+	{
+		RenderData_Set::pointUI_D[0].updatePoint();
+
+	}
+
+	void refreshAll_LastModels()
+	{
+		for (auto& renderMAD : RenderData_Set::AssimpModel_D)
+		{
+			renderMAD.second.ModelCoord.lastModel = renderMAD.second.ModelCoord.model;
+		//	renderMAD.second.ModelCoord.lastTranslateM = renderMAD.second.ModelCoord.translateM;
+		//	renderMAD.second.ModelCoord.lastScaleS = renderMAD.second.ModelCoord.scaleS;
+		//	renderMAD.second.ModelCoord.lastRotateR = renderMAD.second.ModelCoord.rotateR;
+
+		}
+	}
 
 	///añadir aqui para refrescar las posiciones y los cambios de los modelos
 
 }
+
 
 namespace destroy
 {

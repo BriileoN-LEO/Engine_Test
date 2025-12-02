@@ -8,6 +8,7 @@
 namespace opScreenHit
 {
 	glm::vec3 calc_NormalPlane(AABB::triAABB vertPlane);
+	glm::vec3 calc_NormalPlane_VertNormal(AABB::triAABB vertN_Plane, AABB::triAABB vertPlane);
 	float calc_T(AABB::triAABB vertPlane, glm::vec3 nearPT_screen, glm::vec3 direction_R);
 	bool samePlane_Technique(AABB::triAABB tris, glm::vec3 PointCollisicion);
 

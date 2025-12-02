@@ -2,6 +2,182 @@
 #include "ModelAssimp.h"
 #include "Render/RenderData.h"
 
+namespace sky
+{
+	cubeMap_Skybox::cubeMap_Skybox() {};
+	cubeMap_Skybox::cubeMap_Skybox(std::string name, std::string directory_Tex, std::vector<std::string> nameFiles, std::string nameShader)
+	{
+		this->name = name;
+		this->nameShader = nameShader;
+		loadTexture_Skybox_Seq(directory_Tex, nameFiles);
+		loadCube();
+
+	}
+
+	void cubeMap_Skybox::loadTexture_Skybox_Seq(std::string directory_Tex, std::vector<std::string> nameFiles)
+	{
+		std::map<std::string, int> posicionNames
+		{
+			{"right", 0},
+			{"left", 1},
+			{"top", 2},
+			{"bottom", 3},
+			{"back", 4},
+			{"front", 5}
+		};
+
+		glGenTextures(1, &textureID);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+		int width, height, nrChannels;
+
+		for (auto imageFile : nameFiles)
+		{
+			std::string nameSimple{ imageFile.substr(0, imageFile.find_last_of('.')) };
+
+			std::cout << nameSimple << '\n';
+
+			if (posicionNames.find(nameSimple) != posicionNames.end())
+			{
+				std::string sum_DirImage{ directory_Tex + imageFile };
+				unsigned char* data = stbi_load(sum_DirImage.c_str(), &width, &height, &nrChannels, 0);
+
+				if (data)
+				{
+					GLenum format{};
+
+					if (nrChannels == 1)
+					{
+						format = GL_RED;
+					}
+
+					if (nrChannels == 3)
+					{
+						format = GL_RGB;
+					}
+
+					if (nrChannels == 4)
+					{
+						format = GL_RGBA;
+					}
+
+					glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + posicionNames[nameSimple],
+						0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+
+					stbi_image_free(data);
+				}
+
+			}
+			
+			else
+			{
+				std::string errorMessage{ "ERROR::NOT FIND TEXTURE::CUBEMAP ----->" + imageFile };
+				SDL_Log(errorMessage.c_str());
+			}
+
+		}
+
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	}
+	void cubeMap_Skybox::loadCube()
+	{
+		float skyboxVertices[] = {
+			// positions          
+			-1.0f,  1.0f, -1.0f,
+			-1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,////
+			 1.0f, -1.0f, -1.0f,
+			 1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+
+			-1.0f, -1.0f,  1.0f,
+			-1.0f, -1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f,  1.0f,
+			-1.0f, -1.0f,  1.0f,
+
+			 1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,
+
+			-1.0f, -1.0f,  1.0f,
+			-1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f, -1.0f,  1.0f,
+			-1.0f, -1.0f,  1.0f,
+
+			-1.0f,  1.0f, -1.0f,
+			 1.0f,  1.0f, -1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			-1.0f,  1.0f,  1.0f,
+			-1.0f,  1.0f, -1.0f,
+
+			-1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f,  1.0f,
+			 1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f,  1.0f,
+			 1.0f, -1.0f,  1.0f
+		};
+
+		glGenVertexArrays(1, &VAO);
+		glGenBuffers(1, &VBO);
+
+		glBindVertexArray(VAO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+	
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+		glBindVertexArray(0);
+
+	}
+	void cubeMap_Skybox::draw_Skybox()
+	{
+	
+
+		//glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+
+		//glDepthMask(GL_FALSE);
+
+
+		shading::shader& shaderSkybox{ RenderData_Set::shader_D[nameShader] };
+		shaderSkybox.use();
+
+		glm::mat4 model{ glm::mat4(1.0) };
+		shaderSkybox.transformMat("model", model);
+
+		glm::mat4 cameraView{ glm::mat4(glm::mat3(cameras::aerialCamera.cam)) };
+		shaderSkybox.transformMat("view", cameraView);
+
+		shaderSkybox.transformMat("projection", cameras::aerialCamera.camProjection);
+		
+		shaderSkybox.setInt("skybox", 0);
+	//	glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+		glBindVertexArray(VAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+	//	glDepthMask(GL_TRUE);
+		glDepthFunc(GL_LESS);
+
+	}
+
+}
+
 
 namespace Assimp_D
 {
@@ -195,6 +371,7 @@ namespace Assimp_D
 		for (auto& vertex : vertices)
 		{
 			verticesPos.emplace_back(vertex.posicion);
+			normalsPos.emplace_back(vertex.posicion + vertex.Normal);
 
 		}
 
@@ -292,7 +469,7 @@ namespace Assimp_D
 		shader.use();
 
 		shader.transformMat("model", MeshCoord.model);
-		shader.transformMat("view", cameras::aerialCamera.cam); 
+		shader.transformMat("view", cameras::aerialCamera.cam);
 		shader.transformMat("projection", cameras::aerialCamera.camProjection);
 		shader.setVec3("objectColor", shaderSet.objectColor);
 
@@ -684,6 +861,11 @@ namespace Assimp_D
 	//	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	//	glBindVertexArray(0);
 	}
+	unsigned int& Mesh::outVAO()
+	{
+		return VAO;
+	}
+
 
 	void Mesh::setMeshCoord(glm::vec3 posicionMesh, glm::vec3 scaleMesh)
 	{
@@ -701,9 +883,18 @@ namespace Assimp_D
 		//	pos = glm::translate(pos, vertex.posicion);
 			
 		//	pos = MeshCoord.model * pos;
-			glm::vec4 pos = MeshCoord.model * glm::vec4(vertex.posicion.x, vertex.posicion.y, vertex.posicion.z, 1.0f);
 
+			//----ACTUALIZACION DE LA POSICION DE LOS EJES----//
+			glm::vec4 pos{ MeshCoord.model * glm::vec4(vertex.posicion.x, vertex.posicion.y, vertex.posicion.z, 1.0f) };
 			verticesPos[currentVertex] = glm::vec3(pos.x, pos.y, pos.z);
+
+			//----ACTUALIZACION DE LA POSICION DE LAS NORMALES----//
+			glm::vec3 posNormal{ glm::mat3(glm::transpose(glm::inverse(MeshCoord.model))) * vertex.Normal };
+			posNormal = glm::normalize(posNormal);
+
+			glm::vec3 globalPosNormal{ glm::vec3(pos.x, pos.y, pos.z) + posNormal };
+
+			normalsPos[currentVertex] = globalPosNormal;
 
 			currentVertex += 1;
 		}
@@ -1013,7 +1204,7 @@ namespace Assimp_D
 			meshes[i].MeshCoord.refreshCenter_Pos();
 		}
 
-		ModelCoord.lastModel = ModelCoord.model;
+	//	ModelCoord.lastModel = ModelCoord.model;
 	}
 	void Model::setNameModel(const std::string name)
 	{

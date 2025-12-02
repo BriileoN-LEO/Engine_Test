@@ -23,7 +23,7 @@ namespace testPlay
 	{
 		ang += velocityAng; // para rotar el Mesh
 		modelTest->setPosModelTransforms(posicion, scale, pivotRotPos, ang);
-		modelTest->renderModel(cam, lightModel);
+		//modelTest->renderModel(cam, lightModel);
 	}
 	void tranformationT::transformMeshLight(ObjCreation::ModelCreation* modelTest, light::light1* lightModel)
 	{
@@ -46,11 +46,13 @@ namespace testPlay
 		if (scaleStop == false)
 		{
 			scale.y += 0.01f;
+
 			if (scale.y >= max)
 			{
 				scaleStop = true;
 			}
 		}
+
 		else if (scaleStop == true)
 		{
 			scale.y -= 0.01f;
@@ -196,9 +198,10 @@ namespace testPlay
 		
 
 		//Para transforma un unico cubo de minecraft 
-		testTranforms.transformUniqueModel(&RenderData_Set::ModelCreation_D["MinecraftCube"], cameras::aerialCamera, RenderData_Set::pointLights_D[0]);
+		//testTranforms.transformUniqueModel(&RenderData_Set::ModelCreation_D["MinecraftCube"], cameras::aerialCamera, RenderData_Set::pointLights_D[0]);
+		RenderData_Set::ModelCreation_D["MinecraftCube"].updateMultipleModels();
 
-		//Transformacion del backpack para que gire
+		//Transformacion del backpack para que gireq
 		testBackPack.transformModel_test1(&RenderData_Set::AssimpModel_D["backPack"].ModelGlobal_Coord);
 		RenderData_Set::AssimpModel_D["backPack"].refresh_ModelCoord();
 		
@@ -206,9 +209,16 @@ namespace testPlay
 		testFloor.moveModel_Test(&RenderData_Set::AssimpModel_D["Floor"].ModelGlobal_Coord);
 		RenderData_Set::AssimpModel_D["Floor"].refresh_ModelCoord();
 
+	//	camera_Transforms::setAllTranforms_Cam();
+	//	light_Transforms::setAllTranforms_light();
+	}
+
+	void transformation_handCamara()
+	{
 		camera_Transforms::setAllTranforms_Cam();
 		light_Transforms::setAllTranforms_light();
 	}
+
 }
 
 namespace camera_Transforms
@@ -218,6 +228,7 @@ namespace camera_Transforms
 	{
 		if (screenSettings::outWindow == false)
 		{
+			
 			float rad_Pitch{ glm::radians(-cam.pitch) };
 			float rad_Yaw{ glm::radians(-cam.yaw + 90.0f) };
 
@@ -229,18 +240,30 @@ namespace camera_Transforms
 
 			//SDL_Log(std::to_string(rad_Yaw).c_str());
 
-			//glm::qua combieneRotQua{ quaX * quaY };
-
+			glm::qua combineRotation{ quaX * quaY };
+			//combineRotation = glm::slerp(modelPos.lastRotateR, combineRotation, static_cast<float>(alpha));
+		//	modelPos.rotateR = combineRotation; ///Guardar la rotacion en el Modelo.
+		
 			glm::mat4 rot_Yaw{ glm::toMat4(quaX) };
 			glm::mat4 rot_Pitch{ glm::toMat4(quaY) };
 
 			glm::mat4 rot_Model{ rot_Yaw * rot_Pitch };
 
 			glm::mat4 posModel{ glm::mat4(1.0f) };
+
+			//glm::vec3 translateNewPos{ glm::mix(modelPos.lastTranslateM, cam.posCam, static_cast<float>(alpha)) };
 			posModel = glm::translate(posModel, cam.posCam);
+		//	posModel = glm::translate(posModel, translateNewPos);
+        //	modelPos.translateM = cam.posCam;
+
 			posModel = posModel * rot_Model;
+			//posModel = posModel * glm::mat4_cast(modelPos.rotateR);
+
 			posModel = glm::translate(posModel, posicionObject_2);
 			posModel = glm::scale(posModel, glm::vec3(0.01f));
+
+		//	modelPos.lastModel///play with it
+		
 
 			modelPos.translateM = cam.posCam - posicionObject_2;
 			modelPos.viewOrient = cam.directionView; // Probablemente cambiar para la posicion del flashLight

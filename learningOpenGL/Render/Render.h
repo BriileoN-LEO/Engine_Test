@@ -4,36 +4,44 @@
 
 namespace render
 {
+
 	void render_ModelCreation_D();
 	void render_classicModelAssimp_D();
-	void render_ModelAssimp_D(std::string excludedMesh = "", std::string excludeModel = "");
+	void render_ModelAssimp_D(std::vector<Assimp_D::excluded_Obj> excluded_Objs = std::vector<Assimp_D::excluded_Obj>());
 	void render_MultiAssimp_D();
 	void render_MeshLights_D();
 	void render_AABB();
 	void render_Points();
+	void render_Skybox();
 
 	void renderAll();
+	void renderInvertAll();
+	void renderPlanarReflection();
+	void renderPhase();
+
 }
+
 
 namespace openGL_render
 {
 	void setGlobalRender_OpenGL();
 	void clearOpenGL();
+	void secondClearOpenGL();
 	void viewportSet(int origenX, int origenY, int width, int height);
 
 }
 
 namespace renderSelection
 {
-	void renderSelection_Triangle();
-	void renderSelection_Mesh();
-	void renderSelection_Model();
+	void renderSelection_Triangle(std::vector<Assimp_D::excluded_Obj> excluded_Objs = std::vector<Assimp_D::excluded_Obj>());
+	void renderSelection_Mesh(std::vector<Assimp_D::excluded_Obj> excluded_Objs = std::vector<Assimp_D::excluded_Obj>());
+	void renderSelection_Model(std::vector<Assimp_D::excluded_Obj> excluded_Objs = std::vector<Assimp_D::excluded_Obj>());
 }
 
 namespace stencil_test
 {
 
-	void renderStencilTest();
+	void renderStencilTest(std::vector<Assimp_D::excluded_Obj> excluded_Objs = std::vector<Assimp_D::excluded_Obj>());
 	void renderScaleUp_ST(std::vector<std::string>& notVisible);
 
 }
@@ -41,6 +49,8 @@ namespace stencil_test
 namespace refresh_Models
 {
 	void refreshAll_Models();
+	void refreshUI_point();
+	void refreshAll_LastModels();
 	///añadir aqui para refrescar las posiciones y los cambios de los modelos
 
 }

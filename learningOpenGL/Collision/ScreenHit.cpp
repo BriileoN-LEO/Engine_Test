@@ -5,11 +5,11 @@ namespace opScreenHit
 {
 	glm::vec3 calc_NormalPlane(AABB::triAABB vertPlane)
 	{
-	
+
 		glm::vec3 arista1{ vertPlane.v2 - vertPlane.v1 };
 		//		arista1 = glm::normalize(arista1);
 		glm::vec3 arista2{ vertPlane.v3 - vertPlane.v1 };
-	//		arista2 = glm::normalize(arista2);
+		//		arista2 = glm::normalize(arista2);
 
 		glm::vec3 dir_N{};
 
@@ -32,6 +32,32 @@ namespace opScreenHit
 
 		return dir_N;
 	}
+	glm::vec3 calc_NormalPlane_VertNormal(AABB::triAABB vertN_Plane, AABB::triAABB vertPlane)
+	{
+		std::vector<glm::vec3> vertN
+		{
+			vertN_Plane.v1,
+			vertN_Plane.v2,
+			vertN_Plane.v3
+		};
+
+		std::vector<glm::vec3> vert
+		{
+			vertPlane.v1,
+			vertPlane.v2,
+			vertPlane.v3
+		};
+
+
+		glm::vec3 posCenterNormal{ transformation_basics::calcCenterGeo(vertN) };
+		glm::vec3 posCenterTri{ transformation_basics::calcCenterGeo(vert) };
+
+		glm::vec3 normalPlane{ posCenterTri - posCenterNormal };
+		normalPlane *= -1;
+		normalPlane = glm::normalize(normalPlane);
+
+		return normalPlane;
+	}
 	float calc_T(AABB::triAABB vertPlane, glm::vec3 nearPT_screen, glm::vec3 direction_R)
 	{
 		float t{};
@@ -43,34 +69,34 @@ namespace opScreenHit
 			glm::vec3 planoVec{ vertPlane.v1 - nearPT_screen };
 			float numerador{ glm::dot(planoVec, N) };
 
-			 t = numerador / denominator;
+			t = numerador / denominator;
 		}
 
 		return t;
 	}
 	bool samePlane_Technique(AABB::triAABB tris, glm::vec3 PointCollisicion)
-	{
-		glm::vec3 r1{ glm::cross(tris.v2 - tris.v1, PointCollisicion - tris.v1) };
-		glm::vec3 r2{ glm::cross(tris.v3 - tris.v2, PointCollisicion - tris.v2) };
-		glm::vec3 r3{ glm::cross(tris.v1 - tris.v3, PointCollisicion - tris.v3) };
-
-		bool correctCollision{ false };
-
-		if (r1.z > 0 && r2.z > 0 && r3.z > 0)
 		{
-			correctCollision = true;
+			glm::vec3 r1{ glm::cross(tris.v2 - tris.v1, PointCollisicion - tris.v1) };
+			glm::vec3 r2{ glm::cross(tris.v3 - tris.v2, PointCollisicion - tris.v2) };
+			glm::vec3 r3{ glm::cross(tris.v1 - tris.v3, PointCollisicion - tris.v3) };
+
+			bool correctCollision{ false };
+
+			if (r1.z > 0 && r2.z > 0 && r3.z > 0)
+			{
+				correctCollision = true;
+			}
+
+			else if (r1.z < 0 && r2.z < 0 && r3.z < 0)
+			{
+				correctCollision = true;
+			}
+
+			return correctCollision;
 		}
 
-		else if (r1.z < 0 && r2.z < 0 && r3.z < 0)
-		{
-			correctCollision = true;
-		}
-
-		return correctCollision;
-	}
-
+	
 }
-
 namespace ScreenCalc_Hit
 {
 	std::vector<Assimp_D::structModelName> nameMesh_Hit{};
@@ -224,6 +250,14 @@ namespace ScreenCalc_Hit
 
 						};
 
+						AABB::triAABB tri_Normal
+						{
+							mesh.normalsPos[i],
+							mesh.normalsPos[i + 1],
+							mesh.normalsPos[i + 2]
+
+						};
+
 						float t{ opScreenHit::calc_T(tri, nearPt, direction_R) };
 
 						if (t > 0)
@@ -252,9 +286,11 @@ namespace ScreenCalc_Hit
 									meshSelected = m;
 
 									if (intersectSuccessful == false)
-									{
+									{ 
 										intersectSuccessful = true;
 									}
+									
+									break;
 								}
 
 							}

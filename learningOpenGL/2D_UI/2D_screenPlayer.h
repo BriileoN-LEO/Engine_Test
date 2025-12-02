@@ -20,16 +20,19 @@ namespace screenUI
 		glm::vec3 posPointer{};
 		glm::vec3 colorPointer{};
 		float sizePoint{};
+		std::string nameShader{};
 		shading::shader shaderPointer{};
 		glm::mat4 model{};
 
 
 		pointerScreen();
 		pointerScreen(const char* vertexPath, const char* fragmentPath, float size, glm::vec3 posPointer, glm::vec3 colorPointer);
+		pointerScreen(std::string nameShader, float size, glm::vec3 posPointer, glm::vec3 colorPointer);
 		void setPointer();
 
 		void drawPoint();
 		void updatePoint();
+		void updatePos(glm::vec3 pos);
 	};
 	
 
