@@ -85,7 +85,14 @@ namespace shading
 	void shader::setBool(const std::string& name, bool value) const
 	{
 		int location{ glGetUniformLocation(ID, name.c_str()) };
-		glUniform1i(location, static_cast<int>(value));
+
+		if (location == -1)
+		{
+			SDL_Log(std::string("ERROR LOCATION::" + name).c_str());
+
+		}
+
+		glUniform1i(location, value ? 1 : 0);
 	}
 	void shader::setInt(const std::string& name, int value) const
 	{
@@ -173,6 +180,28 @@ namespace shading
 
 		}
 	}
+
+	namespace config
+	{
+		void change_refractiveIndex(float& refractiveIndex)
+		{
+			const bool* stateKeyboard{ SDL_GetKeyboardState(nullptr) };
+
+			if (stateKeyboard[SDL_SCANCODE_U] == true)
+			{
+				refractiveIndex = refractiveIndex + 0.1f;
+			}
+
+			else if (stateKeyboard[SDL_SCANCODE_J] == true)
+			{
+				refractiveIndex = refractiveIndex - 0.1f;
+			}
+
+		}
+
+
+	}
+
 }
 
 namespace Vertex
@@ -735,7 +764,7 @@ namespace texture
 		glBindTexture(GL_TEXTURE_2D, textureID);
 
 	}
-	void textureBuild::useTextures_PerMaterial(shading::shader& shaderID)
+	void textureBuild::useTextures_PerMaterial(shading::shader& shaderID, int max_Texture_mat)
 	{
 		unsigned int difusseNr{ 1 };
 		unsigned int specularNr{ 1 };
@@ -746,28 +775,43 @@ namespace texture
 			std::string name_Data{ texU_Data[i].type };
 			std::string name_TexTest{};
 			std::string number{};
+			bool exist_Tex{};
 
-			if (name_Data == "texture_diffuse")
+			if (name_Data == "texture_diffuse" && difusseNr <= max_Texture_mat)
 			{
-				number = std::to_string(difusseNr++);
+				number = std::to_string(difusseNr);
 				name_Data = "Mat_" + number + "." + name_Data;
 				name_TexTest = "Mat_" + number + "." + "use_texture_diffuse";
-				shaderID.setBool(name_TexTest, 1);
+				shaderID.setBool(name_TexTest, true);
+
+				exist_Tex = true;
+				difusseNr++;
 			}
 
-			else if (name_Data == "texture_specular")
+			else if (name_Data == "texture_specular" && specularNr <= max_Texture_mat)
 			{
-				number = std::to_string(specularNr++);
+				number = std::to_string(specularNr);
 				name_Data = "Mat_" + number + "." + name_Data;
 				name_TexTest = "Mat_" + number + "." + "use_texture_specular";
-				shaderID.setBool(name_TexTest, 1);
+				shaderID.setBool(name_TexTest, true);
+
+				exist_Tex = true;
+				specularNr++;
 			}
 
 
+
+			if (exist_Tex == true)
+			{
+				shaderID.setInt(name_Data, i);
+				glActiveTexture(GL_TEXTURE0 + i);
+				glBindTexture(GL_TEXTURE_2D, texU_Data[i].textureID);
+
+			}
 			//shaderID.setInt(name_Data, static_cast<int>(texU_Data[i].texUnit));
-			shaderID.setInt(name_Data, i);
-			glActiveTexture(GL_TEXTURE0 + i);
-			glBindTexture(GL_TEXTURE_2D, texU_Data[i].textureID);
+		//	shaderID.setInt(name_Data, i);
+		//	glActiveTexture(GL_TEXTURE0 + i);
+		//	glBindTexture(GL_TEXTURE_2D, texU_Data[i].textureID);
 
 		}
 
@@ -784,11 +828,12 @@ namespace texture
 				for (int i = difusseNr; i < specularNr; i++)
 				{
 					std::string diffName{ std::to_string(i) };
-					diffName = "Mat_" + diffName + "texture_diffuse";
+					diffName = "Mat_" + diffName + ".texture_diffuse";
 					std::string name_TexTest{ "Mat_" + std::to_string(i) + "." + "use_texture_diffuse" };
 
-					shaderID.setBool(name_TexTest, 0);
-					shaderID.setInt(diffName, totalSizeTex);
+					shaderID.setBool(name_TexTest, false);
+				//	shaderID.setInt(diffName, totalSizeTex);
+					shaderID.setInt(diffName, 0);
 					glActiveTexture(GL_TEXTURE0 + totalSizeTex);
 					glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -805,11 +850,12 @@ namespace texture
 				for (int i = specularNr; i < difusseNr; i++)
 				{
 					std::string specName{ std::to_string(i) };
-					specName = "Mat_" + specName + "texture_specular";
+					specName = "Mat_" + specName + ".texture_specular";
 					std::string name_TexTest{ "Mat_" + std::to_string(i) + "." + "use_texture_specular" };
 
-					shaderID.setBool(name_TexTest, 0);
-					shaderID.setInt(specName, totalSizeTex);
+					shaderID.setBool(name_TexTest, false);
+					//shaderID.setInt(specName, totalSizeTex);
+					shaderID.setInt(specName, 0);
 					glActiveTexture(GL_TEXTURE0 + totalSizeTex);
 					glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -819,6 +865,34 @@ namespace texture
 				totalMat = difusseNr;
 			}
 
+			if (specularNr == 1 && difusseNr == 1)
+			{
+				std::vector<std::pair<std::string, unsigned int>> texturesData
+				{
+					std::pair("diffuse", difusseNr),
+					std::pair("specular", specularNr)
+				};
+
+				for (int max = 0; max < max_Texture_mat; max++)
+				{
+					for (int i = 0; i < static_cast<int>(texturesData.size()); i++) ///Cambiarlo en algun futuro para el tamaño o cantidad de materiales en el shader
+					{
+						std::string texName{ std::to_string(texturesData[i].second) };
+						texName = "Mat_" + texName + ".texture_" + texturesData[i].first;
+						std::string name_Tex{ "Mat_" + texName + ".use_texture_" + texturesData[i].first };
+
+						texturesData[i].second++;
+
+						shaderID.setInt(texName, 0);
+						shaderID.setBool(name_Tex, false);
+						glActiveTexture(GL_TEXTURE0);
+						glBindTexture(GL_TEXTURE_2D, 0);
+
+					}
+
+
+				}
+			}
 
 		}
 

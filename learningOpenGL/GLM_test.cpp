@@ -599,7 +599,7 @@ namespace transformation_basics
 
 namespace camera
 {
-	camera1::camera1() {}; 
+	camera1::camera1() {};
 	camera1::camera1(glm::vec3 posCam, GLfloat fovCam, GLfloat nearCut, GLfloat maxCut)
 	{
 		setSettingsCamera(posCam, fovCam, nearCut, maxCut);
@@ -614,7 +614,7 @@ namespace camera
 		this->maxCut = maxCut;
 
 		cam = glm::lookAt(posCam, posCam + directionView, glm::vec3(0.0f, 1.0f, 0.0f));
-	    //to rot cam
+		//to rot cam
 	//	cam = glm::rotate(cam, 180.0f, directionView);
 		camProjection = glm::perspective(glm::radians(this->fovCam), static_cast<float>(screenSettings::screen_w) / static_cast<float>(screenSettings::screen_h), this->nearCut, this->maxCut);
 	};
@@ -628,11 +628,11 @@ namespace camera
 		camRot = glm::rotate(camRot, ang, pivotCam);
 	*/
 		cameraRight = glm::cross(directionView, glm::vec3(0.0f, 1.0f, 0.0f));
-	//lm::vec3 cameraRight{ glm::cross(directionView, glm::vec3(0.0f, 1.0f, 0.0f)) }; ///colocar este para hacer la rotacion del objeto con la camara
+		//lm::vec3 cameraRight{ glm::cross(directionView, glm::vec3(0.0f, 1.0f, 0.0f)) }; ///colocar este para hacer la rotacion del objeto con la camara
 		cameraRight = glm::normalize(cameraRight);
-		
+
 		cameraUp = glm::cross(directionView, cameraRight);
-//glm::vec3 cameraUp{ glm::cross(directionView, cameraRight) };
+		//glm::vec3 cameraUp{ glm::cross(directionView, cameraRight) };
 		cameraUp = glm::normalize(cameraUp);
 
 		camRotate = glm::lookAt(posCam, posCam + directionView, -cameraUp);
@@ -642,7 +642,7 @@ namespace camera
 	{
 		posMouse.x *= sensitivity;
 		posMouse.y *= sensitivity;
-		
+
 		yaw += posMouse.x;
 		pitch += posMouse.y;
 
@@ -661,22 +661,23 @@ namespace camera
 		directionView.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 		directionView = glm::normalize(directionView);
 
-//		std::string dirCam{ std::to_string(directionView.x) + '\t' + std::to_string(directionView.y) + '\t' + std::to_string(directionView.z) + '\n' };
-		//SDL_Log(dirCam.c_str());
-		//SDL_Log (std::to_string(pitch).c_str());
+		//		std::string dirCam{ std::to_string(directionView.x) + '\t' + std::to_string(directionView.y) + '\t' + std::to_string(directionView.z) + '\n' };
+				//SDL_Log(dirCam.c_str());
+				//SDL_Log (std::to_string(pitch).c_str());
 	}
 	void camera1::moveCamera()
 	{
 		const bool* stateKeyBoard = SDL_GetKeyboardState(nullptr);
-		
+
 		glm::vec3 posC{};
 
 		if (stateKeyBoard[SDL_SCANCODE_W] == true)
 		{
+
 			posC += speedCam * directionView;
 			posCam += speedCam * directionView;
-		//	posC.x += speedCam;
-		//	posCam.x += speedCam;
+			//	posC.x += speedCam;
+			//	posCam.x += speedCam;
 			camTranslate = glm::translate(cam, posC);
 			moveCameraTest = true;
 		}
@@ -712,7 +713,7 @@ namespace camera
 			camTranslate = glm::translate(cam, posC);
 			moveCameraTest = true;
 		}
-		
+
 		if (stateKeyBoard[SDL_SCANCODE_SPACE] == true)
 		{
 			posCam.y += speedCam;
@@ -776,10 +777,16 @@ namespace camera
 	}
 	void camera1::controlEventsCamera()
 	{
-		rotateCam();
+		rotateCam();  ///añadido para hacer un mix entre las posiciones
 		moveCamera();
-	
+
+
 		cam = camRotate;
+	}
+	void camera1::updateLastPosCam()
+	{
+		lastPosCam = posCam;
+
 	}
 	
 	void camera1::updateSettingsCam(glm::mat4 camView, glm::mat4 camProjection)

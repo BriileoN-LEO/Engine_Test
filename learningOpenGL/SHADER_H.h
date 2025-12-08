@@ -14,6 +14,18 @@
 
 namespace shading
 {
+	namespace config
+	{
+		struct shaderConfig
+		{
+			float refractiveIndex{ 1.52f };
+
+		};
+		
+
+		void change_refractiveIndex(float& refractiveIndex);
+
+	}
 
 	class shader
 	{
@@ -66,6 +78,7 @@ namespace shading
 		void loadShadersThread(std::vector<shaderData_loadCPU> shaders_Data);
 
 	}
+
 
 }
 namespace Vertex
@@ -219,7 +232,7 @@ namespace texture
 		void setTexturesUnits(); ////Este es especial para el Model Assimp
 
 		void useTexurePerUnit(unsigned int textureID, texture::textureUnits texUnit);
-		void useTextures_PerMaterial(shading::shader& shaderID);
+		void useTextures_PerMaterial(shading::shader& shaderID, int max_Texture_mat);
 		void useTextures(); 
 		void destroy();
 

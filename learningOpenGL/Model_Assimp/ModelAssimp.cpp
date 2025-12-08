@@ -151,7 +151,7 @@ namespace sky
 		//glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
 
-		//glDepthMask(GL_FALSE);
+	    glDepthMask(GL_FALSE);
 
 
 		shading::shader& shaderSkybox{ RenderData_Set::shader_D[nameShader] };
@@ -171,8 +171,16 @@ namespace sky
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-	//	glDepthMask(GL_TRUE);
+		glDepthMask(GL_TRUE);
 		glDepthFunc(GL_LESS);
+
+	}
+
+	void cubeMap_Skybox::bind_Texture(shading::shader& shader, std::string nameToBind, texture::textureUnits activeTexturePos)
+	{
+		shader.setInt(nameToBind, static_cast<int>(activeTexturePos ));
+		glActiveTexture(GL_TEXTURE0 + static_cast<int>(activeTexturePos));
+		glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
 	}
 
@@ -189,7 +197,7 @@ namespace Assimp_D
 		if (directory != "")
 		{
 			pa = directory + "/" + pa;
-			SDL_Log(pa.c_str());
+			//SDL_Log(pa.c_str());
 		}
 
 
@@ -382,9 +390,11 @@ namespace Assimp_D
 
 		for (int i = 0; i < static_cast<int>(loadData.textures.size()); i++)
 		{
-			unsigned int texID{ TextureFromData(loadData.textures[i].dataTexture, loadData.textures[i].width, loadData.textures[i].height, loadData.textures[i].nrChannels)};
+			unsigned int texID{ TextureFromData(loadData.textures[i].dataTexture, loadData.textures[i].width, loadData.textures[i].height, loadData.textures[i].nrChannels) };
 			textures.texU_Data.emplace_back(texture::textureData(texID, loadData.textures[i].typeTexture, loadData.textures[i].path, texture::textureUnits_Data[seqUnit]));
 			seqUnit++;
+
+		//	if()
 
 		}
 
@@ -400,7 +410,7 @@ namespace Assimp_D
 		renderP = renderSeq::renderNear;
 
 		setupMesh();
-
+		//setupMesh_subBuffer();
 	}
 
 	void Mesh::setupMesh()
@@ -432,6 +442,53 @@ namespace Assimp_D
 
 
 	}
+
+	void Mesh::setupMesh_subBuffer()
+	{
+		std::vector<glm::vec3> position{};
+		std::vector<glm::vec3> normals{};
+		std::vector<glm::vec2> texCoord{};
+
+		for (auto vertex : vertices)
+		{
+			position.emplace_back(vertex.posicion);
+			normals.emplace_back(vertex.Normal);
+			texCoord.emplace_back(vertex.TexCoord);
+		}
+
+		size_t sizeOfPosition{ position.size() * sizeof(glm::vec3) };
+		size_t sizeOfNormals{ normals.size() * sizeof(glm::vec3) };
+		size_t sizeOfTexCoords{ texCoord.size() * sizeof(glm::vec2) };
+;
+
+		glGenVertexArrays(1, &VAO);
+		glGenBuffers(1, &VBO);
+		glGenBuffers(1, &EBO);
+
+		glBindVertexArray(VAO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertexD), nullptr, GL_STATIC_DRAW);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, position.size() * sizeof(glm::vec3), &position[0]);
+		glBufferSubData(GL_ARRAY_BUFFER, position.size() * sizeof(glm::vec3), normals.size() * sizeof(glm::vec3), &normals[0]);
+		glBufferSubData(GL_ARRAY_BUFFER, (position.size() * sizeof(glm::vec3)) + (normals.size() * sizeof(glm::vec3)), texCoord.size() * sizeof(glm::vec2), &texCoord[0]);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)(position.size() * sizeof(glm::vec3)));
+
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)((position.size() * sizeof(glm::vec3)) + (normals.size() * sizeof(glm::vec3))));
+		
+		glBindVertexArray(0);
+
+	}
+
 	void Mesh::Draw(camera::camera1 cam1, light::light1 light, shading::shader shader)
 	{
 		shader.use();
@@ -451,7 +508,7 @@ namespace Assimp_D
 
 		if (static_cast<int>(textures.texU_Data.size()) > 0)
 		{
-			textures.useTextures_PerMaterial(shader);
+			textures.useTextures_PerMaterial(shader, 1);
 		}
 
 		shader.setVec3("viewPos", cam1.posCam);
@@ -472,7 +529,6 @@ namespace Assimp_D
 		shader.transformMat("view", cameras::aerialCamera.cam);
 		shader.transformMat("projection", cameras::aerialCamera.camProjection);
 		shader.setVec3("objectColor", shaderSet.objectColor);
-
 
 		if (static_cast<int>(RenderData_Set::pointLights_D.size()) > 0)
 		{
@@ -569,17 +625,50 @@ namespace Assimp_D
 
 		if (!textures.texU_Data.empty())
 		{
-			textures.useTextures_PerMaterial(shader);
+			textures.useTextures_PerMaterial(shader, 1);
 			shader.setBool("NotTexture", false);
-			//SDL_Log("USING::TEXTURES");
+
+			if (nameMesh == "CampoVegetacion_1")
+			{
+			//	SDL_Log(std::to_string(static_cast<int>(textures.texU_Data.size())).c_str());
+			}
+
+			if (RenderData_Set::skybox_D::skyBox_Current.active == true && !RenderData_Set::skybox_D::skyBox_Current.nameSkybox.empty())
+			{
+				texture::textureUnits textureUnit{ static_cast<texture::textureUnits>(textures.texU_Data.size() + 1) };
+
+				RenderData_Set::skybox_D::skyBoxes_D[RenderData_Set::skybox_D::skyBox_Current.nameSkybox].bind_Texture(shader, "skybox", textureUnit);
+				shader.setBool("activeSkybox", true);
+
+			}
+
 		}
 
-		else
+		else if(textures.texU_Data.empty())
 		{
 			shader.setBool("NotTexture", true);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, 0);
+			shader.setBool("Mat_1.use_texture_diffuse", false);
+			shader.setBool("Mat_1.use_texture_specular", false);
+			//shader.setBool("useSpec", false);
+
+			if (nameMesh == "CampoVegetacion_1")
+			{
+			//	SDL_Log(std::string("NOT TEXTURE::MESH::" + nameMesh).c_str());
+			}
+
+			shader.setBool("activeSkybox", false);
+			//glActiveTexture(GL_TEXTURE0);
+			//glBindTexture(GL_TEXTURE_2D, 0);
 		}
+
+
+
+		if (data_HitAABB::selectedObj.first.nameMesh == nameMesh)
+		{
+			shading::config::change_refractiveIndex(settingsShader.refractiveIndex);
+		}
+
+		shader.setFloat("refractiveIndex", settingsShader.refractiveIndex);
 		
 		shader.setVec3("Mat.ambient", shaderSet.ambient);
 		shader.setVec3("Mat.difusse", shaderSet.difusse);
@@ -595,6 +684,10 @@ namespace Assimp_D
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
+
+
+		///Terminar con la textura
+		//shader.setBool("NotTexture", true);
 
 	//	std::cout << glGetError() << '\n';
 
@@ -708,16 +801,20 @@ namespace Assimp_D
 
 		if (!textures.texU_Data.empty())
 		{
-			textures.useTextures_PerMaterial(shader);
+			textures.useTextures_PerMaterial(shader, 1);
 			shader.setBool("NotTexture", false);
 		}
 
-		else
+		else if (textures.texU_Data.empty())
 		{
 			shader.setBool("NotTexture", true);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, 0);
+			shader.setBool("Mat_1.use_texture_diffuse", false);
+			shader.setBool("Mat_1.use_texture_specular", false);
+			//shader.setBool("useSpec", false);
+			//glActiveTexture(GL_TEXTURE0);
+			//glBindTexture(GL_TEXTURE_2D, 0);
 		}
+
 
 		shader.setVec3("Mat.ambient", shaderSet.ambient);
 		shader.setVec3("Mat.difusse", shaderSet.difusse);
@@ -731,6 +828,10 @@ namespace Assimp_D
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
 	}
 	void Mesh::build_PreDraw(shading::shader& shader)
 	{
@@ -837,7 +938,7 @@ namespace Assimp_D
 
 		if (!textures.texU_Data.empty())
 		{
-			textures.useTextures_PerMaterial(shader);
+			textures.useTextures_PerMaterial(shader, 1);
 			shader.setBool("NotTexture", false);
 		}
 
@@ -922,6 +1023,12 @@ namespace Assimp_D
 		{
 			std::string nameMeshNew{ nameModel + "_" + std::to_string(i + 1) };
 			meshes[i].nameMesh = nameMeshNew;
+
+			if (nameMeshNew == "CampoVegetacion_1")
+			{
+				std::cout << "FINDING \n";
+
+			}
 
 			meshes[i].setMeshCoord(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 			meshes[i].MeshCoord.model = ModelCoord.model * meshes[i].MeshCoord.model;
@@ -1488,7 +1595,7 @@ namespace Assimp_D
 
 				glm::vec2 texCoords{};
 
-				if (mesh->HasTextureCoords(0))
+				if (mesh->mTextureCoords[0])
 				{
 					texCoords.x = mesh->mTextureCoords[0][i].x;
 					texCoords.y = mesh->mTextureCoords[0][i].y;
@@ -1496,6 +1603,7 @@ namespace Assimp_D
 
 				else
 				{
+					texCoords = glm::vec2(0.0f, 0.0f);
 					SDL_Log("ERROR::NOT::TEXCOORDS");
 				}
 
@@ -1520,8 +1628,6 @@ namespace Assimp_D
 				aiMaterial* material{ scene->mMaterials[mesh->mMaterialIndex] };
 
 				std::vector<TextureData_File> difusseMaps{ loadMatTextures(material, aiTextureType_DIFFUSE, "texture_diffuse", directory) };
-
-				//			shaders.use();
 
 				textures.insert(textures.end(), difusseMaps.begin(), difusseMaps.end());
 
@@ -1696,7 +1802,7 @@ namespace individualComp
 
 		if (!texture.texU_Data.empty())
 		{
-			texture.useTextures_PerMaterial(shader);
+			texture.useTextures_PerMaterial(shader, 1);
 
 		}
 

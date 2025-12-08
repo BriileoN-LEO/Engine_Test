@@ -15,6 +15,11 @@ uniform vec3 lightColor;
 uniform vec3 lightPos;
 uniform vec3 viewPos;
 
+uniform samplerCube skybox;
+uniform bool activeSkybox;
+
+uniform float refractiveIndex;
+
 float near = 0.001;
 float far = 500.0;  
 
@@ -201,11 +206,11 @@ vec3 CalcPointLight(point_Light pointLight, vec3 normal_Face, vec3 viewDir, bool
 
   if(specExist == true)
   {
-  specular = pointLight.specular * spec * vec3(texture(Mat_1.texture_specular, coordTexOut));
+  specular = pointLight.specular * spec * vec3(texture(Mat_1.texture_specular, coordTexOut)); ///añadido de reflect
   }
   else if(specExist == false)
   {
-  specular = pointLight.specular * spec * Mat.specular;
+  specular = pointLight.specular * spec * Mat.specular;///añadido de reflect
   }
 
   ambient *= attenuation;
@@ -258,11 +263,11 @@ vec3 CalcSpotLight(spot_Light spotLight, vec3 normal_Face, vec3 viewDir, bool di
 
   if(specExist == true)
   {
-  specular = spotLight.specular * spec * vec3(texture(Mat_1.texture_specular, coordTexOut));
+  specular = spotLight.specular * spec * vec3(texture(Mat_1.texture_specular, coordTexOut)) ; ///añadido de reflect
   }
   else if(specExist == false)
   {
-  specular = spotLight.specular * spec * Mat.specular;
+  specular = spotLight.specular * spec * Mat.specular ; ///añadido de reflect
   }
 
   ambient *= attenuation;
@@ -285,10 +290,44 @@ float linearDepth(float depth)
   return (2.0 * near * far) / (far + near - z * (far - near));
 }
 
+vec4 CalcSkyboxReflaction()
+{
+  float ratio = 1.0 / refractiveIndex;
+  vec3 I = normalize(FragPos - viewPos); 
+  vec3 R = refract(I, normalize(Normal),ratio );
+
+return vec4(texture(skybox, R).rgb, 1.0);
+}
+
+vec4 opCalc_existTextures( vec4 result, bool existTexSpec, vec4 specMulti) 
+{
+vec4 finalResult = vec4(0.0);
+
+if(activeSkybox == true)
+{
+  if(existTexSpec == true) 
+  {
+   finalResult = result + specMulti;
+  }
+
+}
+
+if(existTexSpec == false)
+{
+finalResult = result;
+
+}
+
+ return finalResult;
+}
+
 
 //////////////
 void main()
 {
+
+
+vec4 skyBox_reflection = CalcSkyboxReflaction();
 
 vec4 texDiff = texture(Mat_1.texture_diffuse, coordTexOut);
 
@@ -310,7 +349,7 @@ if(texDiff.x == 0.0 && texDiff.y == 0.0 && texDiff.z == 0.0)
  diffExist = false;
 }
 
-else if(Mat_1.use_texture_diffuse == false)
+if(Mat_1.use_texture_diffuse == false)
 {
  diffExist = false;
 }
@@ -320,7 +359,7 @@ if(texSpec.x == 0.0 && texSpec.y == 0.0 && texSpec.z == 0.0)
  specExist = false;
 }
 
-else if(Mat_1.use_texture_specular == false)
+if(Mat_1.use_texture_specular == false)
 {
  specExist = false;
 }
@@ -337,7 +376,6 @@ if(diffExist == true && texDiff.a < 0.1)
  discard;
 
 }
-
 
 vec3 DL_1 = CalcDirLight(directionalLight_1, normal_Face, viewDir, diffExist, specExist);
 vec3 result = vec3(0.0);
@@ -368,9 +406,187 @@ if(diffExist == true)
 
 }
 
-FragColor = resultVec4;
+  vec4 texSpecMulti = texSpec * skyBox_reflection;
+
+if(activeSkybox == true)
+{
+  if(specExist == true) 
+  {
+ // vec4 texSpecMulti = texSpec * skyBox_reflection;
+  // FragColor = resultVec4 + texSpecMulti;
+  }
 
 }
+
+if(specExist == false)
+{
+//FragColor = resultVec4;
+
+}
+
+
+FragColor = opCalc_existTextures(resultVec4, specExist, texSpecMulti);
+
+//FragColor = resultVec4;
+
+//FragColor = skyBox_reflection;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

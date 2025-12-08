@@ -1,5 +1,6 @@
 #include "playTest.h"
 #include "Render/RenderData.h"
+#include "threadSystem/thread_System.h"
 
 namespace testPlay
 {
@@ -252,8 +253,14 @@ namespace camera_Transforms
 			glm::mat4 posModel{ glm::mat4(1.0f) };
 
 			//glm::vec3 translateNewPos{ glm::mix(modelPos.lastTranslateM, cam.posCam, static_cast<float>(alpha)) };
-			posModel = glm::translate(posModel, cam.posCam);
-		//	posModel = glm::translate(posModel, translateNewPos);
+			//glm::vec3 translatePos{ glm::mix(cam.lastPosCam, cam.posCam, static_cast<float>(threadSystem::ControlPhysics_Events.timeInterpolation.alpha)) };
+
+             
+			glm::vec3 posNew{ cam.lastPosCam - cam.posCam };
+			posNew = cam.lastPosCam - (posNew * 0.01f);
+
+			posModel = glm::translate(posModel, posNew); ////ANTERIOR 
+			//posModel = glm::translate(posModel, translatePos);
         //	modelPos.translateM = cam.posCam;
 
 			posModel = posModel * rot_Model;

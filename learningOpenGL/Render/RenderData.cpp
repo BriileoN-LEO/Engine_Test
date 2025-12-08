@@ -28,9 +28,11 @@ namespace RenderData_Set
 
 	namespace skybox_D
 	{
+
 		std::map<std::string, sky::cubeMap_Skybox> skyBoxes_D{};
-		std::unique_ptr<sky::cubeMap_Skybox> currentSkyBox_D{};
+	//	std::unique_ptr<sky::cubeMap_Skybox> currentSkyBox_D{};
 		std::string nameSkybox{};
+		activeSkybox skyBox_Current{};
 
 		const std::map<std::string, sky::cubeMap_Skybox> setSkyBoxes_D()
 		{
@@ -269,7 +271,9 @@ namespace RenderData_Set
 		| aiProcess_CalcTangentSpace
 		| aiProcess_GenSmoothNormals
 		| aiProcess_GenNormals
-		| aiProcess_SortByPType };
+		| aiProcess_SortByPType
+	//	| aiProcess_PreTransformVertices
+	};
 
 	//	std::filesystem::path pathBackpack{ backpack_Model };
 		Assimp_D::loadToCPU::insertProcessModel back_Pack
@@ -331,7 +335,6 @@ namespace RenderData_Set
 			aiProcessFlags
 		};
 
-
 		std::vector<Assimp_D::loadToCPU::insertProcessModel> models
 		{
 			back_Pack,
@@ -340,7 +343,6 @@ namespace RenderData_Set
 			CampoVegetacion,
 			plant01,
 			mirror_01
-
 
 		};
 
@@ -435,7 +437,7 @@ namespace RenderData_Set
 				glm::vec3(0.5f),
 				32.0f
 			};
-			Assimp_D::coordModel coord_FlashLight{ glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.001f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f };
+			Assimp_D::coordModel coord_FlashLight{ glm::vec3(0.0f), glm::vec3(0.001f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f };
 			AssimpModel_D["FlashLight"].setModelSettings(coord_FlashLight, ss_FlashLight);
 			//AssimpModel_D["FlashLight"].loadTemporalShaders(vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
 
@@ -471,6 +473,9 @@ namespace RenderData_Set
 			//////Model para el cristal
 			Assimp_D::coordModel coord_Mirror_01{ glm::vec3(0.0f, 0.0f, -20.0f), glm::vec3(15.0f), glm::vec3(1.0f), 0.0f };
 			AssimpModel_D["mirror_01"].setModelSettings(coord_Mirror_01, ss_Plant01);
+
+			Assimp_D::coordModel coord_TokioPlace{ glm::vec3(0.0f), glm::vec3(0.01f), glm::vec3(1.0f), 0.0f };
+			AssimpModel_D["tokio_Place"].setModelSettings(coord_TokioPlace, ss_Plant01);
 
 
 
@@ -809,7 +814,7 @@ namespace RenderData_Set
 		std::vector<screenUI::pointerScreen> PointsUI
 		{
 			centerPoint_UI,
-			pointDirPlane
+			//pointDirPlane
 		};
 		
 		return PointsUI;
@@ -900,7 +905,7 @@ namespace RenderData_Set
 		for (auto& ren : renglones)
 		{
 
-			SDL_Log(ren.c_str());
+		//	SDL_Log(ren.c_str());
 		}
 
 		std::ofstream writeShader;
@@ -969,6 +974,7 @@ namespace RenderData_Set
 		skybox_D::skyBoxes_D = skybox_D::setSkyBoxes_D();
 		//skybox_D::currentSkyBox_D = std::make_unique<sky::cubeMap_Skybox>(skybox_D::skyBoxes_D["skyBox_day"]);
 		skybox_D::nameSkybox = "skyBox_day";
+		skybox_D::skyBox_Current = skybox_D::activeSkybox("skyBox_day", true);
 
 		//Creacion del boundingBox
 		AABB::create_BoundingBox_Mesh();

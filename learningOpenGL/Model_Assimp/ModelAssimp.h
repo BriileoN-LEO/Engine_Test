@@ -38,6 +38,7 @@ namespace sky
 		void loadTexture_Skybox_Seq(std::string directory_Tex, std::vector<std::string> nameFiles);
 		void loadCube();
 		void draw_Skybox();
+		void bind_Texture(shading::shader& shader, std::string nameToBind, texture::textureUnits activeTexturePos);
 
 	};
 
@@ -188,6 +189,7 @@ namespace Assimp_D
 		unsigned int VBO{};
 		unsigned int EBO{};
 		void setupMesh();
+		void setupMesh_subBuffer();
 
 	public:
 
@@ -200,6 +202,7 @@ namespace Assimp_D
 		std::vector<glm::vec3> verticesPos{};
 		std::vector<glm::vec3> normalsPos{}; ///ESTA ES LA POSICION GLOBAL DE LAS NORMALES
 		shaderSettings shaderSet{};
+		shading::config::shaderConfig settingsShader{};
 
 		renderSeq renderP{};
 

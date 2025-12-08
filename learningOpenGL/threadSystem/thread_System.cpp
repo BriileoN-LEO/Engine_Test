@@ -124,7 +124,9 @@ namespace threadSystem
 				//timeInterpolation.loopAcomulator();
 
 				testPlay::renderTranformations_Objects();
+			
 				//refresh_Models::refreshAll_Models();
+				
 				AABB::updateCoordAABB_All();
 				ScreenCalc_Hit::calc_IntersectALL();
 

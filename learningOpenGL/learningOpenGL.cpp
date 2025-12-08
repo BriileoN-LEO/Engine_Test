@@ -16,6 +16,7 @@
 #include "Render/Render.h"
 #include "collision/ScreenHit.h"
 #include "threadSystem/thread_System.h"
+#include "2D_UI/Interface_UI.h"
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -35,7 +36,7 @@ void init()
 
 	if (SDL_Init(SDL_INIT_VIDEO) == false)
 	{
-		SDL_Log("no se pudo abrir la ventana");
+		SDL_Log("<zno se pudo abrir la ventana");
 		SDL_Log(SDL_GetError());
 		assert(gWindow != nullptr);
 		correct_init = false;
@@ -679,6 +680,7 @@ int main(int argc, char* argv[])
 
 				if (camP == camera::camState::cameraAE)
 				{
+					cameras::aerialCamera.updateLastPosCam();
 					cameras::aerialCamera.controlEventsCamera();
 					//camera_Transforms::attachObject_Cam(RenderData_Set::AssimpModel_D["FlashLight"].ModelCoord, cameras::aerialCamera);
 				}
@@ -691,7 +693,7 @@ int main(int argc, char* argv[])
 
 			if (syncFPS.frameT == true)
 			{
-				openGL_render::clearOpenGL();
+				//openGL_render::clearOpenGL();
 
 				threadSystem::ControlPhysics_Events.timeInterpolation.loopAcomulator();
 				////AQUI IBA LA SECCION DE CONTROL DE EVENTS CAMERA.
@@ -745,16 +747,19 @@ int main(int argc, char* argv[])
 					//ControlPhysics_Events.update_ControlSystem();
 
 					//testPlay::renderTranformations_Objects();
+
 					cameras::updateStateCurrentCamera();
 					refresh_Models::refreshUI_point();
 					//refresh_Models::refreshUI_point();
+					//testPlay::transformation_handCamara();
 					testPlay::transformation_handCamara();
 					refresh_Models::refreshAll_Models();
-				    //AABB::updateCoordAABB_All();
+					//AABB::updateCoordAABB_All();
 					//ScreenCalc_Hit::calc_IntersectALL();
-					
+
 					render::renderPhase();
 					refresh_Models::refreshAll_LastModels();
+					
 					//testPlay::renderTranformations_Objects();
 				}
 				

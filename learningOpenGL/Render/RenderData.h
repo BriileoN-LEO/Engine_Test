@@ -30,9 +30,17 @@ namespace RenderData_Set
 
 	namespace skybox_D
 	{
+		struct activeSkybox
+		{
+			std::string nameSkybox{};
+			bool active{};
+
+		};
+
 		extern std::map<std::string, sky::cubeMap_Skybox> skyBoxes_D;
 		extern std::unique_ptr<sky::cubeMap_Skybox> currentSkyBox_D;
 		extern std::string nameSkybox;
+		extern activeSkybox skyBox_Current;
 		const std::map<std::string, sky::cubeMap_Skybox> setSkyBoxes_D();
 	}
 

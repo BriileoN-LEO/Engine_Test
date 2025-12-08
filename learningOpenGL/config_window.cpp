@@ -14,7 +14,7 @@ namespace screenSettings
 	void screenSettings::framebuffer_size_callback(SDL_Window* window)
 	{
 		int w_back = screen_w;
-		int h_back =screen_h;
+		int h_back = screen_h;
 
 		SDL_GetWindowSize(window, &screen_w, &screen_h);
 

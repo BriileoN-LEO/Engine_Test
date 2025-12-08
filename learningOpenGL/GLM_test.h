@@ -147,6 +147,7 @@ namespace camera
 	public:
 		//glm::vec3 pivotCam{ 0.0f, 0.0f, 1.0f };
 		glm::vec3 directionView{ 0.0f, 0.0f, -1.0f };
+		glm::vec3 lastPosCam{};
 		glm::vec3 posCam{ 0.0f, 0.0f, 3.0f };
 
 		glm::mat4 cam{ glm::mat4(1.0f) };///transformaciones de la camera
@@ -172,11 +173,11 @@ namespace camera
 
 		camera1();
 		camera1(glm::vec3 posCam, GLfloat fovCam, GLfloat nearCut, GLfloat maxCut);
-		
-		
+
+
 		camera1 operator=(const camera1& came)
 		{
-		
+
 			directionView = came.directionView;
 			posCam = came.posCam;
 
@@ -203,18 +204,20 @@ namespace camera
 
 			return *this;
 		}
-		
+
 		void setSettingsCamera(glm::vec3 posCam, GLfloat fovCam, GLfloat nearCut, GLfloat maxCut);
 
 		void rotateCam();
 		void detectRotCamMouse(glm::vec2 posMouse);
 		void moveCamera();//// A,S,D,W PARA MOVER LA CAMARA
 		void cameraProjection(SDL_Event* event); ///ALT + RUEDA DEL MOUSE PARA HACER ZOOM
+		void updateLastPos();
 
 		void resetTest();
 
 		void updateCameraOut();
 		void controlEventsCamera();
+		void updateLastPosCam();
 		void updateSettingsCam(glm::mat4 camView, glm::mat4 camProjection);
 
 	};

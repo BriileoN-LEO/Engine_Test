@@ -64,6 +64,7 @@ const std::string floor_Model = "C:/Users/Briil/3D_Models_Game Engine/Floor/Floo
 const std::string floor2_Model = "C:/Users/Briil/3D_Models_Game Engine/Floor_2/Floor2.obj";
 const std::string F1_CarModel = "C:/Users/Briil/3D_Models_Game Engine/Car_Formula1/Car_Formula1.fbx";
 const std::string flashLight_Model = "C:/Users/Briil/3D_Models_Game Engine/flash-light-17mb/FlashLight/FlashLight.obj";
+const std::string tokio_Place = "C:/Users/Briil/3D_Models_Game Engine/tokio_place/source/testexport.fbx";
 
 const std::string campo_01 = "C:/Users/Briil/3D_Models_Game Engine/Campo/Campo_Floor.obj";
 const std::string vegetacion_01 = "C:/Users/Briil/3D_Models_Game Engine/vegetacion_01/vegetacion_01.obj";

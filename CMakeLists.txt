@@ -34,6 +34,7 @@ set(DATA_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/shaders/shader_v_v1.vs"
 "C:/Users/Briil/3D_Models_Game Engine/flash-light-17mb/FlashLight/FlashLight.obj"
 "C:/Users/Briil/3D_Models_Game Engine/Campo/Campo_Floor.obj"
 "C:/Users/Briil/3D_Models_Game Engine/vegetacion_01/vegetacion_01.obj"
+"C:/Users/Briil/3D_Models_Game Engine/tokio_place/source/testexport.fbx";
 )
 
 set(RUTE_COMPLETE_FILES ${DATA_FILE_PATH})
@@ -71,7 +72,19 @@ GIT_REPOSITORY https://github.com/assimp/assimp.git
 GIT_TAG v5.4.1
 )
 
-FetchContent_MakeAvailable(glm assimp)
+FetchContent_Declare(
+imgui
+GIT_REPOSITORY https://github.com/ocornut/imgui
+GIT_TAG docking # Use the 'docking' branch or any desired tag
+)
+
+FetchContent_MakeAvailable(
+glm
+assimp
+imgui
+)
+
+#target_ling_libraries(imgui PUBLIC SDL3::SDL3 OpenGL::GL )
 
 add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/config_window.h" "learningOpenGL/config_window.cpp" "learningOpenGL/data_save.h" "learningOpenGL/data_save.cpp"
 "learningOpenGL/control.cpp" "learningOpenGL/control.h" 
@@ -87,10 +100,27 @@ add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/conf
 "learningOpenGL/2D_UI/2D_screenPlayer.cpp" "learningOpenGL/2D_UI/2D_screenPlayer.h"
 "learningOpenGL/Render/frameBuffers.cpp" "learningOpenGL/Render/frameBuffers.h"
 "learningOpenGL/threadSystem/thread_System.h" "learningOpenGL/threadSystem/thread_System.cpp"
+"learningOpenGL/2D_UI/Interface_UI.cpp" "learningOpenGL/2D_UI/Interface_UI.h"
 "learningOpenGL/STB_IMAGE_IMPLEMENT.cpp"
 )
 
 
+target_sources(Learning PRIVATE
+${imgui_SOURCE_DIR}/imgui.cpp
+${imgui_SOURCE_DIR}/imgui_draw.cpp
+${imgui_SOURCE_DIR}/imgui_tables.cpp
+${imgui_SOURCE_DIR}/imgui_demo.cpp
+${imgui_SOURCE_DIR}/imgui_widgets.cpp
+
+${imgui_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp
+${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
+)
+
+
+target_include_directories(Learning PRIVATE
+${imgui_SOURCE_DIR}
+${imgui_SOURCE_DIR}/backends
+)
 target_include_directories(Learning PRIVATE "${PROJECT_BINARY_DIR}")
 target_include_directories(Learning PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/ThirdPartyLibs")
 target_include_directories(Learning PRIVATE ${glm_SOURCE_DIR})

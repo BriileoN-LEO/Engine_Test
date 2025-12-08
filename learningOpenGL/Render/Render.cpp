@@ -35,6 +35,8 @@ namespace render
 
 				///////RESOLVER AQUIIII AHHHHHHS 
 
+		glEnable(GL_DEPTH_TEST);
+
 		std::map<std::string, float> meshesNear{};
 		std::map<std::string, float> meshesFar{};
 
@@ -196,8 +198,9 @@ namespace render
 
 					if (mesh.textures.active_BlendMode == true)
 					{
-						glDisable(GL_BLEND);
 						glDepthMask(GL_TRUE);
+						glDisable(GL_BLEND);
+	
 					}
 
 
@@ -256,7 +259,11 @@ namespace render
 	void render_Skybox()
 	{
 		//RenderData_Set::skybox_D::currentSkyBox_D->draw_Skybox();
-		RenderData_Set::skybox_D::skyBoxes_D[RenderData_Set::skybox_D::nameSkybox].draw_Skybox();
+		if (RenderData_Set::skybox_D::skyBox_Current.active == true && !RenderData_Set::skybox_D::skyBox_Current.nameSkybox.empty())
+		{
+			RenderData_Set::skybox_D::skyBoxes_D[RenderData_Set::skybox_D::skyBox_Current.nameSkybox].draw_Skybox();
+		}
+	
 	}
 
 	void renderAll()
@@ -276,12 +283,16 @@ namespace render
 			render_Points();
 			//render_classicModelAssimp_D();
 			render_ModelCreation_D();
-			render_ModelAssimp_D(excluded_NormalScenario);///LISTO_NEW_SHADER
-			render_MultiAssimp_D();///LISTO_NEW_SHADER
+			//render_ModelAssimp_D(excluded_NormalScenario);///LISTO_NEW_SHADER
+			//render_MultiAssimp_D();///LISTO_NEW_SHADER
 			render_MeshLights_D();	
 			render_AABB();
+			render_ModelAssimp_D(excluded_NormalScenario);
+			//render_classicModelAssimp_D();
+			//render_ModelAssimp_D(excluded_NormalScenario);///LISTO_NEW_SHADER
 
 			render_Skybox();
+			render_MultiAssimp_D();///LISTO_NEW_SHADER
 		//	data_HitAABB::triangleStencil.drawTest_2();
 	
 		}
@@ -374,10 +385,14 @@ namespace render
 
 	void renderPhase()
 	{
-		render::renderPlanarReflection(); ///Para renderizar el espejo invertido.
-		openGL_render::secondClearOpenGL();
+		openGL_render::clearOpenGL();
+
+	//	render::renderPlanarReflection(); ///Para renderizar el espejo invertido.
+	//	openGL_render::secondClearOpenGL();
 		render::renderAll();
-     	RenderData_Set::frameBuffers_D["mirror_01"].useFrameBufferModel();
+    // 	RenderData_Set::frameBuffers_D["mirror_01"].useFrameBufferModel();
+
+
 
 	}
 
@@ -398,6 +413,8 @@ namespace openGL_render
 		glEnable(GL_PROGRAM_POINT_SIZE);
 //		glEnable(GL_BLEND);
 		glDepthFunc(GL_LESS);
+		glClearDepth(1.0);
+		//glDepthMask(GL_TRUE);
 
 		
 //		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -435,10 +452,12 @@ namespace openGL_render
 	void clearOpenGL()
 	{
 	//RenderData_Set::testFrameBuffer.bindFrameBuffer();
-		RenderData_Set::frameBuffers_D["mirror_01"].bindFrameBuffer();  ///se blindea el Framebuffer para recibir el render 
+	//	RenderData_Set::frameBuffers_D["mirror_01"].bindFrameBuffer();  ///se blindea el Framebuffer para recibir el render 
+		glDepthMask(GL_TRUE);
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		glClearDepth(1.0);
 		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
 
@@ -473,7 +492,7 @@ namespace renderSelection
 	
 		if (data_HitAABB::renderSelection == true)
 		{
-
+		
 		//	glStencilFunc(GL_ALWAYS, 1, 0xFF);
 
 	//		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
