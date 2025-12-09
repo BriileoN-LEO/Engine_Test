@@ -1,4 +1,6 @@
 ﻿
+
+#include "2D_UI/Interface_UI.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <glad/glad.h>
@@ -16,7 +18,6 @@
 #include "Render/Render.h"
 #include "collision/ScreenHit.h"
 #include "threadSystem/thread_System.h"
-#include "2D_UI/Interface_UI.h"
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -49,7 +50,10 @@ void init()
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+
+		SDL_WindowFlags windowFlag{ SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN | SDL_WINDOW_HIGH_PIXEL_DENSITY };
 
 		gWindow = SDL_CreateWindow("LearningOpenGL", screenSettings::screen_w, screenSettings::screen_h, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE); //Creacion de la ventana
 
@@ -112,6 +116,7 @@ int main(int argc, char* argv[])
 {
 	init();
 
+	UI::init_imGUI(gWindow, contextOpenGl);
 
 	openGL_render::viewportSet(0, 0, screenSettings::screen_w, screenSettings::screen_h);
 
@@ -502,6 +507,8 @@ int main(int argc, char* argv[])
 
 			while (SDL_PollEvent(&event))
 			{
+				ImGui_ImplSDL3_ProcessEvent(&event);
+
 				if (event.type == SDL_EVENT_QUIT)
 				{
 					loopEvent = true;
@@ -566,6 +573,24 @@ int main(int argc, char* argv[])
 						{
 							cameras::aerialCamera.moveCameraTest = true;
 						}
+					}
+
+					if (controlMove::detectSDLK_code::detectKeyUI(event))
+					{
+						if (controlMove::detectSDLK_code::keys_UI[SDLK_TAB] == true)
+						{
+							screenSettings::outWindow = true;
+							SDL_SetWindowRelativeMouseMode(gWindow, false);
+
+						}
+
+						else if (controlMove::detectSDLK_code::keys_UI[SDLK_TAB] == false)
+						{
+							screenSettings::outWindow = false;
+							SDL_SetWindowRelativeMouseMode(gWindow, true);
+
+						}
+
 					}
 
 					if (event.key.key == SDLK_F) ////Temporal para controlar el apagado y encendido de la luz
@@ -660,10 +685,16 @@ int main(int argc, char* argv[])
 
 				if (screenSettings::outWindow == true && event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
 				{
-					screenSettings::outWindow = false;
-					SDL_SetWindowRelativeMouseMode(gWindow, true);
-					SDL_WarpMouseInWindow(gWindow, static_cast<float>(screenSettings::screen_w) * 0.5f, static_cast<float>(screenSettings::screen_w) * 0.5f);
+		
+					if (controlMove::detectSDLK_code::keys_UI[SDLK_TAB] == false)
+					{
+						screenSettings::outWindow = false;
+						SDL_SetWindowRelativeMouseMode(gWindow, true);
+						SDL_WarpMouseInWindow(gWindow, static_cast<float>(screenSettings::screen_w) * 0.5f, static_cast<float>(screenSettings::screen_w) * 0.5f);
+					}
 				}
+
+
 
 
 			}
@@ -694,6 +725,8 @@ int main(int argc, char* argv[])
 			if (syncFPS.frameT == true)
 			{
 				//openGL_render::clearOpenGL();
+
+				UI::start_NewFrameUI();
 
 				threadSystem::ControlPhysics_Events.timeInterpolation.loopAcomulator();
 				////AQUI IBA LA SECCION DE CONTROL DE EVENTS CAMERA.
@@ -760,6 +793,8 @@ int main(int argc, char* argv[])
 					render::renderPhase();
 					refresh_Models::refreshAll_LastModels();
 					
+					UI::renderFirst_WindowUI();
+
 					//testPlay::renderTranformations_Objects();
 				}
 				
@@ -781,6 +816,7 @@ int main(int argc, char* argv[])
 	}
 
 	//multiplesTriangles.destroy();
+	UI::destroyUI();
 	threadSystem::ControlPhysics_Events.destroy();
 	destroy::destroyModels();
 	SDL_GL_DestroyContext(contextOpenGl);

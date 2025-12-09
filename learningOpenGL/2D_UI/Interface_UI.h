@@ -10,8 +10,16 @@
 
 namespace UI
 {
-	void init_imGUI();
+	extern std::unique_ptr<ImGuiIO> IO;
+	extern std::unique_ptr<ImGuiStyle> style_UI;
 
+	void init_imGUI(SDL_Window* window, SDL_GLContext contextOpenGL);
+
+	void start_NewFrameUI();
+
+	void renderFirst_WindowUI();
+	
+	void destroyUI();
  
 }
 

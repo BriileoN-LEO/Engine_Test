@@ -15,11 +15,13 @@ namespace controlMove
 		static std::map<SDL_Keycode, bool> keys_Scale;
 		static std::map<SDL_Keycode, bool> keys_Translate;
 		static std::map<SDL_Keycode, bool> keys_fov;
+		static std::map<SDL_Keycode, bool> keys_UI;
 
 		static bool detectKey(SDL_Event event);
 		static bool detectKeyColor(SDL_Event event);
 		static bool detectKeyScale(SDL_Event event);
 		static bool detectKeyTranslate(SDL_Event* event);
+		static bool detectKeyUI(SDL_Event& event);
 		static void resetKeys();
 	};
 	 

@@ -3,6 +3,9 @@
 #
 cmake_minimum_required (VERSION 3.21)
 
+#add_compile_definitions(NOMINMAX)
+#add_compile_definitions(WIN32_LEAN_AND_MEAN)
+
 project (Learning)
 
 

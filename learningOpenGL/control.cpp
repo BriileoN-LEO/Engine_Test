@@ -34,6 +34,12 @@ namespace controlMove
 		{SDLK_RIGHT, false},
 
 	};
+
+	std::map<SDL_Keycode, bool> detectSDLK_code::keys_UI
+	{
+		{SDLK_TAB, false}
+	};
+
 	bool detectSDLK_code::detectKey(SDL_Event event)
 	{
 		bool detectKey{ true };
@@ -88,6 +94,22 @@ namespace controlMove
 	
 		return detect;
 	}
+
+	bool detectSDLK_code::detectKeyUI(SDL_Event& event)
+	{
+		bool findKey{};
+
+		if (keys_UI.find(event.key.key) != keys_UI.end())
+		{
+			findKey = true;
+			
+			keys_UI[event.key.key] = keys_UI[event.key.key] ? false : true;
+		
+		}
+
+		return findKey;
+	}
+
 	void detectSDLK_code::resetKeys()
 	{
 		for (auto& val : keys)
