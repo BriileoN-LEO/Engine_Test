@@ -16,6 +16,13 @@
 
 namespace sky
 {
+	struct transformation_Skybox
+	{
+		glm::vec3 pivot_rot{0.0f, 1.0f, 0.0f};
+		float rad{};
+
+		glm::mat3 rotationVec{};
+	};
 
 	class cubeMap_Skybox
 	{
@@ -31,7 +38,10 @@ namespace sky
 
 
 	public:
-		
+
+		transformation_Skybox transform_SkyBox{};
+		std::vector<float> skyBox_Vertices{};
+
 		cubeMap_Skybox();
 		cubeMap_Skybox(std::string name, std::string directory_Tex, std::vector<std::string> nameFiles, std::string nameShader);
 		
@@ -86,6 +96,8 @@ namespace Assimp_D
 		std::string nameModel{};
 		std::string nameMesh{};
 		[[maybe_unused]] bool changeStateSelection{};
+
+		void reset();
 	};
 
 	struct shaderSettings

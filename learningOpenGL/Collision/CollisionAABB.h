@@ -31,7 +31,8 @@ namespace AABB
 		int v1{};
 		int v2{};
 		int v3{};
-
+		
+		void reset();
 	};
 
 	class BoundingBox
@@ -80,6 +81,10 @@ namespace data_HitAABB
 	extern std::pair<Assimp_D::structModelName, AABB::numberVertSelected> selectedObj;
 	extern individualComp::singleTriangle triangleStencil;
 	extern bool renderSelection;
+	extern bool selectObj;
+
+	void resetSelectedObj();
+
 }
 
 

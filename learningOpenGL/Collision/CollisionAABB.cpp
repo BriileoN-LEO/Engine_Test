@@ -5,6 +5,12 @@
 
 namespace AABB
 {
+	void numberVertSelected::reset()
+	{
+		v1 = 0;
+		v2 = 0;
+		v3 = 0;
+	}
 
 	BoundingBox::BoundingBox() {};
 	BoundingBox::BoundingBox(Assimp_D::structModelName nameAABB, std::vector<glm::vec3> vertAABB, boxAABB box_Coord, std::map<std::string, triAABB> boxTrisAABB)
@@ -62,8 +68,8 @@ namespace AABB
 		}
 
 		//shaderAABB.transformMat("model", matModel);
-		shaderAABB.transformMat("view", cameras::aerialCamera.cam);
-		shaderAABB.transformMat("projection", cameras::aerialCamera.camProjection);
+		shaderAABB.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+		shaderAABB.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 
 		glBindVertexArray(VAO); 
 		glDrawArrays(GL_LINE_STRIP, 0, vertAABB.size());
@@ -489,4 +495,12 @@ namespace data_HitAABB
 	std::pair<Assimp_D::structModelName, AABB::numberVertSelected> selectedObj{};
 	individualComp::singleTriangle triangleStencil{};
 	bool renderSelection{};
+	bool selectObj{};
+
+	void resetSelectedObj()
+	{
+		selectedObj.first.reset();
+		selectedObj.second.reset();
+	}
+
 }

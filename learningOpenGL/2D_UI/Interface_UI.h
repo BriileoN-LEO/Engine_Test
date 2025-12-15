@@ -18,7 +18,11 @@ namespace UI
 	void start_NewFrameUI();
 
 	void renderFirst_WindowUI();
+
+	void render_SelectionCamera(SDL_Window* gWindow);
 	
+	void render_All_ImGui(SDL_Window* gWindow);
+
 	void destroyUI();
  
 }

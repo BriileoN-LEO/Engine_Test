@@ -18,6 +18,12 @@ namespace randomN
 
 }
 
+namespace basic_Operations
+{
+
+
+}
+
 namespace reflectionMatrixOP
 {
 	glm::mat4 calcReflectMatrix(glm::vec3 cameraPos, glm::vec3 pointPlane, glm::vec3 planeNormal, glm::vec3 cameraUp, glm::vec3 cameraViewTarget);
@@ -141,10 +147,35 @@ namespace camera
 		cameraCount = 1
 	};
 
+	enum class typeCam
+	{
+		firstPerson = 0,
+		editMode = 1,
+
+	};
+
+	struct data_EditModeCam
+	{
+		glm::vec2 currentPos_mouseScreen{};
+		glm::vec2 lastPos_mouseScreen{};
+		bool stopDetectCurrentPos{}; ///HACER TRUE CUANDO SE DETECTE QUE SE ROTO LA CAMARA
+
+		glm::vec3 posDirectionView{};
+		float distanceDolly{6.0f};
+		GLfloat sensitivity_editCam{ 1.0f };
+
+		glm::quat rotOrientation{glm::quat(1.0f, 0.0f, 0.0f, 0.0f)};
+		glm::mat4 viewCam{ glm::mat4(1.0f) };
+		glm::vec3 camUp{ glm::vec3(0.0f, 1.0f, 0.0f) };
+		glm::vec3 cameraRight{};
+
+	};
 
 	class camera1
 	{
 	public:
+		typeCam type{};
+
 		//glm::vec3 pivotCam{ 0.0f, 0.0f, 1.0f };
 		glm::vec3 directionView{ 0.0f, 0.0f, -1.0f };
 		glm::vec3 lastPosCam{};
@@ -159,7 +190,7 @@ namespace camera
 
 		GLfloat yaw{};
 		GLfloat pitch{};
-		glm::vec3 cameraUp{};
+		glm::vec3 cameraUp { glm::vec3(0.0f, 1.0f, 0.0f) };
 		glm::vec3 cameraRight{};
 
 		GLfloat sensitivity{ 0.01f };
@@ -171,8 +202,13 @@ namespace camera
 		GLfloat maxCut{};
 		bool cameraFovTest{};
 
+
+		data_EditModeCam editMode_Cam{};
+
+
+
 		camera1();
-		camera1(glm::vec3 posCam, GLfloat fovCam, GLfloat nearCut, GLfloat maxCut);
+		camera1(typeCam type, glm::vec3 posCam, GLfloat fovCam, GLfloat nearCut, GLfloat maxCut);
 
 
 		camera1 operator=(const camera1& came)
@@ -205,18 +241,26 @@ namespace camera
 			return *this;
 		}
 
-		void setSettingsCamera(glm::vec3 posCam, GLfloat fovCam, GLfloat nearCut, GLfloat maxCut);
+		void setSettingsCamera(typeCam type, glm::vec3 posCam, GLfloat fovCam, GLfloat nearCut, GLfloat maxCut);
 
+		//Settings to camera first person 
 		void rotateCam();
 		void detectRotCamMouse(glm::vec2 posMouse);
 		void moveCamera();//// A,S,D,W PARA MOVER LA CAMARA
 		void cameraProjection(SDL_Event* event); ///ALT + RUEDA DEL MOUSE PARA HACER ZOOM
-		void updateLastPos();
+		//void updateLastPos();
+
+		//SETTINGS TO CAMERA EDIT MODE
+		void getViewMat();
+		void rotateCam_EditMode(glm::vec2 posMouse); ///CAMBIAR LA FORMA DE ROTACION DEL EDIT MODE, PARA HACER QUE SE PAREZCA AL DE MAYA (ALT + CLICK_LEFT_MOUSE)
+		void dollyCam_EditMode(glm::vec2 posMouse); ///DETECTAR EL DOLLY IN Y EL DOLLY OUT CONFORME A LA POSICION DEL MOUSE EN PANTALLA Y LA COMBINACION DE BOTONES ALT + CLICK_RIGHT_MOUSE
+		void translateCam_EditMode(glm::vec2 posMouse); ///TRASLADAR LA CAMARA CON LA CONFIGURACION (ALT + CLICK_ROLL_MOUSE)
+		void resetPos();
 
 		void resetTest();
 
-		void updateCameraOut();
-		void controlEventsCamera();
+		void updateCameraOut(); //CAMBIAR ESTA FUNCION PARA COMPATIBILIDAD DE EDIT MODE
+		void controlEventsCamera(); //CAMBIAR ESTA FUNCION PARA COMPATIBILIDAD DE EDIT MODE
 		void updateLastPosCam();
 		void updateSettingsCam(glm::mat4 camView, glm::mat4 camProjection);
 

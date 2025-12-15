@@ -61,8 +61,11 @@ namespace sky
 						format = GL_RGBA;
 					}
 
+					//size_t sizeImage{ sizeof(data) };
+					//glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + posicionNames[nameSimple], 0, format, width, height, 0, sizeImage, data);
+
 					glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + posicionNames[nameSimple],
-						0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+					 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 
 					stbi_image_free(data);
 				}
@@ -129,6 +132,52 @@ namespace sky
 			-1.0f, -1.0f,  1.0f,
 			 1.0f, -1.0f,  1.0f
 		};
+		std::vector<float> skyBoxVertex
+		{
+			-1.0f,  1.0f, -1.0f,
+			-1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,////
+			 1.0f, -1.0f, -1.0f,
+			 1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+
+			-1.0f, -1.0f,  1.0f,
+			-1.0f, -1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f,  1.0f,
+			-1.0f, -1.0f,  1.0f,
+
+			 1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,
+
+			-1.0f, -1.0f,  1.0f,
+			-1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f, -1.0f,  1.0f,
+			-1.0f, -1.0f,  1.0f,
+
+			-1.0f,  1.0f, -1.0f,
+			 1.0f,  1.0f, -1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			-1.0f,  1.0f,  1.0f,
+			-1.0f,  1.0f, -1.0f,
+
+			-1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f,  1.0f,
+			 1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f,  1.0f,
+			 1.0f, -1.0f,  1.0f
+		};
+
+		skyBox_Vertices = skyBoxVertex;
 
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
@@ -136,7 +185,7 @@ namespace sky
 		glBindVertexArray(VAO);
 
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, skyBoxVertex.size() * sizeof(float), &skyBoxVertex[0], GL_STATIC_DRAW);
 	
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -158,12 +207,15 @@ namespace sky
 		shaderSkybox.use();
 
 		glm::mat4 model{ glm::mat4(1.0) };
+		model = glm::rotate(model, glm::radians(transform_SkyBox.rad), transform_SkyBox.pivot_rot);
+		transform_SkyBox.rotationVec = glm::toMat3(glm::quat(glm::angleAxis(glm::radians(transform_SkyBox.rad), transform_SkyBox.pivot_rot)));
+
 		shaderSkybox.transformMat("model", model);
 
-		glm::mat4 cameraView{ glm::mat4(glm::mat3(cameras::aerialCamera.cam)) };
+		glm::mat4 cameraView{ glm::mat4(glm::mat3(cameras::cameras_D[cameras::name_CurrentCamera].cam)) };
 		shaderSkybox.transformMat("view", cameraView);
 
-		shaderSkybox.transformMat("projection", cameras::aerialCamera.camProjection);
+		shaderSkybox.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 		
 		shaderSkybox.setInt("skybox", 0);
 	//	glActiveTexture(GL_TEXTURE0);
@@ -216,6 +268,7 @@ namespace Assimp_D
 		if (DataT)
 		{
 			GLenum format{};
+			GLenum formatSecond{};
 			if (nrChannels == 1)
 			{
 				format = GL_RED;
@@ -224,20 +277,27 @@ namespace Assimp_D
 
 			if (nrChannels == 3)
 			{
-				format = GL_RGB;
+				format = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+				formatSecond = GL_RGB;
 
 			}
 
 			if (nrChannels == 4)
 			{
-				format = GL_RGBA;
+				format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+				formatSecond = GL_RGBA;
 
 			}
 		
 			    glBindTexture(GL_TEXTURE_2D, texID);
-				glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, DataT);
-				glGenerateMipmap(GL_TEXTURE_2D);
+
+			//	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, DataT);
+			//	glGenerateMipmap(GL_TEXTURE_2D);
 			
+	
+				glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, formatSecond, GL_UNSIGNED_BYTE, DataT);
+				glGenerateMipmap(GL_TEXTURE_2D);
+
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -263,6 +323,7 @@ namespace Assimp_D
 		{
 
 			GLenum format{};
+			GLenum sec_Format{};
 			if (nrChannels == 1)
 			{
 				format = GL_RED;
@@ -271,20 +332,29 @@ namespace Assimp_D
 
 			if (nrChannels == 3)
 			{
-				format = GL_RGB;
-
+				//format = GL_RGB;
+				format = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+				sec_Format = GL_RGB;
 			}
 
 			if (nrChannels == 4)
 			{
-				format = GL_RGBA;
-
+				//format = GL_RGBA;
+				//format = GL_RGBA8;
+				format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+				sec_Format = GL_RGBA;
 			}
 
 			glGenTextures(1, &id);
 
+		//	glBindTexture(GL_TEXTURE_2D, id);
+		//	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, dataTexture);
+		//	glGenerateMipmap(GL_TEXTURE_2D);
+
 			glBindTexture(GL_TEXTURE_2D, id);
-			glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, dataTexture);
+			//size_t sizeImage{ sizeof(dataTexture) };
+			//glCompressedTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, sizeImage, dataTexture);
+			glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, sec_Format, GL_UNSIGNED_BYTE, dataTexture);
 			glGenerateMipmap(GL_TEXTURE_2D);
 
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -302,6 +372,13 @@ namespace Assimp_D
 		}
 
 		return id;
+	}
+
+	void structModelName::reset()
+	{
+		nameModel.erase();
+		nameMesh.erase();
+		changeStateSelection = false;
 	}
 
 	Mesh::Mesh() {};
@@ -526,8 +603,8 @@ namespace Assimp_D
 		shader.use();
 
 		shader.transformMat("model", MeshCoord.model);
-		shader.transformMat("view", cameras::aerialCamera.cam);
-		shader.transformMat("projection", cameras::aerialCamera.camProjection);
+		shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+		shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 		shader.setVec3("objectColor", shaderSet.objectColor);
 
 		if (static_cast<int>(RenderData_Set::pointLights_D.size()) > 0)
@@ -638,6 +715,7 @@ namespace Assimp_D
 				texture::textureUnits textureUnit{ static_cast<texture::textureUnits>(textures.texU_Data.size() + 1) };
 
 				RenderData_Set::skybox_D::skyBoxes_D[RenderData_Set::skybox_D::skyBox_Current.nameSkybox].bind_Texture(shader, "skybox", textureUnit);
+				shader.transformMat3("transformation_SkyBox", RenderData_Set::skybox_D::skyBoxes_D["skyBox_day"].transform_SkyBox.rotationVec);
 				shader.setBool("activeSkybox", true);
 
 			}
@@ -676,7 +754,7 @@ namespace Assimp_D
 		shader.setFloat("Mat.shiness", shaderSet.shiness);
 	
 
-		shader.setVec3("viewPos", cameras::aerialCamera.posCam);
+		shader.setVec3("viewPos", cameras::cameras_D[cameras::name_CurrentCamera].posCam);
 		shader.transformMat3("modelMatrix", MeshCoord.normalModelMatrix);
 
 
@@ -701,8 +779,8 @@ namespace Assimp_D
 	void Mesh::Draw_WithoutModel(shading::shader& shader)
 	{		
 
-		shader.transformMat("view", cameras::aerialCamera.cam);
-		shader.transformMat("projection", cameras::aerialCamera.camProjection);
+		shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+		shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 		shader.setVec3("objectColor", shaderSet.objectColor);
 
 
@@ -822,7 +900,7 @@ namespace Assimp_D
 		shader.setFloat("Mat.shiness", shaderSet.shiness);
 
 
-		shader.setVec3("viewPos", cameras::aerialCamera.posCam);
+		shader.setVec3("viewPos", cameras::cameras_D[cameras::name_CurrentCamera].posCam);
 		shader.transformMat3("modelMatrix", MeshCoord.normalModelMatrix);
 
 		glBindVertexArray(VAO);
@@ -838,8 +916,8 @@ namespace Assimp_D
 		shader.use();
 
 		shader.transformMat("model", MeshCoord.model);
-		shader.transformMat("view", cameras::aerialCamera.cam);
-		shader.transformMat("projection", cameras::aerialCamera.camProjection);
+		shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+		shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 		shader.setVec3("objectColor", shaderSet.objectColor);
 
 
@@ -955,7 +1033,7 @@ namespace Assimp_D
 		shader.setFloat("Mat.shiness", shaderSet.shiness);
 
 
-		shader.setVec3("viewPos", cameras::aerialCamera.posCam);
+		shader.setVec3("viewPos", cameras::cameras_D[cameras::name_CurrentCamera].posCam);
 		shader.transformMat3("modelMatrix", MeshCoord.normalModelMatrix);
 
 	//	glBindVertexArray(VAO);
@@ -1701,8 +1779,8 @@ namespace individualComp
 		shader.use();
 
 		shader.transformMat("model", MeshCoord.model);
-		shader.transformMat("view", cameras::aerialCamera.cam);
-		shader.transformMat("projection", cameras::aerialCamera.camProjection);
+		shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+		shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 		shader.setVec3("objectColor", shaderSet.objectColor);
 
 
@@ -1811,7 +1889,7 @@ namespace individualComp
 		shader.setVec3("Mat.specular", shaderSet.specular);
 		shader.setFloat("Mat.shiness", shaderSet.shiness);
 
-		shader.setVec3("viewPos", cameras::aerialCamera.posCam);
+		shader.setVec3("viewPos", cameras::cameras_D[cameras::name_CurrentCamera].posCam);
 		shader.transformMat3("modelMatrix", MeshCoord.normalModelMatrix);
 
 		glBindVertexArray(VAO);
@@ -1861,8 +1939,8 @@ namespace individualComp
 		RenderData_Set::stencilTest::stencilTest_shader.use();
 
 		RenderData_Set::stencilTest::stencilTest_shader.transformMat("model", model);
-		RenderData_Set::stencilTest::stencilTest_shader.transformMat("view", cameras::aerialCamera.cam);
-		RenderData_Set::stencilTest::stencilTest_shader.transformMat("projection", cameras::aerialCamera.camProjection);
+		RenderData_Set::stencilTest::stencilTest_shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+		RenderData_Set::stencilTest::stencilTest_shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 
 		RenderData_Set::stencilTest::stencilTest_shader.setInt("selectionStencil", 1);
 		RenderData_Set::stencilTest::stencilTest_shader.setVec3("centroidTriangle", centroidTriangle);
@@ -1990,11 +2068,11 @@ namespace individualComp
 									posicionInMesh = static_cast<int>(setDataMesh_Multi.size()) - 1 ;
 								}
 
-									float distLenght_Current{ glm::length(cameras::aerialCamera.posCam - meshCopy.posicion) };
+									float distLenght_Current{ glm::length(cameras::cameras_D[cameras::name_CurrentCamera].posCam - meshCopy.posicion) };
 
 									for (int i = 0; i < static_cast<int>(setDataMesh_Multi.size()); i++)
 									{
-										float distLenght_seq{ glm::length(cameras::aerialCamera.posCam - setDataMesh_Multi[i].posicion) };
+										float distLenght_seq{ glm::length(cameras::cameras_D[cameras::name_CurrentCamera].posCam - setDataMesh_Multi[i].posicion) };
 
 									
 										if (distLenght_seq < distLenght_Current)

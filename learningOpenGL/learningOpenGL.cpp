@@ -46,7 +46,7 @@ void init()
 	else
 	{
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -569,44 +569,53 @@ int main(int argc, char* argv[])
 					{
 						//					TexVertex.vertexTransform.detectTranslate(&event);
 
-						if (camP == camera::camState::cameraAE)
+						if (cameras::cameras_D[cameras::name_CurrentCamera].type == camera::typeCam::firstPerson)
 						{
-							cameras::aerialCamera.moveCameraTest = true;
+							cameras::cameras_D[cameras::name_CurrentCamera].moveCameraTest = true;
 						}
 					}
 
 					if (controlMove::detectSDLK_code::detectKeyUI(event))
 					{
-						if (controlMove::detectSDLK_code::keys_UI[SDLK_TAB] == true)
+						if (cameras::cameras_D[cameras::name_CurrentCamera].type == camera::typeCam::firstPerson)
 						{
-							screenSettings::outWindow = true;
-							SDL_SetWindowRelativeMouseMode(gWindow, false);
+							if (controlMove::detectSDLK_code::keys_UI[SDLK_TAB] == true)
+							{
+								screenSettings::outWindow = true;
+								SDL_SetWindowRelativeMouseMode(gWindow, false);
+								
+							}
 
+							else if (controlMove::detectSDLK_code::keys_UI[SDLK_TAB] == false)
+							{
+								screenSettings::outWindow = false;
+								SDL_SetWindowRelativeMouseMode(gWindow, true);
+
+							}
 						}
-
-						else if (controlMove::detectSDLK_code::keys_UI[SDLK_TAB] == false)
-						{
-							screenSettings::outWindow = false;
-							SDL_SetWindowRelativeMouseMode(gWindow, true);
-
-						}
-
 					}
 
 					if (event.key.key == SDLK_F) ////Temporal para controlar el apagado y encendido de la luz
 					{
-						if (RenderData_Set::spotLights_D["FlashLight_SpotLight"].stateLight == true)
+						if (cameras::cameras_D[cameras::name_CurrentCamera].type == camera::typeCam::firstPerson)
 						{
-							RenderData_Set::spotLights_D["FlashLight_SpotLight"].stateLight = false;
+							if (RenderData_Set::spotLights_D["FlashLight_SpotLight"].stateLight == true)
+							{
+								RenderData_Set::spotLights_D["FlashLight_SpotLight"].stateLight = false;
 
+							}
+
+							else if (RenderData_Set::spotLights_D["FlashLight_SpotLight"].stateLight == false)
+							{
+								RenderData_Set::spotLights_D["FlashLight_SpotLight"].stateLight = true;
+
+							}
 						}
 
-						else if (RenderData_Set::spotLights_D["FlashLight_SpotLight"].stateLight == false)
+						else if (cameras::cameras_D[cameras::name_CurrentCamera].type == camera::typeCam::editMode)
 						{
-							RenderData_Set::spotLights_D["FlashLight_SpotLight"].stateLight = true;
-
+							cameras::cameras_D[cameras::name_CurrentCamera].resetPos();
 						}
-
 					}
 
 					ControlScenarios::detectScenario_Key(&event);
@@ -640,9 +649,9 @@ int main(int argc, char* argv[])
 
 					//	TexVertex.vertexTransform.resetTests();
 
-					if (camP == camera::camState::cameraAE)
+					if (cameras::cameras_D[cameras::name_CurrentCamera].type == camera::typeCam::firstPerson)
 					{
-						cameras::aerialCamera.resetTest();
+						cameras::cameras_D[cameras::name_CurrentCamera].resetTest();
 					}
 
 				}
@@ -651,11 +660,69 @@ int main(int argc, char* argv[])
 				{
 					//FirstModel.cam1.detectRotCamMouse(controlMouse::getDistanceMotionMouse());
 
-					if (camP == camera::camState::cameraAE)
+					if (cameras::cameras_D[cameras::name_CurrentCamera].type == camera::typeCam::firstPerson)
 					{
-						cameras::aerialCamera.detectRotCamMouse(controlMouse::getDistanceMotionMouse());
-						cameras::aerialCamera.moveCameraTest = true;
+						cameras::cameras_D[cameras::name_CurrentCamera].detectRotCamMouse(controlMouse::getDistanceMotionMouse());
+						cameras::cameras_D[cameras::name_CurrentCamera].moveCameraTest = true;
 					}
+
+					else if (cameras::cameras_D[cameras::name_CurrentCamera].type == camera::typeCam::editMode)
+					{
+					    
+						SDL_Keymod modStateKey = SDL_GetModState();
+						bool stateAlt{ static_cast<bool>(modStateKey & SDL_KMOD_ALT) };
+						bool stateClickMouse{ static_cast<bool>(event.motion.state & SDL_BUTTON_LMASK) }; //CLICK IZQUIERDO DEL MOUSE
+
+						///ROTACION 
+						if (stateAlt && stateClickMouse)
+						{
+							if (cameras::cameras_D[cameras::name_CurrentCamera].editMode_Cam.stopDetectCurrentPos == false)
+							{
+								cameras::cameras_D[cameras::name_CurrentCamera].editMode_Cam.stopDetectCurrentPos = true;
+							}
+
+							cameras::cameras_D[cameras::name_CurrentCamera].rotateCam_EditMode(controlMouse::getCurrentPosMouse());
+						//SDL_Log("ROTATE::CAMERA::EDIT_MODE\n");
+								///funcion para editar el movimiento de la camara
+
+						}
+
+						stateClickMouse = static_cast<bool>(event.motion.state & SDL_BUTTON_MMASK); //CLICK DE LA RUEDITA DEL MOUSE
+					    
+						///TRASLACION
+						if (stateAlt && stateClickMouse)
+						{
+							if (cameras::cameras_D[cameras::name_CurrentCamera].editMode_Cam.stopDetectCurrentPos == false)
+							{
+								cameras::cameras_D[cameras::name_CurrentCamera].editMode_Cam.stopDetectCurrentPos = true;
+							}
+							cameras::cameras_D[cameras::name_CurrentCamera].translateCam_EditMode(controlMouse::getCurrentPosMouse());
+
+						}
+
+						stateClickMouse = static_cast<bool>(event.motion.state & SDL_BUTTON_RMASK); //CLICK DE LA RUEDITA DEL MOUSE
+
+						///TRASLACION
+						if (stateAlt && stateClickMouse)
+						{
+							if (cameras::cameras_D[cameras::name_CurrentCamera].editMode_Cam.stopDetectCurrentPos == false)
+							{
+								cameras::cameras_D[cameras::name_CurrentCamera].editMode_Cam.stopDetectCurrentPos = true;
+							}
+							cameras::cameras_D[cameras::name_CurrentCamera].dollyCam_EditMode(controlMouse::getCurrentPosMouse());
+
+						}
+
+					}
+					
+				}
+				else if(event.type != SDL_EVENT_MOUSE_MOTION)
+				{
+					if (cameras::cameras_D[cameras::name_CurrentCamera].editMode_Cam.stopDetectCurrentPos == true)
+					{
+						cameras::cameras_D[cameras::name_CurrentCamera].editMode_Cam.stopDetectCurrentPos = false;
+					}
+
 				}
 
 				if (event.type == SDL_EVENT_MOUSE_WHEEL)
@@ -663,9 +730,9 @@ int main(int argc, char* argv[])
 					SDL_Keymod modStateKey = SDL_GetModState();
 					if (modStateKey & SDL_KMOD_ALT)
 					{
-						if (camP == camera::camState::cameraAE)
+						if (cameras::cameras_D[cameras::name_CurrentCamera].type == camera::typeCam::firstPerson)
 						{
-							cameras::aerialCamera.cameraProjection(&event);
+							cameras::cameras_D[cameras::name_CurrentCamera].cameraProjection(&event);
 						}
 					}
 				}
@@ -683,14 +750,33 @@ int main(int argc, char* argv[])
 					SDL_SetWindowRelativeMouseMode(gWindow, false);
 				}
 
+				if (screenSettings::outWindow == false && event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
+				{
+					if (cameras::cameras_D[cameras::name_CurrentCamera].type == camera::typeCam::firstPerson)
+					{
+						data_HitAABB::selectObj = true;  ///ACTIVAR LA SELECCION DE INTERSECCION DEL OBJETO.
+					}
+
+				}
+
 				if (screenSettings::outWindow == true && event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
 				{
 		
 					if (controlMove::detectSDLK_code::keys_UI[SDLK_TAB] == false)
 					{
 						screenSettings::outWindow = false;
-						SDL_SetWindowRelativeMouseMode(gWindow, true);
-						SDL_WarpMouseInWindow(gWindow, static_cast<float>(screenSettings::screen_w) * 0.5f, static_cast<float>(screenSettings::screen_w) * 0.5f);
+						
+						if (cameras::cameras_D[cameras::name_CurrentCamera].type == camera::typeCam::firstPerson)
+						{
+							SDL_SetWindowRelativeMouseMode(gWindow, true);
+							SDL_WarpMouseInWindow(gWindow, static_cast<float>(screenSettings::screen_w) * 0.5f, static_cast<float>(screenSettings::screen_w) * 0.5f);
+
+						}
+
+						else if (cameras::cameras_D[cameras::name_CurrentCamera].type == camera::typeCam::editMode)
+						{
+							SDL_SetWindowRelativeMouseMode(gWindow, false);
+						}
 					}
 				}
 
@@ -707,15 +793,15 @@ int main(int argc, char* argv[])
 			///CONTROL DE EVENTS CAMERA.
 			if (screenSettings::outWindow == false)
 			{
-				SDL_WarpMouseInWindow(gWindow, static_cast<float>(screenSettings::screen_w) * 0.5f, static_cast<float>(screenSettings::screen_w) * 0.5f);
+			//	SDL_WarpMouseInWindow(gWindow, static_cast<float>(screenSettings::screen_w) * 0.5f, static_cast<float>(screenSettings::screen_w) * 0.5f);
 
-				if (camP == camera::camState::cameraAE)
+				if (cameras::cameras_D[cameras::name_CurrentCamera].type == camera::typeCam::firstPerson)
 				{
-					cameras::aerialCamera.updateLastPosCam();
-					cameras::aerialCamera.controlEventsCamera();
+					SDL_WarpMouseInWindow(gWindow, static_cast<float>(screenSettings::screen_w) * 0.5f, static_cast<float>(screenSettings::screen_w) * 0.5f);
 					//camera_Transforms::attachObject_Cam(RenderData_Set::AssimpModel_D["FlashLight"].ModelCoord, cameras::aerialCamera);
 				}
-
+				cameras::cameras_D[cameras::name_CurrentCamera].updateLastPosCam();
+				cameras::cameras_D[cameras::name_CurrentCamera].controlEventsCamera();
 			}
 		//	refresh_Models::refreshUI_point();
 
@@ -781,7 +867,7 @@ int main(int argc, char* argv[])
 
 					//testPlay::renderTranformations_Objects();
 
-					cameras::updateStateCurrentCamera();
+					//cameras::updateStateCurrentCamera();
 					refresh_Models::refreshUI_point();
 					//refresh_Models::refreshUI_point();
 					//testPlay::transformation_handCamara();
@@ -793,8 +879,7 @@ int main(int argc, char* argv[])
 					render::renderPhase();
 					refresh_Models::refreshAll_LastModels();
 					
-					UI::renderFirst_WindowUI();
-
+					UI::render_All_ImGui(gWindow);
 					//testPlay::renderTranformations_Objects();
 				}
 				

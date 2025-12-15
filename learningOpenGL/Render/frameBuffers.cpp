@@ -154,8 +154,8 @@ namespace frameBuff
 
 			   RenderData_Set::shader_D["shaderFramebuffer"].transformMat("model", upModelMesh);
 			   
-			   RenderData_Set::shader_D["shaderFramebuffer"].transformMat("view", cameras::aerialCamera.cam);
-			   RenderData_Set::shader_D["shaderFramebuffer"].transformMat("projection", cameras::aerialCamera.camProjection);
+			   RenderData_Set::shader_D["shaderFramebuffer"].transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+			   RenderData_Set::shader_D["shaderFramebuffer"].transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 			   sizeIndices = static_cast<int>(mesh.indices.size());
 			   unsigned int& VAO_mesh = mesh.outVAO();
 			   glBindVertexArray(VAO_mesh);

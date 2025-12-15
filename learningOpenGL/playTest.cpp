@@ -280,7 +280,11 @@ namespace camera_Transforms
 
 	void setAllTranforms_Cam()
 	{
-		camera_Transforms::attachObject_Cam(RenderData_Set::AssimpModel_D["FlashLight"].ModelCoord, cameras::aerialCamera);
+		if (cameras::cameras_D[cameras::name_CurrentCamera].type != camera::typeCam::editMode)
+		{
+			camera_Transforms::attachObject_Cam(RenderData_Set::AssimpModel_D["FlashLight"].ModelCoord, cameras::cameras_D[cameras::name_CurrentCamera]);
+
+		}
 	};
 }
 

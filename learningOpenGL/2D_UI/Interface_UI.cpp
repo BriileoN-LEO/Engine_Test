@@ -41,13 +41,60 @@ namespace UI
 
 	void renderFirst_WindowUI()
 	{
+
 		ImGui::Begin("DemoWindow");
 		ImGui::Button("Hello");
+		float& rot_skyBox{ RenderData_Set::skybox_D::skyBoxes_D["skyBox_day"].transform_SkyBox.rad };
+
+		ImGui::SliderFloat("Rotation_skybox", &rot_skyBox, -360.0, 360.0);
 		ImGui::End();
+
+	}
+
+	void render_SelectionCamera(SDL_Window* gWindow)
+	{
+		auto changeStateWindow = [&]()
+			{
+				if (cameras::cameras_D[cameras::name_CurrentCamera].type == camera::typeCam::editMode)
+				{
+					SDL_SetWindowRelativeMouseMode(gWindow, false);
+				}
+
+			};
 		
+
+		ImGui::Begin("CameraSelection");
+		bool* returnSelection{ nullptr };
+		returnSelection = new bool(ImGui::Button("Camera_firstPerson"));
+
+		if (*returnSelection == true)
+		{
+			cameras::name_CurrentCamera = "cam1_firstPerson";
+			changeStateWindow();
+		}
+
+		delete returnSelection;
+		returnSelection = nullptr;
+
+		returnSelection = new bool(ImGui::Button("Camera_EditMode"));
+		
+		if (*returnSelection == true)
+		{
+			cameras::name_CurrentCamera = "cam2_edit";
+			changeStateWindow();
+	
+		}
+		ImGui::End();
+
+	}
+
+	void render_All_ImGui(SDL_Window* gWindow)
+	{
+		renderFirst_WindowUI();
+		render_SelectionCamera(gWindow);
+
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
 	}
 
 	void destroyUI()

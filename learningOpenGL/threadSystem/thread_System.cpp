@@ -129,7 +129,7 @@ namespace threadSystem
 				
 				AABB::updateCoordAABB_All();
 				ScreenCalc_Hit::calc_IntersectALL();
-
+			
 			//	fps_Thread.resetTime();
 		//	}
 

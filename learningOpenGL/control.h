@@ -37,8 +37,8 @@ namespace ControlScenarios
 	{
 		normalSceneario = 0,
 		stencilTestAll = 1,
-		detectAABB = 2
-
+		detectAABB = 2,
+		edit_Scene = 3
 	};
 	
 	enum class scenarioAABB
@@ -51,6 +51,7 @@ namespace ControlScenarios
 
 	extern stateScenarios scene;
 	extern scenarioAABB sceneAABB;
+	extern bool cleanScenario;
 
 	extern std::map<SDL_Keycode, stateScenarios> stateScene;
 
@@ -62,7 +63,7 @@ namespace ControlScenarios
 namespace controlMouse
 {
 		glm::vec2 getDistanceMotionMouse();
-
+		glm::vec2 getCurrentPosMouse();
 
 }
 namespace timeS

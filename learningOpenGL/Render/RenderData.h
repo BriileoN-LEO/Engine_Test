@@ -134,10 +134,11 @@ namespace RenderData_Set
 
 namespace cameras
 {
+	extern std::map<std::string, camera::camera1> cameras_D;
 	//camera::camera1 aerialCamera(glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.1f, 100.0f);
 	extern std::string name_CurrentCamera;
-	extern camera::camera1 aerialCamera;
-	extern camera::camera1 currentCamera;
+	//extern camera::camera1 aerialCamera;
+	//extern camera::camera1 currentCamera;
 	void setCameras();
 	void updateStateCurrentCamera();
 

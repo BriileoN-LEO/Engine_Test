@@ -16,8 +16,8 @@ namespace opScreenHit
 		glm::vec3 dir_N_1{ glm::normalize(glm::cross(arista2, arista1)) };
 		glm::vec3 dir_N_2{ glm::normalize(glm::cross(arista1, arista2)) };
 
-		float distDirN_1{ glm::distance(cameras::aerialCamera.posCam, dir_N_1) };
-		float distDirN_2{ glm::distance(cameras::aerialCamera.posCam, dir_N_2) };
+		float distDirN_1{ glm::distance(cameras::cameras_D[cameras::name_CurrentCamera].posCam, dir_N_1) };
+		float distDirN_2{ glm::distance(cameras::cameras_D[cameras::name_CurrentCamera].posCam, dir_N_2) };
 
 		if (distDirN_1 < distDirN_2)
 		{
@@ -157,12 +157,12 @@ namespace ScreenCalc_Hit
 			//glGetIntegerv(GL_VIEWPORT, viewpo)
 
 		glm::mat4 camView{ glm::mat4(1.0f) };
-		camView = glm::translate(camView, cameras::aerialCamera.directionView);
+		camView = glm::translate(camView, cameras::cameras_D[cameras::name_CurrentCamera].directionView);
 
 		std::map<std::string, glm::vec3> ptsPos
 		{
-			{"nearPoint", glm::vec3(glm::unProject(nearWindow, cameras::aerialCamera.cam, cameras::aerialCamera.camProjection, viewportOpenGL))},
-			{"farPoint", glm::vec3(glm::unProject(farWindow, cameras::aerialCamera.cam, cameras::aerialCamera.camProjection, viewportOpenGL))}
+			{"nearPoint", glm::vec3(glm::unProject(nearWindow, cameras::cameras_D[cameras::name_CurrentCamera].cam, cameras::cameras_D[cameras::name_CurrentCamera].camProjection, viewportOpenGL))},
+			{"farPoint", glm::vec3(glm::unProject(farWindow, cameras::cameras_D[cameras::name_CurrentCamera].cam, cameras::cameras_D[cameras::name_CurrentCamera].camProjection, viewportOpenGL))}
 
 		};
 //glm::vec3 posNearPoint = glm::unProject(nearWindow, cameras::currentCamera.cam, cameras::currentCamera.camProjection, viewportOpenGL);
@@ -371,7 +371,7 @@ namespace ScreenCalc_Hit
 	void calc_IntersectAABB()
 	{
 		std::map<std::string, glm::vec3> coord_PointScreen{ calculateWorldCoord_WindowPos() };
-		std::string calc_Direction{ std::to_string(coord_PointScreen["farPoint"].x) + ", " + std::to_string(coord_PointScreen["farPoint"].y) + ", " + std::to_string(coord_PointScreen["farPoint"].z) + ", " };
+		//std::string calc_Direction{ std::to_string(coord_PointScreen["farPoint"].x) + ", " + std::to_string(coord_PointScreen["farPoint"].y) + ", " + std::to_string(coord_PointScreen["farPoint"].z) + ", " };
 		//	SDL_Log(calc_Direction.c_str());  ///INVESTIGAR POR QUE LA DIRECION EN (Y) DE farPoint no cambia
 
 		glm::vec3 direction_R{ coord_PointScreen["farPoint"] - coord_PointScreen["nearPoint"] };
@@ -460,17 +460,40 @@ namespace ScreenCalc_Hit
 
 			else
 			{
+				data_HitAABB::resetSelectedObj();  // PARA RESEAR LA SELECCION DEL MODELO 
 				data_HitAABB::triangleStencil.destroy();
 				data_HitAABB::renderSelection = false;
-
+	
 			}
 
 		}
+
+		else
+		{
+			data_HitAABB::resetSelectedObj();  // PARA RESEAR LA SELECCION DEL MODELO 
+			data_HitAABB::renderSelection = false;
+
+		}
+
 	}
 
 	void calc_IntersectALL()
 	{
-		calc_IntersectAABB();
+		if (ControlScenarios::scene == ControlScenarios::stateScenarios::edit_Scene)
+		{
+			if (data_HitAABB::selectObj == true)
+			{
+				calc_IntersectAABB(); //ESTO HACE QUE RENDER data_HitAABB::renderSelection SOLAMENTE SE COLOQUE UNA VEZ--
+				data_HitAABB::selectObj = false;
+			}
+		}
+
+		else if(ControlScenarios::scene == ControlScenarios::stateScenarios::detectAABB)
+		{
+			calc_IntersectAABB();
+
+		}
+
 	}
 }
 

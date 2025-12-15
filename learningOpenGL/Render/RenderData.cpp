@@ -800,7 +800,7 @@ namespace RenderData_Set
 	{
 
 		glm::vec3 posScreen{ screenUI::screenWorldPos::getScreenPos(static_cast<float>(screenSettings::screen_w) * 0.5f, static_cast<float>(screenSettings::screen_h) * 0.5f, 0.0f) };
-		posScreen = cameras::aerialCamera.posCam - posScreen;  //para normalizar la posicion en 0 del punto 
+		posScreen = cameras::cameras_D[cameras::name_CurrentCamera].posCam - posScreen;  //para normalizar la posicion en 0 del punto 
 		posScreen *= 2.0f;
 
 		glm::vec3 pointColor{ 0.5f, 0.8f, 0.7f };
@@ -1009,34 +1009,59 @@ namespace RenderData_Set
 
 namespace cameras
 {
+	std::map<std::string, camera::camera1> cameras_D{};
+
 	std::string name_CurrentCamera{};
-	camera::camera1 aerialCamera{};
-	camera::camera1 currentCamera{};
+	//camera::camera1 aerialCamera{};
+//	camera::camera1 currentCamera{};
 
 	void setCameras()
 	{
-		aerialCamera.setSettingsCamera(glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.001, 100.0f);
-		currentCamera = aerialCamera;
-		name_CurrentCamera = "aerialCamera";
+		camera::camera1 firstPersonCam(camera::typeCam::firstPerson, glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.001, 100.0f);
+		camera::camera1 editCam(camera::typeCam::editMode, glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.001, 100.0f);
+		//aerialCamera.setSettingsCamera(glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.001, 100.0f);
+//		currentCamera = aerialCamera;
+
+		cameras_D.emplace("cam1_firstPerson", firstPersonCam);
+		cameras_D.emplace("cam2_edit", editCam);
+
+		name_CurrentCamera = "cam1_firstPerson";
 
 	}
 	void updateStateCurrentCamera()
 	{
-		currentCamera = aerialCamera;
+		//currentCamera = aerialCamera;
 		name_CurrentCamera = "aerialCamera";
 
 	}
 
 	void startInvertCurrentCamera()
 	{
+		//LEGACY CAM
+		/*
 		aerialCamera.yaw += 180.0f;
 		aerialCamera.updateCameraOut();
+		*/
+		if (cameras_D[name_CurrentCamera].type == camera::typeCam::firstPerson)
+		{
+			cameras_D[name_CurrentCamera].yaw += 180.0f;
+			cameras_D[name_CurrentCamera].updateCameraOut();
+		}
 	}
 
 	void endInvertCurrentCamera()
 	{
+		//LEGACY CAM
+		/*
 		aerialCamera.yaw -= 180.0f;
 		aerialCamera.updateCameraOut();
+		*/
+		if (cameras_D[name_CurrentCamera].type == camera::typeCam::firstPerson)
+		{
+			cameras_D[name_CurrentCamera].yaw -= 180.0f;
+			cameras_D[name_CurrentCamera].updateCameraOut();
+		}
+
 	}
 
 }

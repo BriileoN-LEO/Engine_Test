@@ -17,6 +17,7 @@ uniform vec3 viewPos;
 
 uniform samplerCube skybox;
 uniform bool activeSkybox;
+uniform mat3 transformation_SkyBox;
 
 uniform float refractiveIndex;
 
@@ -296,7 +297,9 @@ vec4 CalcSkyboxReflaction()
   vec3 I = normalize(FragPos - viewPos); 
   vec3 R = refract(I, normalize(Normal),ratio );
 
-return vec4(texture(skybox, R).rgb, 1.0);
+  vec3 coordTex = transformation_SkyBox * R;
+
+return vec4(texture(skybox, coordTex).rgb, 1.0);
 }
 
 vec4 opCalc_existTextures( vec4 result, bool existTexSpec, vec4 specMulti) 
@@ -325,9 +328,6 @@ finalResult = result;
 //////////////
 void main()
 {
-
-
-vec4 skyBox_reflection = CalcSkyboxReflaction();
 
 vec4 texDiff = texture(Mat_1.texture_diffuse, coordTexOut);
 
@@ -406,7 +406,9 @@ if(diffExist == true)
 
 }
 
-  vec4 texSpecMulti = texSpec * skyBox_reflection;
+vec4 skyBox_reflection = CalcSkyboxReflaction();
+
+vec4 texSpecMulti = texSpec * skyBox_reflection;
 
 if(activeSkybox == true)
 {
@@ -432,6 +434,99 @@ FragColor = opCalc_existTextures(resultVec4, specExist, texSpecMulti);
 //FragColor = skyBox_reflection;
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

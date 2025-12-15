@@ -1,4 +1,5 @@
 #include "GLM_test.h"
+#include "control.h"
 
 namespace randomN
 {
@@ -600,19 +601,21 @@ namespace transformation_basics
 namespace camera
 {
 	camera1::camera1() {};
-	camera1::camera1(glm::vec3 posCam, GLfloat fovCam, GLfloat nearCut, GLfloat maxCut)
+	camera1::camera1(typeCam type, glm::vec3 posCam, GLfloat fovCam, GLfloat nearCut, GLfloat maxCut)
 	{
-		setSettingsCamera(posCam, fovCam, nearCut, maxCut);
+		setSettingsCamera(type, posCam, fovCam, nearCut, maxCut);
 
 	};
 
-	void camera1::setSettingsCamera(glm::vec3 posCam, GLfloat fovCam, GLfloat nearCut, GLfloat maxCut)
+	void camera1::setSettingsCamera(typeCam type, glm::vec3 posCam, GLfloat fovCam, GLfloat nearCut, GLfloat maxCut)
 	{
+		this->type = type;
 		this->posCam = posCam;
 		this->fovCam = fovCam;
 		this->nearCut = nearCut;
 		this->maxCut = maxCut;
 
+		editMode_Cam.posDirectionView = directionView;
 		cam = glm::lookAt(posCam, posCam + directionView, glm::vec3(0.0f, 1.0f, 0.0f));
 		//to rot cam
 	//	cam = glm::rotate(cam, 180.0f, directionView);
@@ -749,6 +752,134 @@ namespace camera
 
 	};
 
+	//SETTINGS TO CAMERA EDIT MODE 
+	void camera1::getViewMat()
+	{
+		editMode_Cam.camUp = editMode_Cam.rotOrientation * glm::vec3(0.0f, 1.0f, 0.0f);
+		editMode_Cam.camUp = glm::normalize(editMode_Cam.camUp);
+
+		editMode_Cam.viewCam = glm::lookAt(posCam, posCam + directionView, editMode_Cam.camUp);
+
+		//glm::mat4 rotate{ glm::toMat4(glm::conjugate(editMode_Cam.rotOrientation)) };
+		//glm::mat4 translate{ glm::translate(glm::mat4(1.0f), -posCam) };
+		//editMode_Cam.viewCam = rotate * translate;
+
+	}
+
+	void camera1::rotateCam_EditMode(glm::vec2 posMouse)
+	{
+		editMode_Cam.lastPos_mouseScreen = editMode_Cam.currentPos_mouseScreen;
+		editMode_Cam.currentPos_mouseScreen = posMouse;
+
+		glm::vec2 distancePosMouse{ editMode_Cam.lastPos_mouseScreen - editMode_Cam.currentPos_mouseScreen };
+		distancePosMouse *= -1.0f;
+
+		distancePosMouse.x *= editMode_Cam.sensitivity_editCam;
+		distancePosMouse.y *= editMode_Cam.sensitivity_editCam;
+
+		yaw += distancePosMouse.x; //quitar lo de sumar y cambiar la distancia al que se fue
+		pitch += distancePosMouse.y; //quitar lo de sumar y cambiar la distancia al que se fue
+
+		float radPosMouse_yaw{ distancePosMouse.x };
+		float radPosMouse_pitch{ distancePosMouse.y };
+
+		glm::vec3 posTemp_Rot{ editMode_Cam.posDirectionView - posCam };
+		posTemp_Rot = posTemp_Rot * -1.0f;
+		//posTemp_Rot = glm::normalize(posTemp_Rot);
+
+		editMode_Cam.cameraRight = glm::normalize(glm::cross(posTemp_Rot, editMode_Cam.camUp));
+
+		glm::qua rotateCam_pitch{ glm::angleAxis(glm::radians(radPosMouse_pitch), editMode_Cam.cameraRight) };
+		glm::qua rotateCam_yaw{ glm::angleAxis(glm::radians(-radPosMouse_yaw), glm::vec3(0.0f, 1.0f, 0.0f)) };
+
+	//	glm::qua rot{ rotateCam_yaw * rotateCam_pitch };
+
+		//editMode_Cam.rotOrientation = rotateCam_yaw * editMode_Cam.rotOrientation * rotateCam_pitch;
+		editMode_Cam.rotOrientation = rotateCam_yaw * glm::quat(1.0f, 0.0f, 0.0f, 0.0f) * rotateCam_pitch; //MAYBE CHANGE
+		editMode_Cam.rotOrientation = glm::normalize(editMode_Cam.rotOrientation);
+
+		posTemp_Rot = editMode_Cam.rotOrientation * posTemp_Rot;
+		//posTemp_Rot *= editMode_Cam.distanceDolly;
+
+		posCam = editMode_Cam.posDirectionView + posTemp_Rot;
+
+		glm::vec3 posView{ posCam - editMode_Cam.posDirectionView }; 
+		posView = glm::normalize(posView);
+		directionView = posView * -1.0f;
+
+		//posCam.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+		//posCam.y = sin(glm::radians(pitch));
+		//posCam.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+		//posCam = glm::normalize(posCam);
+	}
+
+	void camera1::dollyCam_EditMode(glm::vec2 posMouse)
+	{
+		editMode_Cam.lastPos_mouseScreen = editMode_Cam.currentPos_mouseScreen;
+		editMode_Cam.currentPos_mouseScreen = posMouse;
+
+		glm::vec2 distancePosMouse{ editMode_Cam.lastPos_mouseScreen - editMode_Cam.currentPos_mouseScreen };
+		distancePosMouse *= -1.0f;
+
+		distancePosMouse.x *= editMode_Cam.sensitivity_editCam;
+		distancePosMouse.y *= editMode_Cam.sensitivity_editCam;
+
+		float sumResultDolly_redux{ distancePosMouse.x + distancePosMouse.y };
+
+		sumResultDolly_redux /= 100.0f;
+
+		glm::vec3 posRedux{ posCam - editMode_Cam.posDirectionView };
+
+		posCam = posCam - (posRedux * sumResultDolly_redux);
+
+		//editMode_Cam.distanceDolly = glm::distance(posCam, editMode_Cam.posDirectionView) * 6.0f;
+		//editMode_Cam.posDirectionView = editMode_Cam.posDirectionView - (posRedux * sumResultDolly_redux);
+
+		glm::vec3 posView{ posCam - editMode_Cam.posDirectionView };
+		//posView = glm::normalize(posView);
+		directionView = posView * -1.0f;
+	}
+
+	void camera1::translateCam_EditMode(glm::vec2 posMouse)
+	{
+		editMode_Cam.lastPos_mouseScreen = editMode_Cam.currentPos_mouseScreen;
+		editMode_Cam.currentPos_mouseScreen = posMouse;
+
+		glm::vec2 distancePosMouse{ editMode_Cam.lastPos_mouseScreen - editMode_Cam.currentPos_mouseScreen };
+		distancePosMouse *= -1.0f;
+
+		distancePosMouse.x *= editMode_Cam.sensitivity_editCam;
+		distancePosMouse.y *= editMode_Cam.sensitivity_editCam;
+
+		float translatePos_x{ distancePosMouse.x / 10.0f };
+		float translatePos_y{ distancePosMouse.y / 10.0f };
+
+		//glm::vec3 translateCam_y{ posCam - editMode_Cam.camUp };
+
+		posCam = posCam - (editMode_Cam.cameraRight * translatePos_x);
+		posCam = posCam - (editMode_Cam.camUp * translatePos_y);
+
+		editMode_Cam.posDirectionView = editMode_Cam.posDirectionView - (editMode_Cam.cameraRight * translatePos_x);
+		editMode_Cam.posDirectionView = editMode_Cam.posDirectionView - (editMode_Cam.camUp * translatePos_y);
+
+		glm::vec3 posView{ posCam - editMode_Cam.posDirectionView };
+		//posView = glm::normalize(posView);
+		directionView = posView * -1.0f;
+
+	}
+
+	void camera1::resetPos()
+	{
+		editMode_Cam.posDirectionView = glm::vec3(0.0f);
+		posCam = glm::normalize(posCam) * 5.0f;
+
+		glm::vec3 dirView{ posCam - editMode_Cam.posDirectionView };
+		dirView = posCam - (dirView * 0.1f);
+		//dirView = glm::normalize(dirView);
+
+		directionView = dirView;
+	}
+
 	void camera1::resetTest()
 	{
 		if (moveCameraTest == true)
@@ -777,15 +908,28 @@ namespace camera
 	}
 	void camera1::controlEventsCamera()
 	{
-		rotateCam();  ///añadido para hacer un mix entre las posiciones
-		moveCamera();
+		if (type == typeCam::firstPerson)
+		{
+			rotateCam();  ///añadido para hacer un mix entre las posiciones
+			moveCamera();
+			cam = camRotate;
+		}
 
+		else if (type == typeCam::editMode)
+		{
+			getViewMat();
+			cam = editMode_Cam.viewCam;
+		}
 
-		cam = camRotate;
 	}
 	void camera1::updateLastPosCam()
 	{
 		lastPosCam = posCam;
+		
+		if (type == typeCam::editMode && editMode_Cam.stopDetectCurrentPos == false)
+		{
+			editMode_Cam.currentPos_mouseScreen = controlMouse::getCurrentPosMouse();
+		}
 
 	}
 	

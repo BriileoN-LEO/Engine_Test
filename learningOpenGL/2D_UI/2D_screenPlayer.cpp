@@ -8,7 +8,7 @@ namespace screenUI
 		glm::vec3 getScreenPos(float width, float heigth, float distanceScreen)
 		{
 			glm::vec3 nearPos{ width, heigth, distanceScreen };
-			nearPos = glm::unProject(nearPos, cameras::aerialCamera.cam, cameras::aerialCamera.camProjection, viewportOpenGL);
+			nearPos = glm::unProject(nearPos, cameras::cameras_D[cameras::name_CurrentCamera].cam, cameras::cameras_D[cameras::name_CurrentCamera].camProjection, viewportOpenGL);
 			return nearPos;
 		}
 	}
@@ -55,8 +55,8 @@ namespace screenUI
 		shaderPt.use();
 		shaderPt.use();
 		shaderPt.transformMat("model", model);
-		shaderPt.transformMat("view", cameras::aerialCamera.cam);
-		shaderPt.transformMat("projection", cameras::aerialCamera.camProjection);
+		shaderPt.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+		shaderPt.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 		shaderPt.setFloat("sizePointer", sizePoint);
 		shaderPt.setVec3("PointColor", colorPointer);
 
@@ -73,8 +73,8 @@ namespace screenUI
 		//posNewModel = cameras::aerialCamera.posCam - posNewModel;
 			//SDL_Log(std::string(std::to_string(posModel.x) + ", " + std::to_string(posModel.y) + ", " + std::to_string(posModel.z)).c_str());
 
-		float rotYaw{ glm::radians(-cameras::aerialCamera.yaw)};
-		float rotPitch{ glm::radians(-cameras::aerialCamera.pitch - 90.0f)};
+		float rotYaw{ glm::radians(-cameras::cameras_D[cameras::name_CurrentCamera].yaw) };
+		float rotPitch{ glm::radians(-cameras::cameras_D[cameras::name_CurrentCamera].pitch - 90.0f) };
 
 		glm::vec3 posRotPitch{ glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), glm::normalize(posPointer)) };
 
@@ -95,7 +95,7 @@ namespace screenUI
 	//	glm::vec3 TraslationBack{ matTraslation[3].x, matTraslation[3].y, matTraslation[3].z };
 	//	TraslationBack = (-TraslationBack * 2.0f);
 
-		matPos = glm::translate(matPos, cameras::aerialCamera.posCam);
+		matPos = glm::translate(matPos, cameras::cameras_D[cameras::name_CurrentCamera].posCam);
 	//	matPos = glm::translate(matPos, TraslationBack);
 		matPos = matPos *  combineRot;
 

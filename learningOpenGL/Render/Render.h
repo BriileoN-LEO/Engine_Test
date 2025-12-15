@@ -14,6 +14,14 @@ namespace render
 	void render_Points();
 	void render_Skybox();
 
+	namespace renderOP
+	{
+		void renderNormalScenario();
+		void renderStencilTest();
+		void renderDetectAABB();
+		void renderEditMode();
+	}
+
 	void renderAll();
 	void renderInvertAll();
 	void renderPlanarReflection();

@@ -213,13 +213,14 @@ namespace ControlScenarios
 
 	stateScenarios scene{ stateScenarios::normalSceneario };
 	scenarioAABB sceneAABB{ scenarioAABB::Triangle };
+	bool cleanScenario = false;
 
 	std::map<SDL_Keycode, stateScenarios> scenarios
 	{
 		{SDLK_N, stateScenarios::normalSceneario}, //normalScenario ---- N
 		{SDLK_P, stateScenarios::stencilTestAll}, //stencilTestAll ---- P
-		{SDLK_L, stateScenarios::detectAABB} //detectAABB ---- L
-
+		{SDLK_L, stateScenarios::detectAABB}, //detectAABB ---- L
+		{SDLK_5, stateScenarios::edit_Scene}
 	};
 
 	void detectScenario_Key(SDL_Event* event)
@@ -229,12 +230,14 @@ namespace ControlScenarios
 			if (scene != scenarios[event->key.key])
 			{
 				scene = scenarios[event->key.key];
+				cleanScenario = true;
+
 		    }
 		
 			else if (scene == scenarios[event->key.key])
 			{
 				controlSubScenearios();
-
+				cleanScenario = true;
 			}
 
 		}
@@ -281,6 +284,16 @@ namespace controlMouse
 		//SDL_Log(std::to_string(posX).c_str());
 		return glm::vec2(posX, -posY);
 	}
+
+	glm::vec2 getCurrentPosMouse()
+	{
+		float x{};
+		float y{};
+		SDL_GetMouseState(&x, &y);
+
+		return glm::vec2(x, y);
+	}
+
 }
 namespace timeS
 {

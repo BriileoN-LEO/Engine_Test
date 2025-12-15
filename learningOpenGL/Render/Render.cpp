@@ -12,7 +12,7 @@ namespace render
 		for (auto& renderMCD : RenderData_Set::ModelCreation_D)
 		{
 			//renderMCD.second.renderMultipleModels(1, cameras::aerialCamera, RenderData_Set::pointLights_D, RenderData_Set::directionalLights_D, RenderData_Set::spotLights_D, threadSystem::ControlPhysics_Events.timeInterpolation.alpha);
-			renderMCD.second.drawModelMultiple(cameras::aerialCamera, RenderData_Set::pointLights_D, RenderData_Set::directionalLights_D, RenderData_Set::spotLights_D, threadSystem::ControlPhysics_Events.timeInterpolation.alpha);
+			renderMCD.second.drawModelMultiple(cameras::cameras_D[cameras::name_CurrentCamera], RenderData_Set::pointLights_D, RenderData_Set::directionalLights_D, RenderData_Set::spotLights_D, threadSystem::ControlPhysics_Events.timeInterpolation.alpha);
 		}
 	}
 
@@ -80,7 +80,7 @@ namespace render
 
 					if (pass_excluded_mesh == false)
 					{
-						float dist{ glm::distance(meshS.MeshCoord.posModel, cameras::aerialCamera.posCam) };
+						float dist{ glm::distance(meshS.MeshCoord.posModel,  cameras::cameras_D[cameras::name_CurrentCamera].posCam) };
 
 						switch (meshS.renderP)
 						{
@@ -233,7 +233,7 @@ namespace render
 		int posLight{ 0 };
 		for (auto& renderMCD : RenderData_Set::MeshLights_MCD)
 		{
-			renderMCD.renderMeshLight(cameras::aerialCamera, RenderData_Set::pointLights_D[posLight]);
+			renderMCD.renderMeshLight(cameras::cameras_D[cameras::name_CurrentCamera], RenderData_Set::pointLights_D[posLight]);
 			posLight++;
 		}
 
@@ -266,10 +266,162 @@ namespace render
 	
 	}
 
+
+	namespace renderOP
+	{
+		void renderNormalScenario()
+		{
+			std::vector<Assimp_D::excluded_Obj> excluded_NormalScenario
+			{
+				Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
+			};
+
+
+			//render_Skybox();
+
+			render_Points();
+			//render_classicModelAssimp_D();
+			//render_ModelCreation_D();
+			//render_ModelAssimp_D(excluded_NormalScenario);///LISTO_NEW_SHADER
+			//render_MultiAssimp_D();///LISTO_NEW_SHADER
+			render_MeshLights_D();
+			//render_AABB();
+			render_ModelAssimp_D(excluded_NormalScenario);
+			//render_classicModelAssimp_D();
+			//render_ModelAssimp_D(excluded_NormalScenario);///LISTO_NEW_SHADER
+
+			render_Skybox();
+			render_MultiAssimp_D();///LISTO_NEW_SHADER
+			//	data_HitAABB::triangleStencil.drawTest_2();
+
+		}
+		void renderStencilTest()
+		{
+			std::vector<Assimp_D::excluded_Obj> excluded_Stencil
+			{
+				Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
+				Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "Floor"),
+
+			};
+
+			render_Points();
+			stencil_test::renderStencilTest();///LISTO_NEW_SHADER
+			render_Skybox();
+			// render_AABB();
+		}
+		void renderDetectAABB()
+		{
+
+			if (ControlScenarios::sceneAABB == ControlScenarios::scenarioAABB::Triangle)
+			{
+
+				std::vector<Assimp_D::excluded_Obj> excluded_triangle
+				{
+					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
+
+				};
+
+				render_Points();
+				renderSelection::renderSelection_Triangle(excluded_triangle);///LISTO_NEW_SHADER
+				render_Skybox();
+
+			}
+
+			if (ControlScenarios::sceneAABB == ControlScenarios::scenarioAABB::Mesh)
+			{
+				std::vector<Assimp_D::excluded_Obj> excluded_Mesh
+				{
+					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
+
+					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_only_meshes, data_HitAABB::selectedObj.first.nameModel,
+						std::vector<std::string>({data_HitAABB::selectedObj.first.nameMesh}))
+
+				};
+
+				render_Points();
+				renderSelection::renderSelection_Mesh(excluded_Mesh);///LISTO_NEW_SHADER
+				render_Skybox();
+
+			}
+
+			if (ControlScenarios::sceneAABB == ControlScenarios::scenarioAABB::Model)
+			{
+				std::vector<Assimp_D::excluded_Obj> excluded_Model
+				{
+					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
+
+					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, data_HitAABB::selectedObj.first.nameModel)
+				};
+
+
+				render_Points();
+				renderSelection::renderSelection_Model(excluded_Model);///LISTO_NEW_SHADER
+				render_Skybox();
+
+			}
+
+		}
+		void renderEditMode()
+		{
+			if (ControlScenarios::cleanScenario == true)
+			{
+				data_HitAABB::resetSelectedObj();
+				ControlScenarios::cleanScenario = false;
+			}
+
+			if (data_HitAABB::renderSelection == true)
+			{
+				std::vector<Assimp_D::excluded_Obj> excluded_Mesh
+				{
+					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
+
+					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_only_meshes, data_HitAABB::selectedObj.first.nameModel,
+						std::vector<std::string>({data_HitAABB::selectedObj.first.nameMesh}))
+
+				};
+
+				render_Points();
+				renderSelection::renderSelection_Mesh(excluded_Mesh);///LISTO_NEW_SHADER
+				render_Skybox();
+
+			}
+
+			else if (data_HitAABB::renderSelection == false)
+			{
+				renderNormalScenario();
+			}
+		}
+	}
+
 	void renderAll()
 	{
 
+		switch (ControlScenarios::scene)
+		{
 
+		case ControlScenarios::stateScenarios::normalSceneario:
+			 
+			renderOP::renderNormalScenario();
+			break;
+
+		case ControlScenarios::stateScenarios::stencilTestAll:
+
+			renderOP::renderStencilTest();
+			break;
+
+		case ControlScenarios::stateScenarios::detectAABB:
+
+			renderOP::renderDetectAABB();
+			break;
+
+		case ControlScenarios::stateScenarios::edit_Scene:
+		
+			renderOP::renderEditMode();
+		    break;
+
+		}
+
+		/*
 		if (ControlScenarios::scene == ControlScenarios::stateScenarios::normalSceneario)
 		{
 			std::vector<Assimp_D::excluded_Obj> excluded_NormalScenario
@@ -282,7 +434,7 @@ namespace render
 
 			render_Points();
 			//render_classicModelAssimp_D();
-			render_ModelCreation_D();
+			//render_ModelCreation_D();
 			//render_ModelAssimp_D(excluded_NormalScenario);///LISTO_NEW_SHADER
 			//render_MultiAssimp_D();///LISTO_NEW_SHADER
 			render_MeshLights_D();	
@@ -364,6 +516,18 @@ namespace render
  
 		}
 
+		else if (ControlScenarios::scene == ControlScenarios::stateScenarios::edit_Scene)
+		{
+			if (ControlScenarios::cleanScenario == true)
+			{
+				data_HitAABB::resetSelectedObj();
+				ControlScenarios::cleanScenario = false;
+			}
+
+			if()
+
+		}
+		*/
 	}
 	void renderInvertAll()
 	{
@@ -377,9 +541,9 @@ namespace render
 	void renderPlanarReflection()
 	{
 
-		frameBuff_Obj::set_PlanarReflection_Dir(RenderData_Set::frameBuffers_D["mirror_01"].dataBuffer.nameAssimp.nameMesh, cameras::aerialCamera);
+		frameBuff_Obj::set_PlanarReflection_Dir(RenderData_Set::frameBuffers_D["mirror_01"].dataBuffer.nameAssimp.nameMesh, cameras::cameras_D[cameras::name_CurrentCamera]);
 		render::renderAll();
-		cameras::aerialCamera.updateCameraOut();
+		cameras::cameras_D[cameras::name_CurrentCamera].updateCameraOut();
 
 	}
 
@@ -387,10 +551,10 @@ namespace render
 	{
 		openGL_render::clearOpenGL();
 
-	//	render::renderPlanarReflection(); ///Para renderizar el espejo invertido.
-	//	openGL_render::secondClearOpenGL();
+		//render::renderPlanarReflection(); ///Para renderizar el espejo invertido.
+		//openGL_render::secondClearOpenGL();
 		render::renderAll();
-    // 	RenderData_Set::frameBuffers_D["mirror_01"].useFrameBufferModel();
+     	//RenderData_Set::frameBuffers_D["mirror_01"].useFrameBufferModel();
 
 
 
@@ -452,7 +616,7 @@ namespace openGL_render
 	void clearOpenGL()
 	{
 	//RenderData_Set::testFrameBuffer.bindFrameBuffer();
-	//	RenderData_Set::frameBuffers_D["mirror_01"].bindFrameBuffer();  ///se blindea el Framebuffer para recibir el render 
+		//RenderData_Set::frameBuffers_D["mirror_01"].bindFrameBuffer();  ///se blindea el Framebuffer para recibir el render 
 		glDepthMask(GL_TRUE);
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
@@ -573,8 +737,8 @@ namespace renderSelection
 			//modelMesh = glm::scale(modelMesh, glm::vec3(1.1f));
 			//modelMesh = meshes.MeshCoord.model * modelMesh;
 			//modelMesh = modelMesh * modelMat;
-			RenderData_Set::stencilTest::stencilTest_shader.transformMat("view", cameras::aerialCamera.cam);
-			RenderData_Set::stencilTest::stencilTest_shader.transformMat("projection", cameras::aerialCamera.camProjection);
+			RenderData_Set::stencilTest::stencilTest_shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+			RenderData_Set::stencilTest::stencilTest_shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 
 			RenderData_Set::stencilTest::stencilTest_shader.setInt("selectionStencil", 0);
 
@@ -604,7 +768,7 @@ namespace renderSelection
 			//render::render_ModelAssimp_D(data_HitAABB::selectedObj.first.nameMesh); ///ExcludeMesh
 			render::render_ModelAssimp_D(excluded_Objs);
 			render::render_MultiAssimp_D();
-			render::render_ModelCreation_D();
+	//		render::render_ModelCreation_D();
 			render::render_MeshLights_D();
 		}
 
@@ -612,7 +776,7 @@ namespace renderSelection
 		{
 			render::render_ModelCreation_D();
 			render::render_MultiAssimp_D();
-			render::render_ModelAssimp_D();
+		//	render::render_ModelAssimp_D();
 			render::render_MeshLights_D();
 		}
 	}
@@ -635,8 +799,8 @@ namespace renderSelection
 				RenderData_Set::stencilTest::stencilTest_shader.use();
 
 				RenderData_Set::stencilTest::stencilTest_shader.transformMat("model", mesh.MeshCoord.model);
-				RenderData_Set::stencilTest::stencilTest_shader.transformMat("view", cameras::aerialCamera.cam);
-				RenderData_Set::stencilTest::stencilTest_shader.transformMat("projection", cameras::aerialCamera.camProjection);
+				RenderData_Set::stencilTest::stencilTest_shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+				RenderData_Set::stencilTest::stencilTest_shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 
 				RenderData_Set::stencilTest::stencilTest_shader.setInt("selectionStencil", 0);
 				mesh.Draw_Alone();
@@ -754,8 +918,8 @@ namespace stencil_test
 					RenderData_Set::stencilTest::stencilTest_shader.use();
 
 					RenderData_Set::stencilTest::stencilTest_shader.transformMat("model", meshes.MeshCoord.model);
-					RenderData_Set::stencilTest::stencilTest_shader.transformMat("view", cameras::aerialCamera.cam);
-					RenderData_Set::stencilTest::stencilTest_shader.transformMat("projection", cameras::aerialCamera.camProjection);
+					RenderData_Set::stencilTest::stencilTest_shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+					RenderData_Set::stencilTest::stencilTest_shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 
 					RenderData_Set::stencilTest::stencilTest_shader.setInt("selectionStencil", 0);
 
