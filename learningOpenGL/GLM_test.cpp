@@ -826,7 +826,8 @@ namespace camera
 
 		float sumResultDolly_redux{ distancePosMouse.x + distancePosMouse.y };
 
-		sumResultDolly_redux /= 100.0f;
+		//REDUCIR EL PORCENTAJE DEL DOLLY
+		sumResultDolly_redux /= 400.0f;
 
 		glm::vec3 posRedux{ posCam - editMode_Cam.posDirectionView };
 
@@ -851,8 +852,9 @@ namespace camera
 		distancePosMouse.x *= editMode_Cam.sensitivity_editCam;
 		distancePosMouse.y *= editMode_Cam.sensitivity_editCam;
 
-		float translatePos_x{ distancePosMouse.x / 10.0f };
-		float translatePos_y{ distancePosMouse.y / 10.0f };
+		//REDUCIR EL PORCENTAJE DE TRASLACION
+		float translatePos_x{ distancePosMouse.x / 30.0f };
+		float translatePos_y{ distancePosMouse.y / 30.0f };
 
 		//glm::vec3 translateCam_y{ posCam - editMode_Cam.camUp };
 

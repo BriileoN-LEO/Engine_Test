@@ -6,6 +6,7 @@
 #include <assimp/postprocess.h>
 #include "SHADER_H.h"
 #include "stb_image.h"
+#include "textureData/textureManager.h"
 #include <thread>
 #include <stdexcept>
 #include <functional>
@@ -137,22 +138,12 @@ namespace Assimp_D
 	{
 		//NUEVA FORMA DE CARGAR MODELOS DESDE LA CPU ANTES DE QUE SE INICIE EL THREAD DE OPENGL
 		////////////////
-		struct TextureData_File
-		{
-			std::string typeTexture{};
-			std::string path{};
-			unsigned char* dataTexture{ nullptr };
-			int width{};
-			int height{};
-			int nrChannels{};
-		};
-
 
 		struct MeshData_loadCPU
 		{
 			std::vector<vertexD> vertices{};
 			std::vector<unsigned int> indices{};
-			std::vector<TextureData_File> textures{};
+			std::vector<texDataManager::TextureData_File> textures{};
 		};
 
 		struct ModelData_loadCPU
@@ -180,9 +171,10 @@ namespace Assimp_D
 		extern std::mutex mutexModel;
 
 
-		TextureData_File LoadTextureFromFile(const char* path, std::string directory = "", std::string typeTexture = "", bool gamma = false);
+		texDataManager::TextureData_File LoadTextureFromFile(const char* path, std::string directory = "", std::string typeTexture = "", bool gamma = false);
 
-		std::vector<TextureData_File> loadMatTextures(aiMaterial* mat, aiTextureType matType, std::string typeName, std::string directory);
+		std::vector<texDataManager::TextureData_File> loadMatTextures(aiMaterial* mat, aiTextureType matType, std::string typeName, std::string directory); ///FUNCTION LEGACY::LOAD TEXTURES
+		std::vector<texDataManager::TextureData_File> loadMatTextures_Cache(aiMaterial* mat, aiTextureType matType, std::string typeName, std::string directory);
 
 		void loadModelsThread(std::vector<insertProcessModel> models);
 
@@ -208,7 +200,8 @@ namespace Assimp_D
 		std::string nameMesh{}; ///Este nombre servira para linkear con las acciones del bounding box
 		std::vector<vertexD> vertices{};
 		std::vector<unsigned int> indices{};
-		texture::textureBuild textures{};
+		//texture::textureBuild textures{};
+		textureCache::texture_Data textures{};
 
 		transformation_basics::basics_Model3D MeshCoord{};
 		std::vector<glm::vec3> verticesPos{};
@@ -277,7 +270,7 @@ namespace Assimp_D
 		void SetOrderRender_Mesh(const std::string nameMesh, renderSeq renderOrder);
 		void BlendModeTexture_Mesh(const std::string nameMesh, bool op);
 
-		void SetTexture_Mesh(const char* pathTexture, std::string nameMesh, texture::typeTextures tex);
+		void SetTexture_Mesh(const char* pathTexture, std::string nameMesh, texDataManager::typeTexture tex);
 		void loadTemporalShaders(const char* vertexPath, const char* fragmentPath);
 	
 		std::vector<Mesh>& outMeshes();
@@ -298,7 +291,8 @@ namespace individualComp
 		unsigned int VAO{};
 		unsigned int VBO{};
 		std::vector<Assimp_D::vertexD> vertex{};
-		texture::textureBuild texture{};
+		//texture::textureBuild texture{}; //OLD WAY TO LOAD TEXTURES TO TRIANGLE
+		textureCache::texture_Data texture{};
 		shading::shader shader{};
 		transformation_basics::basics_Model3D MeshCoord{};
 		glm::vec3 centroidTriangle{};

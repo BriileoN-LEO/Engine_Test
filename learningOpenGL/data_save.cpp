@@ -24,9 +24,9 @@ namespace vectors
 
 namespace register_Errors
 {
-	void testCompileShader(unsigned int shader, std::string type, Uint8 typeTest)
+	void testCompileShader(GLuint& shader, std::string type, Uint8 typeTest)
 	{
-		int test_Shader{};
+		GLint test_Shader{};
 
 		if (typeTest == 0)
 		{
@@ -35,18 +35,25 @@ namespace register_Errors
 
 		else if (typeTest == 1)
 		{
-			glGetShaderiv(shader, GL_LINK_STATUS, &test_Shader);
+			glGetProgramiv(shader, GL_LINK_STATUS, &test_Shader);
 		}
 
-		if (!test_Shader)
+		if (test_Shader != GL_TRUE)
 		{
-			char infoLog[512];
-			glGetShaderInfoLog(shader, sizeof(infoLog), nullptr, infoLog);
+		//	char infoLog[512];
+			GLint logLength{};
 
-			std::string messageError{ "ERROR::SHADER::" + type + "::COMPILATION_FAILED" };
+			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
+
+			std::string logInfo{"logLength"};
+			GLchar infoLog[512];
+
+			glGetShaderInfoLog(shader, logLength, nullptr, infoLog);
+			
+			std::string messageError{ "ERROR::SHADER::" + type + "::COMPILATION_FAILED --->" + infoLog };
 
 			SDL_Log(messageError.c_str());
-			SDL_Log(infoLog);
+			//SDL_Log(infoLog);
 			
 
 		}

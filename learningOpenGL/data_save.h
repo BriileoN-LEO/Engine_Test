@@ -26,7 +26,7 @@ namespace vectors
 }
 namespace register_Errors
 {
-	void testCompileShader(unsigned int shader, std::string type, Uint8 typeTest);
+	void testCompileShader(GLuint& shader, std::string type, Uint8 typeTest);
 }
 namespace vertexCreation
 {

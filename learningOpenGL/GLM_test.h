@@ -162,7 +162,7 @@ namespace camera
 
 		glm::vec3 posDirectionView{};
 		float distanceDolly{6.0f};
-		GLfloat sensitivity_editCam{ 1.0f };
+		GLfloat sensitivity_editCam{ 0.9f };
 
 		glm::quat rotOrientation{glm::quat(1.0f, 0.0f, 0.0f, 0.0f)};
 		glm::mat4 viewCam{ glm::mat4(1.0f) };

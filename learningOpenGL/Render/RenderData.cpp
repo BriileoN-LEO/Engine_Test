@@ -70,7 +70,6 @@ namespace RenderData_Set
 	}
 
 	
-
 	const std::map<std::string, ObjCreation::ModelCreation> setModelCreation_Data()
 	{
 
@@ -245,7 +244,7 @@ namespace RenderData_Set
 		std::filesystem::path path_plant_01{ vegetacion_01 };
 		Assimp_D::Model model_Plant01(path_plant_01.string(), vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), coord_Plant01, ss_Plant01, aiProcessFlags_PL);
 		model_Plant01.setNameModel("plant01");
-		model_Plant01.SetTexture_Mesh(image_GlassWindow.c_str(), "plant01_1", texture::typeTextures::diffuse);
+		model_Plant01.SetTexture_Mesh(image_GlassWindow.c_str(), "plant01_1", texDataManager::typeTexture::diffuse);
 		model_Plant01.SetOrderRender_Mesh("plant01_1", Assimp_D::renderSeq::renderFar);
 		model_Plant01.BlendModeTexture_Mesh("plant01_1", true);
 
@@ -465,7 +464,7 @@ namespace RenderData_Set
 			};
 			Assimp_D::coordModel coord_Plant01{ glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(2.0f), glm::vec3(1.0f), 0.0f };
 			AssimpModel_D["plant01"].setModelSettings(coord_Plant01, ss_Plant01);
-			AssimpModel_D["plant01"].SetTexture_Mesh(image_GlassWindow.c_str(), "plant01_1", texture::typeTextures::diffuse);
+			AssimpModel_D["plant01"].SetTexture_Mesh(image_GlassWindow.c_str(), "plant01_1", texDataManager::typeTexture::diffuse);
 			AssimpModel_D["plant01"].SetOrderRender_Mesh("plant01_1", Assimp_D::renderSeq::renderFar);
 			AssimpModel_D["plant01"].BlendModeTexture_Mesh("plant01_1", true);
 			//AssimpModel_D["plant01"].loadTemporalShaders(vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
@@ -483,7 +482,6 @@ namespace RenderData_Set
 
 			//Assimp_D::loadToCPU::finishLoadModels = false;
 	}
-
 	const void loadCPU_Shader()
 	{
 		shading::loadToCPU::shaderData_loadCPU shaderT1("shaderT1", vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
@@ -507,6 +505,7 @@ namespace RenderData_Set
 
 		loadShader_Thread.detach();
 	}
+
 	const void insertData_toShader()
 	{
 		int atomic_CounterShader{ shading::loadToCPU::atomic_CounterShader.load() };
@@ -954,7 +953,6 @@ namespace RenderData_Set
 
 
 	}
-
 	
 	const void set_AllObjects()   /////////Cambiar esta funcion para que pueda utilizar la nueva carga de Modelos
 	{
@@ -985,6 +983,9 @@ namespace RenderData_Set
 
 		testFrameBuffer.loadFrameBuffer();
 		frameBuffers_D = setFrameBuffers();
+
+		textureCache::loadAll_PreLoadedTexturesToCache(); ///CARGA DE LAS TEXTURAS EN EL CACHE.
+
 	}
 	const void running_AllObjects()
 	{

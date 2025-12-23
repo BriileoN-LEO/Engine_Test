@@ -60,6 +60,18 @@ target_include_directories(glad_source PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/g
 #para la libreria de glm
 include(FetchContent)
 
+set(KTX_FEATURE_TOOLS OFF CACHE BOOL "" FORCE)
+set(KTX_FEATURE_TEST OFF CACHE BOOL "" FORCE)
+set(KTX_FEATURE_DOC OFF CACHE BOOL "" FORCE)
+set(KTX_FEATURE_LOAD_TEST_IMAGES OFF CACHE BOOL "" FORCE)
+
+FetchContent_Declare(
+ktx_software
+GIT_REPOSITORY https://github.com/KhronosGroup/KTX-Software.git
+GIT_TAG v4.3.2
+
+)
+
 FetchContent_Declare(
  glm
  GIT_REPOSITORY https://github.com/g-truc/glm.git
@@ -67,12 +79,11 @@ FetchContent_Declare(
 
 )
 
-include(FetchContent)
-
 FetchContent_Declare(
 assimp
 GIT_REPOSITORY https://github.com/assimp/assimp.git
-GIT_TAG v5.4.1
+#GIT_TAG v5.4.1
+GIT_TAG v6.0.2
 )
 
 FetchContent_Declare(
@@ -82,6 +93,7 @@ GIT_TAG docking # Use the 'docking' branch or any desired tag
 )
 
 FetchContent_MakeAvailable(
+ktx_software
 glm
 assimp
 imgui
@@ -104,6 +116,8 @@ add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/conf
 "learningOpenGL/Render/frameBuffers.cpp" "learningOpenGL/Render/frameBuffers.h"
 "learningOpenGL/threadSystem/thread_System.h" "learningOpenGL/threadSystem/thread_System.cpp"
 "learningOpenGL/2D_UI/Interface_UI.cpp" "learningOpenGL/2D_UI/Interface_UI.h"
+"learningOpenGL/textureData/textureManager.cpp" "learningOpenGL/textureData/textureManager.h"
+"learningOpenGL/libFile.h"
 "learningOpenGL/STB_IMAGE_IMPLEMENT.cpp"
 )
 
@@ -136,6 +150,7 @@ SDL3::SDL3
 glad_source
 OpenGL::GL
 assimp::assimp
+ktx
 )
 
 #add_custom_command(

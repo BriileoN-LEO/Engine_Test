@@ -1,4 +1,3 @@
-﻿#define GLM_ENABLE_EXPERIMENTAL
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_mouse.h>
 #include <glad/glad.h>
@@ -7,7 +6,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
-#include <ktx.h> ///NUEVA LIBRERIA PARA CARGAR IMAGENES
 #include <iostream>
 #include <string>
 #include <vector>
@@ -26,6 +24,3 @@
 #include <atomic>
 #include <queue>
 #include <mutex>
-#include <variant>
-#include <ranges>
-

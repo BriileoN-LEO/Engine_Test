@@ -51,18 +51,18 @@ namespace shading
 		std::string VC = vShaderStream.str();
 		std::string FC = fShaderStream.str();
 
-		const char* vertexCode = VC.c_str();
-		const char* fragmentCode = FC.c_str();
+		const GLchar* vertexCode = VC.c_str();
+		const GLchar* fragmentCode = FC.c_str();
 
 		//d::cout << vertexCode;
 		//td::cout << fragmentCode;
 
-		unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+		GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 		glShaderSource(vertexShader, 1, &vertexCode, nullptr);
 		glCompileShader(vertexShader);
 		register_Errors::testCompileShader(vertexShader, "VERTEX", 0);
 
-		unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+		GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 		glShaderSource(fragmentShader, 1, &fragmentCode, nullptr);
 		glCompileShader(fragmentShader);
 		register_Errors::testCompileShader(fragmentShader, "FRAGMENT", 0);
@@ -97,6 +97,13 @@ namespace shading
 	void shader::setInt(const std::string& name, int value) const
 	{
 		int location{ glGetUniformLocation(ID, name.c_str()) };
+		
+		if (location == -1)
+		{
+			SDL_Log(std::string("ERROR LOCATION::" + name).c_str());
+
+		}
+
 		glUniform1i(location, static_cast<int>(value));
 	}
 	void shader::setFloat(const std::string& name, float value) const

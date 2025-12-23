@@ -426,14 +426,74 @@ if(specExist == false)
 
 }
 
-
 FragColor = opCalc_existTextures(resultVec4, specExist, texSpecMulti);
-
+//FragColor = vec4(coordTexOut.x, coordTexOut.y, 0.0, 1.0);
 //FragColor = resultVec4;
 
 //FragColor = skyBox_reflection;
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

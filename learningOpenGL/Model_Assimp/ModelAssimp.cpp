@@ -1,8 +1,9 @@
 
 #include "ModelAssimp.h"
 #include "Render/RenderData.h"
+#include "textureData/textureManager.h"
 
-namespace sky
+namespace sky 
 {
 	cubeMap_Skybox::cubeMap_Skybox() {};
 	cubeMap_Skybox::cubeMap_Skybox(std::string name, std::string directory_Tex, std::vector<std::string> nameFiles, std::string nameShader)
@@ -315,7 +316,6 @@ namespace Assimp_D
 
 		return texID;
 	}
-
 	unsigned int TextureFromData(unsigned char* dataTexture, int width, int height, int nrChannels)
 	{
 		unsigned int id{};
@@ -406,7 +406,7 @@ namespace Assimp_D
 
 			for (int i = 0; i < static_cast<int>(texture.size()); i++)
 			{
-				textures.texU_Data.emplace_back(texture[i].id, texture[i].type, texture::textureUnits_Data[i]);
+			//	textures.textures_LoadCache.emplace_back(texDataManager::TextureData_File(texture[i].id, texture[i].type, texture::textureUnits_Data[i]));
 				/*
 				if (texture[i].type == "texture_diffuse")
 				{
@@ -465,16 +465,24 @@ namespace Assimp_D
 
 		int seqUnit{};
 
+		
+		for (auto textureDataCache : loadData.textures)
+		{
+			textures.textures_LoadCache.emplace_back(textureDataCache);
+		}
+
+		//OLD WAY TO LOAD TEXTURES
+		/*
 		for (int i = 0; i < static_cast<int>(loadData.textures.size()); i++)
 		{
 			unsigned int texID{ TextureFromData(loadData.textures[i].dataTexture, loadData.textures[i].width, loadData.textures[i].height, loadData.textures[i].nrChannels) };
-			textures.texU_Data.emplace_back(texture::textureData(texID, loadData.textures[i].typeTexture, loadData.textures[i].path, texture::textureUnits_Data[seqUnit]));
+			textures.texU_Data.emplace_back(texture::textureData(texID, loadData.textures[i].typeTex, loadData.textures[i].completePath, texture::textureUnits_Data[seqUnit]));
 			seqUnit++;
 
 		//	if()
 
 		}
-
+		*/
 		/*
 		for (auto& texLoad : loadData.textures)
 		{
@@ -511,7 +519,7 @@ namespace Assimp_D
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertexD), (void*)offsetof(vertexD, Normal));
 
 		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vertexD), (void*)offsetof(vertexD,TexCoord));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vertexD), (void*)offsetof(vertexD, TexCoord));
 		
 		//glBindBuffer(GL_ARRAY_BUFFER,S 0);
 		glBindVertexArray(0);
@@ -583,9 +591,10 @@ namespace Assimp_D
 		shader.setVec3("Mat.specular", shaderSet.specular);
 		shader.setFloat("Mat.shiness", shaderSet.shiness);
 
-		if (static_cast<int>(textures.texU_Data.size()) > 0)
+		if (static_cast<int>(textures.textures_LoadCache.size()) > 0)
 		{
-			textures.useTextures_PerMaterial(shader, 1);
+			//textures.useTextures_PerMaterial(shader, 1); //OLD WAY
+			textures.use_MaterialTextures(shader, 1);
 		}
 
 		shader.setVec3("viewPos", cam1.posCam);
@@ -700,9 +709,11 @@ namespace Assimp_D
 		}
 
 
-		if (!textures.texU_Data.empty())
+		if(!textures.textures_LoadCache.empty())
+		//if (!textures.texU_Data.empty()) ///OLD WAY TO USE TEXTURES
 		{
-			textures.useTextures_PerMaterial(shader, 1);
+			//textures.useTextures_PerMaterial(shader, 1); ///OLD WAY TO USE TEXTURES
+			textures.use_MaterialTextures(shader, 1);
 			shader.setBool("NotTexture", false);
 
 			if (nameMesh == "CampoVegetacion_1")
@@ -712,7 +723,7 @@ namespace Assimp_D
 
 			if (RenderData_Set::skybox_D::skyBox_Current.active == true && !RenderData_Set::skybox_D::skyBox_Current.nameSkybox.empty())
 			{
-				texture::textureUnits textureUnit{ static_cast<texture::textureUnits>(textures.texU_Data.size() + 1) };
+				texture::textureUnits textureUnit{ static_cast<texture::textureUnits>(static_cast<int>(textures.textures_LoadCache.size()) + 1) };
 
 				RenderData_Set::skybox_D::skyBoxes_D[RenderData_Set::skybox_D::skyBox_Current.nameSkybox].bind_Texture(shader, "skybox", textureUnit);
 				shader.transformMat3("transformation_SkyBox", RenderData_Set::skybox_D::skyBoxes_D["skyBox_day"].transform_SkyBox.rotationVec);
@@ -722,7 +733,7 @@ namespace Assimp_D
 
 		}
 
-		else if(textures.texU_Data.empty())
+		else if(textures.textures_LoadCache.empty())
 		{
 			shader.setBool("NotTexture", true);
 			shader.setBool("Mat_1.use_texture_diffuse", false);
@@ -877,13 +888,16 @@ namespace Assimp_D
 		}
 
 
-		if (!textures.texU_Data.empty())
+		if (!textures.textures_LoadCache.empty())
 		{
-			textures.useTextures_PerMaterial(shader, 1);
+			//textures.useTextures_PerMaterial(shader, 1); OLD WAY TO LOAD TEXTURES
+			textures.use_MaterialTextures(shader, 1);
 			shader.setBool("NotTexture", false);
-		}
+			//SDL_Log(std::to_string(textureCache::textures.size()).c_str());
 
-		else if (textures.texU_Data.empty())
+ 		}
+
+		else if (textures.textures_LoadCache.empty())
 		{
 			shader.setBool("NotTexture", true);
 			shader.setBool("Mat_1.use_texture_diffuse", false);
@@ -1014,9 +1028,10 @@ namespace Assimp_D
 		}
 
 
-		if (!textures.texU_Data.empty())
+		if (!textures.textures_LoadCache.empty())
 		{
-			textures.useTextures_PerMaterial(shader, 1);
+			//textures.useTextures_PerMaterial(shader, 1);
+			textures.use_MaterialTextures(shader, 1);
 			shader.setBool("NotTexture", false);
 		}
 
@@ -1094,7 +1109,7 @@ namespace Assimp_D
 
 		for (auto& meshData : model.Meshes_LoadCPU)
 		{
-			meshes.emplace_back(Mesh(meshData));
+			meshes.emplace_back(Mesh(meshData)); //// ESCENCIAL PARA CARGA DE TEXTURAS, CAMBIAR LOS DATOS PARA QUE SOLAMENTE SE INGRESE EL NOMBRE DE LA TEXTURA JUNTO CON EL TIPO
 		}
 
 		for (int i = 0; i < static_cast<int>(meshes.size()); i++)
@@ -1419,13 +1434,17 @@ namespace Assimp_D
 		meshes[numMesh].textures.shiness = valueShiness;
 
 	}
-	void Model::SetTexture_Mesh(const char* pathTexture, std::string nameMesh, texture::typeTextures tex)
+	void Model::SetTexture_Mesh(const char* pathTexture, std::string nameMesh, texDataManager::typeTexture tex)
 	{
 
 		for (int i = 0; i < static_cast<int>(meshes.size()); i++)
 		{
 			if (meshes[i].nameMesh == nameMesh)
 			{
+				meshes[i].textures.insertNewTexture(pathTexture, tex);
+
+				////OLD WAY TO LOAD TEXTURES
+				/*
 				textureD texture{};
 
 				texture.id = TextureFromFile(pathTexture);
@@ -1433,32 +1452,8 @@ namespace Assimp_D
 				texture.type = texture::typeTexture[tex];
 
 				textures_Loaded.emplace_back(texture);
-				meshes[i].textures.insertTexture(texture.id, texture.path.C_Str(), texture.type); ///revisar si falla aiString
-
-				////
-
-				/*
-				std::string reversePath{ texture.path.C_Str() };
-
-				std::reverse(reversePath.begin(), reversePath.end());
-				int findP{ static_cast<int>(reversePath.find(".")) };
-			
-				std::string newReversePath{ reversePath.substr(0, findP) };
-				std::reverse(newReversePath.begin(), newReversePath.end());
-				
-				if (newReversePath == "png")
-				{
-					meshes[i].renderP = renderSeq::renderFar;
-				}
-
-				else if (newReversePath == "jpg")
-				{
-					meshes[i].renderP = renderSeq::renderNear;
-
-				}
-
+				meshes[i].textures.insertTexture(texture.id, texture.path.C_Str(), texture.type);
 				*/
-
 			}
 
 		}
@@ -1520,7 +1515,7 @@ namespace Assimp_D
 
 	namespace loadToCPU
 	{
-		TextureData_File LoadTextureFromFile(const char* path, std::string directory, std::string typeTexture, bool gamma)
+		texDataManager::TextureData_File LoadTextureFromFile(const char* path, std::string directory, std::string typeTexture, bool gamma)
 		{
 			std::string pa = std::string(path);
 
@@ -1537,7 +1532,8 @@ namespace Assimp_D
 
 			stbi_set_flip_vertically_on_load(true);
 
-			return TextureData_File(typeTexture, pa, std::move(DataT), width, height, nrChannels);
+			//return texDataManager::TextureData_File("", texDataManager::typeTexture{}, typeTexture, std::move(DataT), width, height, nrChannels)
+			return texDataManager::TextureData_File();  ////INSERVIBLE, NO FUNCIONA PARA CARGAR TEXTURAS
 		}
 
 		std::queue<ModelData_loadCPU> modelsData{};
@@ -1547,23 +1543,24 @@ namespace Assimp_D
 		std::atomic<bool> finishLoadModels(false);
 		std::mutex mutexModel;
 
-		std::vector<TextureData_File> loadMatTextures(aiMaterial* mat, aiTextureType matType, std::string typeName, std::string directory)
+		///FUNCTION LEGACY::LOAD TEXTURES
+		std::vector<texDataManager::TextureData_File> loadMatTextures(aiMaterial* mat, aiTextureType matType, std::string typeName, std::string directory)
 		{
-			std::vector<TextureData_File> tex{};
-			std::vector<TextureData_File> tex_Loaded{};
+			std::vector<texDataManager::TextureData_File> tex{};
+			std::vector<texDataManager::TextureData_File> tex_Loaded{};
 			//aiGetMaterialTexture()
 			for (int i = 0; i < mat->GetTextureCount(matType); i++)
 			{
 				aiString str{};
 				mat->GetTexture(matType, i, &str);
-				textureD texture{};
+				//textureD texture{};
 				bool skip{ false };
 
-				SDL_Log(str.C_Str());
+			//	SDL_Log(str.C_Str());
 
 				for (int i = 0; i < static_cast<int>(tex_Loaded.size()); i++)
 				{
-					if (std::strcmp(tex_Loaded[i].path.c_str(), str.C_Str()) == 0)
+					if (std::strcmp(tex_Loaded[i].completePath.c_str(), str.C_Str()) == 0)
 					{
 						skip = true;
 						break;
@@ -1574,17 +1571,36 @@ namespace Assimp_D
 				if (!skip)
 				{
 
-					TextureData_File texture{ LoadTextureFromFile(str.C_Str(), directory, typeName) };
-					tex.emplace_back(texture);
-					tex_Loaded.emplace_back(texture);
-					SDL_Log(texture.typeTexture.c_str());
+					//texDataManager::TextureData_File texture{ LoadTextureFromFile(str.C_Str(), directory, typeName) }; ////OLD WAY TO LOAD TEXTURES
+					texDataManager::TextureData_File textureLoad{ textureCache::manageLoadTexture(str.C_Str(), directory, typeName) }; ////NEW WAY TO LOAD TEXTURES
+					tex.emplace_back(textureLoad);
+					tex_Loaded.emplace_back(textureLoad);
+
+					//SDL_Log(texDataManager::typeTex_String[texture.typeTexture].c_str());
+					//SDL_Log(texture.typeTexture.c_str());
 
 				}
 			}
 
 			return tex;
-		}
+		} ///FUNCTION LEGACY::LOAD TEXTURES
 
+		std::vector<texDataManager::TextureData_File> loadMatTextures_Cache(aiMaterial* mat, aiTextureType matType, std::string typeName, std::string directory)
+		{
+			std::vector<texDataManager::TextureData_File> dataTextures{};
+
+			for (int i = 0; i < mat->GetTextureCount(matType); i++)
+			{
+				aiString pathStr{};
+				mat->GetTexture(matType, i, &pathStr);
+				
+				const char* path = pathStr.C_Str();
+				dataTextures.emplace_back(textureCache::manageLoadTexture(std::string(path), directory, typeName));
+		
+			}
+
+			return dataTextures;
+		}
 
 		void loadModelsThread(std::vector<insertProcessModel> models)
 		{
@@ -1655,7 +1671,7 @@ namespace Assimp_D
 		{
 			std::vector<vertexD> vertices{};
 			std::vector<unsigned int> indices{};
-			std::vector<TextureData_File> textures{};
+			std::vector<texDataManager::TextureData_File> textures{};
 
 			for (int i = 0; i < mesh->mNumVertices; i++)
 			{
@@ -1705,11 +1721,11 @@ namespace Assimp_D
 			{
 				aiMaterial* material{ scene->mMaterials[mesh->mMaterialIndex] };
 
-				std::vector<TextureData_File> difusseMaps{ loadMatTextures(material, aiTextureType_DIFFUSE, "texture_diffuse", directory) };
+				std::vector<texDataManager::TextureData_File> difusseMaps{ loadMatTextures(material, aiTextureType_DIFFUSE, "texture_diffuse", directory) };
 
 				textures.insert(textures.end(), difusseMaps.begin(), difusseMaps.end());
 
-				std::vector<TextureData_File> specularMaps{ loadMatTextures(material, aiTextureType_SPECULAR, "texture_specular", directory) };
+				std::vector<texDataManager::TextureData_File> specularMaps{ loadMatTextures(material, aiTextureType_SPECULAR, "texture_specular", directory) };
 
 				textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 			}
@@ -1878,9 +1894,9 @@ namespace individualComp
 		}
 
 
-		if (!texture.texU_Data.empty())
+		if (!texture.textures_LoadCache.empty())
 		{
-			texture.useTextures_PerMaterial(shader, 1);
+			texture.use_MaterialTextures(shader, 1);
 
 		}
 
