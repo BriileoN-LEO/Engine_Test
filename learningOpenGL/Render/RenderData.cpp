@@ -274,13 +274,18 @@ namespace RenderData_Set
 	//	| aiProcess_PreTransformVertices
 	};
 
+		unsigned int aiProcessFlags_backpack{
+			aiProcess_Triangulate |
+			aiProcess_FlipUVs
+		};
+
 	//	std::filesystem::path pathBackpack{ backpack_Model };
 		Assimp_D::loadToCPU::insertProcessModel back_Pack
 		{
 			"backPack",
 			backpack_Model,
 			"shaderT1",
-			aiProcessFlags
+			aiProcessFlags_backpack
 
 		};
 

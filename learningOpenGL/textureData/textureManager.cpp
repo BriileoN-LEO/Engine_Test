@@ -80,6 +80,7 @@ namespace textureCache
 		//std::reverse(path_to_DDS.begin(), path_to_DDS.end());
 		path_to_KTX2 = path_to_KTX2.substr(0, path_to_KTX2.find_last_of('.'));
 		path_to_KTX2 += ".ktx2";
+		path_to_KTX2 = directory + path_to_KTX2;
 	//	path_to_KTX2 = directory + '/' + path_to_KTX2;
 
 		std::string path_Normal{ directory + '/' + path };
@@ -194,6 +195,8 @@ namespace textureCache
 		ktxTexture_Destroy(texKTX);
 		glBindTexture(target, 0);
 
+		std::cout << "LOADING::KTX\n";
+
 		return idTexture;
 	}
 	GLuint loadTextureStandard(texDataManager::standardTexture& texStandard)
@@ -242,6 +245,8 @@ namespace textureCache
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		std::cout << "LOADING::STANDARD\n";
 
 		stbi_image_free(texStandard.dataTexture);
 	}

@@ -8,7 +8,6 @@ cmake_minimum_required (VERSION 3.21)
 
 project (Learning)
 
-
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(DATA_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/shaders/shader_v_v1.vs" 
@@ -40,6 +39,16 @@ set(DATA_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/shaders/shader_v_v1.vs"
 "C:/Users/Briil/3D_Models_Game Engine/tokio_place/source/testexport.fbx";
 )
 
+set(ASSETS_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/assets_engine"
+"${CMAKE_CURRENT_SOURCE_DIR}/Images"
+"${CMAKE_CURRENT_SOURCE_DIR}/shaders")
+
+set(ASSETS_DESTINATION_DIR "${CMAKE_BINARY_DIR}/assets_engine"
+"${CMAKE_BINARY_DIR}/Images"
+"${CMAKE_BINARY_DIR}/shaders")
+
+file(COPY ${ASSETS_SOURCE_DIR} DESTINATION ${CMAKE_BINARY_DIR})
+
 set(RUTE_COMPLETE_FILES ${DATA_FILE_PATH})
 
 configure_file(
@@ -48,7 +57,8 @@ configure_file(
 
 )
 
-list(APPEND CMAKE_PREFIX_PATH "C:/Users/Briil/SDKs_libraries/SDL")
+#list(APPEND CMAKE_PREFIX_PATH "C:/Users/Briil/SDKs_libraries/SDL")
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}libs/SDL")
 
 find_package(SDL3 REQUIRED)
 find_package(OpenGL REQUIRED)
