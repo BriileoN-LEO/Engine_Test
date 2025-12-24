@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\59f25f05018774024b80247c9f0de218\ktx_software-populate-mkdir.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\59f25f05018774024b80247c9f0de218\ktx_software-populate-download.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\59f25f05018774024b80247c9f0de218\ktx_software-populate-update.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\59f25f05018774024b80247c9f0de218\ktx_software-populate-patch.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\59f25f05018774024b80247c9f0de218\ktx_software-populate-configure.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\59f25f05018774024b80247c9f0de218\ktx_software-populate-build.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\59f25f05018774024b80247c9f0de218\ktx_software-populate-install.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\59f25f05018774024b80247c9f0de218\ktx_software-populate-test.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\32af949a2cdc5e88a310504dc951148a\ktx_software-populate-complete.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\89a29d9d62c6cf8efa559c942731aed3\ktx_software-populate.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\ktx_software-populate" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{ED8456BE-41EC-31A0-B074-A6A741F9705A}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

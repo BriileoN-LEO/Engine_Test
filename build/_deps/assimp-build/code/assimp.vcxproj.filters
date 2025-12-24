@@ -1,0 +1,1964 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\Assimp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\CApi\CInterfaceIOWrapper.cpp">
+      <Filter>CApi</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\Compression.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\BaseImporter.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\BaseProcess.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\PostStepRegistry.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\ImporterRegistry.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\DefaultIOStream.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\IOSystem.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\DefaultIOSystem.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\ZipArchiveIOSystem.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\Importer.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\SGSpatialSort.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\VertexTriangleAdjacency.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\SpatialSort.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\SceneCombiner.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\ScenePreprocessor.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\SkeletonMeshBuilder.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\StandardShapes.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\TargetAnimation.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\RemoveComments.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\Subdivision.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\scene.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\Bitmap.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\Version.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\CreateAnimMesh.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\simd.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\material.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\AssertHandler.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\Exceptional.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\Base64.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Geometry\GeometryUtils.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\DefaultLogger.cpp">
+      <Filter>Logging</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\Exporter.cpp">
+      <Filter>Exporter</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\CApi\AssimpCExport.cpp">
+      <Filter>Exporter</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\CalcTangentsProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\ComputeUVMappingProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\ConvertToLHProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\EmbedTexturesProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\FindDegenerates.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\FindInstancesProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\FindInvalidDataProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\FixNormalsStep.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\DropFaceNormalsProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\GenFaceNormalsProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\GenVertexNormalsProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\PretransformVertices.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\ImproveCacheLocality.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\JoinVerticesProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\LimitBoneWeightsProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\RemoveRedundantMaterials.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\RemoveVCProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\SortByPTypeProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\SplitLargeMeshes.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\TextureTransform.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\TriangulateProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\ValidateDataStructure.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\OptimizeGraph.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\OptimizeMeshes.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\DeboneProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\ProcessHelper.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\MakeVerboseFormat.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\ScaleProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\ArmaturePopulate.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\GenBoundingBoxesProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\SplitByBoneCountProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Material\MaterialSystem.cpp">
+      <Filter>MaterialSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\STEPParser\STEPFileReader.cpp">
+      <Filter>STEPParser</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\STEPParser\STEPFileEncoding.cpp">
+      <Filter>STEPParser</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\glTFCommon\glTFCommon.cpp">
+      <Filter>glTFCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\AMF\AMFImporter.cpp">
+      <Filter>AssetLib\AMF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\AMF\AMFImporter_Geometry.cpp">
+      <Filter>AssetLib\AMF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\AMF\AMFImporter_Material.cpp">
+      <Filter>AssetLib\AMF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\AMF\AMFImporter_Postprocess.cpp">
+      <Filter>AssetLib\AMF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\3DS\3DSConverter.cpp">
+      <Filter>AssetLib\3DS</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\3DS\3DSLoader.cpp">
+      <Filter>AssetLib\3DS</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\AC\ACLoader.cpp">
+      <Filter>AssetLib\AC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\ASE\ASELoader.cpp">
+      <Filter>AssetLib\ASE</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\ASE\ASEParser.cpp">
+      <Filter>AssetLib\ASE</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Assbin\AssbinLoader.cpp">
+      <Filter>AssetLib\ASSBIN</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\B3D\B3DImporter.cpp">
+      <Filter>AssetLib\B3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\BVH\BVHLoader.cpp">
+      <Filter>AssetLib\BVH</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Collada\ColladaHelper.cpp">
+      <Filter>AssetLib\COLLADA</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Collada\ColladaLoader.cpp">
+      <Filter>AssetLib\COLLADA</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Collada\ColladaParser.cpp">
+      <Filter>AssetLib\COLLADA</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\DXF\DXFLoader.cpp">
+      <Filter>AssetLib\DXF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\CSM\CSMLoader.cpp">
+      <Filter>AssetLib\CSM</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\HMP\HMPLoader.cpp">
+      <Filter>AssetLib\HMP</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Irr\IRRMeshLoader.cpp">
+      <Filter>AssetLib\IRRMESH</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Irr\IRRShared.cpp">
+      <Filter>AssetLib\IRRMESH</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\IQM\IQMImporter.cpp">
+      <Filter>AssetLib\IQM</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Irr\IRRLoader.cpp">
+      <Filter>AssetLib\IRR</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\LWO\LWOAnimation.cpp">
+      <Filter>AssetLib\LWO</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\LWO\LWOBLoader.cpp">
+      <Filter>AssetLib\LWO</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\LWO\LWOLoader.cpp">
+      <Filter>AssetLib\LWO</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\LWO\LWOMaterial.cpp">
+      <Filter>AssetLib\LWO</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\LWS\LWSLoader.cpp">
+      <Filter>AssetLib\LWS</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MD2\MD2Loader.cpp">
+      <Filter>AssetLib\MD2</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MD3\MD3Loader.cpp">
+      <Filter>AssetLib\MD3</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MD5\MD5Loader.cpp">
+      <Filter>AssetLib\MD5</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MD5\MD5Parser.cpp">
+      <Filter>AssetLib\MD5</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MDC\MDCLoader.cpp">
+      <Filter>AssetLib\MDC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MDL\MDLLoader.cpp">
+      <Filter>AssetLib\MDL</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MDL\MDLMaterialLoader.cpp">
+      <Filter>AssetLib\MDL</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MDL\HalfLife\HL1MDLLoader.cpp">
+      <Filter>AssetLib\MDL</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MDL\HalfLife\UniqueNameGenerator.cpp">
+      <Filter>AssetLib\MDL</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\NFF\NFFLoader.cpp">
+      <Filter>AssetLib\NFF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\NDO\NDOLoader.cpp">
+      <Filter>AssetLib\NDO</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\OFF\OFFLoader.cpp">
+      <Filter>AssetLib\OFF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Obj\ObjFileImporter.cpp">
+      <Filter>AssetLib\OBJ</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Obj\ObjFileMtlImporter.cpp">
+      <Filter>AssetLib\OBJ</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Obj\ObjFileParser.cpp">
+      <Filter>AssetLib\OBJ</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Ogre\OgreImporter.cpp">
+      <Filter>AssetLib\OGRE</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Ogre\OgreStructs.cpp">
+      <Filter>AssetLib\OGRE</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Ogre\OgreBinarySerializer.cpp">
+      <Filter>AssetLib\OGRE</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Ogre\OgreXmlSerializer.cpp">
+      <Filter>AssetLib\OGRE</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Ogre\OgreMaterial.cpp">
+      <Filter>AssetLib\OGRE</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\OpenGEX\OpenGEXImporter.cpp">
+      <Filter>AssetLib\OPENGEX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Ply\PlyLoader.cpp">
+      <Filter>AssetLib\PLY</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Ply\PlyParser.cpp">
+      <Filter>AssetLib\PLY</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MS3D\MS3DLoader.cpp">
+      <Filter>AssetLib\MS3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\COB\COBLoader.cpp">
+      <Filter>AssetLib\COB</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Blender\BlenderLoader.cpp">
+      <Filter>AssetLib\BLEND</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Blender\BlenderDNA.cpp">
+      <Filter>AssetLib\BLEND</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Blender\BlenderScene.cpp">
+      <Filter>AssetLib\BLEND</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Blender\BlenderModifier.cpp">
+      <Filter>AssetLib\BLEND</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Blender\BlenderBMesh.cpp">
+      <Filter>AssetLib\BLEND</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Blender\BlenderTessellator.cpp">
+      <Filter>AssetLib\BLEND</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Blender\BlenderCustomData.cpp">
+      <Filter>AssetLib\BLEND</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\IFC\IFCLoader.cpp">
+      <Filter>AssetLib\IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\IFC\IFCReaderGen1_2x3.cpp">
+      <Filter>AssetLib\IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\IFC\IFCReaderGen2_2x3.cpp">
+      <Filter>AssetLib\IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\IFC\IFCUtil.cpp">
+      <Filter>AssetLib\IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\IFC\IFCGeometry.cpp">
+      <Filter>AssetLib\IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\IFC\IFCMaterial.cpp">
+      <Filter>AssetLib\IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\IFC\IFCProfile.cpp">
+      <Filter>AssetLib\IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\IFC\IFCCurve.cpp">
+      <Filter>AssetLib\IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\IFC\IFCBoolean.cpp">
+      <Filter>AssetLib\IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\IFC\IFCOpenings.cpp">
+      <Filter>AssetLib\IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\XGL\XGLLoader.cpp">
+      <Filter>AssetLib\XGL</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXImporter.cpp">
+      <Filter>AssetLib\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXParser.cpp">
+      <Filter>AssetLib\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXTokenizer.cpp">
+      <Filter>AssetLib\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXConverter.cpp">
+      <Filter>AssetLib\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXUtil.cpp">
+      <Filter>AssetLib\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXDocument.cpp">
+      <Filter>AssetLib\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXProperties.cpp">
+      <Filter>AssetLib\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXMeshGeometry.cpp">
+      <Filter>AssetLib\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXMaterial.cpp">
+      <Filter>AssetLib\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXModel.cpp">
+      <Filter>AssetLib\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXAnimation.cpp">
+      <Filter>AssetLib\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXNodeAttribute.cpp">
+      <Filter>AssetLib\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXDeformer.cpp">
+      <Filter>AssetLib\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXBinaryTokenizer.cpp">
+      <Filter>AssetLib\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXDocumentUtil.cpp">
+      <Filter>AssetLib\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Q3D\Q3DLoader.cpp">
+      <Filter>AssetLib\Q3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Q3BSP\Q3BSPFileParser.cpp">
+      <Filter>AssetLib\Q3BSP</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Q3BSP\Q3BSPFileImporter.cpp">
+      <Filter>AssetLib\Q3BSP</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Raw\RawLoader.cpp">
+      <Filter>AssetLib\RAW</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\SIB\SIBImporter.cpp">
+      <Filter>AssetLib\SIB</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\SMD\SMDLoader.cpp">
+      <Filter>AssetLib\SMD</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\STL\STLLoader.cpp">
+      <Filter>AssetLib\STL</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Terragen\TerragenLoader.cpp">
+      <Filter>AssetLib\TERRAGEN</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Unreal\UnrealLoader.cpp">
+      <Filter>AssetLib\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X\XFileImporter.cpp">
+      <Filter>AssetLib\X</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X\XFileParser.cpp">
+      <Filter>AssetLib\X</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X3D\X3DImporter.cpp">
+      <Filter>AssetLib\X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X3D\X3DImporter_Geometry2D.cpp">
+      <Filter>AssetLib\X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X3D\X3DImporter_Geometry3D.cpp">
+      <Filter>AssetLib\X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X3D\X3DImporter_Group.cpp">
+      <Filter>AssetLib\X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X3D\X3DImporter_Light.cpp">
+      <Filter>AssetLib\X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X3D\X3DImporter_Metadata.cpp">
+      <Filter>AssetLib\X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X3D\X3DImporter_Networking.cpp">
+      <Filter>AssetLib\X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X3D\X3DImporter_Postprocess.cpp">
+      <Filter>AssetLib\X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X3D\X3DImporter_Rendering.cpp">
+      <Filter>AssetLib\X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X3D\X3DImporter_Shape.cpp">
+      <Filter>AssetLib\X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X3D\X3DImporter_Texturing.cpp">
+      <Filter>AssetLib\X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X3D\X3DGeoHelper.cpp">
+      <Filter>AssetLib\X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X3D\X3DXmlHelper.cpp">
+      <Filter>AssetLib\X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\VRML\VrmlConverter.cpp">
+      <Filter>AssetLib\X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\glTF\glTFImporter.cpp">
+      <Filter>AssetLib\GLTF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\glTF2\glTF2Importer.cpp">
+      <Filter>AssetLib\GLTF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\3MF\XmlSerializer.cpp">
+      <Filter>AssetLib\3MF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\3MF\D3MFImporter.cpp">
+      <Filter>AssetLib\3MF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\3MF\D3MFOpcPackage.cpp">
+      <Filter>AssetLib\3MF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MMD\MMDImporter.cpp">
+      <Filter>AssetLib\MMD</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MMD\MMDPmxParser.cpp">
+      <Filter>AssetLib\MMD</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Obj\ObjExporter.cpp">
+      <Filter>AssetLib\OBJ</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\OpenGEX\OpenGEXExporter.cpp">
+      <Filter>AssetLib\OPENGEX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Ply\PlyExporter.cpp">
+      <Filter>AssetLib\PLY</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\3DS\3DSExporter.cpp">
+      <Filter>AssetLib\3DS</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Assbin\AssbinExporter.cpp">
+      <Filter>AssetLib\ASSBIN</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Assbin\AssbinFileWriter.cpp">
+      <Filter>AssetLib\ASSBIN</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Assxml\AssxmlExporter.cpp">
+      <Filter>AssetLib\ASSXML</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Assxml\AssxmlFileWriter.cpp">
+      <Filter>AssetLib\ASSXML</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Collada\ColladaExporter.cpp">
+      <Filter>AssetLib\COLLADA</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXExporter.cpp">
+      <Filter>AssetLib\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXExportNode.cpp">
+      <Filter>AssetLib\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXExportProperty.cpp">
+      <Filter>AssetLib\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\STL\STLExporter.cpp">
+      <Filter>AssetLib\STL</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X\XFileExporter.cpp">
+      <Filter>AssetLib\X</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X3D\X3DExporter.cpp">
+      <Filter>AssetLib\X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\glTF\glTFExporter.cpp">
+      <Filter>AssetLib\GLTF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\glTF2\glTF2Exporter.cpp">
+      <Filter>AssetLib\GLTF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\3MF\D3MFExporter.cpp">
+      <Filter>AssetLib\3MF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Pbrt\PbrtExporter.cpp">
+      <Filter>AssetLib\PBRT</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Assjson\cencode.c">
+      <Filter>AssetLib\ASSJSON</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Assjson\json_exporter.cpp">
+      <Filter>AssetLib\ASSJSON</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Assjson\mesh_splitter.cpp">
+      <Filter>AssetLib\ASSJSON</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Step\StepExporter.cpp">
+      <Filter>AssetLib\STEP</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\unzip\ioapi.c">
+      <Filter>Contrib\unzip</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\unzip\unzip.c">
+      <Filter>Contrib\unzip</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\poly2tri\poly2tri\common\shapes.cc">
+      <Filter>Contrib\Poly2Tri</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\poly2tri\poly2tri\sweep\advancing_front.cc">
+      <Filter>Contrib\Poly2Tri</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\poly2tri\poly2tri\sweep\cdt.cc">
+      <Filter>Contrib\Poly2Tri</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\poly2tri\poly2tri\sweep\sweep.cc">
+      <Filter>Contrib\Poly2Tri</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\poly2tri\poly2tri\sweep\sweep_context.cc">
+      <Filter>Contrib\Poly2Tri</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\clipper\clipper.cpp">
+      <Filter>Contrib\Clipper</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\openddlparser\code\OpenDDLParser.cpp">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\openddlparser\code\DDLNode.cpp">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\openddlparser\code\OpenDDLCommon.cpp">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\openddlparser\code\OpenDDLExport.cpp">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\openddlparser\code\Value.cpp">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\openddlparser\code\OpenDDLStream.cpp">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcArithmeticCodec.cpp">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcDynamicVectorDecoder.cpp">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcDynamicVectorEncoder.cpp">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcTools.cpp">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcTriangleFans.cpp">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zip\src\zip.c">
+      <Filter>ziplib</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\pugixml\src\pugixml.cpp">
+      <Filter>Contrib\Pugixml</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\CApi\CInterfaceIOWrapper.h">
+      <Filter>CApi</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\StbCommon.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\Compression.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\BaseProcess.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\Importer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\ScenePrivate.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\DefaultProgressHandler.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\PolyTools.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\Maybe.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\IFF.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\VertexTriangleAdjacency.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\ScenePreprocessor.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\StackAllocator.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\StackAllocator.inl">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\TargetAnimation.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\simd.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Geometry\GeometryUtils.h">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\DefaultLogger.hpp">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\LogStream.hpp">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\Logger.hpp">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\NullLogger.hpp">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\Win32DebugLogStream.h">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\FileLogStream.h">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Common\StdOStreamLogStream.h">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\BlobIOSystem.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\CalcTangentsProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\ComputeUVMappingProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\ConvertToLHProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\EmbedTexturesProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\FindDegenerates.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\FindInstancesProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\FindInvalidDataProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\FixNormalsStep.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\DropFaceNormalsProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\GenFaceNormalsProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\GenVertexNormalsProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\PretransformVertices.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\ImproveCacheLocality.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\JoinVerticesProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\LimitBoneWeightsProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\RemoveRedundantMaterials.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\RemoveVCProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\SortByPTypeProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\SplitLargeMeshes.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\TextureTransform.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\TriangulateProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\ValidateDataStructure.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\OptimizeGraph.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\OptimizeMeshes.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\DeboneProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\ProcessHelper.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\MakeVerboseFormat.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\ScaleProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\ArmaturePopulate.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\GenBoundingBoxesProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\PostProcessing\SplitByBoneCountProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Material\MaterialSystem.h">
+      <Filter>MaterialSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\STEPParser\STEPFileReader.h">
+      <Filter>STEPParser</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\STEPParser\STEPFileEncoding.h">
+      <Filter>STEPParser</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\glTFCommon\glTFCommon.h">
+      <Filter>glTFCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\AMF\AMFImporter.hpp">
+      <Filter>AssetLib\AMF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\AMF\AMFImporter_Node.hpp">
+      <Filter>AssetLib\AMF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\3DS\3DSHelper.h">
+      <Filter>AssetLib\3DS</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\3DS\3DSLoader.h">
+      <Filter>AssetLib\3DS</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\AC\ACLoader.h">
+      <Filter>AssetLib\AC</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\ASE\ASELoader.h">
+      <Filter>AssetLib\ASE</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\ASE\ASEParser.h">
+      <Filter>AssetLib\ASE</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Assbin\AssbinLoader.h">
+      <Filter>AssetLib\ASSBIN</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\B3D\B3DImporter.h">
+      <Filter>AssetLib\B3D</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\BVH\BVHLoader.h">
+      <Filter>AssetLib\BVH</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Collada\ColladaHelper.h">
+      <Filter>AssetLib\COLLADA</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Collada\ColladaLoader.h">
+      <Filter>AssetLib\COLLADA</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Collada\ColladaParser.h">
+      <Filter>AssetLib\COLLADA</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\DXF\DXFLoader.h">
+      <Filter>AssetLib\DXF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\DXF\DXFHelper.h">
+      <Filter>AssetLib\DXF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\CSM\CSMLoader.h">
+      <Filter>AssetLib\CSM</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\HMP\HMPFileData.h">
+      <Filter>AssetLib\HMP</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\HMP\HMPLoader.h">
+      <Filter>AssetLib\HMP</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\HMP\HalfLifeFileData.h">
+      <Filter>AssetLib\HMP</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Irr\IRRMeshLoader.h">
+      <Filter>AssetLib\IRRMESH</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Irr\IRRShared.h">
+      <Filter>AssetLib\IRRMESH</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\IQM\iqm.h">
+      <Filter>AssetLib\IQM</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\IQM\IQMImporter.h">
+      <Filter>AssetLib\IQM</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Irr\IRRLoader.h">
+      <Filter>AssetLib\IRR</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\LWO\LWOAnimation.h">
+      <Filter>AssetLib\LWO</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\LWO\LWOFileData.h">
+      <Filter>AssetLib\LWO</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\LWO\LWOLoader.h">
+      <Filter>AssetLib\LWO</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\LWS\LWSLoader.h">
+      <Filter>AssetLib\LWS</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MD2\MD2FileData.h">
+      <Filter>AssetLib\MD2</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MD2\MD2Loader.h">
+      <Filter>AssetLib\MD2</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MD2\MD2NormalTable.h">
+      <Filter>AssetLib\MD2</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MD3\MD3FileData.h">
+      <Filter>AssetLib\MD3</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MD3\MD3Loader.h">
+      <Filter>AssetLib\MD3</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MD5\MD5Loader.h">
+      <Filter>AssetLib\MD5</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MD5\MD5Parser.h">
+      <Filter>AssetLib\MD5</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MDC\MDCFileData.h">
+      <Filter>AssetLib\MDC</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MDC\MDCLoader.h">
+      <Filter>AssetLib\MDC</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MDC\MDCNormalTable.h">
+      <Filter>AssetLib\MDC</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MDL\MDLDefaultColorMap.h">
+      <Filter>AssetLib\MDL</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MDL\MDLFileData.h">
+      <Filter>AssetLib\MDL</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MDL\MDLLoader.h">
+      <Filter>AssetLib\MDL</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MDL\HalfLife\HalfLifeMDLBaseHeader.h">
+      <Filter>AssetLib\MDL</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MDL\HalfLife\HL1FileData.h">
+      <Filter>AssetLib\MDL</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MDL\HalfLife\HL1MDLLoader.h">
+      <Filter>AssetLib\MDL</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MDL\HalfLife\HL1ImportDefinitions.h">
+      <Filter>AssetLib\MDL</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MDL\HalfLife\HL1ImportSettings.h">
+      <Filter>AssetLib\MDL</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MDL\HalfLife\HL1MeshTrivert.h">
+      <Filter>AssetLib\MDL</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MDL\HalfLife\LogFunctions.h">
+      <Filter>AssetLib\MDL</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MDL\HalfLife\UniqueNameGenerator.h">
+      <Filter>AssetLib\MDL</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\NFF\NFFLoader.h">
+      <Filter>AssetLib\NFF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\NDO\NDOLoader.h">
+      <Filter>AssetLib\NDO</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\OFF\OFFLoader.h">
+      <Filter>AssetLib\OFF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Obj\ObjFileData.h">
+      <Filter>AssetLib\OBJ</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Obj\ObjFileImporter.h">
+      <Filter>AssetLib\OBJ</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Obj\ObjFileMtlImporter.h">
+      <Filter>AssetLib\OBJ</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Obj\ObjFileParser.h">
+      <Filter>AssetLib\OBJ</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Obj\ObjTools.h">
+      <Filter>AssetLib\OBJ</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Ogre\OgreImporter.h">
+      <Filter>AssetLib\OGRE</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Ogre\OgreStructs.h">
+      <Filter>AssetLib\OGRE</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Ogre\OgreParsingUtils.h">
+      <Filter>AssetLib\OGRE</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Ogre\OgreBinarySerializer.h">
+      <Filter>AssetLib\OGRE</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Ogre\OgreXmlSerializer.h">
+      <Filter>AssetLib\OGRE</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\OpenGEX\OpenGEXImporter.h">
+      <Filter>AssetLib\OPENGEX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\OpenGEX\OpenGEXStructs.h">
+      <Filter>AssetLib\OPENGEX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Ply\PlyLoader.h">
+      <Filter>AssetLib\PLY</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Ply\PlyParser.h">
+      <Filter>AssetLib\PLY</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MS3D\MS3DLoader.h">
+      <Filter>AssetLib\MS3D</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\COB\COBLoader.h">
+      <Filter>AssetLib\COB</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\COB\COBScene.h">
+      <Filter>AssetLib\COB</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Blender\BlenderLoader.h">
+      <Filter>AssetLib\BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Blender\BlenderDNA.h">
+      <Filter>AssetLib\BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Blender\BlenderDNA.inl">
+      <Filter>AssetLib\BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Blender\BlenderScene.h">
+      <Filter>AssetLib\BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Blender\BlenderSceneGen.h">
+      <Filter>AssetLib\BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Blender\BlenderIntermediate.h">
+      <Filter>AssetLib\BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Blender\BlenderModifier.h">
+      <Filter>AssetLib\BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Blender\BlenderBMesh.h">
+      <Filter>AssetLib\BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Blender\BlenderTessellator.h">
+      <Filter>AssetLib\BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Blender\BlenderCustomData.h">
+      <Filter>AssetLib\BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\IFC\IFCLoader.h">
+      <Filter>AssetLib\IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\IFC\IFCReaderGen_2x3.h">
+      <Filter>AssetLib\IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\IFC\IFCUtil.h">
+      <Filter>AssetLib\IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\XGL\XGLLoader.h">
+      <Filter>AssetLib\XGL</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXCompileConfig.h">
+      <Filter>AssetLib\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXImporter.h">
+      <Filter>AssetLib\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXParser.h">
+      <Filter>AssetLib\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXTokenizer.h">
+      <Filter>AssetLib\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXImportSettings.h">
+      <Filter>AssetLib\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXConverter.h">
+      <Filter>AssetLib\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXUtil.h">
+      <Filter>AssetLib\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXDocument.h">
+      <Filter>AssetLib\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXProperties.h">
+      <Filter>AssetLib\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXMeshGeometry.h">
+      <Filter>AssetLib\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXCommon.h">
+      <Filter>AssetLib\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Q3D\Q3DLoader.h">
+      <Filter>AssetLib\Q3D</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Q3BSP\Q3BSPFileData.h">
+      <Filter>AssetLib\Q3BSP</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Q3BSP\Q3BSPFileParser.h">
+      <Filter>AssetLib\Q3BSP</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Q3BSP\Q3BSPFileImporter.h">
+      <Filter>AssetLib\Q3BSP</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Raw\RawLoader.h">
+      <Filter>AssetLib\RAW</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\SIB\SIBImporter.h">
+      <Filter>AssetLib\SIB</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\SMD\SMDLoader.h">
+      <Filter>AssetLib\SMD</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\STL\STLLoader.h">
+      <Filter>AssetLib\STL</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Terragen\TerragenLoader.h">
+      <Filter>AssetLib\TERRAGEN</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Unreal\UnrealLoader.h">
+      <Filter>AssetLib\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X\XFileHelper.h">
+      <Filter>AssetLib\X</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X\XFileImporter.h">
+      <Filter>AssetLib\X</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X\XFileParser.h">
+      <Filter>AssetLib\X</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X3D\X3DImporter.hpp">
+      <Filter>AssetLib\X3D</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X3D\X3DImporter_Macro.hpp">
+      <Filter>AssetLib\X3D</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X3D\X3DImporter_Node.hpp">
+      <Filter>AssetLib\X3D</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X3D\X3DGeoHelper.h">
+      <Filter>AssetLib\X3D</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X3D\X3DXmlHelper.h">
+      <Filter>AssetLib\X3D</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\glTF\glTFAsset.h">
+      <Filter>AssetLib\GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\glTF\glTFAsset.inl">
+      <Filter>AssetLib\GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\glTF\glTFAssetWriter.h">
+      <Filter>AssetLib\GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\glTF\glTFAssetWriter.inl">
+      <Filter>AssetLib\GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\glTF\glTFImporter.h">
+      <Filter>AssetLib\GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\glTF2\glTF2Asset.h">
+      <Filter>AssetLib\GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\glTF2\glTF2Asset.inl">
+      <Filter>AssetLib\GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\glTF2\glTF2AssetWriter.h">
+      <Filter>AssetLib\GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\glTF2\glTF2AssetWriter.inl">
+      <Filter>AssetLib\GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\glTF2\glTF2Importer.h">
+      <Filter>AssetLib\GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\3MF\3MFTypes.h">
+      <Filter>AssetLib\3MF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\3MF\XmlSerializer.h">
+      <Filter>AssetLib\3MF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\3MF\D3MFImporter.h">
+      <Filter>AssetLib\3MF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\3MF\D3MFOpcPackage.h">
+      <Filter>AssetLib\3MF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\3MF\3MFXmlTags.h">
+      <Filter>AssetLib\3MF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MMD\MMDCpp14.h">
+      <Filter>AssetLib\MMD</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MMD\MMDImporter.h">
+      <Filter>AssetLib\MMD</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MMD\MMDPmdParser.h">
+      <Filter>AssetLib\MMD</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MMD\MMDPmxParser.h">
+      <Filter>AssetLib\MMD</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\MMD\MMDVmdParser.h">
+      <Filter>AssetLib\MMD</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Obj\ObjExporter.h">
+      <Filter>AssetLib\OBJ</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\OpenGEX\OpenGEXExporter.h">
+      <Filter>AssetLib\OPENGEX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Ply\PlyExporter.h">
+      <Filter>AssetLib\PLY</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\3DS\3DSExporter.h">
+      <Filter>AssetLib\3DS</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Assbin\AssbinExporter.h">
+      <Filter>AssetLib\ASSBIN</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Assbin\AssbinFileWriter.h">
+      <Filter>AssetLib\ASSBIN</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Assxml\AssxmlExporter.h">
+      <Filter>AssetLib\ASSXML</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Assxml\AssxmlFileWriter.h">
+      <Filter>AssetLib\ASSXML</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Collada\ColladaExporter.h">
+      <Filter>AssetLib\COLLADA</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXExporter.h">
+      <Filter>AssetLib\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXExportNode.h">
+      <Filter>AssetLib\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\FBX\FBXExportProperty.h">
+      <Filter>AssetLib\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\STL\STLExporter.h">
+      <Filter>AssetLib\STL</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X\XFileExporter.h">
+      <Filter>AssetLib\X</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\X3D\X3DExporter.hpp">
+      <Filter>AssetLib\X3D</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\glTF\glTFExporter.h">
+      <Filter>AssetLib\GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\glTF2\glTF2Exporter.h">
+      <Filter>AssetLib\GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\3MF\D3MFExporter.h">
+      <Filter>AssetLib\3MF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\Pbrt\PbrtExporter.h">
+      <Filter>AssetLib\PBRT</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Assjson\cencode.h">
+      <Filter>AssetLib\ASSJSON</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Assjson\mesh_splitter.h">
+      <Filter>AssetLib\ASSJSON</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\AssetLib\Step\StepExporter.h">
+      <Filter>AssetLib\STEP</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\unzip\crypt.h">
+      <Filter>Contrib\unzip</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\unzip\ioapi.h">
+      <Filter>Contrib\unzip</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\unzip\unzip.h">
+      <Filter>Contrib\unzip</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\poly2tri\poly2tri\common\shapes.h">
+      <Filter>Contrib\Poly2Tri</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\poly2tri\poly2tri\common\utils.h">
+      <Filter>Contrib\Poly2Tri</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\poly2tri\poly2tri\sweep\advancing_front.h">
+      <Filter>Contrib\Poly2Tri</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\poly2tri\poly2tri\sweep\cdt.h">
+      <Filter>Contrib\Poly2Tri</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\poly2tri\poly2tri\sweep\sweep.h">
+      <Filter>Contrib\Poly2Tri</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\poly2tri\poly2tri\sweep\sweep_context.h">
+      <Filter>Contrib\Poly2Tri</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\clipper\clipper.hpp">
+      <Filter>Contrib\Clipper</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\openddlparser\include\openddlparser\OpenDDLParser.h">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\openddlparser\include\openddlparser\OpenDDLParserUtils.h">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\openddlparser\include\openddlparser\OpenDDLCommon.h">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\openddlparser\include\openddlparser\OpenDDLExport.h">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\openddlparser\include\openddlparser\OpenDDLStream.h">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\openddlparser\include\openddlparser\DDLNode.h">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\openddlparser\include\openddlparser\Value.h">
+      <Filter>Contrib\openddl_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcAdjacencyInfo.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcArithmeticCodec.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcBinaryStream.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcCommon.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcDVEncodeParams.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcDynamicVectorDecoder.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcDynamicVectorEncoder.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcDynamicVector.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcFIFO.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcIndexedFaceSet.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcIndexedFaceSet.inl">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcSC3DMCDecoder.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcSC3DMCDecoder.inl">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcSC3DMCEncodeParams.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcSC3DMCEncoder.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcSC3DMCEncoder.inl">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcTimer.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcTriangleFans.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcTriangleListDecoder.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcTriangleListDecoder.inl">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcTriangleListEncoder.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcTriangleListEncoder.inl">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcVector.h">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\Open3DGC\o3dgcVector.inl">
+      <Filter>Contrib\open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zip\src\miniz.h">
+      <Filter>ziplib</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zip\src\zip.h">
+      <Filter>ziplib</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\pugixml\src\pugiconfig.hpp">
+      <Filter>Contrib\Pugixml</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\pugixml\src\pugixml.hpp">
+      <Filter>Contrib\Pugixml</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\stb\stb_image.h">
+      <Filter>Contrib\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\anim.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\aabb.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\ai_assert.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\camera.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\color4.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\color4.inl">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-build\include\assimp\config.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\ColladaMetaData.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\commonMetaData.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\defs.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\cfileio.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\light.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\material.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\material.inl">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\matrix3x3.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\matrix3x3.inl">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\matrix4x4.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\matrix4x4.inl">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\mesh.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\ObjMaterial.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\pbrmaterial.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\GltfMaterial.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\postprocess.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\quaternion.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\quaternion.inl">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\scene.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\metadata.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\texture.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\types.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\vector2.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\vector2.inl">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\vector3.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\vector3.inl">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\version.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\cimport.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\AssertHandler.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\importerdesc.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\Importer.hpp">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\ProgressHandler.hpp">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\IOStream.hpp">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\IOSystem.hpp">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\cexport.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\Exporter.hpp">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\DefaultIOStream.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\DefaultIOSystem.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\ZipArchiveIOSystem.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\SceneCombiner.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\fast_atof.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\qnan.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\BaseImporter.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\Hash.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\MemoryIOWrapper.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\ParsingUtils.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\StreamReader.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\StreamWriter.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\StringComparison.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\StringUtils.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\SGSpatialSort.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\GenericProperty.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\SpatialSort.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\SkeletonMeshBuilder.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\SmallVector.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\SmoothingGroups.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\SmoothingGroups.inl">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\StandardShapes.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\RemoveComments.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\Subdivision.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\Vertex.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\LineSplitter.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\TinyFormatter.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\Profiler.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\LogAux.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\Bitmap.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\XMLTools.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\IOStreamBuffer.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\CreateAnimMesh.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\XmlParser.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\MathFunctions.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\Exceptional.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\ByteSwapper.h">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\Base64.hpp">
+      <Filter>include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\Compiler\pushpack1.h">
+      <Filter>Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\Compiler\poppack1.h">
+      <Filter>Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\include\assimp\Compiler\pstdint.h">
+      <Filter>Compiler</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\code\res\assimp.rc">
+      <Filter>Source Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="AssetLib">
+      <UniqueIdentifier>{06FEC812-8F47-302B-8990-8ABB54E38623}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\3D">
+      <UniqueIdentifier>{39EB0500-4861-3C0E-A56D-C36CCE9B159D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\3DS">
+      <UniqueIdentifier>{1B8441B4-827B-3164-B09E-1FDFAD87EE76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\3MF">
+      <UniqueIdentifier>{31817ED9-0950-3D7F-8BFD-0FC156A60069}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\AC">
+      <UniqueIdentifier>{0937FC35-C1A6-38B2-9913-783AEB886B9C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\AMF">
+      <UniqueIdentifier>{AD2A164E-2CCD-347F-BF76-3D8246DC7C84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\ASE">
+      <UniqueIdentifier>{A5B54CC2-7AE6-33D6-A6CA-9F0599F66A9A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\ASSBIN">
+      <UniqueIdentifier>{5C7F3636-A3AB-3692-81E0-39418830D112}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\ASSJSON">
+      <UniqueIdentifier>{0AC84D93-C409-3C55-B0D9-DA03CE59E0DF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\ASSXML">
+      <UniqueIdentifier>{E558E581-68A1-3F97-B661-1C910A04E309}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\B3D">
+      <UniqueIdentifier>{3C78D530-DBE5-3499-947E-E73F1DF96043}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\BLEND">
+      <UniqueIdentifier>{84CFF573-B702-38C9-95E3-8AB32C2CDE32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\BVH">
+      <UniqueIdentifier>{A6BFCFBA-1819-373A-B091-39EF8C91EBC6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\COB">
+      <UniqueIdentifier>{935B1310-DC4F-307F-A3C3-AA685D7E1923}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\COLLADA">
+      <UniqueIdentifier>{46D652F5-3AF7-30AA-B0B9-C2B88B2B7F5A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\CSM">
+      <UniqueIdentifier>{2F707724-8B8D-3BE4-A59D-DDB5973B7335}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\DXF">
+      <UniqueIdentifier>{B4617CC5-4102-3FC1-A4D4-B8F29F57A13F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\FBX">
+      <UniqueIdentifier>{76E5F533-112E-368D-8ACF-33F33EF5BAA4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\GLTF">
+      <UniqueIdentifier>{43F93B57-C24B-305A-8F1F-9256C35058DF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\HMP">
+      <UniqueIdentifier>{33097D3D-4072-3FCC-96EA-A9472746EA21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\IFC">
+      <UniqueIdentifier>{8BA80ECD-4CF4-3D7B-98D7-E6AB71198E1B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\IQM">
+      <UniqueIdentifier>{7DF78DA1-D245-315E-AD3B-BC947719C18E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\IRR">
+      <UniqueIdentifier>{90E22A57-8F2A-301A-9273-2F2BD85F244C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\IRRMESH">
+      <UniqueIdentifier>{BE529E2F-F0CB-32CB-A646-E02CA570CC42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\LWO">
+      <UniqueIdentifier>{9B3BD063-DC21-3819-A6F8-EA933E69E2D6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\LWS">
+      <UniqueIdentifier>{03BB4B15-F953-3F3B-A719-6B4B1B4846ED}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\MD2">
+      <UniqueIdentifier>{1E671A85-F0DE-362C-A81E-F20D3BCB128C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\MD3">
+      <UniqueIdentifier>{AC8EC1D3-63D2-398D-9B65-2DA7B140EA3B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\MD5">
+      <UniqueIdentifier>{A5ADC5A7-AF17-3BAF-AC14-86A9A70BD42F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\MDC">
+      <UniqueIdentifier>{9E42F1C3-1FCE-3C48-BD27-1E08F61DFC9F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\MDL">
+      <UniqueIdentifier>{75591FBB-EDBA-3A50-BC41-AE91D82CE830}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\MMD">
+      <UniqueIdentifier>{0EC24A84-1D81-3A88-8578-42FAE3642CE0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\MS3D">
+      <UniqueIdentifier>{5AFB7BE2-441D-34DD-9E77-5390E7E71987}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\NDO">
+      <UniqueIdentifier>{0EC7C05F-5F54-37AC-BC97-99ADEAF8AA49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\NFF">
+      <UniqueIdentifier>{1B6B0B91-A485-39BC-8DF8-B8B1666AAA84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\OBJ">
+      <UniqueIdentifier>{10B8F5DF-7045-3117-B17A-470DA84C3922}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\OFF">
+      <UniqueIdentifier>{F91E510E-C69A-34E1-802E-AB42DF882E78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\OGRE">
+      <UniqueIdentifier>{DFA11B5C-7B8D-345B-9ABD-E9CFD9B67E33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\OPENGEX">
+      <UniqueIdentifier>{C6085AA9-12A6-3BA1-9DD8-AA25183B9BE6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\PBRT">
+      <UniqueIdentifier>{D779605C-FF3D-3FD2-8853-9FC767D0DB6B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\PLY">
+      <UniqueIdentifier>{DC4C9EB1-88D7-391C-AB88-30966524A1DF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\Q3BSP">
+      <UniqueIdentifier>{C0FE6365-A748-398C-B7E2-DDFEAB6E664A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\Q3D">
+      <UniqueIdentifier>{D5D46123-D39C-3F93-BD2B-D1EF78860BAE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\RAW">
+      <UniqueIdentifier>{7A903346-900C-351B-98C9-9C1EB15FB812}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\SIB">
+      <UniqueIdentifier>{2332CAB3-7FAA-3292-9DCD-428A9A63955E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\SMD">
+      <UniqueIdentifier>{75FAC144-E8C3-307E-8BD2-94FAE3297219}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\STEP">
+      <UniqueIdentifier>{54A0C8C8-B129-3A33-9155-555D761D92DF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\STL">
+      <UniqueIdentifier>{678717F2-CA53-369C-8460-3EEB0E1FD99F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\TERRAGEN">
+      <UniqueIdentifier>{6A4B7DBC-E63C-3CE1-A896-1BC18BC48513}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\X">
+      <UniqueIdentifier>{49AD4A5D-89F2-3F24-B5F8-DCC7D32F03AC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\X3D">
+      <UniqueIdentifier>{E8F11E1F-4D68-3B61-9C33-86302DA391BD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetLib\XGL">
+      <UniqueIdentifier>{AB21C82E-3B1E-3E4D-9DD9-33935B41CA6B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CApi">
+      <UniqueIdentifier>{052B3180-5927-3686-97E2-493D7FD2AED5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{186F4FBB-688A-333D-A84F-4B3EF5CEC968}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Compiler">
+      <UniqueIdentifier>{CD3F38DB-6BA2-3003-B7B3-FEB4E7015615}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contrib">
+      <UniqueIdentifier>{BA55BC9A-36FC-3DE0-BAEC-7451199EE3CA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contrib\Clipper">
+      <UniqueIdentifier>{542B210D-72EF-325D-81C0-E05D61B72C0E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contrib\Poly2Tri">
+      <UniqueIdentifier>{B0180362-10EF-39CC-B006-C838EB4573D0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contrib\Pugixml">
+      <UniqueIdentifier>{17D17A6D-B931-34B3-93A1-FF52E9D6EEFB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contrib\open3dgc">
+      <UniqueIdentifier>{6B3A5525-6B66-31FA-B905-4454927612C6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contrib\openddl_parser">
+      <UniqueIdentifier>{4D1F58EE-A24D-3661-9174-9C475D1AD4FF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contrib\stb">
+      <UniqueIdentifier>{75A236F2-6F62-3A16-9682-5F9F3426F4B8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contrib\unzip">
+      <UniqueIdentifier>{C71A91D8-53AD-349F-B22E-3C1374246938}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Exporter">
+      <UniqueIdentifier>{5000AB18-CE95-339A-B5AE-A795AAD3FB9D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Geometry">
+      <UniqueIdentifier>{004F9849-15ED-33FB-80A0-016C637AF8C3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logging">
+      <UniqueIdentifier>{B4003F1D-BB19-39DD-B44A-C11F3AB1421E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MaterialSystem">
+      <UniqueIdentifier>{B0396228-24BC-362B-9898-A50513FA1F44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PostProcessing">
+      <UniqueIdentifier>{22CEFD02-CC48-332C-9D0E-F7D480CD795F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="STEPParser">
+      <UniqueIdentifier>{ECA9C9F8-31F8-31C1-A992-4273F01BDEF9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{E2F339C5-13E0-3091-8CF8-54CE70A18447}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="glTFCommon">
+      <UniqueIdentifier>{125F0644-01BA-3E21-AE23-6A2FEED1FBC8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{89F3485B-3EB0-3A53-9750-6F5AA8E65F20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\assimp">
+      <UniqueIdentifier>{6654B326-7FB7-3603-977C-12E2D67CF114}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ziplib">
+      <UniqueIdentifier>{CDA44C95-ADC1-39A2-80B7-E65E93FFBA1D}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

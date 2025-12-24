@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\learningOpenGL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\config_window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\data_save.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\control.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\SHADER_H.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\GLM_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\LIGHTS_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\playTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\Model_Assimp\ModelAssimp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\Render\Render.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\Render\RenderData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\Collision\ScreenHit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\Collision\CollisionAABB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\2D_UI\2D_screenPlayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\Render\frameBuffers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\threadSystem\thread_System.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\2D_UI\Interface_UI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\textureData\textureManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\STB_IMAGE_IMPLEMENT.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\imgui-src\imgui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\imgui-src\imgui_draw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\imgui-src\imgui_tables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\imgui-src\imgui_demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\imgui-src\imgui_widgets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\imgui-src\backends\imgui_impl_sdl3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\imgui-src\backends\imgui_impl_opengl3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\config_window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\data_save.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\control.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\SHADER_H.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\GLM_test.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\LIGHTS_test.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\playTest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\Model_Assimp\ModelAssimp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\Render\Render.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\Render\RenderData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\Collision\ScreenHit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\Collision\CollisionAABB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\2D_UI\2D_screenPlayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\Render\frameBuffers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\threadSystem\thread_System.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\2D_UI\Interface_UI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\textureData\textureManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\learningOpenGL\libFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\libs\SDL\lib\arm64" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{9CF5F5B5-FF11-379D-8A8C-7FB7473AD49F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{E2F339C5-13E0-3091-8CF8-54CE70A18447}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

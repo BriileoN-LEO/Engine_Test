@@ -1,0 +1,1 @@
+include("C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-build/tests/streamtests/streamtests[1]_include-${CTEST_CONFIGURATION_TYPE}.cmake")

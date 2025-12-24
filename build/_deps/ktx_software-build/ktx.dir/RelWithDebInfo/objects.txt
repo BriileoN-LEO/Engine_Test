@@ -1,0 +1,2 @@
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-src/lib/internalexport.def
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-src/lib/internalexport_write.def

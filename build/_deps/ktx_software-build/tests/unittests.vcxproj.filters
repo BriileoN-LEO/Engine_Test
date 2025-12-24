@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-src\lib\dfdutils\dfd2vk.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-src\tests\unittests\image_unittests.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-src\tests\unittests\test_fragment_uri.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-src\tests\unittests\test_string_to_vkformat.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-src\tests\unittests\unittests.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-src\tests\unittests\vkformat_list.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-src\tests\unittests\wthelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-src\tests\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-src\tests\tests.cmake" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{9CF5F5B5-FF11-379D-8A8C-7FB7473AD49F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{E2F339C5-13E0-3091-8CF8-54CE70A18447}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
