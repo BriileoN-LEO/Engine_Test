@@ -36,7 +36,7 @@ set(DATA_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/shaders/shader_v_v1.vs"
 "C:/Users/Briil/3D_Models_Game Engine/flash-light-17mb/FlashLight/FlashLight.obj"
 "C:/Users/Briil/3D_Models_Game Engine/Campo/Campo_Floor.obj"
 "C:/Users/Briil/3D_Models_Game Engine/vegetacion_01/vegetacion_01.obj"
-"C:/Users/Briil/3D_Models_Game Engine/tokio_place/source/testexport.fbx";
+"C:/Users/Briil/3D_Models_Game Engine/tokio_place/source/testexport.fbx"
 )
 
 set(ASSETS_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/assets_engine"
@@ -58,7 +58,7 @@ configure_file(
 )
 
 
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL")
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}libs/SDL")
 
 find_package(SDL3 REQUIRED)
 find_package(OpenGL REQUIRED)
@@ -129,6 +129,8 @@ add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/conf
 "learningOpenGL/textureData/textureManager.cpp" "learningOpenGL/textureData/textureManager.h"
 "learningOpenGL/libFile.h"
 "learningOpenGL/STB_IMAGE_IMPLEMENT.cpp"
+
+"libs/SDL/lib/arm64"
 )
 
 
