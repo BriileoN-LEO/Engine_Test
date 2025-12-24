@@ -57,7 +57,7 @@ configure_file(
 
 )
 
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}libs/SDL")
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL")
 
 find_package(SDL3 REQUIRED)
 find_package(OpenGL REQUIRED)
