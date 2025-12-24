@@ -58,9 +58,9 @@ configure_file(
 )
 
 
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}libs/SDL")
+#list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}libs/SDL")
 
-find_package(SDL3 REQUIRED)
+#//find_package(SDL3 REQUIRED)
 find_package(OpenGL REQUIRED)
 
 add_library(glad_source STATIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glad/src/glad.c)
@@ -70,10 +70,14 @@ target_include_directories(glad_source PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/g
 #para la libreria de glm
 include(FetchContent)
 
-set(KTX_FEATURE_TOOLS OFF CACHE BOOL "" FORCE)
-set(KTX_FEATURE_TEST OFF CACHE BOOL "" FORCE)
-set(KTX_FEATURE_DOC OFF CACHE BOOL "" FORCE)
-set(KTX_FEATURE_LOAD_TEST_IMAGES OFF CACHE BOOL "" FORCE)
+FetchContent_Declare(
+    SDL3
+    GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+    GIT_TAG        main
+)
+
+set(SDL_TESTS OFF CACHE BOOL "" FORCE)
+set(SDL_EXAMPLES OFF CACHE BOOL "" FORCE)
 
 FetchContent_Declare(
 ktx_software
@@ -81,6 +85,12 @@ GIT_REPOSITORY https://github.com/KhronosGroup/KTX-Software.git
 GIT_TAG v4.3.2
 
 )
+
+set(KTX_FEATURE_TOOLS OFF CACHE BOOL "" FORCE)
+set(KTX_FEATURE_TEST OFF CACHE BOOL "" FORCE)
+set(KTX_FEATURE_DOC OFF CACHE BOOL "" FORCE)
+set(KTX_FEATURE_LOAD_TEST_IMAGES OFF CACHE BOOL "" FORCE)
+
 
 FetchContent_Declare(
  glm
@@ -94,7 +104,14 @@ assimp
 GIT_REPOSITORY https://github.com/assimp/assimp.git
 #GIT_TAG v5.4.1
 GIT_TAG v6.0.2
+GIT_SHALLOW ON
 )
+
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
+set(ASSIMP_INJECT_DEBUG_POSTFIX OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_SAMPLES OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
 
 FetchContent_Declare(
 imgui
@@ -103,6 +120,7 @@ GIT_TAG docking # Use the 'docking' branch or any desired tag
 )
 
 FetchContent_MakeAvailable(
+SDL3
 ktx_software
 glm
 assimp
@@ -158,7 +176,7 @@ target_include_directories(Learning PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/learnin
 
 
 target_link_libraries(Learning PRIVATE
-SDL3::SDL3 
+SDL3::SDL3-shared
 glad_source
 OpenGL::GL
 assimp::assimp
