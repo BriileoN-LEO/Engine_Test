@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-subbuild\CMakeFiles\572f4b73aa4ac0329603c48db44d025f\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{9A285754-B820-3EA4-91BD-4006078FBBF0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

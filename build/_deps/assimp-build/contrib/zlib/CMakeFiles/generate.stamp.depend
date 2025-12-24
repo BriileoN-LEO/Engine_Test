@@ -1,0 +1,10 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/Microsoft Visual Studio/18/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-4.1/Modules/CheckCSourceCompiles.cmake
+C:/Program Files/Microsoft Visual Studio/18/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-4.1/Modules/CheckFunctionExists.cmake
+C:/Program Files/Microsoft Visual Studio/18/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-4.1/Modules/CheckIncludeFile.cmake
+C:/Program Files/Microsoft Visual Studio/18/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-4.1/Modules/CheckIncludeFileCXX.cmake
+C:/Program Files/Microsoft Visual Studio/18/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-4.1/Modules/CheckTypeSize.cmake
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/CMakeFiles/cmake.verify_globs
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/assimp-src/contrib/zlib/CMakeLists.txt
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/assimp-src/contrib/zlib/zconf.h.cmakein
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/assimp-src/contrib/zlib/zlib.pc.cmakein

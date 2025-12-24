@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\adler32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\compress.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\crc32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\deflate.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\gzclose.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\gzlib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\gzread.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\gzwrite.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\inflate.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\infback.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\inftrees.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\inffast.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\trees.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\uncompr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\zutil.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-build\contrib\zlib\zconf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\zlib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\crc32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\deflate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\gzguts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\inffast.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\inffixed.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\inflate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\inftrees.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\trees.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\zutil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\assimp-src\contrib\zlib\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{9CF5F5B5-FF11-379D-8A8C-7FB7473AD49F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{E2F339C5-13E0-3091-8CF8-54CE70A18447}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,303 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{1B5E5157-0DB1-3B5C-B003-A8B004AD49EC}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>ktx_software-populate</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\59f25f05018774024b80247c9f0de218\ktx_software-populate-mkdir.rule">
+      <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildInParallel>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Creating directories for 'ktx_software-populate'</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -Dcfgdir=/Debug -P C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/ktx_software-populate-prefix/tmp/ktx_software-populate-mkdirs.cmake
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/ktx_software-populate-prefix/src/ktx_software-populate-stamp/Debug/ktx_software-populate-mkdir
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\Debug\ktx_software-populate-mkdir</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\59f25f05018774024b80247c9f0de218\ktx_software-populate-download.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Performing download step (git clone) for 'ktx_software-populate'</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cd C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE -P C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/ktx_software-populate-prefix/tmp/ktx_software-populate-gitclone.cmake
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/ktx_software-populate-prefix/src/ktx_software-populate-stamp/Debug/ktx_software-populate-download
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\ktx_software-populate-gitinfo.txt;C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\Debug\ktx_software-populate-mkdir;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\Debug\ktx_software-populate-download</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\59f25f05018774024b80247c9f0de218\ktx_software-populate-update.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Performing update step for 'ktx_software-populate'</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cd C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-src
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -Dcan_fetch=YES -DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE -P C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/ktx_software-populate-prefix/tmp/ktx_software-populate-gitupdate.cmake
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\tmp\ktx_software-populate-gitupdate.cmake;C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\ktx_software-populate-update-info.txt;C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\Debug\ktx_software-populate-download;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\Debug\ktx_software-populate-update</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</VerifyInputsAndOutputsExist>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\59f25f05018774024b80247c9f0de218\ktx_software-populate-patch.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">No patch step for 'ktx_software-populate'</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/ktx_software-populate-prefix/src/ktx_software-populate-stamp/Debug/ktx_software-populate-patch
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\ktx_software-populate-patch-info.txt;C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\Debug\ktx_software-populate-update;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\Debug\ktx_software-populate-patch</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</VerifyInputsAndOutputsExist>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\59f25f05018774024b80247c9f0de218\ktx_software-populate-configure.rule">
+      <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildInParallel>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">No configure step for 'ktx_software-populate'</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cd C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/ktx_software-populate-prefix/src/ktx_software-populate-stamp/Debug/ktx_software-populate-configure
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\tmp\ktx_software-populate-cfgcmd.txt;C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\Debug\ktx_software-populate-patch;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\Debug\ktx_software-populate-configure</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\59f25f05018774024b80247c9f0de218\ktx_software-populate-build.rule">
+      <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildInParallel>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">No build step for 'ktx_software-populate'</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cd C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/ktx_software-populate-prefix/src/ktx_software-populate-stamp/Debug/ktx_software-populate-build
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\Debug\ktx_software-populate-configure;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\Debug\ktx_software-populate-build</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\59f25f05018774024b80247c9f0de218\ktx_software-populate-install.rule">
+      <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildInParallel>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">No install step for 'ktx_software-populate'</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cd C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/ktx_software-populate-prefix/src/ktx_software-populate-stamp/Debug/ktx_software-populate-install
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\Debug\ktx_software-populate-build;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\Debug\ktx_software-populate-install</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\59f25f05018774024b80247c9f0de218\ktx_software-populate-test.rule">
+      <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildInParallel>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">No test step for 'ktx_software-populate'</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cd C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/ktx_software-populate-prefix/src/ktx_software-populate-stamp/Debug/ktx_software-populate-test
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\Debug\ktx_software-populate-install;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\Debug\ktx_software-populate-test</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\32af949a2cdc5e88a310504dc951148a\ktx_software-populate-complete.rule">
+      <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildInParallel>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Completed 'ktx_software-populate'</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E make_directory C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/CMakeFiles/Debug
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/CMakeFiles/Debug/ktx_software-populate-complete
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/ktx_software-populate-prefix/src/ktx_software-populate-stamp/Debug/ktx_software-populate-done
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\Debug\ktx_software-populate-install;C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\Debug\ktx_software-populate-mkdir;C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\Debug\ktx_software-populate-download;C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\Debug\ktx_software-populate-update;C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\Debug\ktx_software-populate-patch;C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\Debug\ktx_software-populate-configure;C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\Debug\ktx_software-populate-build;C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\src\ktx_software-populate-stamp\Debug\ktx_software-populate-test;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\Debug\ktx_software-populate-complete</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</VerifyInputsAndOutputsExist>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\89a29d9d62c6cf8efa559c942731aed3\ktx_software-populate.rule">
+      <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildInParallel>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\Debug\ktx_software-populate-complete;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\ktx_software-populate</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</VerifyInputsAndOutputsExist>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild -BC:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild --check-stamp-file C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-4.1\Modules\CMakeDetermineSystem.cmake;C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-4.1\Modules\CMakeGenericSystem.cmake;C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-4.1\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-4.1\Modules\CMakeSystem.cmake.in;C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-4.1\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-4.1\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-4.1\Modules\ExternalProject.cmake;C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-4.1\Modules\ExternalProject\PatchInfo.txt.in;C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-4.1\Modules\ExternalProject\RepositoryInfo.txt.in;C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-4.1\Modules\ExternalProject\UpdateInfo.txt.in;C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-4.1\Modules\ExternalProject\cfgcmd.txt.in;C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-4.1\Modules\ExternalProject\gitclone.cmake.in;C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-4.1\Modules\ExternalProject\gitupdate.cmake.in;C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-4.1\Modules\ExternalProject\mkdirs.cmake.in;C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-4.1\Modules\ExternalProject\shared_internal_commands.cmake;C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-4.1\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-4.1\Modules\Platform\Windows.cmake;C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-4.1\Modules\Platform\WindowsPaths.cmake;C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\4.1.1-msvc1\CMakeSystem.cmake;C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ktx_software-populate-prefix\tmp\ktx_software-populate-mkdirs.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\CMakeFiles\ktx_software-populate">
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\DiegoYael\source\repos\BriileoN-LEO\Engine_Test\build\_deps\ktx_software-subbuild\ZERO_CHECK.vcxproj">
+      <Project>{481B007F-100D-369B-B18D-C71F1D61CA81}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

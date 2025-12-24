@@ -1,0 +1,16 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/Microsoft Visual Studio/18/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-4.1/Modules/BasicConfigVersion-SameMajorVersion.cmake.in
+C:/Program Files/Microsoft Visual Studio/18/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-4.1/Modules/CMakePackageConfigHelpers.cmake
+C:/Program Files/Microsoft Visual Studio/18/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-4.1/Modules/CheckFunctionExists.cmake
+C:/Program Files/Microsoft Visual Studio/18/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-4.1/Modules/CheckIncludeFile.cmake
+C:/Program Files/Microsoft Visual Studio/18/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-4.1/Modules/CheckIncludeFileCXX.cmake
+C:/Program Files/Microsoft Visual Studio/18/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-4.1/Modules/CheckTypeSize.cmake
+C:/Program Files/Microsoft Visual Studio/18/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-4.1/Modules/WriteBasicConfigVersionFile.cmake
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/CMakeFiles/cmake.verify_globs
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/assimp-src/CMakeLists.txt
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/assimp-src/assimp.pc.in
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/assimp-src/cmake-modules/FindPkgMacros.cmake
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/assimp-src/cmake-modules/PrecompiledHeader.cmake
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/assimp-src/cmake-modules/assimp-plain-config.cmake.in
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/assimp-src/include/assimp/config.h.in
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/assimp-src/include/assimp/revision.h.in

@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/glm-subbuild/CMakeFiles/glm-populate"
+		},
+		{
+			"file" : "C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/glm-subbuild/CMakeFiles/3a3e0d2c240ad9ef3bb5cdd9731b8a8b/glm-populate.rule"
+		},
+		{
+			"file" : "C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/glm-subbuild/CMakeFiles/8d88dbe7cdf65e86f266b6f3a8049e7f/glm-populate-complete.rule"
+		},
+		{
+			"file" : "C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/glm-subbuild/CMakeFiles/6e2de13a584b997ff23d6333f56a45d1/glm-populate-build.rule"
+		},
+		{
+			"file" : "C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/glm-subbuild/CMakeFiles/6e2de13a584b997ff23d6333f56a45d1/glm-populate-configure.rule"
+		},
+		{
+			"file" : "C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/glm-subbuild/CMakeFiles/6e2de13a584b997ff23d6333f56a45d1/glm-populate-download.rule"
+		},
+		{
+			"file" : "C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/glm-subbuild/CMakeFiles/6e2de13a584b997ff23d6333f56a45d1/glm-populate-install.rule"
+		},
+		{
+			"file" : "C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/glm-subbuild/CMakeFiles/6e2de13a584b997ff23d6333f56a45d1/glm-populate-mkdir.rule"
+		},
+		{
+			"file" : "C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/glm-subbuild/CMakeFiles/6e2de13a584b997ff23d6333f56a45d1/glm-populate-patch.rule"
+		},
+		{
+			"file" : "C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/glm-subbuild/CMakeFiles/6e2de13a584b997ff23d6333f56a45d1/glm-populate-test.rule"
+		},
+		{
+			"file" : "C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/glm-subbuild/CMakeFiles/6e2de13a584b997ff23d6333f56a45d1/glm-populate-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"glm-populate"
+		],
+		"name" : "glm-populate"
+	}
+}

@@ -1,0 +1,14 @@
+# Target labels
+ ktx_software-populate
+# Source files and their labels
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/CMakeFiles/ktx_software-populate
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/CMakeFiles/89a29d9d62c6cf8efa559c942731aed3/ktx_software-populate.rule
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/CMakeFiles/32af949a2cdc5e88a310504dc951148a/ktx_software-populate-complete.rule
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/CMakeFiles/59f25f05018774024b80247c9f0de218/ktx_software-populate-build.rule
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/CMakeFiles/59f25f05018774024b80247c9f0de218/ktx_software-populate-configure.rule
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/CMakeFiles/59f25f05018774024b80247c9f0de218/ktx_software-populate-download.rule
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/CMakeFiles/59f25f05018774024b80247c9f0de218/ktx_software-populate-install.rule
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/CMakeFiles/59f25f05018774024b80247c9f0de218/ktx_software-populate-mkdir.rule
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/CMakeFiles/59f25f05018774024b80247c9f0de218/ktx_software-populate-patch.rule
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/CMakeFiles/59f25f05018774024b80247c9f0de218/ktx_software-populate-test.rule
+C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/ktx_software-subbuild/CMakeFiles/59f25f05018774024b80247c9f0de218/ktx_software-populate-update.rule
