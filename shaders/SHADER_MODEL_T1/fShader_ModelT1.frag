@@ -426,7 +426,14 @@ if(specExist == false)
 
 }
 
+//if(gl_FragCoord.x < 1000)
+//{
 FragColor = opCalc_existTextures(resultVec4, specExist, texSpecMulti);
+//}
+//else if (gl_FragCoord.x >= 1000)
+//{
+//FragColor = vec4(coordTexOut.x, coordTexOut.y, 0.0, 1.0);
+//}
 //FragColor = vec4(coordTexOut.x, coordTexOut.y, 0.0, 1.0);
 //FragColor = resultVec4;
 

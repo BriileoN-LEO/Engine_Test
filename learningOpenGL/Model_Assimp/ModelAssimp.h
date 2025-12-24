@@ -170,13 +170,17 @@ namespace Assimp_D
 		extern std::atomic<bool> finishLoadModels;
 		extern std::mutex mutexModel;
 
+		extern std::condition_variable manageImporter;
+		extern std::mutex mutexImporter;
+		extern Assimp::Importer importer;
+
 
 		texDataManager::TextureData_File LoadTextureFromFile(const char* path, std::string directory = "", std::string typeTexture = "", bool gamma = false);
 
 		std::vector<texDataManager::TextureData_File> loadMatTextures(aiMaterial* mat, aiTextureType matType, std::string typeName, std::string directory); ///FUNCTION LEGACY::LOAD TEXTURES
 		std::vector<texDataManager::TextureData_File> loadMatTextures_Cache(aiMaterial* mat, aiTextureType matType, std::string typeName, std::string directory);
 
-		void loadModelsThread(std::vector<insertProcessModel> models);
+		void loadModelsThread(std::queue<insertProcessModel> models);
 
 		ModelData_loadCPU processModel(insertProcessModel dataModel);
 		void processNode(aiNode* node, const aiScene* scene, std::vector<MeshData_loadCPU>& meshes, std::string directory);

@@ -1131,6 +1131,8 @@ namespace Assimp_D
 
 		}
 
+
+	
 	}
 	void Model::loadModel(std::string path, const char* vertexPath, const char* fragmentPath, coordModel modelCoords, shaderSettings shaderSettings, unsigned int processFlags)
 	{
@@ -1543,6 +1545,10 @@ namespace Assimp_D
 		std::atomic<bool> finishLoadModels(false);
 		std::mutex mutexModel;
 
+		std::mutex mutexImporter;
+		std::condition_variable manageImporter;
+		Assimp::Importer importer{};
+
 		///FUNCTION LEGACY::LOAD TEXTURES
 		std::vector<texDataManager::TextureData_File> loadMatTextures(aiMaterial* mat, aiTextureType matType, std::string typeName, std::string directory)
 		{
@@ -1602,22 +1608,41 @@ namespace Assimp_D
 			return dataTextures;
 		}
 
-		void loadModelsThread(std::vector<insertProcessModel> models)
+		void loadModelsThread(std::queue<insertProcessModel> models)
 		{
-
-			for (auto& loadModel : models)
-			{
-
-				ModelData_loadCPU modelAssimp{ processModel(loadModel) };
-
+			int countUpload{};
+			auto processModelsFunc = [&]()
 				{
-					std::lock_guard<std::mutex> lock(mutexModel);
-					modelsData.push(modelAssimp);
+					ModelData_loadCPU modelAssimp{ processModel(models.front()) };
+					{
+						std::lock_guard<std::mutex> lock(mutexModel);
+						modelsData.push(modelAssimp);
+					}
 
+					atomic_CounterModel++;
+					models.pop();
+					countUpload++;
+				};
+
+			//for (auto& loadModel : models)
+		
+			while (!models.empty())
+			{
+				if (countUpload == 0)
+				{
+					processModelsFunc();
 				}
 
-				atomic_CounterModel++;
-				//atomic_sizeModels.fetch_add(1);
+				std::unique_lock<std::mutex> lockImporter(mutexImporter);
+
+				manageImporter.wait(lockImporter, [&]
+					{
+						processModelsFunc();
+						//lockImporter.unlock();
+						//atomic_sizeModels.fetch_add(1);
+						return true;
+					}
+				);
 			}
 
 			flagsAtomic = true;
@@ -1627,7 +1652,7 @@ namespace Assimp_D
 		{
 			ModelData_loadCPU data_Out{};
 
-			Assimp::Importer importer;
+			//Assimp::Importer importer;
 
 			std::filesystem::path pathModel{ dataModel.path };
 			const aiScene* scene = importer.ReadFile(pathModel.string(), dataModel.flagsProcessModel);

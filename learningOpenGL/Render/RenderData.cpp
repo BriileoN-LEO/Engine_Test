@@ -270,13 +270,16 @@ namespace RenderData_Set
 		| aiProcess_CalcTangentSpace
 		| aiProcess_GenSmoothNormals
 		| aiProcess_GenNormals
-		| aiProcess_SortByPType
+		| aiProcess_SortByPType 
+		| aiProcess_JoinIdenticalVertices
 	//	| aiProcess_PreTransformVertices
 	};
 
 		unsigned int aiProcessFlags_backpack{
-			aiProcess_Triangulate |
-			aiProcess_FlipUVs
+			aiProcess_Triangulate 
+			| aiProcess_FlipUVs 
+			| aiProcess_GenSmoothNormals 
+			//| aiProcess_JoinIdenticalVertices
 		};
 
 	//	std::filesystem::path pathBackpack{ backpack_Model };
@@ -339,16 +342,14 @@ namespace RenderData_Set
 			aiProcessFlags
 		};
 
-		std::vector<Assimp_D::loadToCPU::insertProcessModel> models
-		{
-			back_Pack,
+		std::queue<Assimp_D::loadToCPU::insertProcessModel> models;
+		
+		models.push(back_Pack);
 			//Floor,
-			FlashLight,
-			CampoVegetacion,
-			plant01,
-			mirror_01
-
-		};
+		models.push(FlashLight);
+		models.push(CampoVegetacion);
+		models.push(plant01);
+		models.push(mirror_01);
 
 		Assimp_D::loadToCPU::atomic_sizeModels.fetch_add(static_cast<int>(models.size()));
 
@@ -366,7 +367,8 @@ namespace RenderData_Set
 		if (actual_countSizeModel > 0)
 		{
 			Assimp_D::loadToCPU::mutexModel.lock();
-			
+			//ssimp_D::loadToCPU::mutexImporter.unlock();
+
 			if (!Assimp_D::loadToCPU::modelsData.empty())
 			{
 				Assimp_D::loadToCPU::ModelData_loadCPU model{ Assimp_D::loadToCPU::modelsData.front() };
@@ -380,6 +382,10 @@ namespace RenderData_Set
 				AssimpModel_D.emplace(model.nameModel, Assimp_D::Model(model));
 
 				std::cout << "LOADING::MODEL---->" << model.nameModel << '\n';
+
+				//Assimp_D::loadToCPU::importer.FreeScene();
+				Assimp_D::loadToCPU::manageImporter.notify_one();
+
 			}
 			else
 			{
@@ -388,6 +394,7 @@ namespace RenderData_Set
 
 		}
 		
+
 		if (Assimp_D::loadToCPU::flagsAtomic.load())
 		{
 			int actual_sizeModels{ Assimp_D::loadToCPU::atomic_sizeModels.load() };
