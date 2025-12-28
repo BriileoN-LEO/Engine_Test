@@ -9,7 +9,8 @@ namespace texDataManager
 	enum class typeTexture
 	{
 		diffuse = 0,
-		specular = 1
+		specular = 1,
+		back_Texture = 2
 	};
 	
 	struct texToShader
@@ -70,6 +71,7 @@ namespace texDataManager
 		std::string completePath{};
 		formatImage format{};
 
+		bool blendTexture{};
 	[[maybe_unused]] unsigned char* dataTexture{ nullptr };///OLD LOADED TEXTURE
 	[[maybe_unused]] int width{};///OLD LOADED TEXTURE
 	[[maybe_unused]] int height{};///OLD LOADED TEXTURE
@@ -83,7 +85,7 @@ namespace textureCache
 {
 	extern std::vector<texDataManager::preloaded_TextureD_info> preLoadedTextures; ///CARGA DE TEXTURAS ANTES DE PASAR A CARGARLAS A OPENGL EN EL MAIN THREAD
 	extern std::map<std::string, texDataManager::textureD_info> textures;  ///AQUI SE GUARDARAN TODAS LAS TEXTURAS QUE SE HAYAN ALMACENADO, NO SE REPETIRAN TEXTURAS
-    
+	extern std::string backTextureName;
 
 	ktxTexture* loadTexture_PreCompress_KTX(const char* path, bool& exist);//WORK IN SEPARATE THREAD, THREAD LOADING
 	texDataManager::standardTexture loadTexture_CompressInCompile(const char* path, bool& exist); //WORK IN SEPARATE THREAD, THREAD LOADING
@@ -93,6 +95,8 @@ namespace textureCache
 	GLuint loadTextureKTX(ktxTexture* texKTX);
 	GLuint loadTextureStandard(texDataManager::standardTexture& texStandard);
 	void loadAll_PreLoadedTexturesToCache();
+	
+	void uploadEngineTextures_Preloaded(const char* path);
 
 	class texture_Data
 	{

@@ -669,16 +669,17 @@ namespace renderSelection
 			*/
 			
 
-			glStencilFunc(GL_ALWAYS, 1, 0xFF);
-			glStencilMask(0xFF);
+			glStencilFunc(GL_ALWAYS, 1, 0xFF);    ////PROVISIONAL OFF
+			glStencilMask(0xFF);   ////PROVISIONAL OFF
 			data_HitAABB::triangleStencil.drawTest_2(); ///LISTO_NEW_SHADER
 
-
+  ////PROVISIONAL OFF
+			
 			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 			glStencilMask(0x00);
 			render::render_ModelAssimp_D(excluded_Objs);
 			render::render_MultiAssimp_D();
-			render::render_ModelCreation_D();
+		//	render::render_ModelCreation_D();
 			render::render_MeshLights_D();
 			
 
@@ -691,14 +692,14 @@ namespace renderSelection
 			glStencilFunc(GL_ALWAYS, 1, 0xFF);
 			glEnable(GL_DEPTH_TEST);
 		
-
+		
 		}
 
 		else
 		{
 			render::render_ModelAssimp_D(excluded_Objs);
 			render::render_MultiAssimp_D();
-			render::render_ModelCreation_D();
+		//	render::render_ModelCreation_D();
 			render::render_MeshLights_D();
 		}
 
@@ -774,7 +775,7 @@ namespace renderSelection
 
 		else
 		{
-			render::render_ModelCreation_D();
+		//	render::render_ModelCreation_D();
 			render::render_MultiAssimp_D();
 		//	render::render_ModelAssimp_D();
 			render::render_MeshLights_D();
@@ -823,14 +824,14 @@ namespace renderSelection
 			//render::render_ModelAssimp_D("", data_HitAABB::selectedObj.first.nameModel); //Exclude Model ///LISTO_NEW_SHADER
 			render::render_ModelAssimp_D(excluded_Objs);
 			render::render_MultiAssimp_D();
-			render::render_ModelCreation_D();
+		//	render::render_ModelCreation_D();
 			render::render_MeshLights_D();
 
 		}
 
 		else
 		{
-			render::render_ModelCreation_D();
+		//	render::render_ModelCreation_D();
 			render::render_MultiAssimp_D();
 			render::render_ModelAssimp_D();
 			render::render_MeshLights_D();

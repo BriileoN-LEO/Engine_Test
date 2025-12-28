@@ -469,6 +469,12 @@ namespace Assimp_D
 		for (auto textureDataCache : loadData.textures)
 		{
 			textures.textures_LoadCache.emplace_back(textureDataCache);
+
+			if (textureDataCache.blendTexture == true && textureDataCache.typeTex == texDataManager::typeTexture::diffuse)
+			{
+				textures.active_BlendMode = true;
+				
+			}
 		}
 
 		//OLD WAY TO LOAD TEXTURES
@@ -934,7 +940,6 @@ namespace Assimp_D
 		shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 		shader.setVec3("objectColor", shaderSet.objectColor);
 
-
 		if (static_cast<int>(RenderData_Set::pointLights_D.size()) > 0)
 		{
 
@@ -1029,18 +1034,54 @@ namespace Assimp_D
 
 
 		if (!textures.textures_LoadCache.empty())
+			//if (!textures.texU_Data.empty()) ///OLD WAY TO USE TEXTURES
 		{
-			//textures.useTextures_PerMaterial(shader, 1);
+			//textures.useTextures_PerMaterial(shader, 1); ///OLD WAY TO USE TEXTURES
 			textures.use_MaterialTextures(shader, 1);
 			shader.setBool("NotTexture", false);
+
+			if (nameMesh == "CampoVegetacion_1")
+			{
+				//	SDL_Log(std::to_string(static_cast<int>(textures.texU_Data.size())).c_str());
+			}
+
+			if (RenderData_Set::skybox_D::skyBox_Current.active == true && !RenderData_Set::skybox_D::skyBox_Current.nameSkybox.empty())
+			{
+				texture::textureUnits textureUnit{ static_cast<texture::textureUnits>(static_cast<int>(textures.textures_LoadCache.size()) + 1) };
+
+				RenderData_Set::skybox_D::skyBoxes_D[RenderData_Set::skybox_D::skyBox_Current.nameSkybox].bind_Texture(shader, "skybox", textureUnit);
+				shader.transformMat3("transformation_SkyBox", RenderData_Set::skybox_D::skyBoxes_D["skyBox_day"].transform_SkyBox.rotationVec);
+				shader.setBool("activeSkybox", true);
+
+			}
+
 		}
 
-		else
+		else if (textures.textures_LoadCache.empty())
 		{
 			shader.setBool("NotTexture", true);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, 0);
+			shader.setBool("Mat_1.use_texture_diffuse", false);
+			shader.setBool("Mat_1.use_texture_specular", false);
+			//shader.setBool("useSpec", false);
+
+			if (nameMesh == "CampoVegetacion_1")
+			{
+				//	SDL_Log(std::string("NOT TEXTURE::MESH::" + nameMesh).c_str());
+			}
+
+			shader.setBool("activeSkybox", false);
+			//glActiveTexture(GL_TEXTURE0);
+			//glBindTexture(GL_TEXTURE_2D, 0);
 		}
+
+
+
+		if (data_HitAABB::selectedObj.first.nameMesh == nameMesh)
+		{
+			shading::config::change_refractiveIndex(settingsShader.refractiveIndex);
+		}
+
+		shader.setFloat("refractiveIndex", settingsShader.refractiveIndex);
 
 		shader.setVec3("Mat.ambient", shaderSet.ambient);
 		shader.setVec3("Mat.difusse", shaderSet.difusse);
@@ -1050,6 +1091,7 @@ namespace Assimp_D
 
 		shader.setVec3("viewPos", cameras::cameras_D[cameras::name_CurrentCamera].posCam);
 		shader.transformMat3("modelMatrix", MeshCoord.normalModelMatrix);
+
 
 	//	glBindVertexArray(VAO);
 	//	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
@@ -1948,9 +1990,12 @@ namespace individualComp
 			if (meshes[i].nameMesh == name.nameMesh)
 			{
 				//shading::shader& shader{ RenderData_Set::AssimpModel_D[name.nameModel].outShader() };///DESACTIVADO TEMPORALMENTE
-				shading::shader& shader{ RenderData_Set::shader_D[RenderData_Set::AssimpModel_D[name.nameModel].nameShader]};
-				meshes[i].build_PreDraw(shader);
-				//SDL_Log("ENCONTRADO::SHADER");
+			//	shading::shader& shader{ RenderData_Set::shader_D[RenderData_Set::AssimpModel_D[name.nameModel].nameShader]};
+				meshes[i].build_PreDraw(RenderData_Set::shader_D[RenderData_Set::AssimpModel_D[name.nameModel].nameShader]);
+				//std::cout << RenderData_Set::AssimpModel_D[name.nameModel].nameShader << '\n';
+			
+
+				//std::cout << "TRIANGLE::FIND\n";
 				break;
 			}
 		}

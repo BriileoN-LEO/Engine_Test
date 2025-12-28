@@ -235,26 +235,26 @@ namespace ScreenCalc_Hit
 		{
 			std::vector<Assimp_D::Mesh>& meshes{ RenderData_Set::AssimpModel_D[Mesh[m].nameModel].outMeshes()};
 
-			for (auto& mesh : meshes)
+			for (auto& meshIntersect : meshes)
 			{
-				if (mesh.nameMesh == Mesh[m].nameMesh)
+				if (meshIntersect.nameMesh == Mesh[m].nameMesh)
 				{
 
-					for (int i = 0; i < static_cast<int>(mesh.verticesPos.size()); i++)
+					for (int i = 0; i < static_cast<int>(meshIntersect.verticesPos.size()); i++)
 					{
 						AABB::triAABB tri
 						{
-							mesh.verticesPos[i],
-							mesh.verticesPos[i + 1],
-							mesh.verticesPos[i + 2]
+							meshIntersect.verticesPos[i],
+							meshIntersect.verticesPos[i + 1],
+							meshIntersect.verticesPos[i + 2]
 
 						};
 
 						AABB::triAABB tri_Normal
 						{
-							mesh.normalsPos[i],
-							mesh.normalsPos[i + 1],
-							mesh.normalsPos[i + 2]
+							meshIntersect.normalsPos[i],
+							meshIntersect.normalsPos[i + 1],
+							meshIntersect.normalsPos[i + 2]
 
 						};
 
@@ -274,9 +274,9 @@ namespace ScreenCalc_Hit
 									numberVert = AABB::numberVertSelected(i, i + 1, i + 2);
 
 									//vertex.clear();
-									vertex[0] = mesh.vertices[i];
-									vertex[1] = mesh.vertices[i + 1];
-									vertex[2] = mesh.vertices[i + 2];
+									vertex[0] = meshIntersect.vertices[i];
+									vertex[1] = meshIntersect.vertices[i + 1];
+									vertex[2] = meshIntersect.vertices[i + 2];
 									dist = distancePrim;
 
 									//data_HitAABB::triangleStencil.texture = mesh.textures;

@@ -28,6 +28,8 @@ namespace textureCache
 {
 	std::vector<texDataManager::preloaded_TextureD_info> preLoadedTextures{};
 	std::map<std::string, texDataManager::textureD_info> textures{};
+	std::string backTextureName{};
+
 
 	///PRELOADED
 	ktxTexture* loadTexture_PreCompress_KTX(const char* path, bool& exist)
@@ -74,6 +76,8 @@ namespace textureCache
 	}
 	texDataManager::TextureData_File manageLoadTexture(std::string path, std::string directory, std::string typeTextures) ///Insertar texturas en el cache de textura, pasar la informa
 	{
+		texDataManager::TextureData_File texturesData{};
+
 		bool existenceTex{};
 
 		std::string path_to_KTX2{ path };
@@ -83,13 +87,26 @@ namespace textureCache
 		path_to_KTX2 = directory + path_to_KTX2;
 	//	path_to_KTX2 = directory + '/' + path_to_KTX2;
 
+
+		///SI LA TEXTURA ES PNG, TIENE BLENDMODE 
+		std::string formatImage{ path };
+		std::reverse(formatImage.begin(), formatImage.end());
+		formatImage = formatImage.substr(0, formatImage.find_last_of('.'));
+		std::reverse(formatImage.begin(), formatImage.end());
+
+		if (formatImage == "png" && texDataManager::typeTex_String[typeTextures] == texDataManager::typeTexture::diffuse)
+		{
+			texturesData.blendTexture = true;
+		}
+
+		else
+		{
+			texturesData.blendTexture = false;
+		}
+
 		std::string path_Normal{ directory + '/' + path };
 		
 		//std::cout << path_to_KTX2 << "\n";
-
-		texDataManager::TextureData_File texturesData{};
-
-
 
 		for (auto tex : textureCache::preLoadedTextures)
 		{
@@ -290,10 +307,21 @@ namespace textureCache
 
 
 		}
+
+		preLoadedTextures.erase(preLoadedTextures.begin(), preLoadedTextures.end());
+	}
+
+	void uploadEngineTextures_Preloaded(const char* path) 
+	{
+		 
+
 	}
 
 	void texture_Data::use_MaterialTextures(shading::shader& shader, int textureMax)
 	{
+		
+		shader.setBool("blendTexture", active_BlendMode);
+
 		std::map<texDataManager::typeTexture, int> texturesNr
 		{
 			{texDataManager::typeTexture::diffuse, 1},
@@ -314,7 +342,7 @@ namespace textureCache
 				prefixTexture = "Mat_" + numberTex + ".";
 				std::string nameTexBool{ prefixTexture + texDataManager::typeTex_T[texMat.typeTex].textureBool };
 				shader.setBool(nameTexBool, true);
-
+				
 				////ACABAR DE INSERTAR LAS TEXTURAS 
 
 				std::string nameTexT{ prefixTexture + texDataManager::typeTex_T[texMat.typeTex].textureInsert };

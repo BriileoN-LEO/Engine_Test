@@ -1,7 +1,9 @@
-#version 330 core
+#version 460 core
 #define NUM_POINT_LIGHTS 9
 #define NUM_DIRECTIONAL_LIGHTS 1
 #define NUM_SPOT_LIGHTS 1
+
+layout(depth_greater) out float gl_FragDepth;
 
 out vec4 FragColor;
 
@@ -83,14 +85,17 @@ struct material_maps
 {
 sampler2D texture_diffuse;
 sampler2D texture_specular;
+sampler2D back_Texture;
 float shiness;
 
+bool blendTextureDiffuse; /////ESTE VALOR SE DEJA AL AIRE
 bool use_texture_diffuse;
 bool use_texture_specular;
 
 };
 
 uniform material_maps Mat_1;
+uniform bool blendTexture;
 uniform bool NotTexture;
 
 struct material_standard
@@ -302,7 +307,7 @@ vec4 CalcSkyboxReflaction()
 return vec4(texture(skybox, coordTex).rgb, 1.0);
 }
 
-vec4 opCalc_existTextures( vec4 result, bool existTexSpec, vec4 specMulti) 
+vec4 opCalc_existTextures(vec4 result, bool existTexSpec, vec4 specMulti) 
 {
 vec4 finalResult = vec4(0.0);
 
@@ -324,6 +329,34 @@ finalResult = result;
  return finalResult;
 }
 
+/////PROXIMAMENTE HACE TENER LA CAPACIDAD DE VER LAS TEXTURAS
+void renderWithTextures(vec4 renderStandard, vec4 renderTextures)
+{
+  if(gl_FragCoord.x < 1000)
+  {
+    FragColor = renderStandard;
+  }
+
+  else if(gl_FragCoord.x <= 1000)
+  {
+    FragColor = renderTextures;
+  }
+}
+
+void renderFrontFacing(vec4 renderStandard)
+{
+
+  if(gl_FrontFacing == true || blendTexture == true)
+  {
+    FragColor = renderStandard;
+  }
+  
+  else if(gl_FrontFacing == false)
+  {
+    FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+  }
+
+}
 
 //////////////
 void main()
@@ -426,9 +459,23 @@ if(specExist == false)
 
 }
 
+vec4 renderStandard = opCalc_existTextures(resultVec4, specExist, texSpecMulti);
+vec4 renderCoordTextures = vec4(coordTexOut.x, coordTexOut.y, 0.0, 1.0);
+
+
+
+renderFrontFacing(renderStandard);
+//FragColor = vec4(1.0);
+//gl_FragDepth = gl_FragCoord.z + 50.0;
+
+
+//renderWithTextures(renderStandard, renderCoordTextures);
+
+//FragColor = opCalc_existTextures(resultVec4, specExist, texSpecMulti);
+
 //if(gl_FragCoord.x < 1000)
 //{
-FragColor = opCalc_existTextures(resultVec4, specExist, texSpecMulti);
+//FragColor = opCalc_existTextures(resultVec4, specExist, texSpecMulti);
 //}
 //else if (gl_FragCoord.x >= 1000)
 //{

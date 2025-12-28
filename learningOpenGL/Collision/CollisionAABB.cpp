@@ -118,11 +118,6 @@ namespace AABB
 				{
 					(updateVert(vert), ...); ///FOLD METHOD
 				}, tuple_PosVertex);
-
-
-
-
-			
 		}
 	
 	}
