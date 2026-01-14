@@ -554,7 +554,7 @@ namespace render
 		//render::renderPlanarReflection(); ///Para renderizar el espejo invertido.
 		//openGL_render::secondClearOpenGL();
 		render::renderAll();
-     	//RenderData_Set::frameBuffers_D["mirror_01"].useFrameBufferModel();
+     //	RenderData_Set::frameBuffers_D["mirror_01"].useFrameBufferModel();
 
 
 
@@ -616,7 +616,7 @@ namespace openGL_render
 	void clearOpenGL()
 	{
 	//RenderData_Set::testFrameBuffer.bindFrameBuffer();
-		//RenderData_Set::frameBuffers_D["mirror_01"].bindFrameBuffer();  ///se blindea el Framebuffer para recibir el render 
+	//	RenderData_Set::frameBuffers_D["mirror_01"].bindFrameBuffer();  ///se blindea el Framebuffer para recibir el render 
 		glDepthMask(GL_TRUE);
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
@@ -669,9 +669,17 @@ namespace renderSelection
 			*/
 			
 
+			if (data_HitAABB::setNewTriangle == true)
+			{
+				data_HitAABB::triangleStencil.insertTriangle();
+				data_HitAABB::setNewTriangle = false;
+			}
+
 			glStencilFunc(GL_ALWAYS, 1, 0xFF);    ////PROVISIONAL OFF
 			glStencilMask(0xFF);   ////PROVISIONAL OFF
 			data_HitAABB::triangleStencil.drawTest_2(); ///LISTO_NEW_SHADER
+
+			//std::cout << data_HitAABB::triangleStencil.vertex[0].posicion.x << '\t' << data_HitAABB::triangleStencil.vertex[0].posicion.y << '\t' << data_HitAABB::triangleStencil.vertex[0].posicion.z << '\n';
 
   ////PROVISIONAL OFF
 			
@@ -769,7 +777,7 @@ namespace renderSelection
 			//render::render_ModelAssimp_D(data_HitAABB::selectedObj.first.nameMesh); ///ExcludeMesh
 			render::render_ModelAssimp_D(excluded_Objs);
 			render::render_MultiAssimp_D();
-	//		render::render_ModelCreation_D();
+		//	render::render_ModelCreation_D();
 			render::render_MeshLights_D();
 		}
 
@@ -777,7 +785,7 @@ namespace renderSelection
 		{
 		//	render::render_ModelCreation_D();
 			render::render_MultiAssimp_D();
-		//	render::render_ModelAssimp_D();
+			render::render_ModelAssimp_D();
 			render::render_MeshLights_D();
 		}
 	}

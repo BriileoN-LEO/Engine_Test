@@ -60,6 +60,9 @@ const std::string skyBox_Directory_01 = "Images/skybox/";
 //IMAGENES BACK OF MODEL
 const std::string solid_black_texture = "Images/black_Solid.jpg";
 
+//IMAGES UI EDIT MODER
+const std::string LeftArrow_editModeUI = "Images/left_arrow_editModeUI.jpg";
+
 ///PATH MODEL 
 
 const std::string backpack_Model = "assets_engine/backpack/backpack.obj";

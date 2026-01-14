@@ -9,7 +9,7 @@ namespace screenSettings
 	int screen_h{ 1080 };
 	bool detectChangeSizeWindow{ false };
 	bool outWindow{ false };
-	int fps{ 75 };
+	int fps{ 120 };
 
 	void screenSettings::framebuffer_size_callback(SDL_Window* window)
 	{

@@ -80,6 +80,7 @@ namespace data_HitAABB
 	//extern Assimp::structModelName nameModel_Stencil;
 	extern std::pair<Assimp_D::structModelName, AABB::numberVertSelected> selectedObj;
 	extern individualComp::singleTriangle triangleStencil;
+	extern bool setNewTriangle;
 	extern bool renderSelection;
 	extern bool selectObj;
 

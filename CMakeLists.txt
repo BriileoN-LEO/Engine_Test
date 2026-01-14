@@ -3,9 +3,11 @@
 #
 cmake_minimum_required (VERSION 3.21)
 
-#add_compile_definitions(NOMINMAX)
+add_compile_definitions(NOMINMAX)
+
 #add_compile_definitions(WIN32_LEAN_AND_MEAN)
 
+add_compile_definitions(NOMINMAX WIN32_LEAN_AND_MEAN)
 project (Learning)
 
 set(CMAKE_CXX_STANDARD 23)
@@ -144,6 +146,7 @@ add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/conf
 "learningOpenGL/Render/frameBuffers.cpp" "learningOpenGL/Render/frameBuffers.h"
 "learningOpenGL/threadSystem/thread_System.h" "learningOpenGL/threadSystem/thread_System.cpp"
 "learningOpenGL/2D_UI/Interface_UI.cpp" "learningOpenGL/2D_UI/Interface_UI.h"
+"learningOpenGL/2D_UI/Interface_generalUI.cpp" "learningOpenGL/2D_UI/Interface_generalUI.h"
 "learningOpenGL/textureData/textureManager.cpp" "learningOpenGL/textureData/textureManager.h"
 "learningOpenGL/libFile.h"
 "learningOpenGL/STB_IMAGE_IMPLEMENT.cpp"

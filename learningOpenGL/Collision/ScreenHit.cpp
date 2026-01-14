@@ -233,7 +233,7 @@ namespace ScreenCalc_Hit
 
 		for (int m = 0; m < static_cast<int>(Mesh.size()); m++)
 		{
-			std::vector<Assimp_D::Mesh>& meshes{ RenderData_Set::AssimpModel_D[Mesh[m].nameModel].outMeshes()};
+			std::vector<Assimp_D::Mesh>& meshes{ RenderData_Set::AssimpModel_D[Mesh[m].nameModel].outMeshes() };
 
 			for (auto& meshIntersect : meshes)
 			{
@@ -268,7 +268,7 @@ namespace ScreenCalc_Hit
 							if (correctIntersect == true)
 							{
 								float distancePrim{ glm::distance(pointCollision, nearPt) };
-								
+
 								if (distancePrim < dist)
 								{
 									numberVert = AABB::numberVertSelected(i, i + 1, i + 2);
@@ -286,10 +286,10 @@ namespace ScreenCalc_Hit
 									meshSelected = m;
 
 									if (intersectSuccessful == false)
-									{ 
+									{
 										intersectSuccessful = true;
 									}
-									
+
 									break;
 								}
 
@@ -306,12 +306,21 @@ namespace ScreenCalc_Hit
 			}
 		}
 
+		auto insertInVertex = [&]()
+			{
+				data_HitAABB::triangleStencil.setTriangle(vertex);
+
+				data_HitAABB::setNewTriangle = true;
+
+				//	data_HitAABB::triangleStencil.insertTriangle();
+				data_HitAABB::triangleStencil.shader = RenderData_Set::AssimpModel_D[Mesh[meshSelected].nameModel].outShader();
+				data_HitAABB::triangleStencil.name = Mesh[meshSelected];
+				//data_HitAABB::triangleStencil.MeshCoord = mesh.MeshCoord;
+				data_HitAABB::selectedObj = std::pair<Assimp_D::structModelName, AABB::numberVertSelected>(Mesh[meshSelected], numberVert);
+			};
+
 		if (intersectSuccessful == true)
 		{
-		//	std::vector<Assimp::Mesh>& meshes{ RenderData_Set::AssimpModel_D[Mesh[meshSelected].nameModel].outMeshes() };
-		//	std::cout << "size_Vertices" << meshes[meshSelected].vertices.size();
-		//	std::cout << "size_VerticesPos" << meshes[meshSelected].verticesPos.size();
-
 			if (Mesh[meshSelected].nameMesh == data_HitAABB::selectedObj.first.nameMesh)
 			{
 				///Aqui nadamas actualizar los vertices y la textura, no el shader
@@ -320,25 +329,8 @@ namespace ScreenCalc_Hit
 					numberVert.v2 != data_HitAABB::selectedObj.second.v2 &&
 					numberVert.v3 != data_HitAABB::selectedObj.second.v3)
 				{
-					//	data_HitAABB::selectedTri = std::pair<Assimp::structModelName, AABB::numberVertSelected>(Mesh, AABB::numberVertSelected(i, i + 2, i + 3));
-
-						/*
-						std::vector<Assimp::vertexD> vertex
-						{
-							mesh.vertices[i],
-							mesh.vertices[i + 1],
-							mesh.vertices[i + 2],
-						};
-					*/
-					//	std::string intersectMesage{ "INTERSECT::" + Mesh.nameModel + "::" + Mesh.nameMesh };
-					//	SDL_Log(intersectMesage.c_str());
-
-					data_HitAABB::triangleStencil.setTriangle(vertex);
-					data_HitAABB::triangleStencil.insertTriangle();
-					data_HitAABB::triangleStencil.shader = RenderData_Set::AssimpModel_D[Mesh[meshSelected].nameModel].outShader();
-					data_HitAABB::triangleStencil.name = Mesh[meshSelected];
-					//data_HitAABB::triangleStencil.MeshCoord = mesh.MeshCoord;
-					data_HitAABB::selectedObj = std::pair<Assimp_D::structModelName, AABB::numberVertSelected>(Mesh[meshSelected], numberVert);
+		
+					insertInVertex();
 				}
 
 
@@ -346,22 +338,7 @@ namespace ScreenCalc_Hit
 
 			else if (Mesh[meshSelected].nameMesh != data_HitAABB::selectedObj.first.nameMesh)
 			{
-
-
-				data_HitAABB::triangleStencil.setTriangle(vertex);
-				data_HitAABB::triangleStencil.insertTriangle();
-			///	data_HitAABB::triangleStencil.texture = mesh.textures;
-			//	data_HitAABB::triangleStencil.shaderSet = mesh.shaderSet;
-			//	data_HitAABB::triangleStencil.MeshCoord = mesh.MeshCoord;
-				data_HitAABB::triangleStencil.name = Mesh[meshSelected];
-
-				//	if (Mesh.nameModel != data_HitAABB::selectedTri.first.nameModel)
-				//	{
-				data_HitAABB::triangleStencil.shader = RenderData_Set::AssimpModel_D[Mesh[meshSelected].nameModel].outShader();
-				//	}
-
-				data_HitAABB::selectedObj = std::pair<Assimp_D::structModelName, AABB::numberVertSelected>(Mesh[meshSelected], numberVert);
-
+				insertInVertex();
 			}
 		}
 

@@ -10,6 +10,7 @@
 #include "Collision/CollisionAABB.h"
 #include "2D_UI/2D_ScreenPlayer.h"
 #include "frameBuffers.h"
+#include "2D_UI/Interface_generalUI.h"
 
 namespace RenderData_Set
 {
@@ -56,6 +57,7 @@ namespace RenderData_Set
 
 	const void loadCPU_Model_Data();
 	const void insertData_toModel();
+
 	const void insertSetting_toModel();////Continuar aqui para ir insertando los modelos 3D 
 	template<typename modelSet>
 	void running_LoadingModels(std::function<modelSet> functionLoad)
@@ -73,7 +75,7 @@ namespace RenderData_Set
 				{
 					//insertSetting_toModel();
 					std::cout << "INSERT::SETTINGS\n";
-				//	Assimp_D::loadToCPU::finishLoadModels = true;
+					//	Assimp_D::loadToCPU::finishLoadModels = true;
 				}
 
 			};
@@ -95,23 +97,48 @@ namespace RenderData_Set
 				while (shading::loadToCPU::finishLoadShaders.load() == false)
 				{
 					insertData_toShader();
+					//shading::loadToCPU::finishLoadShaders.store(true);
 				}
 
 				if (shading::loadToCPU::finishLoadShaders.load() == true)
 				{
-				//	shading::loadToCPU::finishLoadShaders = false;
+					//	shading::loadToCPU::finishLoadShaders = false;
 				}
 
 			};
 
 
 		functionShader();
-		
 		loading_shader();
-	//	std::thread loading_Shaders(loading_shader);
-	//  loading_Shaders.detach();
+		//	std::thread loading_Shaders(loading_shader);
+		//  loading_Shaders.detach();
 
 	}
+
+
+	const void loadCPU_UI_editMode();
+	const void insertData_UI();
+	template<typename UI_Set>
+	void running_Loading_UI(std::function<UI_Set> functionShader)
+	{
+		auto insertData = []()
+			{
+				while (brii_UI::loadToCPU::finishLoadUI == false)
+				{
+					insertData_UI();
+				}
+
+				if (brii_UI::loadToCPU::finishLoadUI == true)
+				{
+					brii_UI::loadToCPU::resetLoadToCPU();
+				}
+			};
+
+			functionShader();
+			insertData();
+
+	}
+
 	const void loadAll_DataCPU();
 
 	const std::vector<ObjCreation::ModelCreation> setMeshLight_ModelCreation_Data();

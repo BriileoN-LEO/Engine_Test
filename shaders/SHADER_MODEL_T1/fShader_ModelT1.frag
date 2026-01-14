@@ -23,6 +23,8 @@ uniform mat3 transformation_SkyBox;
 
 uniform float refractiveIndex;
 
+uniform bool editMode;
+
 float near = 0.001;
 float far = 500.0;  
 

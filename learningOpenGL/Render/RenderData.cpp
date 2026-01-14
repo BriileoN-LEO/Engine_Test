@@ -1,6 +1,7 @@
 #include "RenderData.h"
 #include "Collision/ScreenHit.h"
 #include "playTest.h"
+//#include "2D_UI/Interface_UI.h"
 //#include "2D_UI/2D_ScreenPlayer.h"
 
 
@@ -69,7 +70,6 @@ namespace RenderData_Set
 		}
 	}
 
-	
 	const std::map<std::string, ObjCreation::ModelCreation> setModelCreation_Data()
 	{
 
@@ -494,6 +494,7 @@ namespace RenderData_Set
 
 			//Assimp_D::loadToCPU::finishLoadModels = false;
 	}
+
 	const void loadCPU_Shader()
 	{
 		shading::loadToCPU::shaderData_loadCPU shaderT1("shaderT1", vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
@@ -517,7 +518,6 @@ namespace RenderData_Set
 
 		loadShader_Thread.detach();
 	}
-
 	const void insertData_toShader()
 	{
 		int atomic_CounterShader{ shading::loadToCPU::atomic_CounterShader.load() };
@@ -563,10 +563,154 @@ namespace RenderData_Set
 
 	}
 
+	const void loadCPU_UI_editMode()
+	{
+
+		texDataManager::TextureData_File textureArrowUI
+		{
+			"textureArrowUI_01",
+			texDataManager::typeTexture::diffuse,
+			LeftArrow_editModeUI,
+			texDataManager::formatImage::standard,
+			false,
+			0
+		};
+
+		brii_UI::insertSpriteUI sprite_ArrowShader_State
+		{
+		brii_UI::typeSection_UI::arrow_compareShader,
+		glm::vec2(screenSettings::screen_w, screenSettings::screen_h * 0.5f),
+		std::pair<brii_UI::coord_x, brii_UI::coord_y>(200.0f, 200.0f),
+		"textureArrowUI_01",
+		0,
+		textureArrowUI
+
+		};
+		
+		std::vector<brii_UI::insertSpriteUI> sprites_editMode_CS
+		{
+			sprite_ArrowShader_State
+		};
+
+		brii_UI::midLevel_SpriteUI editMode_midLevel_01
+		{
+			sprites_editMode_CS,
+			brii_UI::sectionsUI::controlShaders,
+			"controlShaders"
+		};
+
+		std::vector<brii_UI::midLevel_SpriteUI> sprites_EditMenu_mid ///SPRITES DE EDITMODE-MID LEVEL 
+		{
+		   editMode_midLevel_01
+
+		};
+		 
+		std::map<std::string, texDataManager::TextureData_File> textures_controlShaders ///AÑADIR TEXTURAS
+		{
+			{textureArrowUI.nameTexture, textureArrowUI}
+		};
+
+		brii_UI::editMode_UI_D.emplace(
+			brii_UI::sectionsUI::controlShaders, 
+			brii_UI::spriteUI_Dynamic(
+				brii_UI::sectionsUI::controlShaders,
+				static_cast<int>(sprites_editMode_CS.size()),
+		    	texDataManager::TextureData_File_UI("controlShaders", textures_controlShaders))
+		); ///INSERCION DE LA CONFIGURACION
+
+
+		brii_UI::maxLevel_SpriteUI sprites_EditMenu ///SPRITES DE EDITMODE-MAX LEVEL 
+		{
+			sprites_EditMenu_mid,
+			brii_UI::menuSpriteUI::editMenu,
+			"editMenu"
+		};
+
+		std::vector<brii_UI::maxLevel_SpriteUI> allSprites
+		{
+			sprites_EditMenu
+		};
+		
+		brii_UI::loadToCPU::atomic_sizeCounterUI.store(static_cast<int>(allSprites.size()));
+
+		std::thread threadUI(brii_UI::loadToCPU::loadUIbrii_thread, allSprites);
+		threadUI.detach();
+
+	}
+    const void insertData_UI()
+	{
+		int counter{ brii_UI::loadToCPU::atomic_CounterUI.load()};
+
+		if (counter > 0)
+		{
+			brii_UI::loadToCPU::mutex_UI.lock();
+
+			if (!brii_UI::loadToCPU::UI_data.empty())
+			{
+				brii_UI::maxLevel_SpriteUI spriteToLoad{ brii_UI::loadToCPU::UI_data.front() };
+
+				brii_UI::loadToCPU::UI_data.pop();
+
+				brii_UI::loadToCPU::mutex_UI.unlock();
+
+				brii_UI::loadToCPU::atomic_CounterUI--;
+
+				if (spriteToLoad.menuType == brii_UI::menuSpriteUI::editMenu)
+				{
+					for (auto sprite : spriteToLoad.midLevels_UI)
+					{
+						for (auto infoSprite : sprite.basicLevels_UI)
+						{
+							brii_UI::editMode_UI_D[sprite.seccion].sprites.emplace(
+								infoSprite.name,
+								brii_UI::spriteUI(
+									infoSprite.name,
+									infoSprite.textureName,
+									infoSprite.posicion,
+									infoSprite.posSC,
+									infoSprite.layerTexture
+								)
+							);
+
+							std::cout << "LOADING::TEXTURE ----> " + infoSprite.textureName << '\n';
+						}
+					}
+
+				}
+
+			}
+
+			else
+			{
+				brii_UI::loadToCPU::mutex_UI.unlock();
+			}
+		}
+
+		if (brii_UI::loadToCPU::flagsReady.load())
+		{
+			int st{ brii_UI::loadToCPU::atomic_sizeCounterUI.load() };
+
+			int st_f  ///sum all
+			{
+				static_cast<int>(brii_UI::editMode_UI_D.size())
+			};
+
+			if (st == st_f)
+			{
+				brii_UI::loadToCPU::finishLoadUI.store(true);
+			}
+
+
+		}
+
+
+	
+	}
 	const void loadAll_DataCPU()
 	{
 		running_LoadingModels<void()>(loadCPU_Model_Data);
 		running_LoadingShaders<void()>(loadCPU_Shader);
+		running_Loading_UI<void()>(loadCPU_UI_editMode);
 	}
 	
 	const std::vector<ObjCreation::ModelCreation> setMeshLight_ModelCreation_Data()
@@ -997,6 +1141,8 @@ namespace RenderData_Set
 		frameBuffers_D = setFrameBuffers();
 
 		textureCache::loadAll_PreLoadedTexturesToCache(); ///CARGA DE LAS TEXTURAS EN EL CACHE.
+		brii_UI::resizeUI_textures(); //TO RESIZE ALL THE TEXTURES THAT I HAVE IN MY UI
+
 
 	}
 	const void running_AllObjects()
@@ -1024,6 +1170,7 @@ namespace cameras
 {
 	std::map<std::string, camera::camera1> cameras_D{};
 
+
 	std::string name_CurrentCamera{};
 	//camera::camera1 aerialCamera{};
 //	camera::camera1 currentCamera{};
@@ -1032,7 +1179,7 @@ namespace cameras
 	{
 		camera::camera1 firstPersonCam(camera::typeCam::firstPerson, glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.001, 100.0f);
 		camera::camera1 editCam(camera::typeCam::editMode, glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.001, 100.0f);
-		//aerialCamera.setSettingsCamera(glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.001, 100.0f);
+//      aerialCamera.setSettingsCamera(glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.001, 100.0f);
 //		currentCamera = aerialCamera;
 
 		cameras_D.emplace("cam1_firstPerson", firstPersonCam);

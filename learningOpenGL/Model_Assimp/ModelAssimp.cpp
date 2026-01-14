@@ -933,6 +933,7 @@ namespace Assimp_D
 	}
 	void Mesh::build_PreDraw(shading::shader& shader)
 	{
+		
 		shader.use();
 
 		shader.transformMat("model", MeshCoord.model);
@@ -1073,8 +1074,6 @@ namespace Assimp_D
 			//glActiveTexture(GL_TEXTURE0);
 			//glBindTexture(GL_TEXTURE_2D, 0);
 		}
-
-
 
 		if (data_HitAABB::selectedObj.first.nameMesh == nameMesh)
 		{
@@ -1831,6 +1830,7 @@ namespace individualComp
 	}
 	void singleTriangle::insertTriangle()
 	{
+
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
 
@@ -1848,6 +1848,7 @@ namespace individualComp
 		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Assimp_D::vertexD), (void*)offsetof(Assimp_D::vertexD, TexCoord));
 
+		//glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 
 	}
@@ -1999,6 +2000,8 @@ namespace individualComp
 				break;
 			}
 		}
+
+		std::cout << VAO << '\n';
 
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);

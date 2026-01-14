@@ -489,6 +489,7 @@ namespace data_HitAABB
 //	Assimp::structModelName nameModel_Stencil{};
 	std::pair<Assimp_D::structModelName, AABB::numberVertSelected> selectedObj{};
 	individualComp::singleTriangle triangleStencil{};
+	bool setNewTriangle{};
 	bool renderSelection{};
 	bool selectObj{};
 
