@@ -59,6 +59,38 @@ namespace register_Errors
 		}
 
 	}
+	void debug_renderError_(const char* file, int line)
+	{
+		GLenum errorC{ glGetError() };
+
+		std::unique_ptr<std::string> showError{ nullptr };
+		//std::string showError{};
+
+		switch (errorC)
+		{
+		case GL_INVALID_ENUM:
+			showError = std::make_unique<std::string>("INVALID_ENUM"); break;
+		case GL_INVALID_VALUE:
+			showError = std::make_unique <std::string>("INVALID_VALUE"); break;
+		case GL_INVALID_OPERATION:
+			showError = std::make_unique <std::string>("INVALID_OPERATION"); break;
+		case GL_STACK_OVERFLOW:
+			showError = std::make_unique <std::string>("STACK_OVERFLOW"); break;
+		case GL_STACK_UNDERFLOW:
+			showError = std::make_unique <std::string>("STACK_UNDERFLOW"); break;
+		case GL_OUT_OF_MEMORY:
+			showError = std::make_unique <std::string>("OUT_OF_MEMORY"); break;
+		case GL_INVALID_FRAMEBUFFER_OPERATION:
+			showError = std::make_unique <std::string>("INVALID_FRAMEBUFFER_OPERATION"); break;
+
+		}
+		
+
+		if (showError != nullptr)
+		{
+			std::cout << showError << " | " << file << " (" << line << ")" << '\n';
+		}
+	}
 
 }
 

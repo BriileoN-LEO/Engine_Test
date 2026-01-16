@@ -27,6 +27,8 @@ namespace vectors
 namespace register_Errors
 {
 	void testCompileShader(GLuint& shader, std::string type, Uint8 typeTest);
+	void debug_renderError_(const char* file, int line);
+#define debug_renderError() debug_renderError_(__FILE__, __LINE__)
 }
 namespace vertexCreation
 {

@@ -1,4 +1,5 @@
 #include "Interface_UI.h"
+#include "2D_UI/Interface_generalUI.h"
 
 namespace UI
 {
@@ -103,6 +104,10 @@ namespace UI
 		ImGui_ImplSDL3_Shutdown();
 		ImGui::DestroyContext();
 
+		for (auto& destroy_UI : brii_UI::editMode_UI_D)
+		{
+			destroy_UI.second.destroy();
+		}
 	}
 
 

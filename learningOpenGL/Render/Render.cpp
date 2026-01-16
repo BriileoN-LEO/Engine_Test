@@ -266,6 +266,15 @@ namespace render
 	
 	}
 
+	void render_brii_UI()
+	{
+		for (auto& UI : brii_UI::editMode_UI_D)
+		{
+			UI.second.renderBatch_UI();
+		}
+
+	}
+
 
 	namespace renderOP
 	{
@@ -554,6 +563,8 @@ namespace render
 		//render::renderPlanarReflection(); ///Para renderizar el espejo invertido.
 		//openGL_render::secondClearOpenGL();
 		render::renderAll();
+
+		render::render_brii_UI();
      //	RenderData_Set::frameBuffers_D["mirror_01"].useFrameBufferModel();
 
 

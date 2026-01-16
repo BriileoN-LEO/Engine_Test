@@ -40,6 +40,10 @@ const std::string fShader_Framebuffer_V01 = "shaders/SHADER_FRAMEBUFFER/fShader_
 const std::string vShader_Skybox_V01 = "shaders/SHADER_SKYBOX/vShader_skybox_v1.vert";
 const std::string fShader_Skybox_V01 = "shaders/SHADER_SKYBOX/fShader_skybox_v1.frag";
 
+//SHADER UI_BRII_1
+const std::string vShader_briiUI_V01 = "shaders/SHADER_UI/vShader_briiUI_1.vert";
+const std::string fShader_briiUI_V01 = "shaders/SHADER_UI/fShader_briiUI_1.frag";
+
 ///IMAGES
 const std::string image_Wood = "Images/container.jpg";
 const std::string image_happyFace = "Images/awesomeface.png";
@@ -61,7 +65,7 @@ const std::string skyBox_Directory_01 = "Images/skybox/";
 const std::string solid_black_texture = "Images/black_Solid.jpg";
 
 //IMAGES UI EDIT MODER
-const std::string LeftArrow_editModeUI = "Images/left_arrow_editModeUI.jpg";
+const std::string LeftArrow_editModeUI = "Images/left_arrow_editModeUI.png";
 
 ///PATH MODEL 
 

@@ -105,6 +105,14 @@ namespace texDataManager
 			return *this;
 		};
 
+		void standardTexture::data_debug()
+		{
+			if (dataTexture)
+			{
+				std::cout << "CORRECT_MOVE\n";
+			}
+		}
+
 		preloaded_TextureD_info::preloaded_TextureD_info() {};
 		preloaded_TextureD_info::preloaded_TextureD_info(std::string nameTexture, typeTexture typeTex, std::string completePath, texTypeFile textureData_F, formatImage format) :
 			nameTexture(nameTexture),
@@ -611,7 +619,7 @@ namespace textureCache
 		return idTexture;
 	}
 
-	GLuint loadTexturesUI(std::vector<std::unique_ptr<texDataManager::standardTexture>> allTexturesToLoad, int max_w, int max_h)
+	GLuint loadTexturesUI(std::vector<texDataManager::standardTexture> allTexturesToLoad, int max_w, int max_h)
 	{
 		GLuint texID_array{};
 		int layers{ static_cast<int>(allTexturesToLoad.size()) };
@@ -631,8 +639,8 @@ namespace textureCache
 	
 			//std::unique_ptr<texDataManager::standardTexture> ptr_tex{ std::move(allTexturesToLoad[sT]) };
 			
-			unsigned char* dataTex{ std::move(allTexturesToLoad[sT]->dataTexture) };
-			allTexturesToLoad[sT]->dataTexture = nullptr;
+			unsigned char* dataTex{ std::move(allTexturesToLoad[sT].dataTexture) };
+			allTexturesToLoad[sT].dataTexture = nullptr;
 
 			if (dataTex)
 			{
@@ -640,13 +648,15 @@ namespace textureCache
 
 				glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
 
+				//std::cout << "CORRECT::LOAD::TEXTURE_UI" << dataTex << '\n';
+
 				stbi_image_free(dataTex);
-				allTexturesToLoad[sT].reset();
+				//allTexturesToLoad[sT].reset();
 			}
 
 			else
 			{
-				std::cout << "ERROR::TEXTURE_UI::ARRAY_2D::LAYER" + sT << '\n';
+				std::cout << "ERROR::TEXTURE_UI::ARRAY_2D::LAYER" << dataTex << '\n';
 			}
 
 		
@@ -656,7 +666,6 @@ namespace textureCache
 		return texID_array;
 	}
 	
-
 	void loadAll_PreLoadedTexturesToCache()
 	{
 		auto saveTexuresPreloaded = [&](
@@ -704,7 +713,7 @@ namespace textureCache
 					for (auto& preLoaded : texUI)
 					{
 					//std::vector<texDataManager::standardTexture> allTex{};   ///ANTERIOR METODO
-						std::vector<std::unique_ptr<texDataManager::standardTexture>> allTex;
+						std::vector<texDataManager::standardTexture> allTex;
 						std::vector<texDataManager::textureD_info_contentUI> textures_data_UI{};
 
 						std::pair<float, float> maxCoords_padd{};   
@@ -741,15 +750,19 @@ namespace textureCache
 								maxCoords_padd.second = size_y_height;
 							}
 
-							allTex.emplace_back(std::make_unique<texDataManager::standardTexture>(std::get<texDataManager::standardTexture>(textures_data.textureData_F)));
+							texDataManager::standardTexture texture_Data{ std::move(std::get<texDataManager::standardTexture>(textures_data.textureData_F)) };
+
+							//texture_Data.data_debug();
+
+							allTex.emplace_back(std::move(texture_Data));
 						
 							batch_layer++;
 						}
 
 						for (auto& vTD_UI : textures_data_UI)
 						{
-							vTD_UI.coords_tex.first = static_cast<float>(vTD_UI.coords_tex.first / maxCoords_padd.first);
-							vTD_UI.coords_tex.second = static_cast<float>(vTD_UI.coords_tex.second / maxCoords_padd.second);
+							vTD_UI.coords_tex.first = static_cast<float>(vTD_UI.coords_tex.first / maxCoords_padd.first); /////
+							vTD_UI.coords_tex.second = static_cast<float>(vTD_UI.coords_tex.second / maxCoords_padd.second); ////
 						}
 
 						GLuint textureID{ loadTexturesUI(std::move(allTex), maxCoords_padd.first, maxCoords_padd.second)};

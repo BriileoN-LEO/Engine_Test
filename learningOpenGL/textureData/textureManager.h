@@ -51,6 +51,9 @@ namespace texDataManager
 		standardTexture& operator=(standardTexture&& oT) noexcept;
 
 		standardTexture& operator=(standardTexture& oT);
+
+		void data_debug();
+
 	};
 
 
@@ -176,7 +179,7 @@ namespace textureCache
 	GLuint loadTextureKTX(ktxTexture* texKTX);
 	GLuint loadTextureStandard(texDataManager::standardTexture& texStandard);
 
-	GLuint loadTexturesUI(std::vector<std::unique_ptr<texDataManager::standardTexture>> allTexturesToLoad, int max_w, int max_h);
+	GLuint loadTexturesUI(std::vector<texDataManager::standardTexture> allTexturesToLoad, int max_w, int max_h);
 
 	void loadAll_PreLoadedTexturesToCache();
 	

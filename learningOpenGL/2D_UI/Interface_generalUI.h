@@ -6,6 +6,8 @@
 
 namespace brii_UI
 {
+	extern const glm::mat4 projection_UI;
+
 	using coord_x = float;
 	using coord_y = float;
 
@@ -91,11 +93,14 @@ namespace brii_UI
 		
 		texDataManager::TextureData_File_UI texture{};
 		std::map<typeSection_UI, spriteUI> sprites{};
+		std::string nameShader{};
 
 		spriteUI_Dynamic();
-		spriteUI_Dynamic(sectionsUI type_sectionUI, int size_Sprites, texDataManager::TextureData_File_UI texture);
+		spriteUI_Dynamic(sectionsUI type_sectionUI, int size_Sprites, texDataManager::TextureData_File_UI texture, std::string nameShader);
 
 		void renderBatch_UI();
+
+		void destroy();
 
 	};
 

@@ -502,6 +502,7 @@ namespace RenderData_Set
 		shading::loadToCPU::shaderData_loadCPU shaderFramebuffer("shaderFramebuffer", vShader_Framebuffer_V01.c_str(), fShader_Framebuffer_V01.c_str());
 		shading::loadToCPU::shaderData_loadCPU shaderPoint("shaderPoint", vShader_Pointer.c_str(), fShader_Pointer.c_str());
 		shading::loadToCPU::shaderData_loadCPU shaderSkybox_01("shaderSkybox_01", vShader_Skybox_V01.c_str(), fShader_Skybox_V01.c_str());
+		shading::loadToCPU::shaderData_loadCPU shader_briiUI_01("brii_UI_01", vShader_briiUI_V01.c_str(), fShader_briiUI_V01.c_str());
 
 		std::vector<shading::loadToCPU::shaderData_loadCPU> shadersLoad
 		{
@@ -509,7 +510,8 @@ namespace RenderData_Set
 			shaderStandard,
 			shaderFramebuffer,
 			shaderPoint,
-			shaderSkybox_01
+			shaderSkybox_01,
+			shader_briiUI_01
 		};
 
 		shading::loadToCPU::atomic_sizeShader.fetch_add(static_cast<int>(shadersLoad.size()));
@@ -565,6 +567,8 @@ namespace RenderData_Set
 
 	const void loadCPU_UI_editMode()
 	{
+		std::string shader_01{ "brii_UI_01" };
+
 
 		texDataManager::TextureData_File textureArrowUI
 		{
@@ -580,7 +584,7 @@ namespace RenderData_Set
 		{
 		brii_UI::typeSection_UI::arrow_compareShader,
 		glm::vec2(screenSettings::screen_w, screenSettings::screen_h * 0.5f),
-		std::pair<brii_UI::coord_x, brii_UI::coord_y>(200.0f, 200.0f),
+		std::pair<brii_UI::coord_x, brii_UI::coord_y>(20.0f, 20.0f),
 		"textureArrowUI_01",
 		0,
 		textureArrowUI
@@ -610,13 +614,15 @@ namespace RenderData_Set
 			{textureArrowUI.nameTexture, textureArrowUI}
 		};
 
+		; ///INSERCION DE LA CONFIGURACION
 		brii_UI::editMode_UI_D.emplace(
 			brii_UI::sectionsUI::controlShaders, 
 			brii_UI::spriteUI_Dynamic(
 				brii_UI::sectionsUI::controlShaders,
 				static_cast<int>(sprites_editMode_CS.size()),
-		    	texDataManager::TextureData_File_UI("controlShaders", textures_controlShaders))
-		); ///INSERCION DE LA CONFIGURACION
+		    	texDataManager::TextureData_File_UI("controlShaders", textures_controlShaders),
+			    shader_01) ///SHADER NAME
+		); 
 
 
 		brii_UI::maxLevel_SpriteUI sprites_EditMenu ///SPRITES DE EDITMODE-MAX LEVEL 
@@ -1169,7 +1175,6 @@ namespace RenderData_Set
 namespace cameras
 {
 	std::map<std::string, camera::camera1> cameras_D{};
-
 
 	std::string name_CurrentCamera{};
 	//camera::camera1 aerialCamera{};

@@ -13,6 +13,7 @@ namespace render
 	void render_AABB();
 	void render_Points();
 	void render_Skybox();
+	void render_brii_UI();
 
 	namespace renderOP
 	{
