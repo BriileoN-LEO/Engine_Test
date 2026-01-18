@@ -150,6 +150,7 @@ add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/conf
 "learningOpenGL/2D_UI/Interface_UI.cpp" "learningOpenGL/2D_UI/Interface_UI.h"
 "learningOpenGL/2D_UI/Interface_generalUI.cpp" "learningOpenGL/2D_UI/Interface_generalUI.h"
 "learningOpenGL/textureData/textureManager.cpp" "learningOpenGL/textureData/textureManager.h"
+"learningOpenGL/2D_UI/system_UI/system_UI_B.cpp" "learningOpenGL/2D_UI/system_UI/system_UI_B.h"
 "learningOpenGL/libFile.h"
 "learningOpenGL/STB_IMAGE_IMPLEMENT.cpp"
 
