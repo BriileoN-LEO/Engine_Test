@@ -618,8 +618,8 @@ namespace Assimp_D
 		shader.use();
 
 		shader.transformMat("model", MeshCoord.model);
-		shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
-		shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
+		//shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+		//shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 		shader.setVec3("objectColor", shaderSet.objectColor);
 
 		if (static_cast<int>(RenderData_Set::pointLights_D.size()) > 0)

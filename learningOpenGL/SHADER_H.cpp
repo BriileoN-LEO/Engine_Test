@@ -10,15 +10,75 @@ namespace shading
 {
 
 
+	unsigned int loadToBuffer_Data(layoutType layoutT)
+	{
+		unsigned int UBO{};
+		glGenBuffers(1, &UBO);
+
+		glBindBuffer(GL_UNIFORM_BUFFER, UBO);
+
+		switch (layoutT)
+		{
+		case layoutType::MATRIX_OBJ :
+			
+			glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), nullptr, GL_STATIC_DRAW);
+			glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+			glBindBufferRange(GL_UNIFORM_BUFFER, 0, UBO, 0, 2 * sizeof(glm::mat4));
+
+			break;
+		}
+
+		return UBO;
+	}
+
+	layouts_Data::layouts_Data() {};
+	layouts_Data::layouts_Data(layoutType layoutT, std::string nameBlockD, int indexP) 
+	{
+		if (layoutT != layoutType::NONE)
+		{
+			this->layoutT = layoutT;
+			this->nameBlockD = nameBlockD;
+			this->indexP = indexP;
+			id_LD = loadToBuffer_Data(layoutT);
+		}
+
+	}
+	unsigned int& layouts_Data::use()
+	{
+		return id_LD;
+	}
+	const std::string& layouts_Data::outNameBlockD()
+	{
+		return nameBlockD;
+	}
+	const int& layouts_Data::outIndexP()
+	{
+		return indexP;
+	}
+
+	std::map<layoutType, layouts_Data>shaders_LayoutB{};
+
 	shader::shader() {};
 	shader::shader(unsigned int ID)
 	{
 		this->ID = ID;
 
 	}
-	shader::shader(const char* vertexPath, const char* fragmentPath)
+	shader::shader(const char* vertexPath, const char* fragmentPath, std::vector<layoutType> data_Layout) :
+		data_Layout(data_Layout)
 	{
 		shaderCreation(vertexPath, fragmentPath);
+		
+		if (data_Layout[0] != layoutType::NONE)
+		{
+			for (auto& dL : data_Layout)
+			{
+				unsigned int setUniformBlockIndex{ glGetUniformBlockIndex(ID, shaders_LayoutB[dL].outNameBlockD().c_str()) };
+				glUniformBlockBinding(ID, setUniformBlockIndex, shaders_LayoutB[dL].outIndexP());
+
+			}
+		}
 	}
 	void shader::shaderCreation(const char* vertexPath, const char* fragmentPath)
 	{
@@ -141,6 +201,13 @@ namespace shading
 		glUniformMatrix3fv(transMat, 1, GL_FALSE, glm::value_ptr(valueT));
 	}
 
+	void shader::setMat4_UB(const std::string& uniform_Layout, const std::string& name, glm::mat4 valueT) const
+	{
+		std::string name_UB{ uniform_Layout + "." + name };
+		unsigned int transMatUB = glGetUniformLocation(ID, name_UB.c_str());
+		glUniformMatrix4fv(transMatUB, 1, GL_FALSE, glm::value_ptr(valueT));
+	}
+
 	void shader::scaleTex(const std::string& name, vec::vec2 size) const
 	{
 		int location{ glGetUniformLocation(ID, name.c_str()) };
@@ -153,6 +220,11 @@ namespace shading
 		int location{ glGetUniformLocation(ID, name.c_str()) };
 		glUniform2f(location, size.x, size.y);
        
+	}
+
+	const std::vector<layoutType>& shader::out_DataLayout()
+	{
+		return data_Layout;
 	}
 
 	void shader::destroy()

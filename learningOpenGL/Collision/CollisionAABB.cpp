@@ -444,7 +444,11 @@ namespace AABB
 	};
 	void setShader_AABB()
 	{
-		shading::shader shaderAll_AABB(vShader_AABB_All.c_str(), fShader_AABB_All.c_str());
+		std::vector<shading::layoutType> vLT
+		{
+			shading::layoutType::NONE
+		};
+		shading::shader shaderAll_AABB(vShader_AABB_All.c_str(), fShader_AABB_All.c_str(), vLT);
 
 		for (auto& AABB_box : meshBoundingBox)
 		{

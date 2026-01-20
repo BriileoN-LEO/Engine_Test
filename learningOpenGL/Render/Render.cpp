@@ -562,6 +562,8 @@ namespace render
 
 		//render::renderPlanarReflection(); ///Para renderizar el espejo invertido.
 		//openGL_render::secondClearOpenGL();
+		Shader_Set::set_All_UB();
+
 		render::renderAll();
 
 		render::render_brii_UI();

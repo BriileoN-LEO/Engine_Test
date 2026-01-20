@@ -497,12 +497,22 @@ namespace RenderData_Set
 
 	const void loadCPU_Shader()
 	{
-		shading::loadToCPU::shaderData_loadCPU shaderT1("shaderT1", vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
-		shading::loadToCPU::shaderData_loadCPU shaderStandard("shaderStandard", vShader_Standard_v1.c_str(), fShader_Standard_v1.c_str());
-		shading::loadToCPU::shaderData_loadCPU shaderFramebuffer("shaderFramebuffer", vShader_Framebuffer_V01.c_str(), fShader_Framebuffer_V01.c_str());
-		shading::loadToCPU::shaderData_loadCPU shaderPoint("shaderPoint", vShader_Pointer.c_str(), fShader_Pointer.c_str());
-		shading::loadToCPU::shaderData_loadCPU shaderSkybox_01("shaderSkybox_01", vShader_Skybox_V01.c_str(), fShader_Skybox_V01.c_str());
-		shading::loadToCPU::shaderData_loadCPU shader_briiUI_01("brii_UI_01", vShader_briiUI_V01.c_str(), fShader_briiUI_V01.c_str());
+		std::vector <shading::layoutType> LB_01
+		{
+			 shading::layoutType::MATRIX_OBJ
+		};
+	
+		std::vector <shading::layoutType> LB_02
+		{
+		    shading::layoutType::NONE
+		};
+
+		shading::loadToCPU::shaderData_loadCPU shaderT1("shaderT1", vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), LB_01);
+		shading::loadToCPU::shaderData_loadCPU shaderStandard("shaderStandard", vShader_Standard_v1.c_str(), fShader_Standard_v1.c_str(), LB_02);
+		shading::loadToCPU::shaderData_loadCPU shaderFramebuffer("shaderFramebuffer", vShader_Framebuffer_V01.c_str(), fShader_Framebuffer_V01.c_str(), LB_02);
+		shading::loadToCPU::shaderData_loadCPU shaderPoint("shaderPoint", vShader_Pointer.c_str(), fShader_Pointer.c_str(), LB_02);
+		shading::loadToCPU::shaderData_loadCPU shaderSkybox_01("shaderSkybox_01", vShader_Skybox_V01.c_str(), fShader_Skybox_V01.c_str(), LB_02);
+		shading::loadToCPU::shaderData_loadCPU shader_briiUI_01("brii_UI_01", vShader_briiUI_V01.c_str(), fShader_briiUI_V01.c_str(), LB_02);
 
 		std::vector<shading::loadToCPU::shaderData_loadCPU> shadersLoad
 		{
@@ -539,7 +549,7 @@ namespace RenderData_Set
 
 				shading::loadToCPU::atomic_CounterShader--;
 
-				shader_D.emplace(shaD.nameShader, shading::shader(shaD.vertexShader_name, shaD.fragmentShader_name));
+				shader_D.emplace(shaD.nameShader, shading::shader(shaD.vertexShader_name, shaD.fragmentShader_name, shaD.data_Layout));
 			   
 				std::cout << "LOADING::SHADER---->" << shaD.nameShader << '\n';
 			}
@@ -1029,7 +1039,6 @@ namespace RenderData_Set
 
 	void setSettings_FileShader(const char* fragmentShader_Path, std::vector<std::string> values)
 	{
-
 		std::ifstream readShader;
 
 		readShader.exceptions(std::ios::failbit | std::ios::badbit);
@@ -1116,6 +1125,14 @@ namespace RenderData_Set
 
 	}
 	
+	const void loadLayoutBuffer_shader()
+	{
+		shading::shaders_LayoutB.emplace(
+			shading::layoutType::MATRIX_OBJ,
+			shading::layouts_Data(shading::layoutType::MATRIX_OBJ, "matrices_cam", 0));
+	
+	}
+
 	const void set_AllObjects()   /////////Cambiar esta funcion para que pueda utilizar la nueva carga de Modelos
 	{
 		pointLights_D = setPointLights();
@@ -1153,6 +1170,8 @@ namespace RenderData_Set
 	}
 	const void running_AllObjects()
 	{
+		loadLayoutBuffer_shader();  ///TO LOAD THE LAYOUTS OF UNIFORM BUFFERS IN THE SHADER
+
 		loadAll_DataCPU();
 
 		while (!finishLoadALL.load())
@@ -1182,8 +1201,8 @@ namespace cameras
 
 	void setCameras()
 	{
-		camera::camera1 firstPersonCam(camera::typeCam::firstPerson, glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.001, 100.0f);
-		camera::camera1 editCam(camera::typeCam::editMode, glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.001, 100.0f);
+		camera::camera1 firstPersonCam(camera::typeCam::firstPerson, glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.01, 100.0f);
+		camera::camera1 editCam(camera::typeCam::editMode, glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.01, 100.0f);
 //      aerialCamera.setSettingsCamera(glm::vec3(0.0f, 0.0f, 1.0f), 90.0f, 0.001, 100.0f);
 //		currentCamera = aerialCamera;
 
@@ -1193,6 +1212,7 @@ namespace cameras
 		name_CurrentCamera = "cam1_firstPerson";
 
 	}
+
 	void updateStateCurrentCamera()
 	{
 		//currentCamera = aerialCamera;
@@ -1231,3 +1251,49 @@ namespace cameras
 
 }
 
+namespace Shader_Set
+{
+	std::map<shading::layoutType, bool> usageExistence_LT{
+		{ shading::layoutType::MATRIX_OBJ, true }
+	};
+
+	void setUB_MatCam(bool& check_Exist)
+	{
+		if (shading::shaders_LayoutB.find(shading::layoutType::MATRIX_OBJ) != shading::shaders_LayoutB.end())
+		{
+			unsigned int& useUBO{ shading::shaders_LayoutB[shading::layoutType::MATRIX_OBJ].use() };
+
+			glBindBuffer(GL_UNIFORM_BUFFER, useUBO);
+
+			glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(cameras::cameras_D[cameras::name_CurrentCamera].cam));
+			glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(cameras::cameras_D[cameras::name_CurrentCamera].camProjection));
+
+			glBindBuffer(GL_UNIFORM_BUFFER, 0);
+			
+		}
+
+		else
+		{
+			check_Exist = false;
+		}
+			/*
+			if (shader_set.second.out_DataLayout() == shading::layoutType::MATRIX_OBJ)
+			{
+				shader_set.second.setMat4_UB("matrices_cam", "view_c", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+				shader_set.second.setMat4_UB("matrices_cam", "projection_c", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
+			}
+			*/
+
+	}
+
+	void set_All_UB()
+	{
+		if (usageExistence_LT[shading::layoutType::MATRIX_OBJ] == true)
+		{
+			setUB_MatCam(usageExistence_LT[shading::layoutType::MATRIX_OBJ]);
+		}
+
+
+	}
+
+}

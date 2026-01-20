@@ -27,8 +27,42 @@ namespace shading
 
 	}
 
+	enum class layoutType
+	{
+		NONE,
+		MATRIX_OBJ
+	};
+
+    unsigned int loadToBuffer_Data(layoutType layoutT);
+
+	class layouts_Data
+	{
+	private:
+
+		[[maybe_unused]] unsigned int id_LD{};
+
+		[[maybe_unused]] layoutType layoutT{};
+		[[maybe_unused]] std::string nameBlockD{};
+		[[maybe_unused]] int indexP{};
+		
+		
+	public:
+
+		layouts_Data();
+		layouts_Data(layoutType layoutT, std::string nameBlockD, int indexP);
+		
+		unsigned int& use();
+		const std::string& outNameBlockD();
+		const int& outIndexP();
+	};
+
+	extern std::map<layoutType, layouts_Data>shaders_LayoutB;
+
 	class shader
 	{
+	private:
+		std::vector<layoutType> data_Layout{};
+
 	public:
 
 		unsigned int ID{};
@@ -36,7 +70,7 @@ namespace shading
 
 		shader();
 		shader(unsigned int ID);
-		shader(const char* vertexPath, const char* fragmentPath);
+		shader(const char* vertexPath, const char* fragmentPath, std::vector<layoutType> data_Layout); /////
 
 		void shaderCreation(const char* vertexPath, const char* fragmentPath);
 
@@ -55,7 +89,11 @@ namespace shading
 
 		void transformMat(const std::string& name, glm::mat4 valueT) const;
 		void transformMat3(const std::string& name, glm::mat3 valueT) const;
-		
+
+		void setMat4_UB(const std::string& uniform_Layout, const std::string& name, glm::mat4 valueT) const;
+
+		const std::vector<layoutType>& out_DataLayout();
+
 		void destroy();
 	};
 
@@ -66,6 +104,7 @@ namespace shading
 			std::string nameShader{};
 			const char* vertexShader_name{nullptr};
 			const char* fragmentShader_name{nullptr};
+		    std::vector<layoutType> data_Layout{};
 		};
 
 		extern std::queue<shaderData_loadCPU> shaderData;

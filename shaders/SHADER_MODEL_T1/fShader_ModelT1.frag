@@ -3,7 +3,7 @@
 #define NUM_DIRECTIONAL_LIGHTS 1
 #define NUM_SPOT_LIGHTS 1
 
-layout(depth_greater) out float gl_FragDepth;
+layout(depth_any) out float gl_FragDepth;
 
 out vec4 FragColor;
 
@@ -345,19 +345,22 @@ void renderWithTextures(vec4 renderStandard, vec4 renderTextures)
   }
 }
 
-void renderFrontFacing(vec4 renderStandard)
+vec4 renderFrontFacing(vec4 renderStandard)
 {
+
+vec4 renderFragColor = vec4(0.0);
 
   if(gl_FrontFacing == true || blendTexture == true)
   {
-    FragColor = renderStandard;
+    renderFragColor = renderStandard;
   }
   
   else if(gl_FrontFacing == false)
   {
-    FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+    renderFragColor = vec4(0.0, 0.0, 0.0, 1.0);
   }
 
+  return renderFragColor;
 }
 
 //////////////
@@ -466,7 +469,8 @@ vec4 renderCoordTextures = vec4(coordTexOut.x, coordTexOut.y, 0.0, 1.0);
 
 
 
-renderFrontFacing(renderStandard);
+FragColor = renderFrontFacing(renderStandard);
+
 //FragColor = vec4(1.0);
 //gl_FragDepth = gl_FragCoord.z + 50.0;
 
