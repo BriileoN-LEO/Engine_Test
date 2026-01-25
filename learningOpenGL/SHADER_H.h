@@ -14,6 +14,7 @@
 
 namespace shading
 {
+
 	namespace config
 	{
 		struct shaderConfig
@@ -27,13 +28,79 @@ namespace shading
 
 	}
 
+	struct setShader_PointLight
+	{
+		glm::vec3 lightPos; // 0-12
+		float pad_01; // 12-16
+
+		glm::vec3 ambient; //16
+		float constant; //4
+
+		glm::vec3 diffuse; //16
+		float linear; //4
+
+		glm::vec3 specular; //16
+		float quadratic; //4
+
+		glm::vec3 pad_02;
+		int lightState; //4
+
+	};
+
+	struct setShader_DirectionLight
+	{
+		glm::vec3 lightDir;// 0-12
+		float pad_01;//12-16
+
+		glm::vec3 ambient; // 16-28
+		float pad_02; // 28-32
+
+		glm::vec3 diffuse; // 32-44
+		float pad_03; // 44-48
+
+		glm::vec3 specular; // 48-60
+		int lightState; // 60-64
+
+	};
+
+	struct setShader_SpotLight
+	{
+		glm::vec3 lightPos;
+		float cutOff;
+
+		glm::vec3 lightDir;
+		float outerCutOff;
+
+		glm::vec3 ambient;
+		float constant;
+
+		glm::vec3 diffuse;
+		float linear;
+
+		glm::vec3 specular;
+		float quadratic;
+
+		glm::vec3 pad_01;
+		int lightState;
+
+	};
+
 	enum class layoutType
 	{
 		NONE,
-		MATRIX_OBJ
+		MATRIX_OBJ,
+		LIGHTS
 	};
 
-    unsigned int loadToBuffer_Data(layoutType layoutT);
+	namespace register_Errors_SS
+	{
+		void debug_BufferLayout(GLuint ID, const char* nameBlock);
+
+
+	}
+
+
+    unsigned int loadToBuffer_Data(layoutType layoutT, int& index);
 
 	class layouts_Data
 	{
@@ -56,6 +123,7 @@ namespace shading
 		const int& outIndexP();
 	};
 
+	extern std::map<layoutType, std::pair<std::string, int>> settings_LayoutUni;
 	extern std::map<layoutType, layouts_Data>shaders_LayoutB;
 
 	class shader
@@ -92,6 +160,7 @@ namespace shading
 
 		void setMat4_UB(const std::string& uniform_Layout, const std::string& name, glm::mat4 valueT) const;
 
+		const unsigned int& outID();
 		const std::vector<layoutType>& out_DataLayout();
 
 		void destroy();

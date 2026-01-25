@@ -9,27 +9,164 @@
 namespace shading
 {
 
-
-	unsigned int loadToBuffer_Data(layoutType layoutT)
+	namespace register_Errors_SS
 	{
-		unsigned int UBO{};
-		glGenBuffers(1, &UBO);
+		void debug_BufferLayout(GLuint ID, const char* nameBlock)
+		{
+			GLuint indexBuffer{ glGetProgramResourceIndex(ID, GL_SHADER_STORAGE_BLOCK, nameBlock) };
 
-		glBindBuffer(GL_UNIFORM_BUFFER, UBO);
+			GLint variablesNum{};
+			GLenum blockProp{ GL_NUM_ACTIVE_VARIABLES };
+			glGetProgramResourceiv(ID, GL_SHADER_STORAGE_BLOCK, indexBuffer, 1, &blockProp, 1, nullptr, &variablesNum);
+
+			std::vector<GLint> variablesIndices(variablesNum);
+			GLenum blockVarProp{ GL_ACTIVE_VARIABLES };
+			glGetProgramResourceiv(ID, GL_SHADER_STORAGE_BLOCK, indexBuffer, 1, &blockVarProp, variablesNum, nullptr, variablesIndices.data());
+
+			for (auto& var : variablesIndices)
+			{
+				GLenum props[]{ GL_OFFSET, GL_NAME_LENGTH };
+				GLint results[2];
+
+				glGetProgramResourceiv(ID, GL_BUFFER_VARIABLE, var, 2, props, 2, nullptr, results);
+				
+				GLint offset{ results[0] };
+				GLint nameLenght{ results[1] };
+				
+				std::vector<char> name(nameLenght);
+				glGetProgramResourceName(ID, GL_BUFFER_VARIABLE, var, nameLenght, nullptr, name.data());
+
+				std::cout << "VARIABLE: " << name.data() << " ---> OFFSET: " << offset << '\n';
+
+			}
+
+		}
+
+
+	}
+
+
+	unsigned int loadToBuffer_Data(layoutType layoutT, int& index)
+	{
 
 		switch (layoutT)
 		{
+			////HERE SAFE THE DATA DEPENDING THE TYPE OF LAYOUT
 		case layoutType::MATRIX_OBJ :
-			
+		{
+			unsigned int UBO{};
+			glGenBuffers(1, &UBO);
+
+			glBindBuffer(GL_UNIFORM_BUFFER, UBO);
+
 			glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), nullptr, GL_STATIC_DRAW);
-			glBindBuffer(GL_UNIFORM_BUFFER, 0);
+			glBindBuffer(GL_UNIFORM_BUFFER, index);
 
 			glBindBufferRange(GL_UNIFORM_BUFFER, 0, UBO, 0, 2 * sizeof(glm::mat4));
+
+			return UBO;
 
 			break;
 		}
 
-		return UBO;
+		case layoutType::LIGHTS :
+		{
+			unsigned int SSBO{};
+			glGenBuffers(1, &SSBO);
+
+			std::vector<shading::setShader_DirectionLight> SS_DL{};
+			std::vector<shading::setShader_PointLight> SS_PL{};
+			std::vector<shading::setShader_SpotLight> SS_SL{};
+
+			////CONTINUAR COLOCANDO LAS LUCES PARA CREAR EL BUFFER DE LUCES
+			for (auto& dirLight : RenderData_Set::directionalLights_D)
+			{
+
+				SS_DL.emplace_back(
+					glm::vec3(dirLight.Direction),
+					0.0f,
+					glm::vec3(dirLight.Mat.ambient),
+					0.0f,
+					glm::vec3(dirLight.Mat.diffuse),
+					0.0f,
+					glm::vec3(dirLight.Mat.specular),
+					0
+				);
+
+			}
+
+			for (auto& pointLight : RenderData_Set::pointLights_D)
+			{
+				SS_PL.emplace_back(
+					glm::vec3(pointLight.Posicion),
+					0.0f,
+					glm::vec3(pointLight.Mat.ambient),
+					pointLight.constant,
+					glm::vec3(pointLight.Mat.diffuse),
+					pointLight.linear,
+					glm::vec3(pointLight.Mat.specular),
+					pointLight.quadratic,
+					glm::vec3(0.0f),
+					static_cast<int>(pointLight.stateLight)
+				);
+
+
+			}
+
+			for (auto& spotLight : RenderData_Set::spotLights_D)
+			{
+				SS_SL.emplace_back(
+					glm::vec3(spotLight.second.Posicion),
+					glm::cos(glm::radians(spotLight.second.cutOff)),
+					glm::vec3(spotLight.second.Direction),
+					glm::cos(glm::radians(spotLight.second.outerCutOff)),
+					glm::vec3(spotLight.second.Mat.ambient),
+					spotLight.second.constant,
+					glm::vec3(spotLight.second.Mat.diffuse),
+					spotLight.second.linear,
+					glm::vec3(spotLight.second.Mat.specular),
+					spotLight.second.quadratic,
+					glm::vec3(0.0f),
+					static_cast<int>(spotLight.second.stateLight)
+				);
+
+			}
+
+
+			size_t rangeSize_01{ static_cast<size_t>(SS_DL.size() * sizeof(shading::setShader_DirectionLight)) };
+		    size_t rangeSize_02{ static_cast<size_t>(SS_PL.size() * sizeof(shading::setShader_PointLight)) };
+			size_t rangeSize_03{ static_cast<size_t>(SS_SL.size() * sizeof(shading::setShader_SpotLight)) };
+
+			size_t total{ rangeSize_01 + rangeSize_02 + rangeSize_03 };
+
+
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, SSBO);
+
+			glBufferData(GL_SHADER_STORAGE_BUFFER, total, nullptr, GL_DYNAMIC_DRAW);
+
+			glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, rangeSize_01, SS_DL.data());
+
+			glBufferSubData(GL_SHADER_STORAGE_BUFFER, rangeSize_01, rangeSize_02, SS_PL.data());
+
+			glBufferSubData(GL_SHADER_STORAGE_BUFFER, rangeSize_01 + rangeSize_02, rangeSize_03, SS_SL.data());
+
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, index, SSBO);
+			//glBindBufferRange(GL_UNIFORM_BUFFER, 1, UBO, (num_PointLights * sizeof(setShader_PointLight)) + (num_DirLights * sizeof(setShader_DirectionLight)), 2 * sizeof(glm::mat4));
+
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+
+			return SSBO;
+
+			break;
+		}
+		default:
+		{
+			std::cout << "ERROR::I CANNOT SEARCH THE LAYOUT TYPE \n";
+			break;
+		}
+		}
+
+		return 0;
 	}
 
 	layouts_Data::layouts_Data() {};
@@ -40,7 +177,7 @@ namespace shading
 			this->layoutT = layoutT;
 			this->nameBlockD = nameBlockD;
 			this->indexP = indexP;
-			id_LD = loadToBuffer_Data(layoutT);
+			id_LD = loadToBuffer_Data(layoutT, indexP);
 		}
 
 	}
@@ -57,7 +194,8 @@ namespace shading
 		return indexP;
 	}
 
-	std::map<layoutType, layouts_Data>shaders_LayoutB{};
+	std::map<layoutType, std::pair<std::string, int>> settings_LayoutUni{}; ////before loading shaders and layouts
+	std::map<layoutType, layouts_Data>shaders_LayoutB{};  ////after load shaders and layouts
 
 	shader::shader() {};
 	shader::shader(unsigned int ID)
@@ -70,12 +208,16 @@ namespace shading
 	{
 		shaderCreation(vertexPath, fragmentPath);
 		
-		if (data_Layout[0] != layoutType::NONE)
+		if (data_Layout[0] != layoutType::NONE &&
+			data_Layout[0] != layoutType::LIGHTS)
 		{
 			for (auto& dL : data_Layout)
 			{
-				unsigned int setUniformBlockIndex{ glGetUniformBlockIndex(ID, shaders_LayoutB[dL].outNameBlockD().c_str()) };
-				glUniformBlockBinding(ID, setUniformBlockIndex, shaders_LayoutB[dL].outIndexP());
+			//	unsigned int setUniformBlockIndex{ glGetUniformBlockIndex(ID, shaders_LayoutB[dL].outNameBlockD().c_str()) };
+			//	glUniformBlockBinding(ID, setUniformBlockIndex, shaders_LayoutB[dL].outIndexP());
+		
+					unsigned int setUniformBlockIndex{ glGetUniformBlockIndex(ID, settings_LayoutUni[dL].first.c_str()) };
+					glUniformBlockBinding(ID, setUniformBlockIndex, settings_LayoutUni[dL].second);
 
 			}
 		}
@@ -220,6 +362,11 @@ namespace shading
 		int location{ glGetUniformLocation(ID, name.c_str()) };
 		glUniform2f(location, size.x, size.y);
        
+	}
+
+	const unsigned int& shader::outID()
+	{
+		return ID;
 	}
 
 	const std::vector<layoutType>& shader::out_DataLayout()

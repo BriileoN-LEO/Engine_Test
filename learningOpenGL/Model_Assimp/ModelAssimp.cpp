@@ -585,8 +585,8 @@ namespace Assimp_D
 		shader.use();
 
 		shader.transformMat("model", MeshCoord.model);
-		shader.transformMat("view", cam1.cam);
-		shader.transformMat("projection", cam1.camProjection);
+		//shader.transformMat("view", cam1.cam);
+		//shader.transformMat("projection", cam1.camProjection);
 		shader.setVec3("objectColor", shaderSet.objectColor);
 
 		shader.setVec3("lightColor", light.Color);
@@ -622,6 +622,7 @@ namespace Assimp_D
 		//shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 		shader.setVec3("objectColor", shaderSet.objectColor);
 
+		/*
 		if (static_cast<int>(RenderData_Set::pointLights_D.size()) > 0)
 		{
 
@@ -681,6 +682,7 @@ namespace Assimp_D
 		{
 			int sL_i{};
 
+			
 			for (auto& spotLight : RenderData_Set::spotLights_D)
 			{
 				std::string sL_name{ "spotLights_Array[" + std::to_string(sL_i) + "]" };
@@ -713,7 +715,7 @@ namespace Assimp_D
 			}
 
 		}
-
+		*/
 
 		if(!textures.textures_LoadCache.empty())
 		//if (!textures.texU_Data.empty()) ///OLD WAY TO USE TEXTURES
@@ -800,7 +802,7 @@ namespace Assimp_D
 		shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 		shader.setVec3("objectColor", shaderSet.objectColor);
 
-
+		/*
 		if (static_cast<int>(RenderData_Set::pointLights_D.size()) > 0)
 		{
 
@@ -892,7 +894,7 @@ namespace Assimp_D
 			}
 
 		}
-
+		*/
 
 		if (!textures.textures_LoadCache.empty())
 		{
@@ -937,10 +939,11 @@ namespace Assimp_D
 		shader.use();
 
 		shader.transformMat("model", MeshCoord.model);
-		shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
-		shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
+		//shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+		//shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 		shader.setVec3("objectColor", shaderSet.objectColor);
 
+		/*
 		if (static_cast<int>(RenderData_Set::pointLights_D.size()) > 0)
 		{
 
@@ -1032,7 +1035,7 @@ namespace Assimp_D
 			}
 
 		}
-
+		*/
 
 		if (!textures.textures_LoadCache.empty())
 			//if (!textures.texU_Data.empty()) ///OLD WAY TO USE TEXTURES

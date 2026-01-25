@@ -54,6 +54,7 @@ namespace RenderData_Set
 	const std::map<std::string, ObjCreation::ModelCreation> setModelCreation_Data();
 	const std::map<std::string, Assimp_D::Model> setModel_Data();
 
+	const void loadSettings_LayoutUni();
 	const void loadLayoutBuffer_shader();
 
 	const void loadCPU_Model_Data();
@@ -180,6 +181,8 @@ namespace Shader_Set
 	extern std::map<shading::layoutType, bool> usageExistence_LT;
 
 	void setUB_MatCam(bool& check_Exist);
+	void setLights_SSBO(bool& check_Exist);
+
 	void set_All_UB();
 }
 

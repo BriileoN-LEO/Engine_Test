@@ -12,14 +12,15 @@ using direction = glm::vec3;
 
 namespace light
 {
-	
+
 	struct lightShader
 	{
 		glm::vec3 ambient{};
 		glm::vec3 diffuse{};
 		glm::vec3 specular{};
 	};
-    
+
+
 	class light1
 	{
 	public:

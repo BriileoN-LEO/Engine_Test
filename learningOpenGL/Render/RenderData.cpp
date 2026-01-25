@@ -262,6 +262,34 @@ namespace RenderData_Set
 		return AssimpModels;
 	}
 
+	const void loadSettings_LayoutUni()
+	{
+		shading::settings_LayoutUni.emplace(
+			shading::layoutType::MATRIX_OBJ,
+			std::pair<std::string, int>("matrices_cam", 0)
+		);
+
+		shading::settings_LayoutUni.emplace(
+			shading::layoutType::LIGHTS,
+			std::pair<std::string, int>("lights", 1)
+		);
+
+	}
+	const void loadLayoutBuffer_shader()
+	{
+
+		for (auto& layout_SS : shading::settings_LayoutUni)
+		{
+			const shading::layoutType& layoutT{ layout_SS.first };
+			const std::string& nameBlockD{ layout_SS.second.first };
+			const int& indexP{ layout_SS.second.second };
+
+			shading::shaders_LayoutB.emplace(
+				layoutT,
+				shading::layouts_Data(layoutT, nameBlockD, indexP));
+		}
+	}
+
 	const void loadCPU_Model_Data()
 	{
 		unsigned int aiProcessFlags{ aiProcess_Triangulate
@@ -499,7 +527,7 @@ namespace RenderData_Set
 	{
 		std::vector <shading::layoutType> LB_01
 		{
-			 shading::layoutType::MATRIX_OBJ
+			 shading::layoutType::MATRIX_OBJ, shading::layoutType::LIGHTS
 		};
 	
 		std::vector <shading::layoutType> LB_02
@@ -1124,14 +1152,6 @@ namespace RenderData_Set
 
 
 	}
-	
-	const void loadLayoutBuffer_shader()
-	{
-		shading::shaders_LayoutB.emplace(
-			shading::layoutType::MATRIX_OBJ,
-			shading::layouts_Data(shading::layoutType::MATRIX_OBJ, "matrices_cam", 0));
-	
-	}
 
 	const void set_AllObjects()   /////////Cambiar esta funcion para que pueda utilizar la nueva carga de Modelos
 	{
@@ -1166,11 +1186,14 @@ namespace RenderData_Set
 		textureCache::loadAll_PreLoadedTexturesToCache(); ///CARGA DE LAS TEXTURAS EN EL CACHE.
 		brii_UI::resizeUI_textures(); //TO RESIZE ALL THE TEXTURES THAT I HAVE IN MY UI
 
-
+		shading::register_Errors_SS::debug_BufferLayout(shader_D["shaderT1"].outID(), "lights");
 	}
+
 	const void running_AllObjects()
 	{
-		loadLayoutBuffer_shader();  ///TO LOAD THE LAYOUTS OF UNIFORM BUFFERS IN THE SHADER
+		//loadLayoutBuffer_shader();  ///TO LOAD THE LAYOUTS OF UNIFORM BUFFERS IN THE SHADER
+
+		loadSettings_LayoutUni();
 
 		loadAll_DataCPU();
 
@@ -1185,6 +1208,8 @@ namespace RenderData_Set
 			}
 
 		}
+
+		loadLayoutBuffer_shader();
 
 
 	}
@@ -1254,7 +1279,8 @@ namespace cameras
 namespace Shader_Set
 {
 	std::map<shading::layoutType, bool> usageExistence_LT{
-		{ shading::layoutType::MATRIX_OBJ, true }
+		{ shading::layoutType::MATRIX_OBJ, true },
+		{ shading::layoutType::LIGHTS, true}
 	};
 
 	void setUB_MatCam(bool& check_Exist)
@@ -1286,6 +1312,112 @@ namespace Shader_Set
 
 	}
 
+	void setLights_SSBO(bool& check_Exist)
+	{
+		if (shading::shaders_LayoutB.find(shading::layoutType::LIGHTS) != shading::shaders_LayoutB.end())
+		{
+
+			std::vector<shading::setShader_DirectionLight> SS_DL{};
+			std::vector<shading::setShader_PointLight> SS_PL{};
+			std::vector<shading::setShader_SpotLight> SS_SL{};
+
+			////CONTINUAR COLOCANDO LAS LUCES PARA CREAR EL BUFFER DE LUCES
+
+			for (auto& dirLight : RenderData_Set::directionalLights_D)
+			{
+
+				SS_DL.emplace_back(
+					glm::vec3(dirLight.Direction),
+					0.0f,
+					glm::vec3(dirLight.Mat.ambient),
+					0.0f,
+					glm::vec3(dirLight.Mat.diffuse),
+					0.0f,
+					glm::vec3(dirLight.Mat.specular),
+					0
+				);
+
+			}
+
+			for (auto& pointLight : RenderData_Set::pointLights_D)
+			{
+				SS_PL.emplace_back(
+					glm::vec3(pointLight.Posicion),
+					0.0f,
+					glm::vec3(pointLight.Mat.ambient),
+					pointLight.constant,
+					glm::vec3(pointLight.Mat.diffuse),
+					pointLight.linear,
+					glm::vec3(pointLight.Mat.specular),
+					pointLight.quadratic,
+					glm::vec3(0.0f),
+					static_cast<int>(pointLight.stateLight)
+				);
+			
+
+			}
+
+			for (auto& spotLight : RenderData_Set::spotLights_D)
+			{
+				SS_SL.emplace_back(
+					glm::vec3(spotLight.second.Posicion),
+					glm::cos(glm::radians(spotLight.second.cutOff)),
+					glm::vec3(spotLight.second.Direction),
+					glm::cos(glm::radians(spotLight.second.outerCutOff)),
+					glm::vec3(spotLight.second.Mat.ambient),
+					spotLight.second.constant,
+					glm::vec3(spotLight.second.Mat.diffuse),
+					spotLight.second.linear,
+					glm::vec3(spotLight.second.Mat.specular),
+					spotLight.second.quadratic,
+					glm::vec3(0.0f),
+					static_cast<int>(spotLight.second.stateLight)
+				);
+
+			}
+			
+
+			size_t rangeSize_01{ static_cast<size_t>(SS_DL.size() * sizeof(shading::setShader_DirectionLight)) };
+		    size_t rangeSize_02{ static_cast<size_t>(SS_PL.size() * sizeof(shading::setShader_PointLight)) };
+			size_t rangeSize_03{ static_cast<size_t>(SS_SL.size() * sizeof(shading::setShader_SpotLight)) };
+
+			size_t total{ rangeSize_01 + rangeSize_02 + rangeSize_03 };
+			////CHECK IF I CAN LOAD THE LIGHTS WITH THE BUFFER 
+
+			unsigned int& ID_SSBO{ shading::shaders_LayoutB[shading::layoutType::LIGHTS].use() };
+			const int& indexP{ shading::shaders_LayoutB[shading::layoutType::LIGHTS].outIndexP() };
+
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, ID_SSBO);
+
+			//glBufferData(GL_SHADER_STORAGE_BUFFER, total, nullptr, GL_DYNAMIC_DRAW);
+
+			glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, rangeSize_01, SS_DL.data());
+
+			//static_assert(sizeof(shading::setShader_PointLight) == 64, "NO EQUAL SIZE::POINT LIGHT::BUFFER");
+
+			//if (sizeof(shading::setShader_PointLight) != 64)
+			//{
+			//	std::cout << "ERROR SIZE--->" << sizeof(shading::setShader_PointLight) << '\n';
+			//}
+
+			glBufferSubData(GL_SHADER_STORAGE_BUFFER, rangeSize_01, rangeSize_02, SS_PL.data());
+			
+
+			glBufferSubData(GL_SHADER_STORAGE_BUFFER, rangeSize_01 + rangeSize_02, rangeSize_03, SS_SL.data());
+
+			//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, indexP, ID_SSBO);
+			//glBindBufferRange(GL_UNIFORM_BUFFER, 1, UBO, (num_PointLights * sizeof(setShader_PointLight)) + (num_DirLights * sizeof(setShader_DirectionLight)), 2 * sizeof(glm::mat4));
+
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+		}
+
+		else
+		{
+			check_Exist = false;
+		}
+
+	}
+
 	void set_All_UB()
 	{
 		if (usageExistence_LT[shading::layoutType::MATRIX_OBJ] == true)
@@ -1293,6 +1425,10 @@ namespace Shader_Set
 			setUB_MatCam(usageExistence_LT[shading::layoutType::MATRIX_OBJ]);
 		}
 
+		if (usageExistence_LT[shading::layoutType::LIGHTS] == true)
+		{
+			setLights_SSBO(usageExistence_LT[shading::layoutType::LIGHTS]);
+		}
 
 	}
 

@@ -30,58 +30,75 @@ float far = 500.0;
 
 struct directional_Light
 {
- vec3 lightDir;
+ vec3 lightDir;// 0-12
+ float pad_01;//12-16
 
- vec3 ambient;
- vec3 diffuse;
- vec3 specular;
+ vec3 ambient; // 16-28
+ float pad_02; // 28-32
 
- bool lightState;
+ vec3 diffuse; // 32-44
+ float pad_03; // 44-48
+
+ vec3 specular; // 48-60
+ int lightState; // 64-68
 
 };
 
-uniform directional_Light directionalLight_1;
+//uniform directional_Light directionalLight_1;  ////TEST TO LOAD IN UNIFORM BUFFER
+//uniform directional_Light directionalLight_1[NUM_DIRECTIONAL_LIGHTS];
 
 struct point_Light
 {
-  vec3 lightPos;
+  vec3 lightPos; // 0-12
+  float pad_01; // 12-16
 
-  float constant;
-  float linear;
-  float quadratic;
+  vec3 ambient; // 16-28
+  float constant; // 16-32
 
-  vec3 ambient;
-  vec3 diffuse;
-  vec3 specular;
+  vec3 diffuse; // 32-44
+  float linear; // 44-48
 
-  bool lightState;
+  vec3 specular; // 48-60
+  float quadratic; // 60-64
+
+  vec3 pad_02; // 64-76
+  int lightState; // 76-80
 };
 
 uniform point_Light pointLight_1;
-uniform point_Light pointLights_Array[NUM_POINT_LIGHTS];
+//uniform point_Light pointLights_Array[NUM_POINT_LIGHTS];  ////TEST TO LOAD IN UNIFORM BUFFER
 
 
 struct spot_Light
 {
   vec3 lightPos; 
-  vec3 lightDir;
   float cutOff;
+
+  vec3 lightDir;
   float outerCutOff;
-     
-  float constant;
-  float linear;
-  float quadratic;
 
   vec3 ambient;
-  vec3 diffuse;
-  vec3 specular;
+  float constant;
 
-  bool lightState;
+  vec3 diffuse;
+  float linear;
+
+  vec3 specular;
+  float quadratic;
+
+  vec3 pad_01;
+  int lightState;
   
 };
 
-uniform spot_Light spotLights_Array[NUM_SPOT_LIGHTS];
+//uniform spot_Light spotLights_Array[NUM_SPOT_LIGHTS];  ////TEST TO LOAD IN UNIFORM BUFFER
 
+layout(std430, binding = 1) buffer lights
+{ 
+directional_Light directionalLight_1[NUM_DIRECTIONAL_LIGHTS];
+point_Light pointLights_Array[NUM_POINT_LIGHTS];
+spot_Light spotLights_Array[NUM_SPOT_LIGHTS];
+};
 
 struct material_maps
 {
@@ -415,8 +432,13 @@ if(diffExist == true && texDiff.a < 0.1)
 
 }
 
-vec3 DL_1 = CalcDirLight(directionalLight_1, normal_Face, viewDir, diffExist, specExist);
 vec3 result = vec3(0.0);
+
+for(int i = 0; i < NUM_DIRECTIONAL_LIGHTS; i++)
+{
+result += CalcDirLight(directionalLight_1[i], normal_Face, viewDir, diffExist, specExist);
+
+}
 
 ///Add point lights
 for(int i = 0; i < NUM_POINT_LIGHTS; i++)
@@ -428,13 +450,13 @@ result += CalcPointLight(pointLights_Array[i], normal_Face, viewDir, diffExist, 
 
 for(int i = 0; i < NUM_SPOT_LIGHTS; i++)
 { 
- if(spotLights_Array[i].lightState == true)
+ if(spotLights_Array[i].lightState == 1)
  {
   result += CalcSpotLight(spotLights_Array[i], normal_Face, viewDir, diffExist, specExist);
  }
 
 }
-result += DL_1;
+//result += DL_1;
 
 vec4 resultVec4 = vec4(result, 1.0) * (vec4(vec3(1.0), 1.0) - vec4(vec3(depth), 1.0)) - vec4(vec3(depth), 1.0);
 
