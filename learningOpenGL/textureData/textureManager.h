@@ -49,7 +49,6 @@ namespace texDataManager
 
 		
 		standardTexture& operator=(standardTexture&& oT) noexcept;
-
 		standardTexture& operator=(standardTexture& oT);
 
 		void data_debug();
@@ -203,4 +202,4 @@ namespace textureCache
 
 
 
-#endif textureManager
+#endif // textureManager

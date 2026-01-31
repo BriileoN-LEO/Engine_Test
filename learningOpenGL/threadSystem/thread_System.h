@@ -1,6 +1,6 @@
 #ifndef thread_System
 #define thread_System
-#include "Render/render.h"
+#include "Render/Render.h"
 #include <condition_variable>
 
 namespace controlTime_race
@@ -77,4 +77,4 @@ namespace threadSystem
 
 
 
-#endif thread_System
+#endif // thread_System

@@ -231,11 +231,11 @@ vec3 CalcPointLight(point_Light pointLight, vec3 normal_Face, vec3 viewDir, bool
 
   if(specExist == true)
   {
-  specular = pointLight.specular * spec * vec3(texture(Mat_1.texture_specular, coordTexOut)); ///añadido de reflect
+  specular = pointLight.specular * spec * vec3(texture(Mat_1.texture_specular, coordTexOut)); ///aï¿½adido de reflect
   }
   else if(specExist == false)
   {
-  specular = pointLight.specular * spec * Mat.specular;///añadido de reflect
+  specular = pointLight.specular * spec * Mat.specular;///aï¿½adido de reflect
   }
 
   ambient *= attenuation;
@@ -288,11 +288,11 @@ vec3 CalcSpotLight(spot_Light spotLight, vec3 normal_Face, vec3 viewDir, bool di
 
   if(specExist == true)
   {
-  specular = spotLight.specular * spec * vec3(texture(Mat_1.texture_specular, coordTexOut)) ; ///añadido de reflect
+  specular = spotLight.specular * spec * vec3(texture(Mat_1.texture_specular, coordTexOut)) ; ///aï¿½adido de reflect
   }
   else if(specExist == false)
   {
-  specular = spotLight.specular * spec * Mat.specular ; ///añadido de reflect
+  specular = spotLight.specular * spec * Mat.specular ; ///aï¿½adido de reflect
   }
 
   ambient *= attenuation;
@@ -492,6 +492,7 @@ vec4 renderCoordTextures = vec4(coordTexOut.x, coordTexOut.y, 0.0, 1.0);
 
 
 FragColor = renderFrontFacing(renderStandard);
+//FragColor = vec4(1.0, 0.0, 0.0, 1.0);
 
 //FragColor = vec4(1.0);
 //gl_FragDepth = gl_FragCoord.z + 50.0;
@@ -515,6 +516,46 @@ FragColor = renderFrontFacing(renderStandard);
 //FragColor = skyBox_reflection;
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

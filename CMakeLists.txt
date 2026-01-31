@@ -1,18 +1,21 @@
-﻿# CMakeList.txt : Top-level CMake project file, do global configuration
+# CMakeList.txt : Top-level CMake project file, do global configuration
 # and include sub-projects here.
 #
 cmake_minimum_required (VERSION 3.21)
 
-add_compile_definitions(NOMINMAX)
+#add_compile_definitions(NOMINMAX)
 
-#add_compile_definitions(WIN32_LEAN_AND_MEAN)
-
-add_compile_definitions(NOMINMAX WIN32_LEAN_AND_MEAN)
 project (Learning)
+#add_compile_definitions(WIN32_LEAN_AND_MEAN)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(DATA_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/shaders/shader_v_v1.vs" 
+
+if(WIN32)
+add_compile_definitions(NOMINMAX WIN32_LEAN_AND_MEAN)
+endif()
+
+set(DATA_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/shaders/shader_v_v1.vs             "
 "${CMAKE_CURRENT_SOURCE_DIR}/shaders/shader_f_v1.fs"
 "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_TEX/shader_v_Tex_v1.vs" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_TEX/shader_v_Tex_v1.fs"
 "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_MODEL1/vshader_model_v1.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_MODEL1/fshader_model_v1.frag"
@@ -43,6 +46,7 @@ set(DATA_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/shaders/shader_v_v1.vs"
 "C:/Users/Briil/3D_Models_Game Engine/tokio_place/source/testexport.fbx"
 )
 
+#if(WIN32)
 set(ASSETS_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/assets_engine"
 "${CMAKE_CURRENT_SOURCE_DIR}/Images"
 "${CMAKE_CURRENT_SOURCE_DIR}/shaders")
@@ -53,21 +57,47 @@ set(ASSETS_DESTINATION_DIR "${CMAKE_BINARY_DIR}/assets_engine"
 
 file(COPY ${ASSETS_SOURCE_DIR} DESTINATION ${CMAKE_BINARY_DIR})
 
+#endif()
+
+#if(UNIX AND NOT APPLE)
+ #   set(ASSETS_ENGINE "assets_engine" "Images" "shaders")
+
+  #  foreach(ASSET ${ASSETS_ENGINE})
+
+   #     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${ASSET}")
+    #        file(CREATE_LINK
+     #               "${CMAKE_CURRENT_SOURCE_DIR}/${ASSET}"
+     #               "${CMAKE_BINARY_DIR}/${ASSET}"
+
+      #               SYMBOLIC
+       #     )
+       # endif()
+   # endforeach()
+#endif()
+
 set(RUTE_COMPLETE_FILES ${DATA_FILE_PATH})
 
+if(WIN32)
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/learningOpenGL/Render/configFilesTXT.h"
-  "${PROjECT_BINARY_DIR}/configFilesTXT.h"
-
+  "${PROJECT_BINARY_DIR}/configFilesTXT.h"
 )
+endif()
 
-
+if(UNIX AND NOT APPLE)
+    configure_file(
+            "${CMAKE_CURRENT_SOURCE_DIR}/learningOpenGL/Render/configFilesTXT.h"
+            "${CMAKE_BINARY_DIR}/configFilesTXT.h"
+    )
+endif()
 #list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}libs/SDL")
 
 #//find_package(SDL3 REQUIRED)
 find_package(OpenGL REQUIRED)
 
-add_library(glad_source STATIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glad/src/glad.c)
+add_library(glad_source STATIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glad/src/glad.c
+        learningOpenGL/Edit_Modes/Edit_M.h
+        learningOpenGL/Edit_Modes/Edit_M.cpp)
 
 target_include_directories(glad_source PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glad/include)
 
@@ -151,10 +181,12 @@ add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/conf
 "learningOpenGL/2D_UI/Interface_generalUI.cpp" "learningOpenGL/2D_UI/Interface_generalUI.h"
 "learningOpenGL/textureData/textureManager.cpp" "learningOpenGL/textureData/textureManager.h"
 "learningOpenGL/2D_UI/system_UI/system_UI_B.cpp" "learningOpenGL/2D_UI/system_UI/system_UI_B.h"
+"learningOpenGL/Edit_Modes/Edit_M.cpp" "learningOpenGL/Edit_Modes/Edit_M.h"
 "learningOpenGL/libFile.h"
 "learningOpenGL/STB_IMAGE_IMPLEMENT.cpp"
 
-"libs/SDL/lib/arm64"
+#"libs/SDL/lib/arm64"
+
 )
 
 
@@ -189,6 +221,28 @@ assimp::assimp
 ktx
 )
 
+if(TARGET assimp)
+    target_compile_options(assimp PRIVATE -Wno-error)
+    target_compile_options(assimp PRIVATE -w)
+endif()
+
+if(UNIX AND NOT APPLE)
+    target_link_libraries(Learning PRIVATE
+            m
+            pthread
+            dl
+    )
+
+
+    target_compile_options(Learning PRIVATE
+            -Wall
+            -Wextra
+            -Werror
+    )
+
+
+endif()
+
 #add_custom_command(
  #   TARGET Learning POST_BUILD
  #   COMMAND ${CMAKE_COMMAND} -E copy
@@ -197,10 +251,13 @@ ktx
   #  COMMENT "Copiando los DLLs necesarios..."
 #)
 
-
 message(STATUS "SDL3 encontrado en: ${SDL3_DIR}")
 message(STATUS "OpenGl encontrado en: ${OpenGL_DIR}")
 
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    add_compile_options(-Wno-error)
+    target_compile_options(Learning PRIVATE -Wno-error)
+endif()
 
 #if(WIN32)
 #    target_link_options(Learning PRIVATE "/SUBSYSTEM:WINDOWS")

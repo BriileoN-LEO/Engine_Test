@@ -992,7 +992,7 @@ namespace refresh_Models
 		}
 	}
 
-	///añadir aqui para refrescar las posiciones y los cambios de los modelos
+	///aÃ±adir aqui para refrescar las posiciones y los cambios de los modelos
 
 }
 

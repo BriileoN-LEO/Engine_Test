@@ -272,6 +272,50 @@ namespace ControlScenarios
 
 namespace controlMouse
 {
+
+	/* std::map<Uint8, bool>  mouseEvents
+	{
+	 {SDL_BUTTON_LEFT, false}
+	};*/
+	std::array<ss_MouseEvents, 3> mouseEvents
+	{
+		ss_MouseEvents(SDL_BUTTON_LEFT, false),
+		ss_MouseEvents(SDL_BUTTON_MIDDLE, false),
+		ss_MouseEvents(SDL_BUTTON_RIGHT, false)
+	};
+
+	void detectKeyMouse(SDL_Event& event)
+	{
+	    auto reset_Keys = [&]()
+		{
+		 for (auto& mE : mouseEvents)
+		  {
+		    mE.active = false;
+		  }
+
+	    };
+
+		if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
+	    {
+			uint8_t id_press {event.button.button};
+
+			if (id_press <= 3)
+			{
+				mouseEvents[id_press].active = true;
+			}
+
+			else
+			{
+			  reset_Keys();
+			}
+	    }
+
+		else if(event.type == SDL_EVENT_MOUSE_BUTTON_UP)
+		{
+		  reset_Keys();
+		}
+	}
+
 	glm::vec2 getDistanceMotionMouse()
 	{
 		float x{};

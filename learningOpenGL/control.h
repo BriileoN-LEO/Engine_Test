@@ -62,6 +62,17 @@ namespace ControlScenarios
 }
 namespace controlMouse
 {
+	struct ss_MouseEvents
+	{
+        Uint8 mouse_ss : 4;
+		bool active : 1;
+	};
+
+     //extern std::map<Uint8, bool> mouseEvents;
+	 extern std::array<ss_MouseEvents, 3> mouseEvents;
+
+	 void detectKeyMouse(SDL_Event& event);
+
 		glm::vec2 getDistanceMotionMouse();
 		glm::vec2 getCurrentPosMouse();
 

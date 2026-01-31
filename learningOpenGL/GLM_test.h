@@ -73,7 +73,7 @@ namespace transformation_basics
 		
 		glm::mat4 transformBasicShader_rot();
 		glm::mat4 transformBasicShader_translate();
-		glm::mat4 transfomrBasicShader_scale();
+		glm::mat4 transformBasicShader_scale();
 
 		void resetTests();
 
@@ -111,10 +111,7 @@ namespace transformation_basics
 		glm::mat4 viewShaderModel();
 		glm::mat4 projectionShaderModel();
 		
-		basics_Model3D operator=(const basics_Model3D& coordModel)
-		{
-			return coordModel;
-		}
+		basics_Model3D operator=(const basics_Model3D& coordModel) const;
 
 		void sumAng(GLfloat angSum);
 		glm::mat4 rotPivotShaderModel(glm::vec3 pivot, glm::mat4 model);
@@ -272,4 +269,4 @@ namespace camera
 
 
 
-#endif GLM_test
+#endif // GLM_test

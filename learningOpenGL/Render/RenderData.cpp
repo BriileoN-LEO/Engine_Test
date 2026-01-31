@@ -405,7 +405,7 @@ namespace RenderData_Set
 
 				Assimp_D::loadToCPU::mutexModel.unlock();
 
-				Assimp_D::loadToCPU::atomic_CounterModel--;
+				--Assimp_D::loadToCPU::atomic_CounterModel;
 
 				AssimpModel_D.emplace(model.nameModel, Assimp_D::Model(model));
 
@@ -575,7 +575,7 @@ namespace RenderData_Set
 
 				shading::loadToCPU::mutexShader.unlock();
 
-				shading::loadToCPU::atomic_CounterShader--;
+				--shading::loadToCPU::atomic_CounterShader;
 
 				shader_D.emplace(shaD.nameShader, shading::shader(shaD.vertexShader_name, shaD.fragmentShader_name, shaD.data_Layout));
 			   
@@ -647,7 +647,7 @@ namespace RenderData_Set
 
 		};
 		 
-		std::map<std::string, texDataManager::TextureData_File> textures_controlShaders ///AÑADIR TEXTURAS
+		std::map<std::string, texDataManager::TextureData_File> textures_controlShaders ///Aï¿½ADIR TEXTURAS
 		{
 			{textureArrowUI.nameTexture, textureArrowUI}
 		};
@@ -697,7 +697,7 @@ namespace RenderData_Set
 
 				brii_UI::loadToCPU::mutex_UI.unlock();
 
-				brii_UI::loadToCPU::atomic_CounterUI--;
+				--brii_UI::loadToCPU::atomic_CounterUI;
 
 				if (spriteToLoad.menuType == brii_UI::menuSpriteUI::editMenu)
 				{

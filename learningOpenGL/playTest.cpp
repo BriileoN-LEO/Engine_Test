@@ -136,7 +136,7 @@ namespace testPlay
 	 testPlay::tranformationT testBackPack{};
 	 testPlay::tranformationT testFloor{};
 	
-	const void setTransformation_Objects()
+	void setTransformation_Objects()
 	{
 		testTransLight = getTranformationT_randomPivot(glm::vec3(6.0f, 6.0f, 6.0f), glm::vec3(1.0f), 0.0f, 0.05f);
 		Trans_pointLight02 = getTranformationT_randomPivot(glm::vec3(6.0f, 6.0f, 6.0f), glm::vec3(1.0f), 0.0f, 0.05f);

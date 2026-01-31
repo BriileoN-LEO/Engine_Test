@@ -206,7 +206,7 @@ namespace shading
 	shader::shader(const char* vertexPath, const char* fragmentPath, std::vector<layoutType> data_Layout) :
 		data_Layout(data_Layout)
 	{
-		shaderCreation(vertexPath, fragmentPath);
+		shaderCreation(vertexPath, fragmentPath);  ///HERE CREATES THE ID
 		
 		if (data_Layout[0] != layoutType::NONE &&
 			data_Layout[0] != layoutType::LIGHTS)
@@ -1101,7 +1101,7 @@ namespace texture
 
 				for (int max = 0; max < max_Texture_mat; max++)
 				{
-					for (int i = 0; i < static_cast<int>(texturesData.size()); i++) ///Cambiarlo en algun futuro para el tamaño o cantidad de materiales en el shader
+					for (int i = 0; i < static_cast<int>(texturesData.size()); i++) ///Cambiarlo en algun futuro para el tamaï¿½o o cantidad de materiales en el shader
 					{
 						std::string texName{ std::to_string(texturesData[i].second) };
 						texName = "Mat_" + texName + ".texture_" + texturesData[i].first;
@@ -1596,7 +1596,7 @@ namespace ObjCreation
 
 		if (vertexTransform.scaleTest == true)
 		{
-			glm::mat4 scale{ vertexTransform.transfomrBasicShader_scale() };
+			glm::mat4 scale{ vertexTransform.transformBasicShader_scale() };
 			shaderColor.transformMat("tranformScale", scale);
 		}
 
@@ -2283,7 +2283,7 @@ namespace ObjCreation
 namespace vertexCreationData
 {
 	
-	//AÑADIDO DE NORMALES EN EL SEGUNDO 
+	//Aï¿½ADIDO DE NORMALES EN EL SEGUNDO 
 	std::array<float, 24> cube::Tri1_face1
 	{
 	  -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,

@@ -44,15 +44,16 @@ namespace texDataManager
 		 height(oT.height),
 		 nrChannels(oT.nrChannels)
 	 {
-		// if (dataTexture)
-		// {
+		 if (dataTexture)
+		 	{
 			 this->dataTexture = oT.dataTexture;
-			 //stbi_image_free(oT.dataTexture);
-			 oT.dataTexture = nullptr;
-		//
+		 	//stbi_image_free(oT.dataTexture);
+		 	oT.dataTexture = nullptr;
+		 }
 	 };
 
-	 standardTexture::standardTexture(standardTexture& oT) :
+
+	 standardTexture::standardTexture( standardTexture& oT) :
 		 width(oT.width),
 		 height(oT.height),
 		 nrChannels(oT.nrChannels)
@@ -64,6 +65,7 @@ namespace texDataManager
 			 oT.dataTexture = nullptr;
 		 }
 	 };
+
 
 	 standardTexture::~standardTexture()
 	 {
@@ -92,6 +94,7 @@ namespace texDataManager
 			return *this;
 		};
 
+
 		standardTexture& standardTexture::operator=(standardTexture& oT)
 		{
 			this->dataTexture = oT.dataTexture;
@@ -104,6 +107,7 @@ namespace texDataManager
 
 			return *this;
 		};
+
 
 		void standardTexture::data_debug()
 		{
@@ -259,11 +263,13 @@ namespace textureCache
 		if (DataT)
 		{
 			exist = true;
-		//	std::cout << "SUCCESS::LOAD::TEXTURES::STANDARD\n";
+			std::cout << "SUCCESS::LOAD::TEXTURES::STANDARD\n";
 		}
 
 		else
 		{
+			std::cout << "ERROR::PATH --->" << path << '\n';
+			std::cout << "REASON --->" << stbi_failure_reason() << '\n';
 			exist = false;
 		}
 
@@ -272,7 +278,6 @@ namespace textureCache
 	texDataManager::TextureData_File manageLoadTexture(std::string path, std::string directory, std::string typeTextures) ///Insertar texturas en el cache de textura, pasar la informa
 	{
 		texDataManager::TextureData_File texturesData{};
-
 		bool existenceTex{};
 
 		std::string path_to_KTX2{ path };
@@ -525,7 +530,7 @@ namespace textureCache
 			
 			else if (existTexture == false)
 			{
-				SDL_Log(std::string("ERROR::PATH--->" + directory + "DOESN´T FIND A TEXTURE UI").c_str());
+				SDL_Log(std::string("ERROR::PATH--->" + directory + "DOESNï¿½T FIND A TEXTURE UI").c_str());
 
 			}
 

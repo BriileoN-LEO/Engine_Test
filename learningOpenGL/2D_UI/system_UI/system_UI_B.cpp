@@ -10,15 +10,16 @@ namespace brSystemUI
 	Icon_UI::Icon_UI(Icon_UI&& icon) noexcept :
 		dataIconUI(icon.dataIconUI), eventUI(icon.eventUI), icon_prop(icon.icon_prop), posicion(icon.posicion)
 	{
+
 		sprite_B = std::move(icon.sprite_B);
 
 	}
-	Icon_UI::Icon_UI(Icon_UI& icon) :
-		dataIconUI(icon.dataIconUI), eventUI(icon.eventUI), icon_prop(icon.icon_prop), posicion(icon.posicion)
+
+	Icon_UI::~Icon_UI()
 	{
-		sprite_B = std::move(icon.sprite_B);
-
+		sprite_B = nullptr;
 	}
+
 	Icon_UI& Icon_UI::operator=(Icon_UI&& oT) noexcept
 	{
 		dataIconUI = oT.dataIconUI;
@@ -43,18 +44,18 @@ namespace brSystemUI
 	}
 
 	section_Icon::section_Icon() {};
-	section_Icon::section_Icon(event_SecUI eventSec, std::vector<Icon_UI>iconsUI) :
+	section_Icon::section_Icon(event_SecUI eventSec, std::vector<Icon_UI>& iconsUI) :
 		eventSec(eventSec),
-		iconsUI(iconsUI) {};
+		iconsUI(std::move(iconsUI)) {};
 
 	section_Icon::section_Icon(event_SecUI eventSec, Icon_UI iconUI) : eventSec(eventSec)
 	{
 		//insert_iconUI(iconUI);
 	}
 
-	void section_Icon::insert_iconUI(Icon_UI iconUI_)
+	void section_Icon::insert_iconUI(Icon_UI& iconUI_)
 	{
-		iconsUI.emplace_back(iconUI_);
+		iconsUI.emplace_back(std::move(iconUI_));
 	};
 
 

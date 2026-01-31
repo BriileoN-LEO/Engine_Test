@@ -101,4 +101,4 @@ namespace light
 
 
 
-#endif LIGHTS_test
+#endif // LIGHTS_test

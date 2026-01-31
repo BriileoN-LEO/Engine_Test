@@ -46,13 +46,10 @@ namespace brSystemUI
 		Icon_UI();
 		Icon_UI(dataIcons icon, event_Icon eventUI, event_IconProperty icon_prop, glm::vec3 posicion);
 		Icon_UI(Icon_UI&& icon) noexcept;
-		Icon_UI(Icon_UI& icon) ;
-		~Icon_UI()
-		{
-			sprite_B = nullptr;
-		}
+		Icon_UI(const Icon_UI& icon) = delete; ////////////REVISIT THIS FUNCTIONS AND WHAT I CAN CHANGE
+		~Icon_UI();
 		Icon_UI& operator=(Icon_UI&& oT) noexcept;
-		Icon_UI& operator=(Icon_UI& oT) ;
+		Icon_UI& operator=(Icon_UI& oT);
 
 	};
 
@@ -70,10 +67,10 @@ namespace brSystemUI
 		std::vector<Icon_UI> iconsUI{};
 		
 		section_Icon();
-		section_Icon(event_SecUI eventSec, std::vector<Icon_UI>iconsUI);
+		section_Icon(event_SecUI eventSec, std::vector<Icon_UI>& iconsUI);
 		section_Icon(event_SecUI eventSec, Icon_UI iconUI);
 
-		void insert_iconUI(Icon_UI iconUI_);
+		void insert_iconUI(Icon_UI& iconUI_);
 
 	};
 
@@ -84,4 +81,4 @@ namespace brSystemUI
 
 
 
-#endif system_UI_B
+#endif //system_UI_B

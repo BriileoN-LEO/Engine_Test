@@ -11,7 +11,7 @@ namespace screenSettings
 	bool outWindow{ false };
 	int fps{ 120 };
 
-	void screenSettings::framebuffer_size_callback(SDL_Window* window)
+	void framebuffer_size_callback(SDL_Window* window)
 	{
 		int w_back = screen_w;
 		int h_back = screen_h;

@@ -1664,7 +1664,7 @@ namespace Assimp_D
 						modelsData.push(modelAssimp);
 					}
 
-					atomic_CounterModel++;
+					++atomic_CounterModel;
 					models.pop();
 					countUpload++;
 				};

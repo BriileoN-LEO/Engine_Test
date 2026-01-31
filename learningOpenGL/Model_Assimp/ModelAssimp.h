@@ -345,4 +345,4 @@ namespace individualComp
 
 
 
-#endif ModelAssimp
+#endif // ModelAssimp

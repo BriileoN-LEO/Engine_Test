@@ -1,4 +1,4 @@
-﻿
+
 
 #include "2D_UI/Interface_UI.h"
 #include <SDL3/SDL.h>
@@ -13,10 +13,10 @@
 #include "LIGHTS_test.h"
 #include "ModelAssimp.h"
 #include "stb_image.h"
-#include "render/configFilesTXT.h"
+#include "Render/configFilesTXT.h"
 #include "Render/RenderData.h"
 #include "Render/Render.h"
-#include "collision/ScreenHit.h"
+#include "Collision/ScreenHit.h"
 #include "threadSystem/thread_System.h"
 #include <iostream>
 #include <vector>
@@ -56,6 +56,8 @@ void init()
 		SDL_WindowFlags windowFlag{ SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN | SDL_WINDOW_HIGH_PIXEL_DENSITY };
 
 		gWindow = SDL_CreateWindow("LearningOpenGL", screenSettings::screen_w, screenSettings::screen_h, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE); //Creacion de la ventana
+		SDL_SetWindowAlwaysOnTop(gWindow, true);
+		SDL_SetWindowPosition(gWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
 		if (gWindow == nullptr)
 		{
@@ -68,6 +70,7 @@ void init()
 		else
 		{
 			contextOpenGl = SDL_GL_CreateContext(gWindow);  //Creacion del contexto
+			SDL_GL_SetSwapInterval(1); ///TEMPORAL
 
 			if (contextOpenGl == NULL)
 			{
@@ -322,12 +325,12 @@ int main(int argc, char* argv[])
 
 					else if (cameras::cameras_D[cameras::name_CurrentCamera].type == camera::typeCam::editMode)
 					{
-					    
+
 						SDL_Keymod modStateKey = SDL_GetModState();
 						bool stateAlt{ static_cast<bool>(modStateKey & SDL_KMOD_ALT) };
 						bool stateClickMouse{ static_cast<bool>(event.motion.state & SDL_BUTTON_LMASK) }; //CLICK IZQUIERDO DEL MOUSE
 
-						///ROTACION 
+						///ROTACION
 						if (stateAlt && stateClickMouse)
 						{
 							if (cameras::cameras_D[cameras::name_CurrentCamera].editMode_Cam.stopDetectCurrentPos == false)
@@ -342,7 +345,7 @@ int main(int argc, char* argv[])
 						}
 
 						stateClickMouse = static_cast<bool>(event.motion.state & SDL_BUTTON_MMASK); //CLICK DE LA RUEDITA DEL MOUSE
-					    
+
 						///TRASLACION
 						if (stateAlt && stateClickMouse)
 						{
@@ -368,7 +371,7 @@ int main(int argc, char* argv[])
 						}
 
 					}
-					
+
 				}
 				else if(event.type != SDL_EVENT_MOUSE_MOTION)
 				{
@@ -415,11 +418,11 @@ int main(int argc, char* argv[])
 
 				if (screenSettings::outWindow == true && event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
 				{
-		
+
 					if (controlMove::detectSDLK_code::keys_UI[SDLK_TAB] == false)
 					{
 						screenSettings::outWindow = false;
-						
+
 						if (cameras::cameras_D[cameras::name_CurrentCamera].type == camera::typeCam::firstPerson)
 						{
 							SDL_SetWindowRelativeMouseMode(gWindow, true);
@@ -434,7 +437,7 @@ int main(int argc, char* argv[])
 					}
 				}
 
-
+               controlMouse::detectKeyMouse(event);  ///TO DETECT THE KEY OF THE MOUSE
 
 
 			}
@@ -458,8 +461,8 @@ int main(int argc, char* argv[])
 				cameras::cameras_D[cameras::name_CurrentCamera].controlEventsCamera();
 			}
 		//	refresh_Models::refreshUI_point();
-
 			//ControlPhysics_Events.update_ControlSystem();
+
 			threadSystem::ControlPhysics_Events.controlExternal_System();
 
 			if (syncFPS.frameT == true)

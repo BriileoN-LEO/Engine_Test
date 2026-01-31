@@ -414,7 +414,7 @@ namespace transformation_basics
 		return matTrans;
 
 	}
-	glm::mat4 basics_posGEO::transfomrBasicShader_scale()
+	glm::mat4 basics_posGEO::transformBasicShader_scale()
 	{
 		if (keyScale == SDLK_S)
 		{
@@ -447,6 +447,12 @@ namespace transformation_basics
 
 
 	basics_Model3D::basics_Model3D() {};
+
+	basics_Model3D basics_Model3D::operator=(const basics_Model3D& coordModel) const
+	{
+		return coordModel;
+	};
+
 	glm::mat4 basics_Model3D::rotShaderModelSeq()
 	{
 		ang += 1.0f;
@@ -912,7 +918,7 @@ namespace camera
 	{
 		if (type == typeCam::firstPerson)
 		{
-			rotateCam();  ///añadido para hacer un mix entre las posiciones
+			rotateCam();  ///aï¿½adido para hacer un mix entre las posiciones
 			moveCamera();
 			cam = camRotate;
 		}

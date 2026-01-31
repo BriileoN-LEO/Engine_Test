@@ -76,7 +76,8 @@ namespace brii_UI
 
 		spriteUI();
 		spriteUI(typeSection_UI name, std::string nameTexture,  glm::vec2 posicion, std::pair<coord_x, coord_y> size, int layerTexture);
-
+		spriteUI(spriteUI&& sprite_move) noexcept;
+		spriteUI(spriteUI& sprite_move);
 	};
 
 	class spriteUI_Dynamic
@@ -125,4 +126,4 @@ namespace brii_UI
 }
 
 
-#endif Interface_generalUI
+#endif //Interface_generalUI

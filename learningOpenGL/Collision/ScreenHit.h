@@ -23,10 +23,18 @@ namespace ScreenCalc_Hit
 		model = 2
 	};
 
+	enum class op_World_PosMouse
+	{
+	  	centerMouse = 0,
+		followMouse = 1
+	};
+
+	extern std::map<camera::typeCam, op_World_PosMouse> sets_toGetCoordsMouse;
+
 	//extern Assimp::Model* currentSelect; std::vector<Assimp::structModelName>
 	extern std::vector<Assimp_D::structModelName> nameMesh_Hit;
 
-	std::map<std::string, glm::vec3> calculateWorldCoord_WindowPos();
+	std::map<std::string, glm::vec3> calculateWorldCoord_WindowPos(const op_World_PosMouse& oMPM);
 
 	void calculateIntersect_Objects(); 
 	bool calc_IntersectTriangleMesh(std::vector<Assimp_D::structModelName>& Mesh, glm::vec3 nearPt, glm::vec3 direction_R);
@@ -37,4 +45,4 @@ namespace ScreenCalc_Hit
 
 
 
-#endif ScreenHit
+#endif //ScreenHit

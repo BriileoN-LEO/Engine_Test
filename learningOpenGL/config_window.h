@@ -2,7 +2,7 @@
 #define config_window
 
 #include "learningOpenGL.h"
-
+#include <condition_variable>
 
 extern glm::vec4 viewportOpenGL;
 

@@ -34,7 +34,21 @@ namespace brii_UI
 		vertexData.emplace_back(spriteData(vert_4, glm::vec2(0.0, 0.0), layer));
 
 	};
+	spriteUI::spriteUI(spriteUI&& sprite_move) noexcept:
+	name(sprite_move.name),
+	nameTexture(sprite_move.nameTexture),
+	posicion(sprite_move.posicion),
+	layerTexture(sprite_move.layerTexture),
+	vertexData(sprite_move.vertexData)
+	{};
 
+	spriteUI::spriteUI(spriteUI& sprite_move) :
+	name(sprite_move.name),
+	nameTexture(sprite_move.nameTexture),
+	posicion(sprite_move.posicion),
+	layerTexture(sprite_move.layerTexture),
+	vertexData(sprite_move.vertexData)
+	{};
 
 	const std::vector<unsigned int> indicesSprite
 	{
@@ -200,7 +214,7 @@ namespace brii_UI
 					UI_data.emplace(maxSpriteUI);
 
 				}
-				atomic_CounterUI++;
+				++atomic_CounterUI;
 
 				flagsReady.store(true);
 			}

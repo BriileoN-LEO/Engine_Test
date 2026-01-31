@@ -61,7 +61,7 @@ namespace opScreenHit
 	float calc_T(AABB::triAABB vertPlane, glm::vec3 nearPT_screen, glm::vec3 direction_R)
 	{
 		float t{};
-		glm::vec3 N{ opScreenHit::calc_NormalPlane(vertPlane) };
+		 glm::vec3 N{ opScreenHit::calc_NormalPlane(vertPlane) };
 		float denominator{ glm::dot(direction_R, N) };
 
 		if (denominator < 0)
@@ -99,6 +99,13 @@ namespace opScreenHit
 }
 namespace ScreenCalc_Hit
 {
+
+	 std::map<camera::typeCam, op_World_PosMouse> sets_toGetCoordsMouse
+    {
+		 {camera::typeCam::firstPerson, op_World_PosMouse::centerMouse},
+		 {camera::typeCam::editMode, op_World_PosMouse::followMouse}
+    };
+
 	std::vector<Assimp_D::structModelName> nameMesh_Hit{};
 
 	std::array<selectObjParts, 3> selectedParts
@@ -108,7 +115,7 @@ namespace ScreenCalc_Hit
 		selectObjParts::model
 	};
 
-	std::map<std::string, glm::vec3> calculateWorldCoord_WindowPos()
+	std::map<std::string, glm::vec3> calculateWorldCoord_WindowPos(const op_World_PosMouse& oMPM)
 	{
 		/*
 		float matModelView[16], matProjection[16];
@@ -149,9 +156,21 @@ namespace ScreenCalc_Hit
 		}
 	    */
 	//   glGetFloatv(cameras::currentCamera.cam, matModleView);
+		float xWindow{}, yWindow{};
 
-		float xWindow{ static_cast<float>(screenSettings::screen_w) * 0.5f };
-		float yWindow{ static_cast<float>(screenSettings::screen_h) * 0.5f };
+		switch (oMPM)
+		{
+			case op_World_PosMouse::centerMouse :
+			xWindow = static_cast<float>(screenSettings::screen_w) * 0.5f;
+			yWindow = static_cast<float>(screenSettings::screen_h) * 0.5f;
+			break;
+
+			case op_World_PosMouse::followMouse :
+			SDL_GetMouseState(&xWindow, &yWindow);
+			yWindow = static_cast<float>(screenSettings::screen_h) - yWindow;
+			break;
+		}
+
 		glm::vec3 nearWindow{ xWindow, yWindow, 0.0f };
 		glm::vec3 farWindow{ xWindow, yWindow, 1.0f };
 			//glGetIntegerv(GL_VIEWPORT, viewpo)
@@ -171,9 +190,10 @@ namespace ScreenCalc_Hit
 		return ptsPos;
 	}
 
-	void calculateIntersect_Objects()
-	{
-		std::map<std::string, glm::vec3> points_SW3D{ calculateWorldCoord_WindowPos() };
+	void calculateIntersect_Objects() {
+		std::map<std::string, glm::vec3> points_SW3D{};
+
+		points_SW3D = calculateWorldCoord_WindowPos(sets_toGetCoordsMouse[cameras::cameras_D[cameras::name_CurrentCamera].type]);
 
 		glm::vec3 rayPointScreen{ glm::normalize(points_SW3D["nearPoint"] - points_SW3D["farPoint"]) };
 		std::string modelSelected{};
@@ -347,7 +367,7 @@ namespace ScreenCalc_Hit
 
 	void calc_IntersectAABB()
 	{
-		std::map<std::string, glm::vec3> coord_PointScreen{ calculateWorldCoord_WindowPos() };
+		std::map<std::string, glm::vec3> coord_PointScreen{ calculateWorldCoord_WindowPos(sets_toGetCoordsMouse[cameras::cameras_D[cameras::name_CurrentCamera].type]) };
 		//std::string calc_Direction{ std::to_string(coord_PointScreen["farPoint"].x) + ", " + std::to_string(coord_PointScreen["farPoint"].y) + ", " + std::to_string(coord_PointScreen["farPoint"].z) + ", " };
 		//	SDL_Log(calc_Direction.c_str());  ///INVESTIGAR POR QUE LA DIRECION EN (Y) DE farPoint no cambia
 

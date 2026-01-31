@@ -60,7 +60,7 @@ namespace refresh_Models
 	void refreshAll_Models();
 	void refreshUI_point();
 	void refreshAll_LastModels();
-	///añadir aqui para refrescar las posiciones y los cambios de los modelos
+	///aï¿½adir aqui para refrescar las posiciones y los cambios de los modelos
 
 }
 
@@ -72,4 +72,4 @@ namespace destroy
 
 
 
-#endif Render
+#endif //Render

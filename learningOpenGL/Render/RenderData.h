@@ -8,7 +8,7 @@
 #include "ModelAssimp.h"
 #include "configFilesTXT.h"
 #include "Collision/CollisionAABB.h"
-#include "2D_UI/2D_ScreenPlayer.h"
+#include "2D_UI/2D_screenPlayer.h"
 #include "frameBuffers.h"
 #include "2D_UI/Interface_generalUI.h"
 
@@ -186,4 +186,4 @@ namespace Shader_Set
 	void set_All_UB();
 }
 
-#endif RenderData
+#endif //RenderData
