@@ -294,8 +294,8 @@ namespace Assimp_D
 
 			//	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, DataT);
 			//	glGenerateMipmap(GL_TEXTURE_2D);
-			
-	
+
+
 				glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, formatSecond, GL_UNSIGNED_BYTE, DataT);
 				glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -306,7 +306,7 @@ namespace Assimp_D
 
 				stbi_image_free(DataT);
 		}
-		
+
 		else
 		{
 			SDL_Log("ERROR::LOAD::TEXTURE");
@@ -373,6 +373,98 @@ namespace Assimp_D
 
 		return id;
 	}
+
+
+	structModelName::structModelName() = default;
+
+	structModelName::structModelName(std::string nameModel, std::string nameMesh)
+	:
+	nameModel{nameModel},
+	nameMesh{nameMesh}
+	{}
+	structModelName::structModelName(std::string nameModel, std::string nameMesh , bool changeStateSelection)
+		:
+	nameModel{nameModel},
+	nameMesh{nameMesh},
+	changeStateSelection{changeStateSelection}
+	{};
+	structModelName::structModelName(structModelName&& insertNew) noexcept :
+	nameModel{insertNew.nameModel},
+	nameMesh{insertNew.nameMesh},
+	changeStateSelection{insertNew.changeStateSelection}
+	{}
+	structModelName::structModelName(structModelName& insertNew):
+	nameModel{insertNew.nameModel},
+	nameMesh{insertNew.nameMesh},
+	changeStateSelection{insertNew.changeStateSelection}
+	{}
+	structModelName::structModelName(structModelName* insertNew)
+	{
+		nameModel = insertNew->nameModel;
+		nameMesh = insertNew->nameMesh;
+		changeStateSelection = insertNew->changeStateSelection;
+	}
+
+	bool structModelName::operator!=(structModelName&& sModelName) noexcept
+	{
+		if (nameModel != sModelName.nameModel &&
+			nameMesh != sModelName.nameMesh)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	bool structModelName::operator!=(structModelName& sModelName)
+	{
+		if (nameModel != sModelName.nameModel &&
+			nameMesh != sModelName.nameMesh)
+		{
+		  return true;
+		}
+
+		return false;
+	}
+
+	bool structModelName::operator==(structModelName&& sModelName) noexcept
+	{
+		if (nameModel == sModelName.nameModel &&
+	        nameMesh == sModelName.nameMesh)
+		{
+		 return true;
+		}
+
+		return false;
+	}
+	bool structModelName::operator ==(structModelName& sModelName)
+	{
+		if (nameModel == sModelName.nameModel &&
+				nameMesh == sModelName.nameMesh)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	structModelName structModelName::operator=(structModelName&& sModelName) noexcept
+	{
+		nameModel = sModelName.nameModel;
+		nameMesh = sModelName.nameMesh;
+		changeStateSelection = sModelName.changeStateSelection;
+
+		return *this;
+	}
+	structModelName structModelName::operator=(structModelName& sModelName)
+	{
+		nameModel = sModelName.nameModel;
+		nameMesh = sModelName.nameMesh;
+		changeStateSelection = sModelName.changeStateSelection;
+
+		return *this;
+	}
+
 
 	void structModelName::reset()
 	{
@@ -1545,6 +1637,25 @@ namespace Assimp_D
 	{
 		return shaders;
 	}
+
+	Mesh& Model::outSpecificMesh(std::string& nameMesh)
+	{
+		int return_p {};
+		auto find_M { std::ranges::find_if(meshes, [&](Mesh& dMesh)
+		{
+			++return_p;
+           return dMesh.nameMesh == nameMesh;
+		})};
+
+	    if (find_M != std::ranges::end(meshes))
+	    {
+		    --return_p;
+	    	return meshes[return_p];
+	    }
+
+       return RenderData_Set::error_MeshF;
+	}
+
 	int Model::numMeshes()
 	{
 		return static_cast<int>(meshes.size());
@@ -1824,11 +1935,11 @@ namespace individualComp
 			this->vertex.shrink_to_fit();
 			destroy();
 		}
-		
+
 		this->vertex = vertex;
 
 		///CALCULATE CENTROID TRIANGLE
-	
+
 		centroidTriangle = transformation_basics::centroidObj(std::vector<glm::vec3>{vertex[0].posicion, vertex[1].posicion, vertex[2].posicion});
 
 	}
@@ -1998,7 +2109,7 @@ namespace individualComp
 			//	shading::shader& shader{ RenderData_Set::shader_D[RenderData_Set::AssimpModel_D[name.nameModel].nameShader]};
 				meshes[i].build_PreDraw(RenderData_Set::shader_D[RenderData_Set::AssimpModel_D[name.nameModel].nameShader]);
 				//std::cout << RenderData_Set::AssimpModel_D[name.nameModel].nameShader << '\n';
-			
+
 
 				//std::cout << "TRIANGLE::FIND\n";
 				break;
@@ -2028,13 +2139,14 @@ namespace individualComp
 		}
 
 	//	scaleModel = scaleModel * MeshCoord.model;
-		
+
 		RenderData_Set::stencilTest::stencilTest_shader.use();
 
 		RenderData_Set::stencilTest::stencilTest_shader.transformMat("model", model);
 		RenderData_Set::stencilTest::stencilTest_shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
 		RenderData_Set::stencilTest::stencilTest_shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 
+		RenderData_Set::stencilTest::stencilTest_shader.setVec3("color_stencil", glm::vec3(1.0));
 		RenderData_Set::stencilTest::stencilTest_shader.setInt("selectionStencil", 1);
 		RenderData_Set::stencilTest::stencilTest_shader.setVec3("centroidTriangle", centroidTriangle);
 
@@ -2054,7 +2166,7 @@ namespace individualComp
 			}
 
 		}
-		
+
 	}
 	void singleTriangle::updateModel()
 	{
@@ -2080,12 +2192,56 @@ namespace individualComp
 	}
 
 
-	Multiple_AssimpMesh::Multiple_AssimpMesh() {};
+	Multiple_AssimpMesh::Multiple_AssimpMesh() = default;
 	Multiple_AssimpMesh::Multiple_AssimpMesh(Assimp_D::structModelName meshToCopy, std::vector<glm::vec3> quantityMesh)
 	{
 		setMultipleMesh(meshToCopy, quantityMesh);
 
 	};
+	Multiple_AssimpMesh::Multiple_AssimpMesh(Multiple_AssimpMesh&& mAssimp_copy) noexcept = default;
+	Multiple_AssimpMesh::Multiple_AssimpMesh(Multiple_AssimpMesh& mAssimp_copy) = default;
+
+
+	Multiple_AssimpMesh Multiple_AssimpMesh::operator=(Multiple_AssimpMesh&& mAssimp_copy) noexcept
+	{
+			name = mAssimp_copy.name;
+
+			for (auto mAC : mAssimp_copy.setDataMesh_Multi)
+			{
+
+				setDataMesh_Multi.emplace_back
+				(
+				mAC.subNameMesh,
+				mAC.posicion,
+				mAC.verticesPos,
+				mAC.model
+				);
+			}
+
+			ActiveMesh = mAssimp_copy.ActiveMesh;
+
+	}
+	Multiple_AssimpMesh Multiple_AssimpMesh::operator=(Multiple_AssimpMesh& mAssimp_copy)
+	{
+		name = mAssimp_copy.name;
+
+		for (auto mAC : mAssimp_copy.setDataMesh_Multi)
+		{
+
+			setDataMesh_Multi.emplace_back
+			(
+			mAC.subNameMesh,
+			mAC.posicion,
+			mAC.verticesPos,
+			mAC.model
+			);
+		}
+
+		ActiveMesh = mAssimp_copy.ActiveMesh;
+	}
+
+
+	Multiple_AssimpMesh::~Multiple_AssimpMesh() = default;
 
 	void Multiple_AssimpMesh::setMultipleMesh(Assimp_D::structModelName meshToCopy, std::vector<glm::vec3> quantityMesh)
 	{

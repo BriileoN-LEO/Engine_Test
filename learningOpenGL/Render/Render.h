@@ -21,6 +21,8 @@ namespace render
 		void renderStencilTest();
 		void renderDetectAABB();
 		void renderEditMode();
+
+		void renderEditMode_Advance();  ///////MAKING A ADVANCE SELECTION MESH TO RENDER ALL THE MESHES THAT I SELECTED
 	}
 
 	void renderAll();
@@ -45,6 +47,9 @@ namespace renderSelection
 	void renderSelection_Triangle(std::vector<Assimp_D::excluded_Obj> excluded_Objs = std::vector<Assimp_D::excluded_Obj>());
 	void renderSelection_Mesh(std::vector<Assimp_D::excluded_Obj> excluded_Objs = std::vector<Assimp_D::excluded_Obj>());
 	void renderSelection_Model(std::vector<Assimp_D::excluded_Obj> excluded_Objs = std::vector<Assimp_D::excluded_Obj>());
+
+	void render_AdvanceSelection_Mesh(std::vector<Assimp_D::excluded_Obj>excluded_Objs = std::vector<Assimp_D::excluded_Obj>());
+	void render_EditMode_SelectionMesh(std::vector<Assimp_D::excluded_Obj> excluded_Objs = std::vector<Assimp_D::excluded_Obj>());
 }
 
 namespace stencil_test

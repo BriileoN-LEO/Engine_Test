@@ -27,6 +27,9 @@ namespace RenderData_Set
 	std::map<std::string, frameBuff::frameBuffer> frameBuffers_D{};
 	frameBuff::frameBuffer testFrameBuffer{};
 
+	Assimp_D::Mesh error_MeshF{};
+
+
 	namespace skybox_D
 	{
 
@@ -295,9 +298,9 @@ namespace RenderData_Set
 		unsigned int aiProcessFlags{ aiProcess_Triangulate
 		| aiProcess_FlipUVs
 		| aiProcess_ImproveCacheLocality
-		| aiProcess_CalcTangentSpace
+	//	| aiProcess_CalcTangentSpace
 		| aiProcess_GenSmoothNormals
-		| aiProcess_GenNormals
+		//| aiProcess_GenNormals
 		| aiProcess_SortByPType 
 		| aiProcess_JoinIdenticalVertices
 	//	| aiProcess_PreTransformVertices
@@ -757,7 +760,7 @@ namespace RenderData_Set
 		running_Loading_UI<void()>(loadCPU_UI_editMode);
 	}
 	
-	const std::vector<ObjCreation::ModelCreation> setMeshLight_ModelCreation_Data()
+	 std::vector<ObjCreation::ModelCreation> setMeshLight_ModelCreation_Data()
 	{
 
 		std::vector<std::array<float, 9>> vertexLight{};
@@ -893,7 +896,7 @@ namespace RenderData_Set
 
 		return MeshLight;
 	}
-	const std::vector<light::light1> setPointLights()
+	 std::vector<light::light1> setPointLights()
 	{
 
 		glm::vec3 purpleLight{ 0.7f, 0.5f, 1.0f };
@@ -960,7 +963,7 @@ namespace RenderData_Set
 
 		return pointLights;
 	}
-	const std::vector<light::DirectionalLight> setDirectionalLights()
+	 std::vector<light::DirectionalLight> setDirectionalLights()
 	{
 		glm::vec3 white_Color{ 1.0f, 1.0f, 1.0f };
 
@@ -975,7 +978,7 @@ namespace RenderData_Set
 
 		return DirectionalLights;
 	}
-	const std::map<std::string, light::SpotLight> setSpotLights()
+	 std::map<std::string, light::SpotLight> setSpotLights()
 	{
 		matSettings matSP_1
 		{
@@ -995,7 +998,7 @@ namespace RenderData_Set
 
 		return spotLights;
 	}
-	const std::vector<screenUI::pointerScreen> setPointUI_2D()
+	 std::vector<screenUI::pointerScreen> setPointUI_2D()
 	{
 
 		glm::vec3 posScreen{ screenUI::screenWorldPos::getScreenPos(static_cast<float>(screenSettings::screen_w) * 0.5f, static_cast<float>(screenSettings::screen_h) * 0.5f, 0.0f) };
@@ -1018,7 +1021,7 @@ namespace RenderData_Set
 		
 		return PointsUI;
 	}
-	const std::vector<individualComp::Multiple_AssimpMesh> setMulti_AssimpModel()
+	 std::vector<individualComp::Multiple_AssimpMesh> setMulti_AssimpModel()
 	{
 		////Aqui colocar el seteo de los objetos que contendran Multiples Models
 		Assimp_D::structModelName sM_Plant01
@@ -1040,27 +1043,23 @@ namespace RenderData_Set
 
 		individualComp::Multiple_AssimpMesh plant01(sM_Plant01, pos_Plant01);
 
-		std::vector<individualComp::Multiple_AssimpMesh> multiMesh
-		{
-			plant01
-		};
+		std::vector<individualComp::Multiple_AssimpMesh> multiMesh;
+
+		multiMesh.reserve(1);
+		multiMesh.push_back(std::move(plant01));
 
 		return multiMesh;
 	}
 
-	const std::map<std::string, frameBuff::frameBuffer> setFrameBuffers()
+	 std::map<std::string, frameBuff::frameBuffer> setFrameBuffers()
 	{
 		frameBuff::frameBuffer frameBufferScreen("screen", frameBuff::typeFrameBuffer::bufferScreen);
 
 		Assimp_D::structModelName nameFrameBuff_01("mirror_01", "mirror_01_1");
 		frameBuff::frameBuffer frameBufferModel_01("mirror_01", frameBuff::typeFrameBuffer::bufferAssimp, nameFrameBuff_01);
 
-		std::map<std::string, frameBuff::frameBuffer> FB
-		{
-			//{"screen", frameBufferScreen},
-			{"mirror_01", frameBufferModel_01}
-
-		};
+		std::map<std::string, frameBuff::frameBuffer> FB;
+		FB.emplace("mirror_01", std::move(frameBufferModel_01));
 
 		return FB;
 	}

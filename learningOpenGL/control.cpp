@@ -220,7 +220,7 @@ namespace ControlScenarios
 		{SDLK_N, stateScenarios::normalSceneario}, //normalScenario ---- N
 		{SDLK_P, stateScenarios::stencilTestAll}, //stencilTestAll ---- P
 		{SDLK_L, stateScenarios::detectAABB}, //detectAABB ---- L
-		{SDLK_5, stateScenarios::edit_Scene}
+		{SDLK_5, stateScenarios::edit_Scene},
 	};
 
 	void detectScenario_Key(SDL_Event* event)
@@ -302,6 +302,7 @@ namespace controlMouse
 			if (id_press <= 3)
 			{
 				mouseEvents[id_press].active = true;
+				SDL_Log("11");
 			}
 
 			else

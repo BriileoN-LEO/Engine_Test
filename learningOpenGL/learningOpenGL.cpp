@@ -18,6 +18,7 @@
 #include "Render/Render.h"
 #include "Collision/ScreenHit.h"
 #include "threadSystem/thread_System.h"
+#include "Edit_Modes/Edit_M.h"
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -119,6 +120,8 @@ int main(int argc, char* argv[])
 {
 	init();
 
+	std::setvbuf(stdout, nullptr, _IONBF, 0);
+
 	UI::init_imGUI(gWindow, contextOpenGl);
 
 	openGL_render::viewportSet(0, 0, screenSettings::screen_w, screenSettings::screen_h);
@@ -155,7 +158,6 @@ int main(int argc, char* argv[])
 
 	if (correct_init == true)
 	{
-
 		SDL_Event event;
 		bool loopEvent{ false };
 
@@ -275,7 +277,10 @@ int main(int argc, char* argv[])
 						}
 					}
 
-					ControlScenarios::detectScenario_Key(&event);
+					if (ControlScenarios::scene != ControlScenarios::stateScenarios::editMode_advance)
+					{
+						ControlScenarios::detectScenario_Key(&event);
+					}
 
 					//			TexVertex.vertexTransform.detectRot(&event);
 					//			TexVertex.vertexTransform.detectScale(&event);
@@ -463,6 +468,7 @@ int main(int argc, char* argv[])
 		//	refresh_Models::refreshUI_point();
 			//ControlPhysics_Events.update_ControlSystem();
 
+			control_EditMode::controlAll_EditMode();
 			threadSystem::ControlPhysics_Events.controlExternal_System();
 
 			if (syncFPS.frameT == true)
@@ -535,7 +541,7 @@ int main(int argc, char* argv[])
 
 					render::renderPhase();
 					refresh_Models::refreshAll_LastModels();
-					
+
 					UI::render_All_ImGui(gWindow);
 					//testPlay::renderTranformations_Objects();
 				}

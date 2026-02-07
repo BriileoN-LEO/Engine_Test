@@ -476,20 +476,20 @@ namespace ScreenCalc_Hit
 
 	void calc_IntersectALL()
 	{
-		if (ControlScenarios::scene == ControlScenarios::stateScenarios::edit_Scene)
+		if (ControlScenarios::scene == ControlScenarios::stateScenarios::edit_Scene ||
+	      	ControlScenarios::scene == ControlScenarios::stateScenarios::detectAABB ||
+	      	ControlScenarios::scene == ControlScenarios::stateScenarios::editMode_advance
+			)
 		{
-			if (data_HitAABB::selectObj == true)
-			{
-				calc_IntersectAABB(); //ESTO HACE QUE RENDER data_HitAABB::renderSelection SOLAMENTE SE COLOQUE UNA VEZ--
-				data_HitAABB::selectObj = false;
-			}
-		}
+		//	if (data_HitAABB::selectObj == true)
+			//{
+		//		calc_IntersectAABB(); //ESTO HACE QUE RENDER data_HitAABB::renderSelection SOLAMENTE SE COLOQUE UNA VEZ--
+		//		data_HitAABB::selectObj = false;
+		//	}
 
-		else if(ControlScenarios::scene == ControlScenarios::stateScenarios::detectAABB)
-		{
 			calc_IntersectAABB();
-
 		}
+
 
 	}
 }

@@ -38,7 +38,8 @@ namespace ControlScenarios
 		normalSceneario = 0,
 		stencilTestAll = 1,
 		detectAABB = 2,
-		edit_Scene = 3
+		edit_Scene = 3,
+		editMode_advance = 4
 	};
 	
 	enum class scenarioAABB

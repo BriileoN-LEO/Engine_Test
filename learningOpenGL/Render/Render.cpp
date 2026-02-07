@@ -1,6 +1,7 @@
 #include "Render.h"
 #include "RenderData.h"
 #include "threadSystem/thread_System.h"
+#include "Edit_Modes/Edit_M.h"
 //#include "playTest.h"
 //#include "Collision/ScreenHit.h"
 
@@ -58,7 +59,7 @@ namespace render
 				std::vector<Assimp_D::Mesh>& meshesSearch{ modelSearch.second.outMeshes() };
 
 				for (auto& meshS : meshesSearch)
-				{
+					{
 					bool pass_excluded_mesh{};
 
 					for (auto excludedModel : excluded_Objs)
@@ -400,6 +401,36 @@ namespace render
 				renderNormalScenario();
 			}
 		}
+		void renderEditMode_Advance()
+		{
+			if (ControlScenarios::cleanScenario == true)
+			{
+				data_HitAABB::resetSelectedObj();
+				ControlScenarios::cleanScenario = false;
+			}
+
+			std::vector<Assimp_D::excluded_Obj> excluded_Mesh
+			{
+				Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
+				Assimp_D::excluded_Obj(
+				Assimp_D::excludedOP::exclude_only_meshes,
+				data_HitAABB::selectedObj.first.nameModel,
+		        std::vector<std::string>({data_HitAABB::selectedObj.first.nameMesh}))
+			};
+
+		    excluded_Mesh.insert(excluded_Mesh.end(), edit_visualize::exclude_EditMeshes.begin(), edit_visualize::exclude_EditMeshes.end());
+
+			for (auto meshesEx : excluded_Mesh)
+			{
+			  SDL_Log(meshesEx.nameModel.c_str());
+			}
+
+			render_Points();
+			///renderSelection::renderSelection_Mesh(excluded_Mesh);///LISTO_NEW_SHADER
+			renderSelection::render_EditMode_SelectionMesh(excluded_Mesh);
+			render_Skybox();
+		}
+
 	}
 
 	void renderAll()
@@ -427,6 +458,10 @@ namespace render
 		
 			renderOP::renderEditMode();
 		    break;
+
+			case ControlScenarios::stateScenarios::editMode_advance :
+
+		    renderOP::renderEditMode_Advance();
 
 		}
 
@@ -748,7 +783,6 @@ namespace renderSelection
 			{
 				if (mesh.nameMesh == data_HitAABB::selectedObj.first.nameMesh)
 				{
-
 					RenderData_Set::stencilTest::stencilTest_shader.transformMat("model", mesh.MeshCoord.model);
 					break;
 				}
@@ -762,6 +796,7 @@ namespace renderSelection
 			RenderData_Set::stencilTest::stencilTest_shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
 			RenderData_Set::stencilTest::stencilTest_shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 
+			RenderData_Set::stencilTest::stencilTest_shader.setVec3("color_stencil", glm::vec3(1.0));
 			RenderData_Set::stencilTest::stencilTest_shader.setInt("selectionStencil", 0);
 
 			RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel].DrawSingleMesh(data_HitAABB::selectedObj.first.nameMesh, 0);///LISTO_NEW_SHADER
@@ -824,6 +859,7 @@ namespace renderSelection
 				RenderData_Set::stencilTest::stencilTest_shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
 				RenderData_Set::stencilTest::stencilTest_shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 
+				RenderData_Set::stencilTest::stencilTest_shader.setVec3("color_stencil", glm::vec3(1.0));
 				RenderData_Set::stencilTest::stencilTest_shader.setInt("selectionStencil", 0);
 				mesh.Draw_Alone();
 			}
@@ -864,6 +900,146 @@ namespace renderSelection
 
 	}
 
+	void render_AdvanceSelection_Mesh(std::vector<Assimp_D::excluded_Obj>excluded_Objs)
+	{
+			if (data_HitAABB::renderSelection == true)
+			{
+				glStencilFunc(GL_ALWAYS, 1, 0xFF);
+				glStencilMask(0xFF);
+
+				RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel].DrawSingleMesh(data_HitAABB::selectedObj.first.nameMesh, 1);///LISTO_NEW_SHADER
+
+				glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+				glStencilMask(0x00);
+				//	glDisable(GL_DEPTH_TEST);
+
+				std::vector<Assimp_D::Mesh>& meshesData{ RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel].outMeshes() };
+				glm::mat4 modelMat{ glm::mat4(1.0f) };
+
+				RenderData_Set::stencilTest::stencilTest_shader.use();
+
+				for (auto& mesh : meshesData)
+				{
+					if (mesh.nameMesh == data_HitAABB::selectedObj.first.nameMesh)
+					{
+						RenderData_Set::stencilTest::stencilTest_shader.transformMat("model", mesh.MeshCoord.model);
+						break;
+					}
+
+				}
+
+				//glm::mat4 modelMesh = glm::mat4(1.0f);
+				//modelMesh = glm::scale(modelMesh, glm::vec3(1.1f));
+				//modelMesh = meshes.MeshCoord.model * modelMesh;
+				//modelMesh = modelMesh * modelMat;
+				RenderData_Set::stencilTest::stencilTest_shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+				RenderData_Set::stencilTest::stencilTest_shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
+
+
+			//	RenderData_Set::stencilTest::stencilTest_shader.setVec3("color_stencil", glm::vec3(0.937f, 0.505f, 0.078f));  ////ORANGE
+
+				RenderData_Set::stencilTest::stencilTest_shader.setVec3("color_stencil", glm::vec3(0.356f, 0.725f, 0.909f));  ////BLUE
+
+
+				RenderData_Set::stencilTest::stencilTest_shader.setInt("selectionStencil", 0);
+
+				RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel].DrawSingleMesh(data_HitAABB::selectedObj.first.nameMesh, 0);///LISTO_NEW_SHADER
+			}
+
+			glStencilMask(0xFF);
+			glStencilFunc(GL_ALWAYS, 1, 0xFF);
+
+			render::render_ModelAssimp_D(excluded_Objs);
+			render::render_MultiAssimp_D();
+		//	render::render_ModelCreation_D();
+			render::render_MeshLights_D();
+
+	}
+	void render_EditMode_SelectionMesh(std::vector<Assimp_D::excluded_Obj> excluded_Objs) {
+		////MODIFICAR PARA SELECCIONAR
+
+
+		//int size_SM { dataConvert::cast_int<decltype(edit_visualize::nameSelect_Model.size())>(edit_visualize::nameSelect_Model.size()) };
+		int size_SM { static_cast<int>(edit_visualize::nameSelect_Model.size()) };
+
+
+		std::vector<std::unique_ptr<Assimp_D::structModelName>> getNameSelected_Models(size_SM);
+		//std::vector<Assimp_D::structModelName> getNameSelected_Models{};
+
+		glm::vec3& posCamera{cameras::cameras_D[cameras::name_CurrentCamera].posCam};
+
+		std::vector<float> pos_Detect{};
+
+		for (auto sMP : edit_visualize::nameSelect_Model)
+		{
+		   Assimp_D::Mesh& getMesh {RenderData_Set::AssimpModel_D[sMP.nameModel].outSpecificMesh(sMP.nameMesh) };
+
+			if (static_cast<int>(getMesh.nameMesh.size()) != 0)
+			{
+				glm::vec3& posObj_P {getMesh.MeshCoord.posModel};
+
+				float dist_t{glm::distance2(posObj_P, posCamera)};
+
+				pos_Detect.emplace_back(dist_t);
+			}
+		}
+
+
+		for (int i = 0; i < size_SM; i++)
+		{
+			int pos_D{ size_SM - 1 };
+
+		   for (int d = 0; d < size_SM; d++)
+		   {
+			 if (pos_Detect[i] < pos_Detect[d] && i != d)
+			 {
+			   --pos_D;
+			 }
+		   }
+			//getNameSelected_Models.emplace_back(std::make_unique<Assimp_D::structModelName>(edit_visualize::nameSelect_Model[pos_D]));
+			std::unique_ptr<Assimp_D::structModelName> container_Sp{std::make_unique<Assimp_D::structModelName>(edit_visualize::nameSelect_Model[pos_D])};
+			getNameSelected_Models.emplace_back(std::move(container_Sp));
+		}
+
+		for (int sP = 0; sP < static_cast<int>(getNameSelected_Models.size()); sP++)
+		{
+			if (getNameSelected_Models[sP] != nullptr) {
+				glStencilFunc(GL_ALWAYS, 1, 0xFF);
+				glStencilMask( 0xFF);
+
+				RenderData_Set::AssimpModel_D[getNameSelected_Models[sP]->nameModel].DrawSingleMesh(getNameSelected_Models[sP]->nameMesh, 1);///LISTO_NEW_SHADER
+
+				glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+				glStencilMask(0x00);
+				Assimp_D::Mesh& mesh_Model {RenderData_Set::AssimpModel_D[getNameSelected_Models[sP]->nameModel].outSpecificMesh(getNameSelected_Models[sP]->nameMesh)};
+
+				RenderData_Set::stencilTest::stencilTest_shader.use();
+				RenderData_Set::stencilTest::stencilTest_shader.transformMat("model", mesh_Model.MeshCoord.model);
+				RenderData_Set::stencilTest::stencilTest_shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+				RenderData_Set::stencilTest::stencilTest_shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
+
+
+			   if (getNameSelected_Models[sP]->nameModel == data_HitAABB::selectedObj.first.nameModel &&
+			   	getNameSelected_Models[sP]->nameMesh == data_HitAABB::selectedObj.first.nameMesh)
+			    {
+			    	RenderData_Set::stencilTest::stencilTest_shader.setVec3("color_stencil", glm::vec3(0.937f, 0.505f, 0.078f));
+			    }
+				else
+				{
+					RenderData_Set::stencilTest::stencilTest_shader.setVec3("color_stencil", glm::vec3(0.8f, 5.0f, 0.3f));
+				}
+
+				RenderData_Set::stencilTest::stencilTest_shader.setInt("selectionStencil", 0);
+
+				RenderData_Set::AssimpModel_D[getNameSelected_Models[sP]->nameModel].DrawSingleMesh(getNameSelected_Models[sP]->nameMesh, 0);
+			}
+		}
+
+		getNameSelected_Models.clear();
+
+		render_AdvanceSelection_Mesh(excluded_Objs);
+
+	}
 }
 
 namespace stencil_test

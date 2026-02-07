@@ -96,8 +96,7 @@ endif()
 find_package(OpenGL REQUIRED)
 
 add_library(glad_source STATIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glad/src/glad.c
-        learningOpenGL/Edit_Modes/Edit_M.h
-        learningOpenGL/Edit_Modes/Edit_M.cpp)
+)
 
 target_include_directories(glad_source PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glad/include)
 
@@ -163,7 +162,8 @@ imgui
 
 #target_ling_libraries(imgui PUBLIC SDL3::SDL3 OpenGL::GL )
 
-add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/config_window.h" "learningOpenGL/config_window.cpp" "learningOpenGL/data_save.h" "learningOpenGL/data_save.cpp"
+add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/learningOpenGL.h"
+"learningOpenGL/config_window.h" "learningOpenGL/config_window.cpp" "learningOpenGL/data_save.h" "learningOpenGL/data_save.cpp"
 "learningOpenGL/control.cpp" "learningOpenGL/control.h" 
 "learningOpenGL/SHADER_H.cpp" "learningOpenGL/SHADER_H.h" 
 "learningOpenGL/GLM_test.h" "learningOpenGL/GLM_test.cpp"
@@ -179,9 +179,9 @@ add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/conf
 "learningOpenGL/threadSystem/thread_System.h" "learningOpenGL/threadSystem/thread_System.cpp"
 "learningOpenGL/2D_UI/Interface_UI.cpp" "learningOpenGL/2D_UI/Interface_UI.h"
 "learningOpenGL/2D_UI/Interface_generalUI.cpp" "learningOpenGL/2D_UI/Interface_generalUI.h"
+"learningOpenGL/Edit_Modes/Edit_M.cpp" "learningOpenGL/Edit_Modes/Edit_M.h"
 "learningOpenGL/textureData/textureManager.cpp" "learningOpenGL/textureData/textureManager.h"
 "learningOpenGL/2D_UI/system_UI/system_UI_B.cpp" "learningOpenGL/2D_UI/system_UI/system_UI_B.h"
-"learningOpenGL/Edit_Modes/Edit_M.cpp" "learningOpenGL/Edit_Modes/Edit_M.h"
 "learningOpenGL/libFile.h"
 "learningOpenGL/STB_IMAGE_IMPLEMENT.cpp"
 
@@ -206,20 +206,26 @@ target_include_directories(Learning PRIVATE
 ${imgui_SOURCE_DIR}
 ${imgui_SOURCE_DIR}/backends
 )
-target_include_directories(Learning PRIVATE "${PROJECT_BINARY_DIR}")
-target_include_directories(Learning PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/ThirdPartyLibs")
-target_include_directories(Learning PRIVATE ${glm_SOURCE_DIR})
-target_include_directories(Learning PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/learningOpenGL/Model_Assimp")
-target_include_directories(Learning PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/learningOpenGL")
-
+target_include_directories(Learning PUBLIC "${PROJECT_BINARY_DIR}")
+target_include_directories(Learning PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/ThirdPartyLibs")
+target_include_directories(Learning PUBLIC ${glm_SOURCE_DIR})
+target_include_directories(Learning PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/learningOpenGL/Model_Assimp")
+target_include_directories(Learning PUBLIC
+        "${CMAKE_CURRENT_SOURCE_DIR}"
+        "${CMAKE_CURRENT_SOURCE_DIR}/learningOpenGL"}
+        "${CMAKE_CURRENT_SOURCE_DIR}/learningOpenGL/Edit_Modes"
+)
 
 target_link_libraries(Learning PRIVATE
 SDL3::SDL3-shared
 glad_source
 OpenGL::GL
 assimp::assimp
+glm::glm
 ktx
 )
+
+target_include_directories(Learning PUBLIC ${glm_SOURCE_DIR})
 
 if(TARGET assimp)
     target_compile_options(assimp PRIVATE -Wno-error)

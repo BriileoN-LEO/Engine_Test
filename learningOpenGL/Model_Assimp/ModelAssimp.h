@@ -81,7 +81,7 @@ namespace Assimp_D
 		excludedOP exclude_Type{};
 		std::string nameModel{};
 		std::vector<std::string> nameMeshes{};
-	
+
 	};
 
 	struct structMesh_Data
@@ -97,6 +97,20 @@ namespace Assimp_D
 		std::string nameModel{};
 		std::string nameMesh{};
 		[[maybe_unused]] bool changeStateSelection{};
+
+		structModelName();
+		structModelName(std::string nameModel, std::string nameMesh);
+		structModelName(std::string nameModel, std::string nameMesh, bool changeStateSelection);
+		structModelName(structModelName&& insertNew) noexcept;
+		structModelName(structModelName& insertNew);
+		structModelName(structModelName* insertNew);
+
+		bool operator!=(structModelName&& sModelName) noexcept;
+		bool operator!=(structModelName& sModelName);
+		bool operator==(structModelName&& sModelName) noexcept;
+		bool operator==(structModelName& sModelName);
+        structModelName operator=(structModelName&& sModelName) noexcept;
+		structModelName operator=(structModelName& sModelName);
 
 		void reset();
 	};
@@ -279,6 +293,9 @@ namespace Assimp_D
 	
 		std::vector<Mesh>& outMeshes();
 		shading::shader& outShader();
+
+		Mesh& outSpecificMesh(std::string& nameMesh);
+
 		int numMeshes();
 		void refresh_ModelCoord();
 	};
@@ -330,6 +347,14 @@ namespace individualComp
 
 		Multiple_AssimpMesh();
 		Multiple_AssimpMesh(Assimp_D::structModelName meshToCopy, std::vector<glm::vec3> quantityMesh);
+		Multiple_AssimpMesh(Multiple_AssimpMesh&& mAssimp_copy) noexcept;
+		Multiple_AssimpMesh(Multiple_AssimpMesh& mAssimp_copy);
+        ~Multiple_AssimpMesh();
+
+		Multiple_AssimpMesh operator=(Multiple_AssimpMesh&& mAssimp_copy) noexcept;
+		Multiple_AssimpMesh operator=(Multiple_AssimpMesh& mAssimp_copy);
+
+
 
 		void setMultipleMesh(Assimp_D::structModelName meshToCopy, std::vector<glm::vec3> quantityMesh);
 		void drawMultipleMesh();

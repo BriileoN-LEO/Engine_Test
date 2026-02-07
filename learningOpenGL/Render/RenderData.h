@@ -27,7 +27,7 @@ namespace RenderData_Set
 	extern std::map<std::string, frameBuff::frameBuffer> frameBuffers_D;
 	extern frameBuff::frameBuffer testFrameBuffer;
 
-
+    extern Assimp_D::Mesh error_MeshF;
 
 	namespace skybox_D
 	{
@@ -143,13 +143,13 @@ namespace RenderData_Set
 
 	const void loadAll_DataCPU();
 
-	const std::vector<ObjCreation::ModelCreation> setMeshLight_ModelCreation_Data();
-	const std::vector<light::light1> setPointLights();
-	const std::vector<light::DirectionalLight> setDirectionalLights();
-	const std::map<std::string, light::SpotLight> setSpotLights();
-	const std::vector<screenUI::pointerScreen> setPointUI_2D();
-	const std::vector<individualComp::Multiple_AssimpMesh> setMulti_AssimpModel();
-	const std::map<std::string, frameBuff::frameBuffer> setFrameBuffers();
+	 std::vector<ObjCreation::ModelCreation> setMeshLight_ModelCreation_Data();
+	 std::vector<light::light1> setPointLights();
+	 std::vector<light::DirectionalLight> setDirectionalLights();
+	 std::map<std::string, light::SpotLight> setSpotLights();
+	 std::vector<screenUI::pointerScreen> setPointUI_2D();
+	 std::vector<individualComp::Multiple_AssimpMesh> setMulti_AssimpModel();
+	 std::map<std::string, frameBuff::frameBuffer> setFrameBuffers();
 
 
 	void setSettings_FileShader(const char* fragmentShader_Path, std::vector<std::string> values);

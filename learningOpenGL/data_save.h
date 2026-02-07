@@ -30,6 +30,24 @@ namespace register_Errors
 	void debug_renderError_(const char* file, int line);
 #define debug_renderError() debug_renderError_(__FILE__, __LINE__)
 }
+
+
+namespace dataConvert
+{
+ template<typename enumC>
+ enumC s_cast(int enumToCast)
+  {
+   return static_cast<enumC>(enumToCast);
+  }
+
+ template<typename enum_to_int>
+ int cast_int (enum_to_int enumToCast)
+ {
+   return static_cast<int>(enumToCast);
+ }
+
+}
+
 namespace vertexCreation
 {
 	class triangle

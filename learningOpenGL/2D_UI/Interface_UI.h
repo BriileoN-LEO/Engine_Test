@@ -7,6 +7,20 @@
 #include "imgui_impl_opengl3.h"
 
 
+namespace UI_EditMode
+{
+ enum class editMode_S : uint8_t
+	{
+      SELECTION_ON_OFF = 0,
+ 	  NOT_BUTTOM = 1,
+    };
+
+extern bool buttom_active;
+extern editMode_S lastButtom;
+
+ void render_SelectionObj();
+
+}
 
 namespace UI
 {

@@ -7,6 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/norm.hpp>
 #include <ktx.h> ///NUEVA LIBRERIA PARA CARGAR IMAGENES
 #include <iostream>
 #include <string>
