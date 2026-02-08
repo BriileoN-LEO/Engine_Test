@@ -43,12 +43,20 @@ namespace register_Errors
 		//	char infoLog[512];
 			GLint logLength{};
 
-			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
-
 			std::string logInfo{"logLength"};
 			GLchar infoLog[512];
 
-			glGetShaderInfoLog(shader, logLength, nullptr, infoLog);
+			if (typeTest == 0)
+			{
+				glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
+				glGetShaderInfoLog(shader, logLength, nullptr, infoLog);
+			}
+
+			if (typeTest == 1)
+			{
+				glGetProgramiv(shader, GL_INFO_LOG_LENGTH, &logLength);
+				glGetProgramInfoLog(shader, logLength, nullptr, infoLog);
+			}
 			
 			std::string messageError{ "ERROR::SHADER::" + type + "::COMPILATION_FAILED --->" + infoLog };
 
@@ -94,6 +102,21 @@ namespace register_Errors
 
 }
 
+namespace resolve_Errors
+{
+	void quit_BOM_UFT_8(std::string& dataCode)
+	{
+		if (dataCode.size() >= 3 &&
+			static_cast<unsigned char>(dataCode[0]) == 0xEF &&
+			static_cast<unsigned char>(dataCode[1]) == 0xBB &&
+			static_cast<unsigned char>(dataCode[2]) == 0xBF
+				)
+		{
+			dataCode.substr(3);
+		}
+	}
+
+}
 
 namespace vertexCreation
 {

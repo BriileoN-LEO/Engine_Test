@@ -10,9 +10,17 @@ layout (std140) uniform matrices_cam
  mat4 projection_c;
 };
 
-out vec3 Normal;
-out vec3 FragPos;
-out vec2 coordTexOut;
+out VS_OUT
+{
+vec3 Normal_;
+vec3 FragPos_;
+vec2 coordTexOut_;
+
+} vs_out;
+
+//out vec3 Normal;
+//out vec3 FragPos;
+//out vec2 coordTexOut;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -31,10 +39,10 @@ void main()
 {
  // gl_Position =  projection * view * model * vec4(aPos.xyz, 1.0);
   gl_Position =  projection_c * view_c * model * vec4(aPos.xyz, 1.0);
-  FragPos = vec3(model * vec4(aPos.xyz, 1.0));
+  vs_out.FragPos_ = vec3(model * vec4(aPos.xyz, 1.0));
  //ormal = modelMatrix * aNormal; ///Calcularlo desde el codigo(CPU) para enviarlo a Uniform
-  Normal = mat3(transpose(inverse(model))) * aNormal;  
+  vs_out.Normal_ = mat3(transpose(inverse(model))) * aNormal;
 
-  coordTexOut = aCoordTex;///
+  vs_out.coordTexOut_ = aCoordTex;///
 
 }

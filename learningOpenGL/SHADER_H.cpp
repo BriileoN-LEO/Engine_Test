@@ -222,7 +222,26 @@ namespace shading
 			}
 		}
 	}
-	void shader::shaderCreation(const char* vertexPath, const char* fragmentPath)
+	shader::shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath, std::vector<layoutType> data_Layout)
+	{
+		shaderCreation(vertexPath, fragmentPath, geometryPath);  ///HERE CREATES THE ID
+
+		if (data_Layout[0] != layoutType::NONE &&
+			data_Layout[0] != layoutType::LIGHTS)
+		{
+			for (auto& dL : data_Layout)
+			{
+				//	unsigned int setUniformBlockIndex{ glGetUniformBlockIndex(ID, shaders_LayoutB[dL].outNameBlockD().c_str()) };
+				//	glUniformBlockBinding(ID, setUniformBlockIndex, shaders_LayoutB[dL].outIndexP());
+
+				unsigned int setUniformBlockIndex{ glGetUniformBlockIndex(ID, settings_LayoutUni[dL].first.c_str()) };
+				glUniformBlockBinding(ID, setUniformBlockIndex, settings_LayoutUni[dL].second);
+
+			}
+		}
+	}
+	/////
+	void shader::shaderCreation(const char* vertexPath, const char* fragmentPath, const char* geometryPath)
 	{
 		std::ifstream vertexStreamFile;
 		std::ifstream fragmentStreamFile;
@@ -245,24 +264,66 @@ namespace shading
 		}
 		catch (std::ifstream::failure e)
 		{
-			std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ\n" <<
-				vertexPath << '\n';
+			std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ ---->" <<  vertexPath << '\n';
+			std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ ---->" <<  fragmentPath << '\n';
 			//std::cout << e.what();
 		}
 
 		std::string VC = vShaderStream.str();
 		std::string FC = fShaderStream.str();
+		std::string GC {};
 
 		const GLchar* vertexCode = VC.c_str();
 		const GLchar* fragmentCode = FC.c_str();
+		const GLchar* geometryCode = nullptr;
 
-		//d::cout << vertexCode;
-		//td::cout << fragmentCode;
+		if (geometryPath != nullptr)
+		{
+		  std::cout << "READING::GEOMETRY SHADER --->" << geometryPath << '\n';
+          std::ifstream geometryShader;
+		  geometryShader.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+		  std::stringstream gShaderStream;
+
+		  bool notPass_f{};
+
+		  try
+		   {
+			geometryShader.open(geometryPath);
+		  	gShaderStream << geometryShader.rdbuf();
+		  	geometryShader.close();
+
+		   }
+
+			catch (std::ifstream::failure e)
+			{
+				std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ ---->" << geometryPath << '\n';
+				notPass_f = true;
+			}
+
+			if (notPass_f == false)
+			{
+				GC = gShaderStream.str();
+				resolve_Errors::quit_BOM_UFT_8(GC);
+				//geometryCode = infoShader.c_str();
+				geometryCode = GC.c_str();
+             //   std::cout << geometryCode << '\n';
+			}
+		}
 
 		GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 		glShaderSource(vertexShader, 1, &vertexCode, nullptr);
 		glCompileShader(vertexShader);
 		register_Errors::testCompileShader(vertexShader, "VERTEX", 0);
+
+		GLuint geometryShader{};
+		if (geometryCode != nullptr)  ///check if the distribution affects the creation of shader
+		{
+			geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
+			glShaderSource(geometryShader, 1, &geometryCode, nullptr); //Check the nullptr
+			glCompileShader(geometryShader);
+			register_Errors::testCompileShader(geometryShader, "GEOMETRY", 0);
+			glAttachShader(ID, geometryShader);
+		}
 
 		GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 		glShaderSource(fragmentShader, 1, &fragmentCode, nullptr);
@@ -271,14 +332,21 @@ namespace shading
 
 		ID = glCreateProgram();
 		glAttachShader(ID, vertexShader);
+		if (geometryCode != nullptr)
+		{
+			glAttachShader(ID, geometryShader);
+		}
 		glAttachShader(ID, fragmentShader);
+
 		glLinkProgram(ID);
 		register_Errors::testCompileShader(ID, "PROGRAM", 1);
 
 		glDeleteShader(vertexShader);
 		glDeleteShader(fragmentShader);
+		glDeleteShader(geometryShader);
 
 	}
+
 	void shader::use()
 	{
 		glUseProgram(ID);
@@ -290,7 +358,7 @@ namespace shading
 
 		if (location == -1)
 		{
-			SDL_Log(std::string("ERROR LOCATION::" + name).c_str());
+		//	SDL_Log(std::string("ERROR LOCATION::" + name).c_str());
 
 		}
 
@@ -302,7 +370,7 @@ namespace shading
 		
 		if (location == -1)
 		{
-			SDL_Log(std::string("ERROR LOCATION::" + name).c_str());
+		//	SDL_Log(std::string("ERROR LOCATION::" + name).c_str());
 
 		}
 

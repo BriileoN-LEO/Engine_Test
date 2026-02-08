@@ -31,6 +31,11 @@ namespace register_Errors
 #define debug_renderError() debug_renderError_(__FILE__, __LINE__)
 }
 
+namespace resolve_Errors
+{
+  void quit_BOM_UFT_8(std::string& dataCode);
+
+}
 
 namespace dataConvert
 {

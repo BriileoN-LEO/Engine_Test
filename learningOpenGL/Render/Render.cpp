@@ -420,10 +420,10 @@ namespace render
 
 		    excluded_Mesh.insert(excluded_Mesh.end(), edit_visualize::exclude_EditMeshes.begin(), edit_visualize::exclude_EditMeshes.end());
 
-			for (auto meshesEx : excluded_Mesh)
-			{
-			  SDL_Log(meshesEx.nameModel.c_str());
-			}
+		//	for (auto meshesEx : excluded_Mesh)
+			//{
+		//	  SDL_Log(meshesEx.nameModel.c_str());
+		//	}
 
 			render_Points();
 			///renderSelection::renderSelection_Mesh(excluded_Mesh);///LISTO_NEW_SHADER

@@ -15,13 +15,13 @@ if(WIN32)
 add_compile_definitions(NOMINMAX WIN32_LEAN_AND_MEAN)
 endif()
 
-set(DATA_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/shaders/shader_v_v1.vs             "
+set(DATA_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/shaders/shader_v_v1.vs"
 "${CMAKE_CURRENT_SOURCE_DIR}/shaders/shader_f_v1.fs"
 "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_TEX/shader_v_Tex_v1.vs" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_TEX/shader_v_Tex_v1.fs"
-"${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_MODEL1/vshader_model_v1.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_MODEL1/fshader_model_v1.frag"
+"${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_MODEL1/vShader_model_v1.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_MODEL1/fShader_model_v1.frag"
 "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_LIGHT/vShader_Light_v1.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_LIGHT/fShader_Light_v1.frag"
-"${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_MODEL_T1/vShader_ModelT1.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_MODEL_T1/fShader_ModelT1.frag"
-"${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_STANDARD/vShader_Standard_v1.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_STANDARD/fShader_Standard_v1.frag"
+"${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_MODEL_T1/vShader_ModelT1.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_MODEL_T1/fShader_ModelT1.frag" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_MODEL_T1/gShader_ModelT1.geom"
+        "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_STANDARD/vShader_Standard_v1.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_STANDARD/fShader_Standard_v1.frag"
 "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_STENCIL_TEST/vShader_stencil_test.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_STENCIL_TEST/fShader_stencil_test.frag"
 "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADERS_AABB/vShader_AABB_All.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADERS_AABB/fShader_AABB_All.frag"
 "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_UI/vShader_Pointer.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_UI/fShader_Pointer.frag"

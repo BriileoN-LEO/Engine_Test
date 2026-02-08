@@ -139,8 +139,9 @@ namespace shading
 		shader();
 		shader(unsigned int ID);
 		shader(const char* vertexPath, const char* fragmentPath, std::vector<layoutType> data_Layout); /////
+		shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath, std::vector<layoutType> data_Layout); /////
 
-		void shaderCreation(const char* vertexPath, const char* fragmentPath);
+		void shaderCreation(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr);
 
 		void use();
 		
@@ -174,6 +175,8 @@ namespace shading
 			const char* vertexShader_name{nullptr};
 			const char* fragmentShader_name{nullptr};
 		    std::vector<layoutType> data_Layout{};
+
+			const char* geometryShader_name{nullptr};
 		};
 
 		extern std::queue<shaderData_loadCPU> shaderData;

@@ -538,7 +538,7 @@ namespace RenderData_Set
 		    shading::layoutType::NONE
 		};
 
-		shading::loadToCPU::shaderData_loadCPU shaderT1("shaderT1", vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), LB_01);
+		shading::loadToCPU::shaderData_loadCPU shaderT1("shaderT1", vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), LB_01, gShader_ModelT1.c_str());  //TEST
 		shading::loadToCPU::shaderData_loadCPU shaderStandard("shaderStandard", vShader_Standard_v1.c_str(), fShader_Standard_v1.c_str(), LB_02);
 		shading::loadToCPU::shaderData_loadCPU shaderFramebuffer("shaderFramebuffer", vShader_Framebuffer_V01.c_str(), fShader_Framebuffer_V01.c_str(), LB_02);
 		shading::loadToCPU::shaderData_loadCPU shaderPoint("shaderPoint", vShader_Pointer.c_str(), fShader_Pointer.c_str(), LB_02);
@@ -580,8 +580,16 @@ namespace RenderData_Set
 
 				--shading::loadToCPU::atomic_CounterShader;
 
-				shader_D.emplace(shaD.nameShader, shading::shader(shaD.vertexShader_name, shaD.fragmentShader_name, shaD.data_Layout));
-			   
+			    if (shaD.geometryShader_name == nullptr) /// NOT HAVE GEOMETRY SHADER
+			    {
+				    shader_D.emplace(shaD.nameShader, shading::shader(shaD.vertexShader_name, shaD.fragmentShader_name, shaD.data_Layout));
+			    }
+
+				else if (shaD.geometryShader_name != nullptr)  /// HAVE GEOMETRY SHADER
+				{
+					shader_D.emplace(shaD.nameShader, shading::shader(shaD.vertexShader_name, shaD.fragmentShader_name, shaD.geometryShader_name, shaD.data_Layout));
+				}
+
 				std::cout << "LOADING::SHADER---->" << shaD.nameShader << '\n';
 			}
 
