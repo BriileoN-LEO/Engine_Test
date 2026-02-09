@@ -2,6 +2,7 @@
 #include "ModelAssimp.h"
 #include "Render/RenderData.h"
 #include "textureData/textureManager.h"
+#include "Edit_Modes/Edit_M.h"
 
 namespace sky 
 {
@@ -672,6 +673,46 @@ namespace Assimp_D
 
 	}
 
+	void Mesh::update_editMode() //CHANGE LATER IF I WILL USE THE SAME NAME OF THE MESH BUT IN OTHER MODEL
+	{
+
+		auto find_pos = [&]()
+		{
+			int pos{-1};
+			auto find_Mesh = std::ranges::find_if(edit_visualize::nameSelect_Model,
+				[&](edit_visualize::edit_MV& nSM) {
+				   pos++;
+					return nSM.names.nameMesh == nameMesh;
+				});
+
+			if (find_Mesh != std::ranges::end(edit_visualize::nameSelect_Model))
+			{
+				pos_editMode = pos;
+			}
+
+			else if (find_Mesh == std::ranges::end(edit_visualize::nameSelect_Model))
+			{
+				pos_editMode = -1;
+			}
+
+			last_Size_EM = static_cast<int>(edit_visualize::nameSelect_Model.size());
+		};
+
+		if (last_Size_EM != static_cast<int>(edit_visualize::nameSelect_Model.size()))
+		{
+			find_pos();
+		}
+
+		else if (pos_editMode != -1)
+		{
+		    if (edit_visualize::nameSelect_Model[pos_editMode].names.nameMesh != nameMesh)
+		  {
+		    	find_pos();
+		  }
+		}
+
+	}
+
 	void Mesh::Draw(camera::camera1 cam1, light::light1 light, shading::shader shader)
 	{
 		shader.use();
@@ -698,7 +739,17 @@ namespace Assimp_D
 		shader.setVec3("viewPos", cam1.posCam);
 		shader.transformMat3("modelMatrix", MeshCoord.normalModelMatrix);
 
-	
+		if (pos_editMode != -1)
+		{
+			shader.setBool("active_exploded", edit_visualize::nameSelect_Model[pos_editMode].explode.active);
+			shader.setFloat("dist_exploded", edit_visualize::nameSelect_Model[pos_editMode].explode.dist_explode);
+		}
+
+		else if (pos_editMode == -1)
+		{
+			shader.setBool("active_exploded", false);
+			shader.setFloat("dist_exploded", 0.0f);
+		}
 
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
@@ -868,6 +919,19 @@ namespace Assimp_D
 		shader.setVec3("viewPos", cameras::cameras_D[cameras::name_CurrentCamera].posCam);
 		shader.transformMat3("modelMatrix", MeshCoord.normalModelMatrix);
 
+		  if (pos_editMode != -1)
+		{
+				shader.setBool("active_exploded", edit_visualize::nameSelect_Model[pos_editMode].explode.active);
+				shader.setFloat("dist_exploded", edit_visualize::nameSelect_Model[pos_editMode].explode.dist_explode);
+		}
+
+		else if (pos_editMode == -1)
+	    {
+			shader.setBool("active_exploded", false);
+			shader.setFloat("dist_exploded", 0.0f);
+		}
+			//CHANGE LATER IF I WILL USE THE SAME NAME OF THE MESH BUT IN OTHER MODEL
+
 
 
 		glBindVertexArray(VAO);
@@ -1016,6 +1080,18 @@ namespace Assimp_D
 
 		shader.setVec3("viewPos", cameras::cameras_D[cameras::name_CurrentCamera].posCam);
 		shader.transformMat3("modelMatrix", MeshCoord.normalModelMatrix);
+
+		if (pos_editMode != -1)
+		{
+			shader.setBool("active_exploded", edit_visualize::nameSelect_Model[pos_editMode].explode.active);
+			shader.setFloat("dist_exploded", edit_visualize::nameSelect_Model[pos_editMode].explode.dist_explode);
+		}
+
+		else if (pos_editMode == -1)
+		{
+			shader.setBool("active_exploded", false);
+			shader.setFloat("dist_exploded", 0.0f);
+		}
 
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);

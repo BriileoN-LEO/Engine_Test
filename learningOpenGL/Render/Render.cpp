@@ -972,7 +972,7 @@ namespace renderSelection
 
 		for (auto sMP : edit_visualize::nameSelect_Model)
 		{
-		   Assimp_D::Mesh& getMesh {RenderData_Set::AssimpModel_D[sMP.nameModel].outSpecificMesh(sMP.nameMesh) };
+		   Assimp_D::Mesh& getMesh {RenderData_Set::AssimpModel_D[sMP.names.nameModel].outSpecificMesh(sMP.names.nameMesh) };
 
 			if (static_cast<int>(getMesh.nameMesh.size()) != 0)
 			{
@@ -997,7 +997,7 @@ namespace renderSelection
 			 }
 		   }
 			//getNameSelected_Models.emplace_back(std::make_unique<Assimp_D::structModelName>(edit_visualize::nameSelect_Model[pos_D]));
-			std::unique_ptr<Assimp_D::structModelName> container_Sp{std::make_unique<Assimp_D::structModelName>(edit_visualize::nameSelect_Model[pos_D])};
+			std::unique_ptr<Assimp_D::structModelName> container_Sp{std::make_unique<Assimp_D::structModelName>(edit_visualize::nameSelect_Model[pos_D].names)};
 			getNameSelected_Models.emplace_back(std::move(container_Sp));
 		}
 

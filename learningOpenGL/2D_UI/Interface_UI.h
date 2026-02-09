@@ -12,11 +12,18 @@ namespace UI_EditMode
  enum class editMode_S : uint8_t
 	{
       SELECTION_ON_OFF = 0,
- 	  NOT_BUTTOM = 1,
+ 	  SELECTION_EXPLODE = 1,
+ 	  NOT_BUTTOM = 2,
     };
 
+	struct exit_Buttom_EM
+	{
+	  editMode_S buttom{editMode_S::NOT_BUTTOM};
+	  bool press{ false };
+	};
+
 extern bool buttom_active;
-extern editMode_S lastButtom;
+extern std::array<exit_Buttom_EM, 2> lastButtom;
 
  void render_SelectionObj();
 

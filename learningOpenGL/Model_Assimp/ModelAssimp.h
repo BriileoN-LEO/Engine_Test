@@ -56,7 +56,6 @@ namespace sky
 
 }
 
-
 namespace Assimp_D
 {
 	////////////
@@ -203,8 +202,7 @@ namespace Assimp_D
 
 	}
 
-	class Mesh
-	{
+	class Mesh {
 	private:
 
 		unsigned int VAO{};
@@ -227,12 +225,17 @@ namespace Assimp_D
 		shaderSettings shaderSet{};
 		shading::config::shaderConfig settingsShader{};
 
+		int pos_editMode{-1};
+		int last_Size_EM{-1};
+
 		renderSeq renderP{};
 
 		Mesh();
 		Mesh(std::vector<vertexD> ver, std::vector<unsigned int> indi, std::vector<textureD> texture);
 
 		Mesh(Assimp_D::loadToCPU::MeshData_loadCPU loadData);
+
+		void update_editMode();
 
 		void Draw(camera::camera1 cam1, light::light1 light, shading::shader shader);
 		void Draw_WithLights(shading::shader& shader);

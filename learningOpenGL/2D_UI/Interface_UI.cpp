@@ -5,27 +5,50 @@
 namespace UI_EditMode
 {
 	bool buttom_active{};
-	editMode_S lastButtom{editMode_S::NOT_BUTTOM};
+	std::array<exit_Buttom_EM, 2> lastButtom
+	{
+		exit_Buttom_EM(editMode_S::SELECTION_ON_OFF, false),
+		exit_Buttom_EM(editMode_S::SELECTION_EXPLODE, false)
+	};
 
 	void render_SelectionObj() {
+		//bool* selection_on_off { new bool(ImGui::Button("selection : ON/OFF")) };
+		bool* selection_on_off { nullptr };
+		bool* selection_explode { nullptr };
+
+		auto buttomSelect = [&](editMode_S& buttom)
+		{
+		  switch (buttom)
+		  {
+		  	case (editMode_S::SELECTION_ON_OFF)	:
+		  		selection_on_off = new bool(ImGui::Button("selection : ON/OFF"));
+		  		break;
+		  	case (editMode_S::SELECTION_EXPLODE) :
+		  		selection_explode = new bool(ImGui::Button("selection explode"));
+		  }
+		};
+
 		ImGui::Begin("EditMode");
 
-		if (lastButtom == editMode_S::SELECTION_ON_OFF)
-		{
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.6f, 0.0f, 1.0f));
-		}
-		else
-		{
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.6f, 1.0f, 1.0f));
-		}
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0, 0.5f, 0.0f, 1.0f));
-	//	ImGui::PushStyleColor(ImGuiCol_ButtonActive,  ImVec4(1.0f, 0.6f, 0.0f, 1.0f));
+		 for (auto& eBM : lastButtom)
+		 {
+		 	if (eBM.press == true)
+		 	{
+		 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.6f, 0.0f, 1.0f));
+		 	}
+		 	else
+		 	{
+		 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.6f, 1.0f, 1.0f));
+		 	}
+		 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0, 0.5f, 0.0f, 1.0f));
 
-		bool* selection_on_off {new bool(ImGui::Button("selection : ON/OFF")) };
+		 	buttomSelect(eBM.buttom);
+		 }
 
-		std::array<bool*, 1> selections
+		std::array<bool*, 2> selections
 		{
-			std::move(selection_on_off)
+			std::move(selection_on_off),
+			std::move(selection_explode)
 		};
 
 		int fS{};
@@ -44,24 +67,38 @@ namespace UI_EditMode
 			{
 				case (editMode_S::SELECTION_ON_OFF) :
 
-					if (lastButtom == editMode_S::SELECTION_ON_OFF)
+					if (lastButtom[fS].press == true)
 					{
 						edit_visualize::selectionMode = false;
-						lastButtom = editMode_S::NOT_BUTTOM;
+						lastButtom[fS].press = false;
 					}
 
-					else if (lastButtom == editMode_S::NOT_BUTTOM)
+					else if (lastButtom[fS].press == false)
 					{
 						edit_visualize::selectionMode = true;
-						lastButtom = editMode_S::SELECTION_ON_OFF;
+				        lastButtom[fS].press = true;
 					}
 
 					break;
+
+				case (editMode_S::SELECTION_EXPLODE) :
+					if (lastButtom[fS].press == true)
+					{
+						edit_visualize::exploded_objs_Active = false;
+						lastButtom[fS].press = false;
+					}
+
+					else if (lastButtom[fS].press == false)
+					{
+						edit_visualize::exploded_objs_Active = true;
+						lastButtom[fS].press = true;
+					}
+				break;
 			}
 
 		}
 
-		  ImGui::PopStyleColor(2);
+		  ImGui::PopStyleColor(2 * static_cast<int>(lastButtom.size()));
 
 
 		ImGui::End();
