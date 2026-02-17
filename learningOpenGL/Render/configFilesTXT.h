@@ -14,6 +14,11 @@ const std::string vShader_ModelT1 = "shaders/SHADER_MODEL_T1/vShader_ModelT1.ver
 const std::string fShader_ModelT1 = "shaders/SHADER_MODEL_T1/fShader_ModelT1.frag";
 const std::string gShader_ModelT1 = "shaders/SHADER_MODEL_T1/gShader_ModelT1.geom";
 
+const std::string vShader_ModelT1_Normals = "shaders/SHADER_MODEL_T1/vShader_ModelT1_normals.vert";
+const std::string gShader_ModelT1_Normals = "shaders/SHADER_MODEL_T1/gShader_ModelT1_normals.geom";
+const std::string fShader_ModelT1_Normals = "shaders/SHADER_MODEL_T1/fShader_ModelT1_normals.frag";
+
+
 const std::string vShader_Standard_v1 = "shaders/SHADER_STANDARD/vShader_Standard_v1.vert";
 const std::string fShader_Standard_v1 = "shaders/SHADER_STANDARD/fShader_Standard_v1.frag";
 

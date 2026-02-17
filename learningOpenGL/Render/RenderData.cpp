@@ -9,7 +9,11 @@
 namespace RenderData_Set
 {
 	using matSettings = light::lightShader;
-	  
+
+
+	std::vector<Assimp_D::Model> models_D{};
+
+
 	std::map<std::string, ObjCreation::ModelCreation> ModelCreation_D{};
 	std::map<std::string, Assimp_D::Model> AssimpModel_D{};
 	std::vector<ObjCreation::ModelCreation> MeshLights_MCD{};
@@ -253,14 +257,15 @@ namespace RenderData_Set
 
         ///////////////// 
 
-		std::map<std::string, Assimp_D::Model> AssimpModels
-		{
+
+		std::map<std::string, Assimp_D::Model> AssimpModels{};
+		/*{
 			{"CampoVegetacion", model_Campo01},
 			{"plant01", model_Plant01},
 			{"backPack", modelBackpack},
 		//	{"Floor", model_Floor},
 			{"FlashLight", model_FlashLight}
-		};
+		};*/
 
 		return AssimpModels;
 	}
@@ -313,13 +318,19 @@ namespace RenderData_Set
 			//| aiProcess_JoinIdenticalVertices
 		};
 
+		//NEW_SET SHADERS
+		std::vector<Assimp_D::shader_SetType> shaders{};
+		shaders.emplace_back("shaderT1", Assimp_D::shader_type::standard_Shader);
+		shaders.emplace_back("normals_shaderT1", Assimp_D::shader_type::viewNormals_Shader);
+
+
 	//	std::filesystem::path pathBackpack{ backpack_Model };
 		Assimp_D::loadToCPU::insertProcessModel back_Pack
 		{
 			"backPack",
 			backpack_Model,
-			"shaderT1",
-			aiProcessFlags_backpack
+			shaders,
+			aiProcessFlags
 
 		};
 
@@ -328,7 +339,7 @@ namespace RenderData_Set
 		{
 			"Floor",	
 			floor2_Model,
-			"shaderT1",
+			shaders,
 			aiProcessFlags
 
 		};
@@ -339,7 +350,7 @@ namespace RenderData_Set
 		{
 			"FlashLight",
 			flashLight_Model,
-			"shaderT1",
+			shaders,
 			aiProcessFlags
 
 		};
@@ -350,9 +361,8 @@ namespace RenderData_Set
 		{
 			"CampoVegetacion",
 			campo_01,
-			"shaderT1",
+			shaders,
 			aiProcessFlags
-
 		};
 
 		//std::filesystem::path path_plant_01{ vegetacion_01 };
@@ -360,7 +370,7 @@ namespace RenderData_Set
 		{
 			"plant01",
 			vegetacion_01,
-			"shaderT1",
+			shaders,
 			aiProcessFlags
 
 		};
@@ -369,18 +379,20 @@ namespace RenderData_Set
 		{
 			"mirror_01",
 			vegetacion_01,
-			"shaderT1",
+			shaders,
 			aiProcessFlags
+
 		};
 
 		std::queue<Assimp_D::loadToCPU::insertProcessModel> models;
-		
 		models.push(back_Pack);
 			//Floor,
 		models.push(FlashLight);
 		models.push(CampoVegetacion);
 		models.push(plant01);
 		models.push(mirror_01);
+
+		models_D.reserve(static_cast<int>(models.size()));
 
 		Assimp_D::loadToCPU::atomic_sizeModels.fetch_add(static_cast<int>(models.size()));
 
@@ -410,7 +422,9 @@ namespace RenderData_Set
 
 				--Assimp_D::loadToCPU::atomic_CounterModel;
 
-				AssimpModel_D.emplace(model.nameModel, Assimp_D::Model(model));
+				Assimp_D::Model modelP(model);  ///CORREGIR AQUI
+
+				AssimpModel_D.emplace(model.nameModel, std::move(modelP));
 
 				std::cout << "LOADING::MODEL---->" << model.nameModel << '\n';
 
@@ -450,7 +464,7 @@ namespace RenderData_Set
 				glm::vec3(0.8f),
 				32.0f
 			};
-			Assimp_D::coordModel coordBackPack{ glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f), 210.0f };
+			Assimp_D::coordModel coordBackPack{ glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f), glm::vec3(1.0f, 0.0f, 0.0f), 210.0f };
 			AssimpModel_D["backPack"].setModelSettings(coordBackPack, ss_Model_v1);
 			//AssimpModel_D["backPack"].loadTemporalShaders(vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
 
@@ -532,13 +546,19 @@ namespace RenderData_Set
 		{
 			 shading::layoutType::MATRIX_OBJ, shading::layoutType::LIGHTS
 		};
-	
+
+		std::vector <shading::layoutType> LB_MAT
+		{
+			shading::layoutType::MATRIX_OBJ
+		};
+
 		std::vector <shading::layoutType> LB_02
 		{
 		    shading::layoutType::NONE
 		};
 
 		shading::loadToCPU::shaderData_loadCPU shaderT1("shaderT1", vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), LB_01, gShader_ModelT1.c_str());  //TEST
+		shading::loadToCPU::shaderData_loadCPU shaderT1_normals("normals_shaderT1", vShader_ModelT1_Normals.c_str(), fShader_ModelT1_Normals.c_str(), LB_MAT, gShader_ModelT1_Normals.c_str());
 		shading::loadToCPU::shaderData_loadCPU shaderStandard("shaderStandard", vShader_Standard_v1.c_str(), fShader_Standard_v1.c_str(), LB_02);
 		shading::loadToCPU::shaderData_loadCPU shaderFramebuffer("shaderFramebuffer", vShader_Framebuffer_V01.c_str(), fShader_Framebuffer_V01.c_str(), LB_02);
 		shading::loadToCPU::shaderData_loadCPU shaderPoint("shaderPoint", vShader_Pointer.c_str(), fShader_Pointer.c_str(), LB_02);
@@ -548,11 +568,12 @@ namespace RenderData_Set
 		std::vector<shading::loadToCPU::shaderData_loadCPU> shadersLoad
 		{
 			shaderT1,
+			shaderT1_normals,
 			shaderStandard,
 			shaderFramebuffer,
 			shaderPoint,
 			shaderSkybox_01,
-			shader_briiUI_01
+			shader_briiUI_01,
 		};
 
 		shading::loadToCPU::atomic_sizeShader.fetch_add(static_cast<int>(shadersLoad.size()));

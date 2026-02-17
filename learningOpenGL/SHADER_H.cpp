@@ -226,18 +226,18 @@ namespace shading
 	{
 		shaderCreation(vertexPath, fragmentPath, geometryPath);  ///HERE CREATES THE ID
 
-		if (data_Layout[0] != layoutType::NONE &&
-			data_Layout[0] != layoutType::LIGHTS)
-		{
 			for (auto& dL : data_Layout)
 			{
+				if (dL != layoutType::NONE &&
+		           dL != layoutType::LIGHTS)
+				{
 				//	unsigned int setUniformBlockIndex{ glGetUniformBlockIndex(ID, shaders_LayoutB[dL].outNameBlockD().c_str()) };
 				//	glUniformBlockBinding(ID, setUniformBlockIndex, shaders_LayoutB[dL].outIndexP());
 
 				unsigned int setUniformBlockIndex{ glGetUniformBlockIndex(ID, settings_LayoutUni[dL].first.c_str()) };
 				glUniformBlockBinding(ID, setUniformBlockIndex, settings_LayoutUni[dL].second);
 
-			}
+		       	}
 		}
 	}
 	/////
@@ -342,9 +342,10 @@ namespace shading
 		register_Errors::testCompileShader(ID, "PROGRAM", 1);
 
 		glDeleteShader(vertexShader);
+		if (geometryCode != nullptr) {
+			glDeleteShader(geometryShader);
+		}
 		glDeleteShader(fragmentShader);
-		glDeleteShader(geometryShader);
-
 	}
 
 	void shader::use()
@@ -449,6 +450,36 @@ namespace shading
 
 	namespace loadToCPU
 	{
+
+		shaderData_loadCPU::shaderData_loadCPU(){};
+
+		shaderData_loadCPU::shaderData_loadCPU(std::string nameShader, const char* vertexShader_name, const char* fragmentShader_name, std::vector<layoutType> data_Layout) :
+		nameShader(nameShader),
+		vertexShader_name(std::move(vertexShader_name)),
+		fragmentShader_name(std::move(fragmentShader_name)),
+		data_Layout(data_Layout){};
+
+		shaderData_loadCPU::shaderData_loadCPU(std::string nameShader, const char* vertexShader_name, const char* fragmentShader_name, std::vector<layoutType> data_Layout, const char* geometryShader_name) :
+		nameShader(nameShader),
+		vertexShader_name(std::move(vertexShader_name)),
+		fragmentShader_name(std::move(fragmentShader_name)),
+		data_Layout(data_Layout),
+		geometryShader_name(std::move(geometryShader_name)){};
+
+		shaderData_loadCPU::shaderData_loadCPU(const shaderData_loadCPU&& shader_LCPU) noexcept :
+		nameShader(shader_LCPU.nameShader),
+        vertexShader_name(std::move(shader_LCPU.vertexShader_name)),
+        fragmentShader_name(std::move(shader_LCPU.fragmentShader_name)),
+        data_Layout(shader_LCPU.data_Layout),
+        geometryShader_name(std::move(shader_LCPU.geometryShader_name)){};
+
+		shaderData_loadCPU::shaderData_loadCPU(const shaderData_loadCPU& shader_LCPU) :
+		nameShader(shader_LCPU.nameShader),
+		vertexShader_name(std::move(shader_LCPU.vertexShader_name)),
+		fragmentShader_name(std::move(shader_LCPU.fragmentShader_name)),
+		data_Layout(shader_LCPU.data_Layout),
+		geometryShader_name(std::move(shader_LCPU.geometryShader_name)){};
+
 		std::queue<shaderData_loadCPU> shaderData{};
 		std::atomic<int> atomic_CounterShader(0);
 		std::atomic<int> atomic_sizeShader(0);
@@ -2131,6 +2162,7 @@ namespace ObjCreation
 			setCameraTransforms(cam);
 			vertexData.useMultipleVAO(i);
 			glDrawArrays(GL_TRIANGLES, 0, 3);
+			glBindVertexArray(0);
 		}
 
 	}

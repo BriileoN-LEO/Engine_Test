@@ -3,6 +3,7 @@
 #include "Render/RenderData.h"
 #include "textureData/textureManager.h"
 #include "Edit_Modes/Edit_M.h"
+#include "Render/Render.h"
 
 namespace sky 
 {
@@ -225,6 +226,7 @@ namespace sky
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
+		glBindVertexArray(0);
 		glDepthMask(GL_TRUE);
 		glDepthFunc(GL_LESS);
 
@@ -241,8 +243,7 @@ namespace sky
 }
 
 
-namespace Assimp_D
-{
+namespace Assimp_D {
 	unsigned int TextureFromFile(const char* path, std::string directory, bool gamma)
 	{
 	
@@ -291,21 +292,21 @@ namespace Assimp_D
 
 			}
 		
-			    glBindTexture(GL_TEXTURE_2D, texID);
+			glBindTexture(GL_TEXTURE_2D, texID);
 
 			//	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, DataT);
 			//	glGenerateMipmap(GL_TEXTURE_2D);
 
 
-				glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, formatSecond, GL_UNSIGNED_BYTE, DataT);
-				glGenerateMipmap(GL_TEXTURE_2D);
+			glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, formatSecond, GL_UNSIGNED_BYTE, DataT);
+			glGenerateMipmap(GL_TEXTURE_2D);
 
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-				stbi_image_free(DataT);
+			stbi_image_free(DataT);
 		}
 
 		else
@@ -348,9 +349,9 @@ namespace Assimp_D
 
 			glGenTextures(1, &id);
 
-		//	glBindTexture(GL_TEXTURE_2D, id);
-		//	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, dataTexture);
-		//	glGenerateMipmap(GL_TEXTURE_2D);
+			//	glBindTexture(GL_TEXTURE_2D, id);
+			//	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, dataTexture);
+			//	glGenerateMipmap(GL_TEXTURE_2D);
 
 			glBindTexture(GL_TEXTURE_2D, id);
 			//size_t sizeImage{ sizeof(dataTexture) };
@@ -375,6 +376,7 @@ namespace Assimp_D
 		return id;
 	}
 
+	Uint8 size_shaderType{2};
 
 	structModelName::structModelName() = default;
 
@@ -422,7 +424,7 @@ namespace Assimp_D
 		if (nameModel != sModelName.nameModel &&
 			nameMesh != sModelName.nameMesh)
 		{
-		  return true;
+			return true;
 		}
 
 		return false;
@@ -431,9 +433,9 @@ namespace Assimp_D
 	bool structModelName::operator==(structModelName&& sModelName) noexcept
 	{
 		if (nameModel == sModelName.nameModel &&
-	        nameMesh == sModelName.nameMesh)
+			nameMesh == sModelName.nameMesh)
 		{
-		 return true;
+			return true;
 		}
 
 		return false;
@@ -473,6 +475,76 @@ namespace Assimp_D
 		nameMesh.erase();
 		changeStateSelection = false;
 	}
+
+	shader_SetType::shader_SetType(){};
+	shader_SetType::shader_SetType(std::string name_shader, shader_type type) : name_shader(name_shader), type(type) {};
+	shader_SetType::shader_SetType(const shader_SetType&& insertNew) noexcept :  name_shader(insertNew.name_shader), type(insertNew.type){};
+	shader_SetType::shader_SetType(const shader_SetType& insertNew) : name_shader(insertNew.name_shader), type(insertNew.type){};
+	//shader_SetType::shader_SetType(shader_SetType* insertNew) : name_shader(insertNew->name_shader), type(insertNew->type){};
+
+	bool shader_SetType::operator!=(const shader_SetType&& sShader) noexcept
+	{
+	  bool toReturn{false};
+
+	  if (name_shader != sShader.name_shader &&
+	  	  type != sShader.type)
+	  {
+	    toReturn = true;
+	  }
+
+      return toReturn;
+	}
+	bool shader_SetType::operator!=(const shader_SetType& sShader)
+	{
+		bool toReturn{false};
+
+		if (name_shader != sShader.name_shader &&
+			  type != sShader.type)
+		{
+			toReturn = true;
+		}
+
+		return toReturn;
+	}
+	bool shader_SetType::operator==(const shader_SetType&& sShader) noexcept
+	{
+		bool toReturn{false};
+
+		if (name_shader == sShader.name_shader &&
+			  type == sShader.type)
+		{
+			toReturn = true;
+		}
+
+		return toReturn;
+	}
+	bool shader_SetType::operator==(const shader_SetType& sShader)
+	{
+		if (name_shader == sShader.name_shader &&
+			  type == sShader.type)
+		{
+			return true;
+		}
+
+		return false;
+	}
+	shader_SetType shader_SetType::operator=(const shader_SetType&& sShader) noexcept
+	{
+	  name_shader = sShader.name_shader;
+	  type = sShader.type;
+
+	  return *this;
+	}
+	shader_SetType shader_SetType::operator=(const shader_SetType& sShader)
+	{
+		name_shader = sShader.name_shader;
+		type = sShader.type;
+
+		return *this;
+	}
+
+	//shader_SetType::shader_SetType() : name_shader(""), type(shader_type::standard_Shader){};
+	//shader_SetType::shader_SetType(std::string name_shader, shader_type type) : name_shader(name_shader), type(type){}
 
 	Mesh::Mesh() {};
 	Mesh::Mesh(std::vector<vertexD> ver, std::vector<unsigned int> ind, std::vector<textureD> texture)
@@ -712,8 +784,30 @@ namespace Assimp_D
 		}
 
 	}
+	void Mesh::Draw_Normals(std::string& shader_ID)  ////this need to set the shader for normals
+	{
+		if (edit_visualize::show_normals_active == true)
+		{
+			if (pos_editMode != -1)
+			{
+                shading::shader& shader_set {RenderData_Set::shader_D[shader_ID]};
+				shader_set.use();
 
-	void Mesh::Draw(camera::camera1 cam1, light::light1 light, shading::shader shader)
+				///VERTEX SHADER
+				shader_set.transformMat("model", MeshCoord.model);
+
+				///GEOMETRY SHADER
+				shader_set.setBool("active_exploded", edit_visualize::nameSelect_Model[pos_editMode].explode.active);
+				shader_set.setFloat("dist_exploded", edit_visualize::nameSelect_Model[pos_editMode].explode.dist_explode);
+
+
+				glBindVertexArray(VAO);
+			    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
+				glBindVertexArray(0);
+			}
+		}
+	}
+	void Mesh::Draw(camera::camera1 cam1, light::light1 light, shading::shader& shader, std::string& shaderNormals_ID)
 	{
 		shader.use();
 
@@ -752,17 +846,26 @@ namespace Assimp_D
 		}
 
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
 		glBindVertexArray(0);
 
+		if (edit_visualize::editMode_active == true)
+		{
+			Draw_Normals(shaderNormals_ID); //DRAW NORMALS IF I SELECT THE OPTION
+		}
 	}
-	void Mesh::Draw_WithLights(shading::shader& shader)
+	void Mesh::Draw_WithLights(shading::shader& shader, std::string& shaderNormals_ID)
 	{
+		if (!render::oneTimeSee)
+		{
+			SDL_Log(glm::to_string(MeshCoord.model).c_str());
+		}
+
 		shader.use();
 
 		shader.transformMat("model", MeshCoord.model);
-		//shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
-		//shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
+	//	shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+	//	shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 		shader.setVec3("objectColor", shaderSet.objectColor);
 
 		/*
@@ -935,8 +1038,15 @@ namespace Assimp_D
 
 
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
 		glBindVertexArray(0);
+
+
+		if (edit_visualize::editMode_active == true && shaderNormals_ID != "")
+		{
+			Draw_Normals(shaderNormals_ID); //DRAW NORMALS IF I SELECT THE OPTION
+		}
+
 
 
 		///Terminar con la textura
@@ -945,15 +1055,204 @@ namespace Assimp_D
 	//	std::cout << glGetError() << '\n';
 
 	}
-	void Mesh::Draw_Alone()
+	void Mesh::Draw_WithLights02(shading::shader& shader)
 	{
+		shader.use();
+
+		shader.transformMat("model", MeshCoord.model);
+		//shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+		//shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
+		shader.setVec3("objectColor", shaderSet.objectColor);
+
+		/*
+		if (static_cast<int>(RenderData_Set::pointLights_D.size()) > 0)
+		{
+
+			for (int i = 0; i < static_cast<int>(RenderData_Set::pointLights_D.size()); i++)
+			{
+				std::string pL_name{ "pointLights_Array[" + std::to_string(i) + "]" };
+
+				std::string pL_color{ pL_name + ".lightColor" };
+				std::string pL_Posicion{ pL_name + ".lightPos" };
+				std::string pL_constant{ pL_name + ".constant" };
+				std::string pL_linear{ pL_name + ".linear" };
+				std::string pL_quadratic{ pL_name + ".quadratic" };
+				std::string pL_ambient{ pL_name + ".ambient" };
+				std::string pL_diffuse{ pL_name + ".diffuse" };
+				std::string pL_specular{ pL_name + ".specular" };
+
+				shader.setVec3(pL_color, RenderData_Set::pointLights_D[i].Color);
+				shader.setVec3(pL_Posicion, RenderData_Set::pointLights_D[i].Posicion);
+				shader.setFloat(pL_constant, RenderData_Set::pointLights_D[i].constant);
+				shader.setFloat(pL_linear, RenderData_Set::pointLights_D[i].linear);
+				shader.setFloat(pL_quadratic, RenderData_Set::pointLights_D[i].quadratic);
+				shader.setVec3(pL_ambient, RenderData_Set::pointLights_D[i].Mat.ambient);
+				shader.setVec3(pL_diffuse, RenderData_Set::pointLights_D[i].Mat.diffuse);
+				shader.setVec3(pL_specular, RenderData_Set::pointLights_D[i].Mat.specular);
+
+			}
+		}
+
+		////////////Corregir aqui y revisar si funciona nullptr
+		if (static_cast<int>(RenderData_Set::directionalLights_D.size()) > 0)
+		{
+			int dirLight_pos{ 1 };
+
+			for (int i = 0; i < static_cast<int>(RenderData_Set::directionalLights_D.size()); i++)
+			{
+				//for (auto& dL : *directionalLights)
+				//{
+				std::string dL_name{ "directionalLight_" + std::to_string(dirLight_pos++) };
+			//	std::string dL_color{ dL_name + ".lightColor" };
+				std::string dL_direction{ dL_name + ".lightDir" };
+				std::string dL_ambient{ dL_name + ".ambient" };
+				std::string dL_diffuse{ dL_name + "diffuse" };
+				std::string dL_specular{ dL_name + ".specular" };
+
+				//shader.setVec3(dL_color, directionalLights[i].Color);
+				shader.setVec3(dL_direction, RenderData_Set::directionalLights_D[i].Direction);
+				shader.setVec3(dL_ambient, RenderData_Set::directionalLights_D[i].Mat.ambient);
+				shader.setVec3(dL_diffuse, RenderData_Set::directionalLights_D[i].Mat.diffuse);
+				shader.setVec3(dL_specular, RenderData_Set::directionalLights_D[i].Mat.specular);
+
+
+			}
+
+		}
+
+		if (static_cast<int>(RenderData_Set::spotLights_D.size()) > 0)
+		{
+			int sL_i{};
+
+
+			for (auto& spotLight : RenderData_Set::spotLights_D)
+			{
+				std::string sL_name{ "spotLights_Array[" + std::to_string(sL_i) + "]" };
+
+				std::string sL_Posicion{ sL_name + ".lightPos" };
+				std::string sL_Direction{ sL_name + ".lightDir" };
+				std::string sL_cutOff{ sL_name + ".cutOff" };
+				std::string sL_outerCutOff{ sL_name + ".outerCutOff" };
+				std::string sL_constant{ sL_name + ".constant" };
+				std::string sL_linear{ sL_name + ".linear" };
+				std::string sL_quadratic{ sL_name + ".quadratic" };
+				std::string sL_ambient{ sL_name + ".ambient" };
+				std::string sL_diffuse{ sL_name + ".diffuse" };
+				std::string sL_specular{ sL_name + ".specular" };
+				std::string sL_lightState{ sL_name + ".lightState" };
+
+				shader.setVec3(sL_Posicion, spotLight.second.Posicion);
+				shader.setVec3(sL_Direction, spotLight.second.Direction);
+				shader.setFloat(sL_cutOff, glm::cos(glm::radians(spotLight.second.cutOff)));
+				shader.setFloat(sL_outerCutOff, glm::cos(glm::radians(spotLight.second.outerCutOff)));
+				shader.setFloat(sL_constant, spotLight.second.constant);
+				shader.setFloat(sL_linear, spotLight.second.linear);
+				shader.setFloat(sL_quadratic, spotLight.second.quadratic);
+				shader.setVec3(sL_ambient, spotLight.second.Mat.ambient);
+				shader.setVec3(sL_diffuse, spotLight.second.Mat.diffuse);
+				shader.setVec3(sL_specular, spotLight.second.Mat.specular);
+				shader.setBool(sL_lightState, spotLight.second.stateLight);
+
+				sL_i++;
+			}
+
+		}
+		*/
+
+		if(!textures.textures_LoadCache.empty())
+		//if (!textures.texU_Data.empty()) ///OLD WAY TO USE TEXTURES
+		{
+			//textures.useTextures_PerMaterial(shader, 1); ///OLD WAY TO USE TEXTURES
+			textures.use_MaterialTextures(shader, 1);
+			shader.setBool("NotTexture", false);
+
+			if (nameMesh == "CampoVegetacion_1")
+			{
+			//	SDL_Log(std::to_string(static_cast<int>(textures.texU_Data.size())).c_str());
+			}
+
+			if (RenderData_Set::skybox_D::skyBox_Current.active == true && !RenderData_Set::skybox_D::skyBox_Current.nameSkybox.empty())
+			{
+				texture::textureUnits textureUnit{ static_cast<texture::textureUnits>(static_cast<int>(textures.textures_LoadCache.size()) + 1) };
+
+				RenderData_Set::skybox_D::skyBoxes_D[RenderData_Set::skybox_D::skyBox_Current.nameSkybox].bind_Texture(shader, "skybox", textureUnit);
+				shader.transformMat3("transformation_SkyBox", RenderData_Set::skybox_D::skyBoxes_D["skyBox_day"].transform_SkyBox.rotationVec);
+				shader.setBool("activeSkybox", true);
+
+			}
+
+		}
+
+		else if(textures.textures_LoadCache.empty())
+		{
+			shader.setBool("NotTexture", true);
+			shader.setBool("Mat_1.use_texture_diffuse", false);
+			shader.setBool("Mat_1.use_texture_specular", false);
+			//shader.setBool("useSpec", false);
+
+			if (nameMesh == "CampoVegetacion_1")
+			{
+			//	SDL_Log(std::string("NOT TEXTURE::MESH::" + nameMesh).c_str());
+			}
+
+			shader.setBool("activeSkybox", false);
+			//glActiveTexture(GL_TEXTURE0);
+			//glBindTexture(GL_TEXTURE_2D, 0);
+		}
+
+
+
+		if (data_HitAABB::selectedObj.first.nameMesh == nameMesh)
+		{
+			shading::config::change_refractiveIndex(settingsShader.refractiveIndex);
+		}
+
+		shader.setFloat("refractiveIndex", settingsShader.refractiveIndex);
+
+		shader.setVec3("Mat.ambient", shaderSet.ambient);
+		shader.setVec3("Mat.difusse", shaderSet.difusse);
+		shader.setVec3("Mat.specular", shaderSet.specular);
+		shader.setFloat("Mat.shiness", shaderSet.shiness);
+
+
+		shader.setVec3("viewPos", cameras::cameras_D[cameras::name_CurrentCamera].posCam);
+		shader.transformMat3("modelMatrix", MeshCoord.normalModelMatrix);
+
+		  if (pos_editMode != -1)
+		{
+				shader.setBool("active_exploded", edit_visualize::nameSelect_Model[pos_editMode].explode.active);
+				shader.setFloat("dist_exploded", edit_visualize::nameSelect_Model[pos_editMode].explode.dist_explode);
+		}
+
+		else if (pos_editMode == -1)
+	    {
+			shader.setBool("active_exploded", false);
+			shader.setFloat("dist_exploded", 0.0f);
+		}
+			//CHANGE LATER IF I WILL USE THE SAME NAME OF THE MESH BUT IN OTHER MODEL
+
+
+
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
-	}
-	void Mesh::Draw_WithoutModel(shading::shader& shader)
-	{		
 
+
+		///Terminar con la textura
+		//shader.setBool("NotTexture", true);
+
+	//	std::cout << glGetError() << '\n';
+	}
+	void Mesh::Draw_Alone()
+	{
+		glBindVertexArray(VAO);
+		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
+		glBindVertexArray(0);
+	}
+	void Mesh::Draw_WithoutModel(shading::shader& shader, std::string& shaderNormals_ID)
+	{
+		//shader.use();
+	//	shader.transformMat("model", glm::mat4(1.0f));
 		shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
 		shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 		shader.setVec3("objectColor", shaderSet.objectColor);
@@ -1100,6 +1399,10 @@ namespace Assimp_D
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
+		if (edit_visualize::editMode_active == true)
+		{
+		Draw_Normals(shaderNormals_ID); //DRAW NORMALS IF I SELECT THE OPTION
+		}
 	}
 	void Mesh::build_PreDraw(shading::shader& shader)
 	{
@@ -1318,7 +1621,34 @@ namespace Assimp_D
 	{
 		nameModel = model.nameModel;
 		directory = model.directory;
-		nameShader = model.nameShader;
+
+        for (Uint8 i = 0; i < size_shaderType; i++)
+        {
+        	if (i != size_shaderType) {
+        		shader_type find_type {static_cast<shader_type>(i)};
+
+        		Uint8 pos {};
+        		auto find_s = std::ranges::find_if(model.shader,
+					[&](shader_SetType& find_sT)
+					{
+					   ++pos;
+					  return  find_sT.type == find_type;
+					}
+					);
+
+        		if (find_s != std::ranges::end(model.shader))
+        		{
+        			shaders_set.emplace_back(shader_SetType(find_s->name_shader, find_s->type));
+        		}
+
+        		else if (find_s == std::ranges::end(model.shader) )
+        		{
+        			shaders_set.emplace_back(shader_SetType("", find_type));
+        		}
+        	}
+        }
+
+		//nameShader = model.nameShader;
 
 		for (auto& meshData : model.Meshes_LoadCPU)
 		{
@@ -1513,6 +1843,8 @@ namespace Assimp_D
 	}
 	Model::Model(loadToCPU::ModelData_loadCPU model)
 	{
+		shaders_set.reserve(static_cast<int>(model.shader.size()));
+
 		loadModel_CPU(model);
 	}
 	void Model::setModelSettings(coordModel modelCoords, shaderSettings shaderSettings)
@@ -1539,8 +1871,10 @@ namespace Assimp_D
 				meshes[i].MeshCoord.lastModel = meshes[i].MeshCoord.model;
 			}
 
-			meshes[i].Draw(cam1, light, RenderData_Set::shader_D[nameShader]);
-
+		//	meshes[i].Draw(cam1, light, RenderData_Set::shader_D[nameShader]);  ///LAST WAY TO LOAD SHADERS
+			meshes[i].Draw(cam1, light,
+				RenderData_Set::shader_D[shaders_set[static_cast<Uint8>(shader_type::standard_Shader)].name_shader],
+				shaders_set[static_cast<Uint8>(shader_type::viewNormals_Shader)].name_shader);
 		}
 
 			ModelCoord.lastModel = ModelCoord.model;
@@ -1552,7 +1886,12 @@ namespace Assimp_D
 		for (int i = 0; i < static_cast<int>(meshes.size()); i++)
 		{
 			//meshes[i].Draw_WithLights(shaders); //DESACTIVADO TEMPORALMENTERE
-			meshes[i].Draw_WithLights(RenderData_Set::shader_D[nameShader]);
+		//	meshes[i].Draw_WithLights(RenderData_Set::shader_D[nameShader]); ///LAST WAY TO LOAD SHADERS
+			shading::shader& standard_shader {RenderData_Set::shader_D[shaders_set[static_cast<Uint8>(shader_type::standard_Shader)].name_shader]};
+			meshes[i].Draw_WithLights(
+				standard_shader,
+				shaders_set[static_cast<Uint8>(shader_type::viewNormals_Shader)].name_shader
+				);
 		}
 
 	}
@@ -1570,7 +1909,10 @@ namespace Assimp_D
 				else if (shaderOp == 1)
 				{
 					//meshes[i].Draw_WithLights(shaders);//DESACTIVADO TEMPORALMENTE
-					meshes[i].Draw_WithLights(RenderData_Set::shader_D[nameShader]);
+				//	meshes[i].Draw_WithLights(RenderData_Set::shader_D[nameShader]); ///LAST WAY TO LOAD SHADERS
+					meshes[i].Draw_WithLights(
+						RenderData_Set::shader_D[shaders_set[static_cast<Uint8>(shader_type::standard_Shader)].name_shader],
+				        shaders_set[static_cast<Uint8>(shader_type::viewNormals_Shader)].name_shader);
 				}
 			}
 		}
@@ -1584,7 +1926,9 @@ namespace Assimp_D
 		{
 			if (meshes[i].nameMesh != nameMesh)
 			{
-				meshes[i].Draw_WithLights(shaders);
+				//meshes[i].Draw_WithLights(shaders)
+				meshes[i].Draw_WithLights(RenderData_Set::shader_D[shaders_set[static_cast<Uint8>(shader_type::standard_Shader)].name_shader],
+							shaders_set[static_cast<Uint8>(shader_type::viewNormals_Shader)].name_shader);;  ///changes if i wrong
 			}
 		}
 
@@ -1884,7 +2228,7 @@ namespace Assimp_D
 		{
 			ModelData_loadCPU data_Out{};
 
-			//Assimp::Importer importer;
+		//	Assimp::Importer importer;
 
 			std::filesystem::path pathModel{ dataModel.path };
 			const aiScene* scene = importer.ReadFile(pathModel.string(), dataModel.flagsProcessModel);
@@ -1896,7 +2240,13 @@ namespace Assimp_D
 			}
 
 			data_Out.nameModel = dataModel.nameModel;
-			data_Out.nameShader = dataModel.nameShader;
+
+			//for (auto& shader_p : dataModel.shader)
+		//	{
+			//	data_Out.shader.emplace_back(shader_p);
+			data_Out.shader = dataModel.shader;
+			//}
+		//	data_Out.nameShader = dataModel.nameShader;
 			data_Out.directory = dataModel.path.substr(0, dataModel.path.find_last_of('/'));
 
 			std::vector<MeshData_loadCPU> dataMeshes{};
@@ -2050,15 +2400,17 @@ namespace individualComp
 	}
 	void singleTriangle::draw()
 	{
+        shading::shader& shader_set {RenderData_Set::shader_D[shaderName]};
 
-		shader.use();
+		shader_set.use();
 
-		shader.transformMat("model", MeshCoord.model);
-		shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
-		shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
-		shader.setVec3("objectColor", shaderSet.objectColor);
+		shader_set.transformMat("model", MeshCoord.model);
+	//	shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+	//	shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
+		shader_set.setVec3("objectColor", shaderSet.objectColor);
 
 
+		/*
 		if (static_cast<int>(RenderData_Set::pointLights_D.size()) > 0)
 		{
 
@@ -2151,21 +2503,21 @@ namespace individualComp
 
 
 		}
-
+*/
 
 		if (!texture.textures_LoadCache.empty())
 		{
-			texture.use_MaterialTextures(shader, 1);
+			texture.use_MaterialTextures(shader_set, 1);
 
 		}
 
-		shader.setVec3("Mat.ambient", shaderSet.ambient);
-		shader.setVec3("Mat.difusse", shaderSet.difusse);
-		shader.setVec3("Mat.specular", shaderSet.specular);
-		shader.setFloat("Mat.shiness", shaderSet.shiness);
+		shader_set.setVec3("Mat.ambient", shaderSet.ambient);
+		shader_set.setVec3("Mat.difusse", shaderSet.difusse);
+		shader_set.setVec3("Mat.specular", shaderSet.specular);
+		shader_set.setFloat("Mat.shiness", shaderSet.shiness);
 
-		shader.setVec3("viewPos", cameras::cameras_D[cameras::name_CurrentCamera].posCam);
-		shader.transformMat3("modelMatrix", MeshCoord.normalModelMatrix);
+		shader_set.setVec3("viewPos", cameras::cameras_D[cameras::name_CurrentCamera].posCam);
+		shader_set.transformMat3("modelMatrix", MeshCoord.normalModelMatrix);
 
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -2183,7 +2535,10 @@ namespace individualComp
 			{
 				//shading::shader& shader{ RenderData_Set::AssimpModel_D[name.nameModel].outShader() };///DESACTIVADO TEMPORALMENTE
 			//	shading::shader& shader{ RenderData_Set::shader_D[RenderData_Set::AssimpModel_D[name.nameModel].nameShader]};
-				meshes[i].build_PreDraw(RenderData_Set::shader_D[RenderData_Set::AssimpModel_D[name.nameModel].nameShader]);
+
+		///		meshes[i].build_PreDraw(RenderData_Set::shader_D[RenderData_Set::AssimpModel_D[name.nameModel].nameShader]);  ///LAST WAY TO LOAD SHADERS
+			    Uint8 pos_shader = static_cast<Uint8>(Assimp_D::shader_type::standard_Shader);
+				meshes[i].build_PreDraw(RenderData_Set::shader_D[RenderData_Set::AssimpModel_D[name.nameModel].shaders_set[pos_shader].name_shader]);
 				//std::cout << RenderData_Set::AssimpModel_D[name.nameModel].nameShader << '\n';
 
 
@@ -2427,11 +2782,13 @@ namespace individualComp
 										if (nameMesh == meshCopy.subNameMesh)
 										{
 											//shading::shader& shader_Set{ model_Assimp.second.outShader() };
-											shading::shader& shader_Set{ RenderData_Set::shader_D[model_Assimp.second.nameShader]};
-
+											//shading::shader& shader_Set{ RenderData_Set::shader_D[model_Assimp.second.nameShader]}; ///LAST WAY TO LOAD SHADERS
+											shading::shader& shader_Set{ RenderData_Set::shader_D[model_Assimp.second.shaders_set[static_cast<Uint8>(Assimp_D::shader_type::standard_Shader)].name_shader]};
 											shader_Set.use();
 											shader_Set.transformMat("model", meshCopy.model);
-											mesh.Draw_WithoutModel(shader_Set);
+											mesh.Draw_WithoutModel(
+												shader_Set,
+												model_Assimp.second.shaders_set[static_cast<Uint8>(Assimp_D::shader_type::viewNormals_Shader)].name_shader);  /////CHANGE IF I DON HAVE THE CORRECT NORMALS
 											break;
 										}
 									}

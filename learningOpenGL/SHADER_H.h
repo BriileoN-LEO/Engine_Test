@@ -96,7 +96,6 @@ namespace shading
 	{
 		void debug_BufferLayout(GLuint ID, const char* nameBlock);
 
-
 	}
 
 
@@ -177,6 +176,14 @@ namespace shading
 		    std::vector<layoutType> data_Layout{};
 
 			const char* geometryShader_name{nullptr};
+
+		    shaderData_loadCPU();
+			shaderData_loadCPU(std::string nameShader, const char* vertexShader_name, const char* fragmentShader_name, std::vector<layoutType> data_Layout);
+			shaderData_loadCPU(std::string nameShader, const char* vertexShader_name, const char* fragmentShader_name, std::vector<layoutType> data_Layout, const char* geometryShader_name);
+            shaderData_loadCPU(const shaderData_loadCPU&& shader_LCPU) noexcept;
+			shaderData_loadCPU(const shaderData_loadCPU& shader_LCPU);
+
+			//shaderData_loadCPU();
 		};
 
 		extern std::queue<shaderData_loadCPU> shaderData;

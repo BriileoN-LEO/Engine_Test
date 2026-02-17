@@ -4,7 +4,7 @@ layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aCoordTex;
 
-layout (std140) uniform matrices_cam
+layout (std140, binding = 0) uniform matrices_cam
 {
  mat4 view_c;
  mat4 projection_c;
@@ -23,10 +23,10 @@ vec2 coordTexOut_;
 //out vec2 coordTexOut;
 
 uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+//uniform mat4 view;
+//uniform mat4 projection;
 
-uniform mat3 modelMatrix;
+//uniform mat3 modelMatrix;
 
 //uniform vec3 objectColor;
 //uniform vec3 lightColor;
@@ -38,11 +38,11 @@ uniform mat3 modelMatrix;
 void main()
 {
  // gl_Position =  projection * view * model * vec4(aPos.xyz, 1.0);
-  gl_Position =  projection_c * view_c * model * vec4(aPos.xyz, 1.0);
+  gl_Position = projection_c * view_c * model * vec4(aPos.xyz, 1.0);
+  //gl_Position =  projection_c * view_c * model * vec4(0.0f, 0.0f, 0.0f, 1.0);
   vs_out.FragPos_ = vec3(model * vec4(aPos.xyz, 1.0));
  //ormal = modelMatrix * aNormal; ///Calcularlo desde el codigo(CPU) para enviarlo a Uniform
   vs_out.Normal_ = mat3(transpose(inverse(model))) * aNormal;
 
   vs_out.coordTexOut_ = aCoordTex;///
-
 }

@@ -20,6 +20,7 @@ namespace edit_visualize
   Assimp_D::structModelName names{};
   bool active_Edit_MV{};
   explode_OBJ explode{};
+  //bool active_show_normals{};//
 
   bool start_erase{};
 
@@ -48,6 +49,8 @@ namespace edit_visualize
  extern bool exploded_objs_Active;
  extern float time_EOS;
  extern float max_EOS;
+
+ extern bool show_normals_active;
  ////MAKING A VISUALIZER OF EXPLOTED OBJECTS
  ///MAKING A VISUALIZER OF NORMAL OBJECTSr
 }
@@ -58,6 +61,7 @@ namespace control_EditMode
  void detectSelectionMode();
 
  void deleteMesh_exploded_deselect();
+ //void control_showNormals_OBJs();
  void control_Exploded_OBJs();
  void update_status_OBJs();
 

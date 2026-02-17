@@ -29,14 +29,16 @@ namespace edit_visualize {
     std::vector<edit_MV> nameSelect_Model{};
     std::vector<Assimp_D::excluded_Obj> exclude_EditMeshes{};
 
-    bool editMode_active{};
+    bool editMode_active{false};
 
     bool selectionMode{false};
     bool select_one_time{false};
 
     bool exploded_objs_Active{false};
     float time_EOS{0.001f};
-    extern float max_EOS {0.4f};
+    float max_EOS {0.4f};
+
+    bool show_normals_active{false};
     ////MAKING A VISUALIZER OF EXPLOTED OBJECTS
     ///MAKING A VISUALIZER OF NORMAL OBJECTS
 
@@ -44,7 +46,6 @@ namespace edit_visualize {
 
 namespace control_EditMode
 {
-
 
     void detectSelectionMode()
     {
@@ -224,14 +225,14 @@ namespace control_EditMode
     {
      std::vector<std::pair<int, std::string>> meshes_to_delete{};
 
-     int pos{};
+     int pos2{};
      for (auto& mesh_select :  edit_visualize::nameSelect_Model)
      {
       if (mesh_select.start_erase == true && mesh_select.explode.dist_explode <= 0)
       {
-         meshes_to_delete.emplace_back(std::pair<int, std::string>(pos, mesh_select.names.nameMesh));
+         meshes_to_delete.emplace_back(std::pair<int, std::string>(pos2, mesh_select.names.nameMesh));
       }
-         ++pos;
+         ++pos2;
      }
 
      ///HERE I DELETE
@@ -280,7 +281,16 @@ namespace control_EditMode
      }
 
     }
+/*
+    void control_showNormals_OBJs()
+    {
+     if (edit_visualize::show_normals_active == true)
+     {
+      //   for (auto& select_Obj : edit_visualize::nameSelect_Model)
+     }
 
+    }
+*/
     void control_Exploded_OBJs()
     {
       if (edit_visualize::exploded_objs_Active == false || edit_visualize::editMode_active == false)  ///FINISH IF ALL THE EXPLODED OBJS ARE FALSE OR IF THE EDIT MODE IS NOT ACTIVE

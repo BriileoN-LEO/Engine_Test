@@ -14,8 +14,14 @@
 
 namespace RenderData_Set
 {
+	extern std::vector<Assimp_D::Model> models_D;
+
 	extern std::map<std::string, ObjCreation::ModelCreation> ModelCreation_D;
-	extern std::map<std::string, Assimp_D::Model> AssimpModel_D;
+
+
+    extern std::map<std::string, Assimp_D::Model> AssimpModel_D; ///CHANGE THIS TO EDIT THEM LIKE A STD::MAP
+  //  extern std::map<std::string, std::unique_ptr<Assimp_D::Model>> AssimpModel_D;
+
 	extern std::vector<ObjCreation::ModelCreation> MeshLights_MCD;
 	extern std::vector<light::light1> pointLights_D;
 	extern std::vector<light::DirectionalLight> directionalLights_D;

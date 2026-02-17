@@ -4,6 +4,7 @@
 
 namespace render
 {
+    extern bool oneTimeSee;
 
 	void render_ModelCreation_D();
 	void render_classicModelAssimp_D();

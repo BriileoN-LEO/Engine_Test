@@ -8,6 +8,7 @@
 
 namespace render
 {
+	bool oneTimeSee{};
 	void render_ModelCreation_D()
 	{
 		for (auto& renderMCD : RenderData_Set::ModelCreation_D)
@@ -28,19 +29,10 @@ namespace render
 	void render_ModelAssimp_D(std::vector<Assimp_D::excluded_Obj> excluded_Objs)
 	{
 
-		//		for (auto& renderMAD : RenderData_Set::AssimpModel_D)
-		//		{
-		//			renderMAD.second.Draw_WL();
-		//		}
-
-
-				///////RESOLVER AQUIIII AHHHHHHS 
-
 		glEnable(GL_DEPTH_TEST);
 
 		std::map<std::string, float> meshesNear{};
 		std::map<std::string, float> meshesFar{};
-
 
 		for (auto& modelSearch : RenderData_Set::AssimpModel_D)
 		{
@@ -51,6 +43,7 @@ namespace render
 				if (modelSearch.second.nameModel == excludedModel.nameModel && excludedModel.exclude_Type == Assimp_D::excludedOP::exclude_complete_model)
 				{
 					pass_excluded_model = true;
+					break;
 				}
 			}
 
@@ -61,6 +54,7 @@ namespace render
 				for (auto& meshS : meshesSearch)
 					{
 					bool pass_excluded_mesh{};
+                    bool find_mesh{};
 
 					for (auto excludedModel : excluded_Objs)
 					{
@@ -71,9 +65,15 @@ namespace render
 								if (meshS.nameMesh == excludedMesh && excludedModel.exclude_Type == Assimp_D::excludedOP::exclude_only_meshes)
 								{
 									pass_excluded_mesh = true;
-
+									find_mesh = true;
+                                    break;
 								}
 
+							}
+
+							if (find_mesh == true)
+							{
+								break;
 							}
 						}
 
@@ -82,6 +82,13 @@ namespace render
 					if (pass_excluded_mesh == false)
 					{
 						float dist{ glm::distance(meshS.MeshCoord.posModel,  cameras::cameras_D[cameras::name_CurrentCamera].posCam) };
+                     //   std::cout << dist << std::endl;s
+                       // SDL_Log(std::to_string(dist).c_str());
+
+					//	if (oneTimeSee == false)
+					//	{
+						// SDL_Log(meshS.nameMesh.c_str());
+					//	}
 
 						switch (meshS.renderP)
 						{
@@ -110,13 +117,14 @@ namespace render
 			}
 		}
 
-
+		Uint8 pos_standardShader {static_cast<Uint8>(Assimp_D::shader_type::standard_Shader)};
+		Uint8 pos_normalShader {static_cast<Uint8>(Assimp_D::shader_type::viewNormals_Shader)};
 		float minNear{};
 
 		for (int i = 0; i < static_cast<int>(meshesNear.size()); i++)
 		{
 			std::string meshToRender{};
-			float maxNear{ 10000 };
+			float maxNear{ 10000.0f };
 
 			for (auto& meshNear : meshesNear)
 			{
@@ -139,8 +147,14 @@ namespace render
 				{
 					if (mesh.nameMesh == meshToRender)
 					{
-
-						mesh.Draw_WithLights(RenderData_Set::shader_D[renderMesh.second.nameShader]);
+						if (oneTimeSee == false)
+						{
+							SDL_Log(mesh.nameMesh.c_str());
+						}
+						//mesh.Draw_WithLights02(RenderData_Set::shader_D["shaderT1"]);  ///LAST WAY TO LOAD SHADERS
+						mesh.Draw_WithLights(
+							RenderData_Set::shader_D[renderMesh.second.shaders_set[pos_standardShader].name_shader],
+				            renderMesh.second.shaders_set[pos_normalShader].name_shader);
 						// mesh.Draw_WithLights(renderMesh.second.outShader()); //DESACTIVADO TEMPORALMENTE
 						breakLoop = true;
 						break;
@@ -154,7 +168,7 @@ namespace render
 			}
 		}
 
-		float maxDist{ 10000 };
+		float maxDist{ 10000.0f };
 
 		for (int i = 0; i < static_cast<int>(meshesFar.size()); i++)
 		{
@@ -190,7 +204,15 @@ namespace render
 
 					if (mesh.nameMesh == meshToRender)
 					{
-						mesh.Draw_WithLights(RenderData_Set::shader_D[renderMesh.second.nameShader]);
+					//	mesh.Draw_WithLights02(RenderData_Set::shader_D["shaderT1"]); ///LAST WAY TO LOAD SHADERS
+
+							if (oneTimeSee == false)
+							{
+					      	 SDL_Log(mesh.nameMesh.c_str());
+							}
+						mesh.Draw_WithLights(RenderData_Set::shader_D[renderMesh.second.shaders_set[pos_standardShader].name_shader],
+							renderMesh.second.shaders_set[pos_normalShader].name_shader);
+
 						//shading::shader& shaderUse{ renderMesh.second.outShader() };
 						//mesh.Draw_WithLights(shaderUse);
 						breakLoop = true;
@@ -216,7 +238,7 @@ namespace render
 
 		}
 
-
+		oneTimeSee = true;
 	}
 
 	void render_MultiAssimp_D()
@@ -295,8 +317,11 @@ namespace render
 			//render_ModelAssimp_D(excluded_NormalScenario);///LISTO_NEW_SHADER
 			//render_MultiAssimp_D();///LISTO_NEW_SHADER
 			render_MeshLights_D();
-			//render_AABB();
+			render_AABB();
 			render_ModelAssimp_D(excluded_NormalScenario);
+			//render_classicModelAssimp_D();
+			//render_ModelAssimp_D();
+
 			//render_classicModelAssimp_D();
 			//render_ModelAssimp_D(excluded_NormalScenario);///LISTO_NEW_SHADER
 
@@ -602,6 +627,7 @@ namespace render
 		render::renderAll();
 
 		render::render_brii_UI();
+
      //	RenderData_Set::frameBuffers_D["mirror_01"].useFrameBufferModel();
 
 
@@ -666,7 +692,8 @@ namespace openGL_render
 	//RenderData_Set::testFrameBuffer.bindFrameBuffer();
 	//	RenderData_Set::frameBuffers_D["mirror_01"].bindFrameBuffer();  ///se blindea el Framebuffer para recibir el render 
 		glDepthMask(GL_TRUE);
-		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+		//glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+		glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
 		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glClearDepth(1.0);
@@ -734,6 +761,7 @@ namespace renderSelection
 			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 			glStencilMask(0x00);
 			render::render_ModelAssimp_D(excluded_Objs);
+		//	render::render_ModelAssimp_D();
 			render::render_MultiAssimp_D();
 		//	render::render_ModelCreation_D();
 			render::render_MeshLights_D();
@@ -753,6 +781,7 @@ namespace renderSelection
 
 		else
 		{
+			//render::render_ModelAssimp_D();
 			render::render_ModelAssimp_D(excluded_Objs);
 			render::render_MultiAssimp_D();
 		//	render::render_ModelCreation_D();

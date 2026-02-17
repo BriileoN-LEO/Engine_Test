@@ -326,14 +326,17 @@ namespace ScreenCalc_Hit
 			}
 		}
 
-		auto insertInVertex = [&]()
-			{
-				data_HitAABB::triangleStencil.setTriangle(vertex);
+		auto insertInVertex = [&]() {
+			data_HitAABB::triangleStencil.setTriangle(vertex);
 
-				data_HitAABB::setNewTriangle = true;
+			data_HitAABB::setNewTriangle = true;
 
-				//	data_HitAABB::triangleStencil.insertTriangle();
-				data_HitAABB::triangleStencil.shader = RenderData_Set::AssimpModel_D[Mesh[meshSelected].nameModel].outShader();
+			//	data_HitAABB::triangleStencil.insertTriangle();
+			//data_HitAABB::triangleStencil.shader = RenderData_Set::AssimpModel_D[Mesh[meshSelected].nameModel].outShader();
+
+			Uint8 pos_shader {static_cast<Uint8>(Assimp_D::shader_type::standard_Shader)};
+
+			    data_HitAABB::triangleStencil.shaderName = RenderData_Set::AssimpModel_D[Mesh[meshSelected].nameModel].shaders_set[pos_shader].name_shader;
 				data_HitAABB::triangleStencil.name = Mesh[meshSelected];
 				//data_HitAABB::triangleStencil.MeshCoord = mesh.MeshCoord;
 				data_HitAABB::selectedObj = std::pair<Assimp_D::structModelName, AABB::numberVertSelected>(Mesh[meshSelected], numberVert);

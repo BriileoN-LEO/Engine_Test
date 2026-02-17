@@ -5,16 +5,18 @@
 namespace UI_EditMode
 {
 	bool buttom_active{};
-	std::array<exit_Buttom_EM, 2> lastButtom
+	std::array<exit_Buttom_EM, 3> lastButtom
 	{
 		exit_Buttom_EM(editMode_S::SELECTION_ON_OFF, false),
-		exit_Buttom_EM(editMode_S::SELECTION_EXPLODE, false)
+		exit_Buttom_EM(editMode_S::SELECTION_EXPLODE, false),
+		exit_Buttom_EM(editMode_S::SELECTION_SHOW_NORMALS, false)
 	};
 
 	void render_SelectionObj() {
 		//bool* selection_on_off { new bool(ImGui::Button("selection : ON/OFF")) };
 		bool* selection_on_off { nullptr };
 		bool* selection_explode { nullptr };
+		bool* selection_show_normals { nullptr };
 
 		auto buttomSelect = [&](editMode_S& buttom)
 		{
@@ -25,6 +27,10 @@ namespace UI_EditMode
 		  		break;
 		  	case (editMode_S::SELECTION_EXPLODE) :
 		  		selection_explode = new bool(ImGui::Button("selection explode"));
+		  		break;
+		  	case (editMode_S::SELECTION_SHOW_NORMALS) :
+		  		selection_show_normals = new bool(ImGui::Button("selection show normals"));
+		  		break;
 		  }
 		};
 
@@ -45,10 +51,11 @@ namespace UI_EditMode
 		 	buttomSelect(eBM.buttom);
 		 }
 
-		std::array<bool*, 2> selections
+		std::array<bool*, 3> selections
 		{
 			std::move(selection_on_off),
-			std::move(selection_explode)
+			std::move(selection_explode),
+			std::move(selection_show_normals)
 		};
 
 		int fS{};
@@ -94,6 +101,20 @@ namespace UI_EditMode
 						lastButtom[fS].press = true;
 					}
 				break;
+
+				case (editMode_S::SELECTION_SHOW_NORMALS) :
+					if (lastButtom[fS].press == true)
+					{
+						edit_visualize::show_normals_active = false;
+						lastButtom[fS].press = false;
+					}
+
+					else if (lastButtom[fS].press == false)
+					{
+						edit_visualize::show_normals_active = true;
+						lastButtom[fS].press = true;
+					}
+					break;
 			}
 
 		}

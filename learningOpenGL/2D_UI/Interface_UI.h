@@ -13,7 +13,8 @@ namespace UI_EditMode
 	{
       SELECTION_ON_OFF = 0,
  	  SELECTION_EXPLODE = 1,
- 	  NOT_BUTTOM = 2,
+ 	  SELECTION_SHOW_NORMALS = 2,
+ 	  NOT_BUTTOM = 3,
     };
 
 	struct exit_Buttom_EM
@@ -23,7 +24,7 @@ namespace UI_EditMode
 	};
 
 extern bool buttom_active;
-extern std::array<exit_Buttom_EM, 2> lastButtom;
+extern std::array<exit_Buttom_EM, 3> lastButtom;
 
  void render_SelectionObj();
 

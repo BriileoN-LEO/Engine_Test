@@ -73,6 +73,8 @@ namespace AABB
 
 		glBindVertexArray(VAO); 
 		glDrawArrays(GL_LINE_STRIP, 0, vertAABB.size());
+	   //	glDrawArrays(GL_LINE_STRIP, 0, (void*)0);
+		glBindVertexArray(0);
 	}
 	void BoundingBox::destroy()
 	{

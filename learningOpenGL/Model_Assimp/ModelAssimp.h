@@ -74,6 +74,12 @@ namespace Assimp_D
 		exclude_only_meshes = 1,
 
 	};
+    enum class shader_type : Uint8
+	{
+	   standard_Shader = 0,
+       viewNormals_Shader = 1,
+    };
+	extern Uint8 size_shaderType;
 
 	struct excluded_Obj
 	{
@@ -124,6 +130,27 @@ namespace Assimp_D
 		float shiness{};
 	};
 
+	struct shader_SetType
+	{
+	 std::string name_shader{};
+	 shader_type type{};
+
+		shader_SetType();
+		shader_SetType(std::string name_shader, shader_type type);
+		shader_SetType(const shader_SetType&& insertNew) noexcept;
+		shader_SetType(const shader_SetType& insertNew);
+		//shader_SetType(shader_SetType* insertNew);
+
+		bool operator!=(const shader_SetType&& sShader) noexcept;
+		bool operator!=(const shader_SetType& sShader);
+		bool operator==(const shader_SetType&& sShader) noexcept;
+		bool operator==(const shader_SetType& sShader);
+		shader_SetType operator=(const shader_SetType&& sShader) noexcept;
+		shader_SetType operator=(const shader_SetType& sShader) ;
+    // shader_SetType();
+	// shader_SetType(std::string name_shader, shader_type type);
+	};
+
 	struct coordModel
 	{
 		glm::vec3 posicion{};
@@ -162,7 +189,8 @@ namespace Assimp_D
 		struct ModelData_loadCPU
 		{
 			std::string nameModel{};
-			std::string nameShader{};
+			std::vector<shader_SetType> shader{};
+			//std::string nameShader{};
 			std::string directory{};
 			std::vector<MeshData_loadCPU> Meshes_LoadCPU{};
 		};
@@ -171,9 +199,11 @@ namespace Assimp_D
 		{
 			std::string nameModel{};
 			std::string path{};
-			std::string nameShader{};
+            std::vector<shader_SetType> shader{};
+			//std::string nameShader{};
 			unsigned int flagsProcessModel{};
 
+		//	std::vector<std::string> nameShaders{};  ////WITH THIS, TRY TO MAKE A SEPARATION OF SHADERS TO CLASIFIED THE EACH TYPE OF SHADER
 		};
 
 		extern std::queue<ModelData_loadCPU> modelsData;
@@ -228,7 +258,7 @@ namespace Assimp_D
 		int pos_editMode{-1};
 		int last_Size_EM{-1};
 
-		renderSeq renderP{};
+		renderSeq renderP{renderSeq::renderNear};
 
 		Mesh();
 		Mesh(std::vector<vertexD> ver, std::vector<unsigned int> indi, std::vector<textureD> texture);
@@ -237,11 +267,13 @@ namespace Assimp_D
 
 		void update_editMode();
 
-		void Draw(camera::camera1 cam1, light::light1 light, shading::shader shader);
-		void Draw_WithLights(shading::shader& shader);
+		void Draw_Normals(std::string& shader_ID); ///change this in the future to have only the ID of the string and pass to this
+		void Draw(camera::camera1 cam1, light::light1 light, shading::shader& shader, std::string& shaderNormals_ID);
+		void Draw_WithLights(shading::shader& shader, std::string& shaderNormals_ID);
+		void Draw_WithLights02(shading::shader& shader);
 		void Draw_Alone();
-		void Draw_WithoutModel(shading::shader& shader);
-		void build_PreDraw(shading::shader& shader);
+		void Draw_WithoutModel(shading::shader& shader, std::string& shaderNormals_ID);
+		void build_PreDraw(shading::shader& shader);  ///SEARCH THIS IF I NEED IT
 		unsigned int& outVAO();
 
 		void setMeshCoord(glm::vec3 posicionMesh, glm::vec3 scaleMesh);
@@ -268,7 +300,9 @@ namespace Assimp_D
 	public:
 
 		std::string nameModel{};
-		std::string nameShader{};   //Nombre global del modelo
+		std::vector<shader_SetType> shaders_set{}; //Update if i save more
+		//std::string nameShader{};  ///LAST WAY TO LOAD SHADERS
+		//Nombre global del modelo
 		transformation_basics::basics_Model3D ModelCoord{};
 		coordModel ModelGlobal_Coord{};
 
@@ -317,7 +351,8 @@ namespace individualComp
 		std::vector<Assimp_D::vertexD> vertex{};
 		//texture::textureBuild texture{}; //OLD WAY TO LOAD TEXTURES TO TRIANGLE
 		textureCache::texture_Data texture{};
-		shading::shader shader{};
+        std::string shaderName{};
+		//shading::shader shader{};
 		transformation_basics::basics_Model3D MeshCoord{};
 		glm::vec3 centroidTriangle{};
 		
