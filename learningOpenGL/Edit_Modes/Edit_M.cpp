@@ -5,7 +5,7 @@ namespace edit_visualize {
 
     edit_MV::edit_MV(){};
     edit_MV::edit_MV(edit_MV&& e_MV) noexcept : names(e_MV.names){};
-    edit_MV:: edit_MV(edit_MV& e_MV) : names(e_MV.names){};
+    edit_MV::edit_MV(edit_MV& e_MV) : names(e_MV.names){};
     edit_MV::edit_MV(Assimp_D::structModelName&& names) noexcept : names(names){};
     edit_MV::edit_MV(Assimp_D::structModelName& names) : names(names){};
    // edit_MV::~edit_MV(){};
@@ -69,7 +69,8 @@ namespace control_EditMode
                       --dS;
                   }
 
-                  if (findSelect_M == std::ranges::end(edit_visualize::nameSelect_Model)) {
+                  if (findSelect_M == std::ranges::end(edit_visualize::nameSelect_Model))
+                      {
 
                       edit_visualize::nameSelect_Model.emplace_back(edit_visualize::edit_MV(data_HitAABB::selectedObj.first));
 
@@ -78,7 +79,7 @@ namespace control_EditMode
                           [&](Assimp_D::excluded_Obj& eM)
                           {
                             pos++;
-                            return eM.nameModel == data_HitAABB::selectedObj.first.nameModel;
+                            return eM.model_ID == data_HitAABB::selectedObj.first.model_ID;
                           });
 
                       if (!edit_visualize::exclude_EditMeshes.empty())
@@ -88,15 +89,15 @@ namespace control_EditMode
 
                       if (find_eM != std::ranges::end(edit_visualize::exclude_EditMeshes))
                       {
-                          auto find_Mesh = std::ranges::find_if(edit_visualize::exclude_EditMeshes[pos].nameMeshes,
-                              [&](std::string& nameMesh)
+                          auto find_Mesh = std::ranges::find_if(edit_visualize::exclude_EditMeshes[pos].meshes_ID,
+                              [&](uint32_t& mesh_ID)
                               {
-                                return nameMesh == data_HitAABB::selectedObj.first.nameMesh;
+                                return mesh_ID == data_HitAABB::selectedObj.first.mesh_ID;
                               });
 
-                          if (find_Mesh == std::ranges::end(edit_visualize::exclude_EditMeshes[pos].nameMeshes))
+                          if (find_Mesh == std::ranges::end(edit_visualize::exclude_EditMeshes[pos].meshes_ID))
                           {
-                              edit_visualize::exclude_EditMeshes[pos].nameMeshes.emplace_back(data_HitAABB::selectedObj.first.nameMesh);
+                              edit_visualize::exclude_EditMeshes[pos].meshes_ID.emplace_back(data_HitAABB::selectedObj.first.mesh_ID);
                           }
                       }
 
@@ -104,8 +105,8 @@ namespace control_EditMode
                           edit_visualize::exclude_EditMeshes.emplace_back
                        (
                           Assimp_D::excludedOP::exclude_only_meshes,
-                          data_HitAABB::selectedObj.first.nameModel,
-                          std::vector<std::string>{data_HitAABB::selectedObj.first.nameMesh}
+                          data_HitAABB::selectedObj.first.model_ID,
+                          std::vector<uint32_t>{data_HitAABB::selectedObj.first.mesh_ID}
                        );
                       }
 
@@ -127,10 +128,10 @@ namespace control_EditMode
                               // ++pos;
                               pos_meshes = 0;
                               bool exist_delete{};
-                              for (auto& mesh : edit_visualize::exclude_EditMeshes[eM].nameMeshes)
+                              for (auto& mesh : edit_visualize::exclude_EditMeshes[eM].meshes_ID)
                               {
 
-                                  if (mesh == data_HitAABB::selectedObj.first.nameMesh)
+                                  if (mesh == data_HitAABB::selectedObj.first.mesh_ID)
                                   {
                                       //        --pos_meshes;
                                       //        --pos;
@@ -149,35 +150,10 @@ namespace control_EditMode
                               ++pos;
                           }
                           ////RESOLVE THE PROBLEM OF STATIC SELECTION AND DYNAMIC SELECTION WHEN I PRESS THE BUTTOM
-                          /*
-                          auto find_eM_D = std::ranges::find_if(edit_visualize::exclude_EditMeshes,
-                              [&](Assimp_D::excluded_Obj& eM)
-                              {
-                                ++pos;
-                                pos_meshes = 0;
-                                bool exist_delete{};
-                                for (auto& mesh : eM.nameMeshes)
-                                {
-                                   ++pos_meshes;
-                                   if (mesh == findSelect_M->nameMesh)
-                                   {
-                                     --pos_meshes;
-                                     --pos;
-                                     exist_delete = true;
-                                     break;
-                                   }
-                                }
-                                return exist_delete;
-                              });
-                          */
-                          //         if (!edit_visualize::exclude_EditMeshes.empty())
-                          //         {
-                          //          --pos;
-                          //         }
 
-                          edit_visualize::exclude_EditMeshes[pos].nameMeshes.erase( edit_visualize::exclude_EditMeshes[pos].nameMeshes.begin() + pos_meshes);
+                          edit_visualize::exclude_EditMeshes[pos].meshes_ID.erase( edit_visualize::exclude_EditMeshes[pos].meshes_ID.begin() + pos_meshes);
 
-                          if (edit_visualize::exclude_EditMeshes[pos].nameMeshes.empty())  ///this delete the vector if any meshes exist inside the model selected
+                          if (edit_visualize::exclude_EditMeshes[pos].meshes_ID.empty())  ///this delete the vector if any meshes exist inside the model selected
                           {
                               edit_visualize::exclude_EditMeshes.erase(edit_visualize::exclude_EditMeshes.begin() + pos);
                           }
@@ -223,14 +199,14 @@ namespace control_EditMode
 
     void deleteMesh_exploded_deselect()
     {
-     std::vector<std::pair<int, std::string>> meshes_to_delete{};
+     std::vector<std::pair<int, uint32_t>> meshes_to_delete{};
 
      int pos2{};
      for (auto& mesh_select :  edit_visualize::nameSelect_Model)
      {
       if (mesh_select.start_erase == true && mesh_select.explode.dist_explode <= 0)
       {
-         meshes_to_delete.emplace_back(std::pair<int, std::string>(pos2, mesh_select.names.nameMesh));
+         meshes_to_delete.emplace_back(std::pair<int, uint32_t>(pos2, mesh_select.names.mesh_ID));
       }
          ++pos2;
      }
@@ -250,7 +226,7 @@ namespace control_EditMode
                               // ++pos;
                               pos_meshes = 0;
                               bool exist_delete{};
-                              for (auto& mesh : edit_visualize::exclude_EditMeshes[eM].nameMeshes)
+                              for (auto& mesh : edit_visualize::exclude_EditMeshes[eM].meshes_ID)
                               {
 
                                   if (mesh == mesh_delete.second)
@@ -271,9 +247,9 @@ namespace control_EditMode
                           }
 
 
-                          edit_visualize::exclude_EditMeshes[pos].nameMeshes.erase( edit_visualize::exclude_EditMeshes[pos].nameMeshes.begin() + pos_meshes);
+                          edit_visualize::exclude_EditMeshes[pos].meshes_ID.erase( edit_visualize::exclude_EditMeshes[pos].meshes_ID.begin() + pos_meshes);
 
-                          if (edit_visualize::exclude_EditMeshes[pos].nameMeshes.empty())  ///this delete the vector if any meshes exist inside the model selected
+                          if (edit_visualize::exclude_EditMeshes[pos].meshes_ID.empty())  ///this delete the vector if any meshes exist inside the model selected
                           {
                               edit_visualize::exclude_EditMeshes.erase(edit_visualize::exclude_EditMeshes.begin() + pos);
                           }
@@ -343,9 +319,11 @@ namespace control_EditMode
     }
     void update_status_OBJs()
     {
-     for (auto& model : RenderData_Set::AssimpModel_D)
+      std::vector<utilities::entity>& all_Entities {RenderData_Set::ModelsScene_D->out_entities()};  /// SEE IF ITS WORKS AND UPDATE THE ESTATUS
+
+     for (auto& model : all_Entities)
      {
-       std::vector<Assimp_D::Mesh>& meshes_D { model.second.outMeshes() };
+       std::vector<Assimp_D::Mesh>& meshes_D { model.model_entity->outMeshes() };
        for (auto& mesh : meshes_D)
        {
          mesh.update_editMode();

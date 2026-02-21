@@ -11,11 +11,15 @@ namespace RenderData_Set
 	using matSettings = light::lightShader;
 
 
-	std::vector<Assimp_D::Model> models_D{};
+	//std::vector<Assimp_D::Model> models_D{};
 
 
 	std::map<std::string, ObjCreation::ModelCreation> ModelCreation_D{};
-	std::map<std::string, Assimp_D::Model> AssimpModel_D{};
+
+	//std::map<std::string, Assimp_D::Model> AssimpModel_D{};  ////OFF FOR ONE MOMENT
+	std::optional<resourceManager::manager_Model> AssimpModel_D;
+	std::optional<utilities::scene> ModelsScene_D;
+
 	std::vector<ObjCreation::ModelCreation> MeshLights_MCD{};
 
 	std::vector<light::light1> pointLights_D{};
@@ -31,7 +35,7 @@ namespace RenderData_Set
 	std::map<std::string, frameBuff::frameBuffer> frameBuffers_D{};
 	frameBuff::frameBuffer testFrameBuffer{};
 
-	Assimp_D::Mesh error_MeshF{};
+	Assimp_D::Mesh error_MeshF{};  ///DELETE THIS IN THE FUTURE
 
 
 	namespace skybox_D
@@ -392,7 +396,8 @@ namespace RenderData_Set
 		models.push(plant01);
 		models.push(mirror_01);
 
-		models_D.reserve(static_cast<int>(models.size()));
+		//models_D.reserve(static_cast<int>(models.size()));// LAST_WAY ---- MODELS DATA
+		AssimpModel_D->reserve_size(static_cast<int>(models.size()));
 
 		Assimp_D::loadToCPU::atomic_sizeModels.fetch_add(static_cast<int>(models.size()));
 
@@ -422,9 +427,12 @@ namespace RenderData_Set
 
 				--Assimp_D::loadToCPU::atomic_CounterModel;
 
-				Assimp_D::Model modelP(model);  ///CORREGIR AQUI
+			//	Assimp_D::Model modelP(model);  ///CORREGIR AQUI
 
-				AssimpModel_D.emplace(model.nameModel, std::move(modelP));
+				//AssimpModel_D.emplace(model.nameModel, std::move(modelP));
+				//AssimpModel_D.emplace(model.nameModel, Assimp_D::Model(model));
+
+				AssimpModel_D->insertModel(model.nameModel, model);
 
 				std::cout << "LOADING::MODEL---->" << model.nameModel << '\n';
 
@@ -445,7 +453,7 @@ namespace RenderData_Set
 			int actual_sizeModels{ Assimp_D::loadToCPU::atomic_sizeModels.load() };
 			//std::cout << "finishLoad::" << actual_sizeModels << '\n';
 
-			if (static_cast<int>(AssimpModel_D.size()) == actual_sizeModels)
+			if (static_cast<int>(AssimpModel_D->size_models_D()) == actual_sizeModels)
 			{
 				Assimp_D::loadToCPU::finishLoadModels.store(true);
 				///std::cout << "finishLoad::" << Assimp_D::loadToCPU::finishLoadModels.load() << '\n';
@@ -456,6 +464,8 @@ namespace RenderData_Set
 	}
 	const void insertSetting_toModel()
 	{
+		Assimp_D::Model* model {nullptr};
+
 			Assimp_D::shaderSettings ss_Model_v1
 			{
 				glm::vec3(0.8f, 0.8f, 0.8f),
@@ -465,7 +475,15 @@ namespace RenderData_Set
 				32.0f
 			};
 			Assimp_D::coordModel coordBackPack{ glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f), glm::vec3(1.0f, 0.0f, 0.0f), 210.0f };
-			AssimpModel_D["backPack"].setModelSettings(coordBackPack, ss_Model_v1);
+		    model = AssimpModel_D->model_by_str("backPack");
+		    if (model != nullptr)
+		    {
+			   model->setModelSettings(coordBackPack, ss_Model_v1);
+		    	delete model;
+		    	model = nullptr;
+		    }
+
+
 			//AssimpModel_D["backPack"].loadTemporalShaders(vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
 
 			///////////////////////
@@ -480,7 +498,15 @@ namespace RenderData_Set
 
 			};
 			Assimp_D::coordModel coord_FloorModel{ glm::vec3(0.0f, -5.0f, 0.0f), glm::vec3(15.0f, 1.0f, 15.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f };
-			AssimpModel_D["Floor"].setModelSettings(coord_FloorModel, ss_Model_v2);
+			//AssimpModel_D["Floor"].setModelSettings(coord_FloorModel, ss_Model_v2);
+		    model = AssimpModel_D->model_by_str("Floor");
+	     	if (model != nullptr)
+		    {
+		    	model->setModelSettings(coord_FloorModel, ss_Model_v2);
+	     		delete model;
+	     		model = nullptr;
+		    }
+
 			//AssimpModel_D["Floor"].loadTemporalShaders(vShader_Standard_v1.c_str(), fShader_Standard_v1.c_str());
 
 			/////////////////////////
@@ -494,7 +520,17 @@ namespace RenderData_Set
 				32.0f
 			};
 			Assimp_D::coordModel coord_FlashLight{ glm::vec3(0.0f), glm::vec3(0.001f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f };
-			AssimpModel_D["FlashLight"].setModelSettings(coord_FlashLight, ss_FlashLight);
+			//AssimpModel_D["FlashLight"].setModelSettings(coord_FlashLight, ss_FlashLight);
+		    model = AssimpModel_D->model_by_str("FlashLight");
+		    if (model != nullptr)
+	     	 {
+		     	model->setModelSettings(coord_FlashLight, ss_FlashLight);
+		    	delete model;
+		    	model = nullptr;
+		     }
+
+
+
 			//AssimpModel_D["FlashLight"].loadTemporalShaders(vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
 
 			///////////////////////////
@@ -508,7 +544,17 @@ namespace RenderData_Set
 				32.0f
 			};
 			Assimp_D::coordModel coord_Campo01{ glm::vec3(0.0f, -10.0f, 0.0f), glm::vec3(2.0f), glm::vec3(1.0f), 0.0f };
-			AssimpModel_D["CampoVegetacion"].setModelSettings(coord_Campo01, ss_Campo01);
+		//	AssimpModel_D["CampoVegetacion"].setModelSettings(coord_Campo01, ss_Campo01);
+
+		     model = AssimpModel_D->model_by_str("CampoVegetacion");
+		     if (model != nullptr)
+		     {
+			  model->setModelSettings(coord_Campo01, ss_Campo01);
+		     	delete model;
+		     	model = nullptr;
+		     }
+
+
 			//AssimpModel_D["CampoVegetacion"].loadTemporalShaders(vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
 
 			Assimp_D::shaderSettings ss_Plant01
@@ -520,18 +566,46 @@ namespace RenderData_Set
 				32.0f
 			};
 			Assimp_D::coordModel coord_Plant01{ glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(2.0f), glm::vec3(1.0f), 0.0f };
-			AssimpModel_D["plant01"].setModelSettings(coord_Plant01, ss_Plant01);
-			AssimpModel_D["plant01"].SetTexture_Mesh(image_GlassWindow.c_str(), "plant01_1", texDataManager::typeTexture::diffuse);
-			AssimpModel_D["plant01"].SetOrderRender_Mesh("plant01_1", Assimp_D::renderSeq::renderFar);
-			AssimpModel_D["plant01"].BlendModeTexture_Mesh("plant01_1", true);
+		///	AssimpModel_D["plant01"].setModelSettings(coord_Plant01, ss_Plant01);
+		///	AssimpModel_D["plant01"].SetTexture_Mesh(image_GlassWindow.c_str(), "plant01_1", texDataManager::typeTexture::diffuse);
+		///	AssimpModel_D["plant01"].SetOrderRender_Mesh("plant01_1", Assimp_D::renderSeq::renderFar);
+		///	AssimpModel_D["plant01"].BlendModeTexture_Mesh("plant01_1", true);
+
+		    model = AssimpModel_D->model_by_str("plant01");
+		    if (model != nullptr)
+		    {
+		    	model->setModelSettings(coord_Plant01, ss_Plant01);
+		    	model->SetTexture_Mesh(image_GlassWindow.c_str(), "plant01_1", texDataManager::typeTexture::diffuse);
+		    	model->SetOrderRender_Mesh("plant01_1", Assimp_D::renderSeq::renderFar);
+		    	model->BlendModeTexture_Mesh("plant01_1", true);
+
+		    	delete model;
+		    	model = nullptr;
+		    }
+
+
 			//AssimpModel_D["plant01"].loadTemporalShaders(vShader_ModelT1.c_str(), fShader_ModelT1.c_str());
 
 			//////Model para el cristal
 			Assimp_D::coordModel coord_Mirror_01{ glm::vec3(0.0f, 0.0f, -20.0f), glm::vec3(15.0f), glm::vec3(1.0f), 0.0f };
-			AssimpModel_D["mirror_01"].setModelSettings(coord_Mirror_01, ss_Plant01);
+	//		AssimpModel_D["mirror_01"].setModelSettings(coord_Mirror_01, ss_Plant01);
+		    model = AssimpModel_D->model_by_str("mirror_01");
+		    if (model != nullptr)
+		    {
+		    	model->setModelSettings(coord_Mirror_01, ss_Plant01);
+		    	delete model;
+		    	model = nullptr;
+		    }
 
 			Assimp_D::coordModel coord_TokioPlace{ glm::vec3(0.0f), glm::vec3(0.01f), glm::vec3(1.0f), 0.0f };
-			AssimpModel_D["tokio_Place"].setModelSettings(coord_TokioPlace, ss_Plant01);
+			///AssimpModel_D["tokio_Place"].setModelSettings(coord_TokioPlace, ss_Plant01);
+		    model = AssimpModel_D->model_by_str("tokio_Place");
+		    if (model != nullptr)
+		    {
+		    	model->setModelSettings(coord_TokioPlace, ss_Plant01);
+		    	delete model;
+		    	model = nullptr;
+	     	}
 
 
 
@@ -1181,8 +1255,30 @@ namespace RenderData_Set
 
 	}
 
-	const void set_AllObjects()   /////////Cambiar esta funcion para que pueda utilizar la nueva carga de Modelos
+	void init_managerResources()
 	{
+		AssimpModel_D.emplace();
+		ModelsScene_D.emplace();
+	}
+
+	void setModels_to_scene()
+	{
+		int s_MD {AssimpModel_D->size_models_D()};  ///CHECK IF THIS IS CORRECT
+
+       for (int i = 0; i < s_MD; i++)
+       {
+       	Assimp_D::Model* model_ptr {AssimpModel_D->model_by_num(i)}; ///CHECK IF THIS IS CORRECT
+        ModelsScene_D->insert_entity_model(std::move(model_ptr));
+
+       	model_ptr = nullptr;
+
+       }
+
+	}
+
+	 void set_AllObjects()   /////////Cambiar esta funcion para que pueda utilizar la nueva carga de Modelos
+	{
+
 		pointLights_D = setPointLights();
 		directionalLights_D = setDirectionalLights();
 		spotLights_D = setSpotLights();
@@ -1215,9 +1311,11 @@ namespace RenderData_Set
 		brii_UI::resizeUI_textures(); //TO RESIZE ALL THE TEXTURES THAT I HAVE IN MY UI
 
 		shading::register_Errors_SS::debug_BufferLayout(shader_D["shaderT1"].outID(), "lights");
+
+		setModels_to_scene();  /////PUT TO THE END TO SAVE ALL THE POINTERS CORRECTLY
 	}
 
-	const void running_AllObjects()
+	 void running_AllObjects()
 	{
 		//loadLayoutBuffer_shader();  ///TO LOAD THE LAYOUTS OF UNIFORM BUFFERS IN THE SHADER
 

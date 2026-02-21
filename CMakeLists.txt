@@ -97,6 +97,9 @@ endif()
 find_package(OpenGL REQUIRED)
 
 add_library(glad_source STATIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glad/src/glad.c
+        "learningOpenGL/resource_Manager/resourceManager.cpp"
+        learningOpenGL/optimize_Algorithmics/optimizeAlgorithmics.cpp
+        learningOpenGL/optimize_Algorithmics/optimizeAlgorithmics.h
 )
 
 target_include_directories(glad_source PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glad/include)
@@ -185,8 +188,11 @@ add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/lear
 "learningOpenGL/2D_UI/system_UI/system_UI_B.cpp" "learningOpenGL/2D_UI/system_UI/system_UI_B.h"
 "learningOpenGL/libFile.h"
 "learningOpenGL/STB_IMAGE_IMPLEMENT.cpp"
+"learningOpenGL/resource_Manager/resourceManager.h" "learningOpenGL/resource_Manager/resourceManager.cpp"
+"learningOpenGL/optimize_Algorithmics/optimizeAlgorithmics.h" "learningOpenGL/optimize_Algorithmics/optimizeAlgorithmics.cpp"
 
-#"libs/SDL/lib/arm64"
+
+        #"libs/SDL/lib/arm64"
 
 )
 

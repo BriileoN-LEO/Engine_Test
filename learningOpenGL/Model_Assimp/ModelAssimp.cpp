@@ -4,6 +4,8 @@
 #include "textureData/textureManager.h"
 #include "Edit_Modes/Edit_M.h"
 #include "Render/Render.h"
+#include "optimize_Algorithmics/optimizeAlgorithmics.h"
+#include "resource_Manager/resourceManager.h"
 
 namespace sky 
 {
@@ -382,36 +384,40 @@ namespace Assimp_D {
 
 	structModelName::structModelName(std::string nameModel, std::string nameMesh)
 	:
-	nameModel{nameModel},
-	nameMesh{nameMesh}
+	model_ID{FNV::str_to_hash(nameModel)},
+	mesh_ID{FNV::str_to_hash(nameMesh)}
 	{}
 	structModelName::structModelName(std::string nameModel, std::string nameMesh , bool changeStateSelection)
 		:
-	nameModel{nameModel},
-	nameMesh{nameMesh},
+	model_ID{FNV::str_to_hash(nameModel)},
+    mesh_ID{FNV::str_to_hash(nameMesh)},
 	changeStateSelection{changeStateSelection}
 	{};
+	structModelName::structModelName(uint32_t mesh_ID, uint32_t model_ID, bool changeStateSelection) :
+	mesh_ID(mesh_ID),
+	model_ID(model_ID),
+	changeStateSelection(changeStateSelection)
+	{};
 	structModelName::structModelName(structModelName&& insertNew) noexcept :
-	nameModel{insertNew.nameModel},
-	nameMesh{insertNew.nameMesh},
+	model_ID{insertNew.model_ID},
+	mesh_ID{insertNew.mesh_ID},
 	changeStateSelection{insertNew.changeStateSelection}
 	{}
 	structModelName::structModelName(structModelName& insertNew):
-	nameModel{insertNew.nameModel},
-	nameMesh{insertNew.nameMesh},
+	model_ID{insertNew.model_ID},
+    mesh_ID{insertNew.mesh_ID},
 	changeStateSelection{insertNew.changeStateSelection}
 	{}
-	structModelName::structModelName(structModelName* insertNew)
-	{
-		nameModel = insertNew->nameModel;
-		nameMesh = insertNew->nameMesh;
-		changeStateSelection = insertNew->changeStateSelection;
-	}
+	structModelName::structModelName(structModelName* insertNew) :
+	 model_ID{insertNew->model_ID},
+	 mesh_ID{insertNew->mesh_ID},
+	 changeStateSelection{insertNew->changeStateSelection}
+	{}
 
 	bool structModelName::operator!=(structModelName&& sModelName) noexcept
 	{
-		if (nameModel != sModelName.nameModel &&
-			nameMesh != sModelName.nameMesh)
+		if (model_ID != sModelName.model_ID &&
+			mesh_ID != sModelName.mesh_ID)
 		{
 			return true;
 		}
@@ -421,8 +427,8 @@ namespace Assimp_D {
 
 	bool structModelName::operator!=(structModelName& sModelName)
 	{
-		if (nameModel != sModelName.nameModel &&
-			nameMesh != sModelName.nameMesh)
+		if (model_ID != sModelName.model_ID &&
+			mesh_ID != sModelName.mesh_ID)
 		{
 			return true;
 		}
@@ -432,8 +438,8 @@ namespace Assimp_D {
 
 	bool structModelName::operator==(structModelName&& sModelName) noexcept
 	{
-		if (nameModel == sModelName.nameModel &&
-			nameMesh == sModelName.nameMesh)
+		if (model_ID == sModelName.model_ID &&
+			mesh_ID == sModelName.mesh_ID)
 		{
 			return true;
 		}
@@ -442,8 +448,8 @@ namespace Assimp_D {
 	}
 	bool structModelName::operator ==(structModelName& sModelName)
 	{
-		if (nameModel == sModelName.nameModel &&
-				nameMesh == sModelName.nameMesh)
+		if (model_ID == sModelName.model_ID &&
+				mesh_ID == sModelName.mesh_ID)
 		{
 			return true;
 		}
@@ -453,16 +459,16 @@ namespace Assimp_D {
 
 	structModelName structModelName::operator=(structModelName&& sModelName) noexcept
 	{
-		nameModel = sModelName.nameModel;
-		nameMesh = sModelName.nameMesh;
+		model_ID = sModelName.model_ID;
+		mesh_ID = sModelName.mesh_ID;
 		changeStateSelection = sModelName.changeStateSelection;
 
 		return *this;
 	}
 	structModelName structModelName::operator=(structModelName& sModelName)
 	{
-		nameModel = sModelName.nameModel;
-		nameMesh = sModelName.nameMesh;
+		model_ID = sModelName.model_ID;
+		mesh_ID = sModelName.mesh_ID;
 		changeStateSelection = sModelName.changeStateSelection;
 
 		return *this;
@@ -471,8 +477,8 @@ namespace Assimp_D {
 
 	void structModelName::reset()
 	{
-		nameModel.erase();
-		nameMesh.erase();
+		model_ID = 0;
+		mesh_ID = 0;
 		changeStateSelection = false;
 	}
 
@@ -754,7 +760,7 @@ namespace Assimp_D {
 			auto find_Mesh = std::ranges::find_if(edit_visualize::nameSelect_Model,
 				[&](edit_visualize::edit_MV& nSM) {
 				   pos++;
-					return nSM.names.nameMesh == nameMesh;
+					return nSM.names.mesh_ID == ID;
 				});
 
 			if (find_Mesh != std::ranges::end(edit_visualize::nameSelect_Model))
@@ -777,7 +783,7 @@ namespace Assimp_D {
 
 		else if (pos_editMode != -1)
 		{
-		    if (edit_visualize::nameSelect_Model[pos_editMode].names.nameMesh != nameMesh)
+		    if (edit_visualize::nameSelect_Model[pos_editMode].names.mesh_ID != ID)
 		  {
 		    	find_pos();
 		  }
@@ -820,7 +826,7 @@ namespace Assimp_D {
 		shader.setVec3("lightPos", light.Posicion);
 	
 		shader.setVec3("Mat.ambient", shaderSet.ambient);
-		shader.setVec3("Mat.difusse", shaderSet.difusse);
+		shader.setVec3("Mat.difusse", shaderSet.difusse);  ///SEE IF THIS AFFECTS THE SHADER
 		shader.setVec3("Mat.specular", shaderSet.specular);
 		shader.setFloat("Mat.shiness", shaderSet.shiness);
 
@@ -1006,7 +1012,7 @@ namespace Assimp_D {
 
 
 
-		if (data_HitAABB::selectedObj.first.nameMesh == nameMesh)
+		if (data_HitAABB::selectedObj.first.mesh_ID == ID)
 		{
 			shading::config::change_refractiveIndex(settingsShader.refractiveIndex);
 		}
@@ -1202,7 +1208,7 @@ namespace Assimp_D {
 
 
 
-		if (data_HitAABB::selectedObj.first.nameMesh == nameMesh)
+		if (data_HitAABB::selectedObj.first.mesh_ID == ID)
 		{
 			shading::config::change_refractiveIndex(settingsShader.refractiveIndex);
 		}
@@ -1249,7 +1255,7 @@ namespace Assimp_D {
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
 		glBindVertexArray(0);
 	}
-	void Mesh::Draw_WithoutModel(shading::shader& shader, std::string& shaderNormals_ID)
+	void Mesh::Draw_WithoutModel(shading::shader& shader, std::string shaderNormals_ID)
 	{
 		//shader.use();
 	//	shader.transformMat("model", glm::mat4(1.0f));
@@ -1549,7 +1555,7 @@ namespace Assimp_D {
 			//glBindTexture(GL_TEXTURE_2D, 0);
 		}
 
-		if (data_HitAABB::selectedObj.first.nameMesh == nameMesh)
+		if (data_HitAABB::selectedObj.first.mesh_ID == ID)
 		{
 			shading::config::change_refractiveIndex(settingsShader.refractiveIndex);
 		}
@@ -1619,6 +1625,8 @@ namespace Assimp_D {
 
 	void Model::loadModel_CPU(Assimp_D::loadToCPU::ModelData_loadCPU model)
 	{
+        ID = FNV::str_to_hash(model.nameModel);  ///TO SAVE THE ID OF THE MODEL
+
 		nameModel = model.nameModel;
 		directory = model.directory;
 
@@ -2058,13 +2066,13 @@ namespace Assimp_D {
 		return shaders;
 	}
 
-	Mesh& Model::outSpecificMesh(std::string& nameMesh)
+	Mesh& Model::outSpecificMesh(uint32_t mesh_ID)
 	{
 		int return_p {};
 		auto find_M { std::ranges::find_if(meshes, [&](Mesh& dMesh)
 		{
 			++return_p;
-           return dMesh.nameMesh == nameMesh;
+           return dMesh.ID == mesh_ID;
 		})};
 
 	    if (find_M != std::ranges::end(meshes))
@@ -2527,97 +2535,137 @@ namespace individualComp
 	}
 	void singleTriangle::drawTest_2()
 	{
-		std::vector<Assimp_D::Mesh>& meshes{ RenderData_Set::AssimpModel_D[name.nameModel].outMeshes() };
+		utilities::entity* entity_model {RenderData_Set::ModelsScene_D->out_entity_model(name.model_ID)}; ///SEE IF THIS WORKS
 
-		for (int i = 0; i < static_cast<int>(meshes.size()); i++)
-		{
-			if (meshes[i].nameMesh == name.nameMesh)
-			{
-				//shading::shader& shader{ RenderData_Set::AssimpModel_D[name.nameModel].outShader() };///DESACTIVADO TEMPORALMENTE
-			//	shading::shader& shader{ RenderData_Set::shader_D[RenderData_Set::AssimpModel_D[name.nameModel].nameShader]};
+       if (entity_model != nullptr)
+       	{
+	       std::vector<Assimp_D::Mesh>& meshes{ entity_model->model_entity->outMeshes() };
 
-		///		meshes[i].build_PreDraw(RenderData_Set::shader_D[RenderData_Set::AssimpModel_D[name.nameModel].nameShader]);  ///LAST WAY TO LOAD SHADERS
-			    Uint8 pos_shader = static_cast<Uint8>(Assimp_D::shader_type::standard_Shader);
-				meshes[i].build_PreDraw(RenderData_Set::shader_D[RenderData_Set::AssimpModel_D[name.nameModel].shaders_set[pos_shader].name_shader]);
-				//std::cout << RenderData_Set::AssimpModel_D[name.nameModel].nameShader << '\n';
+       	for (int i = 0; i < static_cast<int>(meshes.size()); i++)
+       	{
+       		if (meshes[i].ID == name.mesh_ID)
+       		{
+       			//shading::shader& shader{ RenderData_Set::AssimpModel_D[name.nameModel].outShader() };///DESACTIVADO TEMPORALMENTE
+       			//	shading::shader& shader{ RenderData_Set::shader_D[RenderData_Set::AssimpModel_D[name.nameModel].nameShader]};
+
+       			///		meshes[i].build_PreDraw(RenderData_Set::shader_D[RenderData_Set::AssimpModel_D[name.nameModel].nameShader]);  ///LAST WAY TO LOAD SHADERS
+       			Uint8 pos_shader = static_cast<Uint8>(Assimp_D::shader_type::standard_Shader);
+       			meshes[i].build_PreDraw(RenderData_Set::shader_D[entity_model->model_entity->shaders_set[pos_shader].name_shader]);
+       			//std::cout << RenderData_Set::AssimpModel_D[name.nameModel].nameShader << '\n';
 
 
-				//std::cout << "TRIANGLE::FIND\n";
-				break;
-			}
-		}
+       			//std::cout << "TRIANGLE::FIND\n";
+       			break;
+       		}
+       	}
 
-		std::cout << VAO << '\n';
+       	std::cout << VAO << '\n';
 
-		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		glBindVertexArray(0);
+       	glBindVertexArray(VAO);
+       	glDrawArrays(GL_TRIANGLES, 0, 3);
+       	glBindVertexArray(0);
+       }
 
+	   else if (entity_model == nullptr)
+	   {
+	   	 std::string error_log { RenderData_Set::AssimpModel_D->get_nameModel(name.model_ID)};
+
+	   	error_log = "SINGLE TRIANGLE ERROR::WE CANNOT FIND THE MODEL --" + error_log + " --  | ModelAssimp.cpp ---> singleTriangle::drawTest_2()";
+
+         SDL_Log(error_log.c_str());
+	   }
 	}
 
 	void singleTriangle::drawSelection()
 	{
-		std::vector<Assimp_D::Mesh>& meshes{ RenderData_Set::AssimpModel_D[name.nameModel].outMeshes() };
-		glm::mat4 model{ glm::mat4(1.0f) };
 
-		for (auto& mesh : meshes)
-		{
-			if (mesh.nameMesh == name.nameMesh)
+		//std::vector<Assimp_D::Mesh>& meshes{ RenderData_Set::AssimpModel_D[name.nameModel]->outMeshes() };
+
+			glm::mat4 model{ glm::mat4(1.0f) };
+
+	//	utilities::entity* entity_model {RenderData_Set::ModelsScene_D->out_entity_model(name.model_ID)};  ///TEST IF WORKS
+		Assimp_D::Mesh* model_Entity {RenderData_Set::ModelsScene_D->out_mesh_fromModel(name.model_ID, name.mesh_ID)};///TEST IF WORKS
+			if (model_Entity != nullptr)
 			{
-				//scaleModel = scaleModel * mesh.MeshCoord.model;
-				model = mesh.MeshCoord.model;
+	//			Assimp_D::Mesh& entity_mesh {entity_model->model_entity->outSpecificMesh(name.mesh_ID)};
+
+					model = model_Entity->MeshCoord.model;
+
+		//			register_error_RM::register_inexistence_Mesh(name.model_ID, name.mesh_ID);  ///SEE IF I HAVE AN ERROR AND THIS REGISTER THEM
+		//		delete model_Entity;
+				model_Entity = nullptr;
 			}
+
+			else  //MAKE A REGISTER ERROR
+			{
+					register_error_RM::register_inexistence_Mesh(name.model_ID, name.mesh_ID);  ///SEE IF I HAVE AN ERROR AND THIS REGISTER THEM
+				//	register_error_RM::register_inexistence_Model(name.model_ID);
+			}
+			//	scaleModel = scaleModel * MeshCoord.model;
+
+			RenderData_Set::stencilTest::stencilTest_shader.use();
+
+			RenderData_Set::stencilTest::stencilTest_shader.transformMat("model", model);
+			RenderData_Set::stencilTest::stencilTest_shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+			RenderData_Set::stencilTest::stencilTest_shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
+
+			RenderData_Set::stencilTest::stencilTest_shader.setVec3("color_stencil", glm::vec3(1.0));
+			RenderData_Set::stencilTest::stencilTest_shader.setInt("selectionStencil", 1);
+			RenderData_Set::stencilTest::stencilTest_shader.setVec3("centroidTriangle", centroidTriangle);
+
+			glBindVertexArray(VAO);
+			glDrawArrays(GL_TRIANGLES, 0, 3);
+			glBindVertexArray(0);
 		}
 
-	//	scaleModel = scaleModel * MeshCoord.model;
-
-		RenderData_Set::stencilTest::stencilTest_shader.use();
-
-		RenderData_Set::stencilTest::stencilTest_shader.transformMat("model", model);
-		RenderData_Set::stencilTest::stencilTest_shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
-		RenderData_Set::stencilTest::stencilTest_shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
-
-		RenderData_Set::stencilTest::stencilTest_shader.setVec3("color_stencil", glm::vec3(1.0));
-		RenderData_Set::stencilTest::stencilTest_shader.setInt("selectionStencil", 1);
-		RenderData_Set::stencilTest::stencilTest_shader.setVec3("centroidTriangle", centroidTriangle);
-
-		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		glBindVertexArray(0);
-	}
 
 	void singleTriangle::updateTexture()
 	{
-		std::unique_ptr<std::vector<Assimp_D::Mesh>> meshes{ std::make_unique<std::vector<Assimp_D::Mesh>>(RenderData_Set::AssimpModel_D[name.nameModel].outMeshes()) };
-		for (int i = 0; i < static_cast<int>(meshes->size()); i++)
-		{
-			if (meshes->at(i).nameMesh == name.nameMesh)
-			{
-				texture = meshes->at(i).textures;
-			}
+	//	std::unique_ptr<std::vector<Assimp_D::Mesh>> meshes{ std::make_unique<std::vector<Assimp_D::Mesh>>(RenderData_Set::AssimpModel_D[name.nameModel]->outMeshes()) };
 
+	    Assimp_D::Mesh* mesh_Entity {RenderData_Set::ModelsScene_D->out_mesh_fromModel(name.model_ID, name.mesh_ID)};
+
+		if (mesh_Entity != nullptr)
+		{
+		    texture = mesh_Entity->textures;
+
+		//	delete mesh_Entity;
+			mesh_Entity = nullptr;
+
+		}
+
+		else if (mesh_Entity == nullptr)
+		{
+			register_error_RM::register_inexistence_Mesh(name.model_ID, name.mesh_ID); /// SEE IF WORKS
 		}
 
 	}
 	void singleTriangle::updateModel()
 	{
-		std::unique_ptr<std::vector<Assimp_D::Mesh>> meshes{ std::make_unique<std::vector<Assimp_D::Mesh>>(RenderData_Set::AssimpModel_D[name.nameModel].outMeshes()) };
-		for (int i = 0; i < static_cast<int>(meshes->size()); i++)
+		Assimp_D::Mesh* mesh_Entity {RenderData_Set::ModelsScene_D->out_mesh_fromModel(name.model_ID, name.mesh_ID)};
+
+		if (mesh_Entity != nullptr)
 		{
-			if (meshes->at(i).nameMesh == name.nameMesh)
-			{
 //		MeshCoord = meshes->at(i).MeshCoord;
-				MeshCoord.model = meshes->at(i).MeshCoord.model;
-				MeshCoord.normalModelMatrix = meshes->at(i).MeshCoord.normalModelMatrix;
-			}
+		 MeshCoord.model = mesh_Entity->MeshCoord.model;
+		 MeshCoord.normalModelMatrix = mesh_Entity->MeshCoord.normalModelMatrix;
+
+		// delete mesh_Entity;
+		 mesh_Entity = nullptr;
 
 		}
 
+		else if (mesh_Entity == nullptr)
+		{
+			register_error_RM::register_inexistence_Mesh(name.model_ID, name.mesh_ID); /// SEE IF WORKS
+		}
+
 	}
-	void singleTriangle::destroy()
+
+	void singleTriangle::destroy() /// I ONLY CHANGE THE RETURN TYPE OF THE MODEL AND MESH, FROM string TO uint32_t
 	{
-		name.nameModel = std::string();
-		name.nameMesh = std::string();
+		name.model_ID = 0;
+		name.mesh_ID = 0;
 		glDeleteVertexArrays(1, &VAO);
 		glDeleteBuffers(1, &VBO);
 	}
@@ -2642,7 +2690,7 @@ namespace individualComp
 
 				setDataMesh_Multi.emplace_back
 				(
-				mAC.subNameMesh,
+				mAC.subNameMesh_ID,
 				mAC.posicion,
 				mAC.verticesPos,
 				mAC.model
@@ -2661,7 +2709,7 @@ namespace individualComp
 
 			setDataMesh_Multi.emplace_back
 			(
-			mAC.subNameMesh,
+			mAC.subNameMesh_ID,
 			mAC.posicion,
 			mAC.verticesPos,
 			mAC.model
@@ -2676,13 +2724,11 @@ namespace individualComp
 
 	void Multiple_AssimpMesh::setMultipleMesh(Assimp_D::structModelName meshToCopy, std::vector<glm::vec3> quantityMesh)
 	{
-		std::vector<Assimp_D::Mesh>& meshes{ RenderData_Set::AssimpModel_D[meshToCopy.nameModel].outMeshes() };
-
+		Assimp_D::Mesh* mesh_Entity {RenderData_Set::ModelsScene_D->out_mesh_fromModel(name.model_ID, name.mesh_ID)};
 
 		///Para colocar la copia de los meshes
-		for (auto& mesh : meshes)
-		{	
-			if (mesh.nameMesh == meshToCopy.nameMesh)///Si lo encuentra hara una compia dependiendo de la cantidad de posiciones de quantityMesh
+
+			if (mesh_Entity != nullptr)///Si lo encuentra hara una compia dependiendo de la cantidad de posiciones de quantityMesh
 			{
 				int countMeshCopy{1};
 				for (auto& meshSet : quantityMesh)
@@ -2690,45 +2736,43 @@ namespace individualComp
 					glm::mat4 posModel{ glm::mat4(1.0f) };
 					posModel = glm::translate(posModel, meshSet);
 
-					std::string SubNameMesh{ mesh.nameMesh + "_" + std::to_string(countMeshCopy) };
+					std::string SubNameMesh{ mesh_Entity->nameMesh + "_" + std::to_string(countMeshCopy) };
 
 					std::vector<glm::vec3> newVerticesPos{};
-					for (int m = 0; m < static_cast<int>(mesh.verticesPos.size()); m++)
+					for (int m = 0; m < static_cast<int>(mesh_Entity->verticesPos.size()); m++)
 					{
-						glm::vec4 ver{ posModel * glm::vec4(mesh.verticesPos[m].x, mesh.verticesPos[m].y, mesh.verticesPos[m].z, 1.0f) };
+						glm::vec4 ver{ posModel * glm::vec4(mesh_Entity->verticesPos[m].x, mesh_Entity->verticesPos[m].y, mesh_Entity->verticesPos[m].z, 1.0f) };
 
 						newVerticesPos.emplace_back(glm::vec3(ver.x, ver.y, ver.z));
 
 					}
 
-					setDataMesh_Multi.emplace_back(SubNameMesh, meshSet, newVerticesPos, posModel);
+					setDataMesh_Multi.emplace_back(FNV::str_to_hash(SubNameMesh), meshSet, newVerticesPos, posModel);
 					countMeshCopy++;
 				}
 				
 				name = meshToCopy;
 				ActiveMesh = true;
 
+			//	delete mesh_Entity;
+				mesh_Entity = nullptr;
+
 			}
 
+		else if (mesh_Entity == nullptr)
+		{
+			register_error_RM::register_inexistence_Mesh(name.model_ID, name.mesh_ID); /// SEE IF WORKS
 		}
-
 	}
 
 	void Multiple_AssimpMesh::drawMultipleMesh()   /////Renderizar los Objetos
 	{
-	    
-		for (auto& model_Assimp : RenderData_Set::AssimpModel_D)
-		{
-			if (model_Assimp.second.nameModel == name.nameModel)
-			{
-				auto& meshes{ model_Assimp.second.outMeshes() };
+		Assimp_D::Mesh* mesh_Entity {RenderData_Set::ModelsScene_D->out_mesh_fromModel(name.model_ID, name.mesh_ID)};
 
-				for (auto& mesh : meshes)
-				{
-					if (mesh.nameMesh == name.nameMesh)
+		if (mesh_Entity != nullptr)
 					{
 
-						if (mesh.textures.active_BlendMode == true)
+						if (mesh_Entity->textures.active_BlendMode == true)
 						{
 							glEnable(GL_BLEND);
 							glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -2736,14 +2780,14 @@ namespace individualComp
 
 						}
 
-							std::vector<std::string> meshesTo_Render{};
+							std::vector<uint32_t> meshesTo_Render{};
 							meshesTo_Render.resize(static_cast<int>(setDataMesh_Multi.size()));
 
 							for (auto& meshCopy : setDataMesh_Multi)
 							{
 								int posicionInMesh{};
 
-								if (mesh.renderP == Assimp_D::renderSeq::renderFar)
+								if (mesh_Entity->renderP == Assimp_D::renderSeq::renderFar)
 								{
 									posicionInMesh = static_cast<int>(setDataMesh_Multi.size()) - 1 ;
 								}
@@ -2757,11 +2801,11 @@ namespace individualComp
 									
 										if (distLenght_seq < distLenght_Current)
 										{
-											if (mesh.renderP == Assimp_D::renderSeq::renderNear)
+											if (mesh_Entity->renderP == Assimp_D::renderSeq::renderNear)
 											{
 												posicionInMesh++;
 											}
-											else if (mesh.renderP == Assimp_D::renderSeq::renderFar)
+											else if (mesh_Entity->renderP == Assimp_D::renderSeq::renderFar)
 											{
 												posicionInMesh--;
 											}
@@ -2770,7 +2814,7 @@ namespace individualComp
 
 									}
 
-									meshesTo_Render[posicionInMesh] = meshCopy.subNameMesh;
+									meshesTo_Render[posicionInMesh] = meshCopy.subNameMesh_ID;
 
 								}
 
@@ -2779,34 +2823,44 @@ namespace individualComp
 									for (auto& meshCopy : setDataMesh_Multi)
 									{
 										///////AQUI CONTINUAR
-										if (nameMesh == meshCopy.subNameMesh)
+										if (nameMesh == meshCopy.subNameMesh_ID)
 										{
 											//shading::shader& shader_Set{ model_Assimp.second.outShader() };
 											//shading::shader& shader_Set{ RenderData_Set::shader_D[model_Assimp.second.nameShader]}; ///LAST WAY TO LOAD SHADERS
-											shading::shader& shader_Set{ RenderData_Set::shader_D[model_Assimp.second.shaders_set[static_cast<Uint8>(Assimp_D::shader_type::standard_Shader)].name_shader]};
-											shader_Set.use();
-											shader_Set.transformMat("model", meshCopy.model);
-											mesh.Draw_WithoutModel(
-												shader_Set,
-												model_Assimp.second.shaders_set[static_cast<Uint8>(Assimp_D::shader_type::viewNormals_Shader)].name_shader);  /////CHANGE IF I DON HAVE THE CORRECT NORMALS
-											break;
+											const Assimp_D::shader_SetType& shader_t {RenderData_Set::ModelsScene_D->out_shaderSet_fromModel(name.model_ID, Assimp_D::shader_type::standard_Shader)};
+
+											if (!shader_t.name_shader.empty()) {
+												shading::shader& shader_Set{ RenderData_Set::shader_D[shader_t.name_shader]};
+												shader_Set.use();
+												shader_Set.transformMat("model", meshCopy.model);
+
+												const Assimp_D::shader_SetType& shader_N{RenderData_Set::ModelsScene_D->out_shaderSet_fromModel(name.model_ID, Assimp_D::shader_type::viewNormals_Shader)};
+
+												mesh_Entity->Draw_WithoutModel(
+													shader_Set,
+													shader_N.name_shader);  /////CHANGE IF I DON HAVE THE CORRECT NORMALS
+												break;
+											}
 										}
 									}
 
 								}
 
-						if (mesh.textures.active_BlendMode == true)
+						if (mesh_Entity->textures.active_BlendMode == true)
 						{
 							glDisable(GL_BLEND);
 							glDepthMask(GL_TRUE);
 						}
 
-						break;
+			mesh_Entity = nullptr;
 					}
-				}
-				break;
-			}
+
+		else if (mesh_Entity == nullptr)
+		{
+			register_error_RM::register_inexistence_Mesh(name.model_ID, name.mesh_ID); /// SEE IF WORKS
+
 		}
+
 	}
 
 

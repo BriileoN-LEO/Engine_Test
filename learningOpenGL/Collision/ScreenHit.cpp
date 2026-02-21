@@ -199,10 +199,12 @@ namespace ScreenCalc_Hit
 		std::string modelSelected{};
 		int numMeshSelected{};
 		bool findTriangle{};
-		
-		for(auto& dataModels : RenderData_Set::AssimpModel_D)
+
+
+/*
+		for(auto& dataModels : RenderData_Set::AssimpModel_D) ////SEGUIR AQUI
 		{
-			std::vector<Assimp_D::Mesh> meshesModel{ dataModels.second.outMeshes() };
+			std::vector<Assimp_D::Mesh> meshesModel{ dataModels.second->outMeshes() };
 			for (int i = 0; i < static_cast<int>(meshesModel.size()); i++)
 			{
 				int numberTriangles{ static_cast<int>(meshesModel[i].vertices.size()) / 3 };
@@ -214,19 +216,19 @@ namespace ScreenCalc_Hit
 					glm::vec3 posVertex_1{ meshesModel[i].vertices[sumSeq].posicion };
 					glm::vec3 posVertex_2{ meshesModel[i].vertices[sumSeq+1].posicion };
 					glm::vec3 posVertex_3{ meshesModel[i].vertices[sumSeq+2].posicion };
-					
-					glm::vec4 posVert_1 = dataModels.second.ModelCoord.lastModel * glm::vec4(posVertex_1, 1.0); //Revisar
-					glm::vec4 posVert_2 = dataModels.second.ModelCoord.lastModel * glm::vec4(posVertex_2, 1.0); //Revisar
-					glm::vec4 posVert_3 = dataModels.second.ModelCoord.lastModel * glm::vec4(posVertex_3, 1.0); //Revisar
+
+					glm::vec4 posVert_1 = dataModels.second->ModelCoord.lastModel * glm::vec4(posVertex_1, 1.0); //Revisar
+					glm::vec4 posVert_2 = dataModels.second->ModelCoord.lastModel * glm::vec4(posVertex_2, 1.0); //Revisar
+					glm::vec4 posVert_3 = dataModels.second->ModelCoord.lastModel * glm::vec4(posVertex_3, 1.0); //Revisar
 
 					posVertex_1 = glm::vec3(posVert_1.x, posVert_1.y, posVert_1.z);
 					posVertex_2 = glm::vec3(posVert_2.x, posVert_2.y, posVert_2.z);
 					posVertex_3 = glm::vec3(posVert_3.x, posVert_3.y, posVert_3.z);
-					
+
 					posVertex_1 = glm::normalize(points_SW3D["nearPoint"] - posVertex_1);
 					posVertex_2 = glm::normalize(points_SW3D["nearPoint"] - posVertex_2);
 					posVertex_3 = glm::normalize(points_SW3D["nearPoint"] - posVertex_3);
-				
+
 					////Cambiar al metodo del mismo lado
 					sumAng_AllVertex += glm::dot(posVertex_1, posVertex_2);
 					sumAng_AllVertex += glm::dot(posVertex_2, posVertex_3);
@@ -234,13 +236,13 @@ namespace ScreenCalc_Hit
 
 					sumSeq += 3;
 				}
-				
+
 
 			}
 
-		
-		}
 
+		}
+*/
 	}
 	bool calc_IntersectTriangleMesh(std::vector<Assimp_D::structModelName>& Mesh, glm::vec3 nearPt, glm::vec3 direction_R)
 	{
@@ -251,80 +253,82 @@ namespace ScreenCalc_Hit
 		float dist{ 200.0f };
 		int meshSelected{};
 
+	//	Assimp_D::Mesh* mesh_find {RenderData_Set::ModelsScene_D->out_mesh_fromModel()
+
+		Assimp_D::Mesh* mesh_find {nullptr};
+
 		for (int m = 0; m < static_cast<int>(Mesh.size()); m++)
-		{
-			std::vector<Assimp_D::Mesh>& meshes{ RenderData_Set::AssimpModel_D[Mesh[m].nameModel].outMeshes() };
-
-			for (auto& meshIntersect : meshes)
 			{
-				if (meshIntersect.nameMesh == Mesh[m].nameMesh)
+			//		std::vector<Assimp_D::Mesh>& meshes{ RenderData_Set::AssimpModel_D[Mesh[m].nameModel]->outMeshes() };
+			mesh_find = RenderData_Set::ModelsScene_D->out_mesh_fromModel(Mesh[m].model_ID, Mesh[m].mesh_ID);  ///SEE IF IT FINDS THE MESH OF THE SELECTED MODEL
+
+			if (mesh_find != nullptr)
+			{
+				for (int i = 0; i < static_cast<int>(mesh_find->verticesPos.size()); i++)
 				{
-
-					for (int i = 0; i < static_cast<int>(meshIntersect.verticesPos.size()); i++)
+					AABB::triAABB tri
 					{
-						AABB::triAABB tri
+						mesh_find->verticesPos[i],
+						mesh_find->verticesPos[i + 1],
+						mesh_find->verticesPos[i + 2]
+
+					};
+
+					AABB::triAABB tri_Normal
+					{
+						mesh_find->normalsPos[i],
+						mesh_find->normalsPos[i + 1],
+						mesh_find->normalsPos[i + 2]
+
+					};
+
+					float t{ opScreenHit::calc_T(tri, nearPt, direction_R) };
+
+					if (t > 0)
+					{
+						glm::vec3 pointCollision{ nearPt + t * direction_R };
+						bool correctIntersect{ opScreenHit::samePlane_Technique(tri, pointCollision) };
+
+						if (correctIntersect == true)
 						{
-							meshIntersect.verticesPos[i],
-							meshIntersect.verticesPos[i + 1],
-							meshIntersect.verticesPos[i + 2]
+							float distancePrim{ glm::distance(pointCollision, nearPt) };
 
-						};
-
-						AABB::triAABB tri_Normal
-						{
-							meshIntersect.normalsPos[i],
-							meshIntersect.normalsPos[i + 1],
-							meshIntersect.normalsPos[i + 2]
-
-						};
-
-						float t{ opScreenHit::calc_T(tri, nearPt, direction_R) };
-
-						if (t > 0)
-						{
-							glm::vec3 pointCollision{ nearPt + t * direction_R };
-							bool correctIntersect{ opScreenHit::samePlane_Technique(tri, pointCollision) };
-
-							if (correctIntersect == true)
+							if (distancePrim < dist)
 							{
-								float distancePrim{ glm::distance(pointCollision, nearPt) };
+								numberVert = AABB::numberVertSelected(i, i + 1, i + 2);
 
-								if (distancePrim < dist)
+								//vertex.clear();
+								vertex[0] = mesh_find->vertices[i];
+								vertex[1] = mesh_find->vertices[i + 1];
+								vertex[2] = mesh_find->vertices[i + 2];
+								dist = distancePrim;
+
+								//data_HitAABB::triangleStencil.texture = mesh.textures;
+								//data_HitAABB::triangleStencil.shaderSet = mesh.shaderSet;
+								//data_HitAABB::triangleStencil.MeshCoord = mesh.MeshCoord;
+
+								meshSelected = m;
+
+								if (intersectSuccessful == false)
 								{
-									numberVert = AABB::numberVertSelected(i, i + 1, i + 2);
-
-									//vertex.clear();
-									vertex[0] = meshIntersect.vertices[i];
-									vertex[1] = meshIntersect.vertices[i + 1];
-									vertex[2] = meshIntersect.vertices[i + 2];
-									dist = distancePrim;
-
-									//data_HitAABB::triangleStencil.texture = mesh.textures;
-									//data_HitAABB::triangleStencil.shaderSet = mesh.shaderSet;
-									//data_HitAABB::triangleStencil.MeshCoord = mesh.MeshCoord;
-
-									meshSelected = m;
-
-									if (intersectSuccessful == false)
-									{
-										intersectSuccessful = true;
-									}
-
-									break;
+									intersectSuccessful = true;
 								}
 
+								break;
 							}
 
 						}
 
-						i += 2;
 					}
 
-
-					break;
+					i += 2;
 				}
-			}
-		}
+		    }
+
+			delete mesh_find;
+			mesh_find = nullptr;
+	    }
+
 
 		auto insertInVertex = [&]() {
 			data_HitAABB::triangleStencil.setTriangle(vertex);
@@ -336,7 +340,9 @@ namespace ScreenCalc_Hit
 
 			Uint8 pos_shader {static_cast<Uint8>(Assimp_D::shader_type::standard_Shader)};
 
-			    data_HitAABB::triangleStencil.shaderName = RenderData_Set::AssimpModel_D[Mesh[meshSelected].nameModel].shaders_set[pos_shader].name_shader;
+			utilities::entity* model {RenderData_Set::ModelsScene_D->out_entity_model(Mesh[meshSelected].model_ID)};
+
+			    data_HitAABB::triangleStencil.shaderName = model->model_entity->shaders_set[pos_shader].name_shader;  //SE IF THIS WORKS
 				data_HitAABB::triangleStencil.name = Mesh[meshSelected];
 				//data_HitAABB::triangleStencil.MeshCoord = mesh.MeshCoord;
 				data_HitAABB::selectedObj = std::pair<Assimp_D::structModelName, AABB::numberVertSelected>(Mesh[meshSelected], numberVert);
@@ -344,7 +350,7 @@ namespace ScreenCalc_Hit
 
 		if (intersectSuccessful == true)
 		{
-			if (Mesh[meshSelected].nameMesh == data_HitAABB::selectedObj.first.nameMesh)
+			if (Mesh[meshSelected].model_ID == data_HitAABB::selectedObj.first.model_ID)
 			{
 				///Aqui nadamas actualizar los vertices y la textura, no el shader
 
@@ -352,14 +358,14 @@ namespace ScreenCalc_Hit
 					numberVert.v2 != data_HitAABB::selectedObj.second.v2 &&
 					numberVert.v3 != data_HitAABB::selectedObj.second.v3)
 				{
-		
+
 					insertInVertex();
 				}
 
 
 			}
 
-			else if (Mesh[meshSelected].nameMesh != data_HitAABB::selectedObj.first.nameMesh)
+			else if (Mesh[meshSelected].model_ID  != data_HitAABB::selectedObj.first.model_ID )
 			{
 				insertInVertex();
 			}
@@ -409,47 +415,8 @@ namespace ScreenCalc_Hit
 
 		if (!namesIntersectAABB.empty())
 		{
-			///////////////////////////////////////////////////////////////////REVISAR ESTA OPERACION SI SALE EXISTOSA
-			//int sizeSelection{ static_cast<int>(distances_AABB.size()) };
 
 			bool correctIntersect_Triangle{ calc_IntersectTriangleMesh(namesIntersectAABB, coord_PointScreen["nearPoint"], direction_R) };
-
-			/*
-			int pointerDist{};
-
-			std::vector<std::pair<Assimp::structModelName, float>> distancesInvert{}; /////todos los meshes con los que esta intersectando en el AABB
-			//distancesInvert.resize(sizeSelection);
-
-			for (int i = 0; i < static_cast<int>(distances_AABB.size()); i++)
-			{
-				for (int s = 0; s < static_cast<int>(distances_AABB.size()); s++)
-				{
-					if (distances_AABB[i].second > distances_AABB[s].second)
-					{
-						pointerDist += 1;
-					}
-				}
-
-				distancesInvert.emplace_back(distances_AABB[pointerDist]);
-				pointerDist = 0;
-			}
-
-			for (auto& intersectMeshes : distancesInvert)
-			{
-
-				bool correctIntersect_Triangle{ calc_IntersectTriangleMesh(intersectMeshes.first, coord_PointScreen["nearPoint"], direction_R) };
-
-				SDL_Log(std::to_string(intersectMeshes.second).c_str());
-				if (correctIntersect_Triangle == true)
-				{
-					data_HitAABB::renderSelection = true;
-					data_HitAABB::triangleStencil.updateModel();
-					break;
-				}
-
-			}
-		}
-		*/
 
 			if (correctIntersect_Triangle == true)
 			{

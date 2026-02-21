@@ -84,14 +84,17 @@ namespace Assimp_D
 	struct excluded_Obj
 	{
 		excludedOP exclude_Type{};
-		std::string nameModel{};
-		std::vector<std::string> nameMeshes{};
+		uint32_t model_ID{};
+	//	std::string nameModel{};
+	//	std::vector<std::string> nameMeshes{};
+		std::vector<uint32_t> meshes_ID{};
 
 	};
 
 	struct structMesh_Data
 	{
-		std::string subNameMesh{};
+		//std::string subNameMesh{};
+		uint32_t subNameMesh_ID{};
 		glm::vec3 posicion{};
 		std::vector<glm::vec3> verticesPos{};
 		glm::mat4 model{};
@@ -99,13 +102,15 @@ namespace Assimp_D
 
 	struct structModelName
 	{
-		std::string nameModel{};
-		std::string nameMesh{};
+	    uint32_t model_ID{};
+		uint32_t mesh_ID{};
+
 		[[maybe_unused]] bool changeStateSelection{};
 
 		structModelName();
 		structModelName(std::string nameModel, std::string nameMesh);
 		structModelName(std::string nameModel, std::string nameMesh, bool changeStateSelection);
+		structModelName(uint32_t mesh_ID, uint32_t model_ID, bool changeStateSelection);
 		structModelName(structModelName&& insertNew) noexcept;
 		structModelName(structModelName& insertNew);
 		structModelName(structModelName* insertNew);
@@ -243,6 +248,8 @@ namespace Assimp_D
 
 	public:
 
+		uint32_t ID{};
+
 		std::string nameMesh{}; ///Este nombre servira para linkear con las acciones del bounding box
 		std::vector<vertexD> vertices{};
 		std::vector<unsigned int> indices{};
@@ -272,7 +279,7 @@ namespace Assimp_D
 		void Draw_WithLights(shading::shader& shader, std::string& shaderNormals_ID);
 		void Draw_WithLights02(shading::shader& shader);
 		void Draw_Alone();
-		void Draw_WithoutModel(shading::shader& shader, std::string& shaderNormals_ID);
+		void Draw_WithoutModel(shading::shader& shader, std::string shaderNormals_ID);
 		void build_PreDraw(shading::shader& shader);  ///SEARCH THIS IF I NEED IT
 		unsigned int& outVAO();
 
@@ -299,6 +306,7 @@ namespace Assimp_D
 
 	public:
 
+		uint32_t ID{};
 		std::string nameModel{};
 		std::vector<shader_SetType> shaders_set{}; //Update if i save more
 		//std::string nameShader{};  ///LAST WAY TO LOAD SHADERS
@@ -331,7 +339,7 @@ namespace Assimp_D
 		std::vector<Mesh>& outMeshes();
 		shading::shader& outShader();
 
-		Mesh& outSpecificMesh(std::string& nameMesh);
+		Mesh& outSpecificMesh(uint32_t mesh_ID);  ///CHANGE THIS GET A POINTER OF Mesh
 
 		int numMeshes();
 		void refresh_ModelCoord();

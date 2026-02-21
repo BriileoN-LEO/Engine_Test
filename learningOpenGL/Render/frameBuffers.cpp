@@ -140,9 +140,9 @@ namespace frameBuff
 
 		RenderData_Set::shader_D["shaderFramebuffer"].use();
 		
-		////SI EL OBJETO DE TAMAÑO ESTA CHICO, AGREGAR LA MATRIX MODEL PARA LA POSICION 
+		////SI EL OBJETO DE TAMAï¿½O ESTA CHICO, AGREGAR LA MATRIX MODEL PARA LA POSICION 
 
-		std::vector<Assimp_D::Mesh>& meshes{ RenderData_Set::AssimpModel_D[dataBuffer.nameAssimp.nameModel].outMeshes() };
+		std::vector<Assimp_D::Mesh>& meshes{ RenderData_Set::AssimpModel_D[dataBuffer.nameAssimp.nameModel]->outMeshes() };  ///CONTINUE HERE
 		int sizeIndices{};
 
 		for (auto& mesh : meshes)
@@ -181,7 +181,7 @@ namespace frameBuff_Obj
 	{
 		for (auto& model : RenderData_Set::AssimpModel_D)
 		{
-			std::vector<Assimp_D::Mesh>& meshes{ model.second.outMeshes() };
+			std::vector<Assimp_D::Mesh>& meshes{ model.second->outMeshes() };
 
 			for (auto& mesh : meshes)
 			{

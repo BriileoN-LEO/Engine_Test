@@ -22,7 +22,7 @@ namespace render
 	{
 		for (auto& renderMAD : RenderData_Set::AssimpModel_D)
 		{
-			renderMAD.second.Draw_WL();
+			renderMAD.second->Draw_WL();
 		}
 	}
 
@@ -40,7 +40,7 @@ namespace render
 
 			for (auto excludedModel : excluded_Objs)
 			{
-				if (modelSearch.second.nameModel == excludedModel.nameModel && excludedModel.exclude_Type == Assimp_D::excludedOP::exclude_complete_model)
+				if (modelSearch.second->nameModel == excludedModel.nameModel && excludedModel.exclude_Type == Assimp_D::excludedOP::exclude_complete_model)
 				{
 					pass_excluded_model = true;
 					break;
@@ -49,7 +49,7 @@ namespace render
 
 			if (pass_excluded_model == false)
 			{
-				std::vector<Assimp_D::Mesh>& meshesSearch{ modelSearch.second.outMeshes() };
+				std::vector<Assimp_D::Mesh>& meshesSearch{ modelSearch.second->outMeshes() };
 
 				for (auto& meshS : meshesSearch)
 					{
@@ -58,7 +58,7 @@ namespace render
 
 					for (auto excludedModel : excluded_Objs)
 					{
-						if (modelSearch.second.nameModel == excludedModel.nameModel)
+						if (modelSearch.second->nameModel == excludedModel.nameModel)
 						{
 							for (auto excludedMesh : excludedModel.nameMeshes)
 							{
@@ -141,7 +141,7 @@ namespace render
 
 			for (auto& renderMesh : RenderData_Set::AssimpModel_D)
 			{
-				std::vector<Assimp_D::Mesh>& meshesSearch{ renderMesh.second.outMeshes() };
+				std::vector<Assimp_D::Mesh>& meshesSearch{ renderMesh.second->outMeshes() };
 
 				for (auto& mesh : meshesSearch)
 				{
@@ -153,8 +153,8 @@ namespace render
 						}
 						//mesh.Draw_WithLights02(RenderData_Set::shader_D["shaderT1"]);  ///LAST WAY TO LOAD SHADERS
 						mesh.Draw_WithLights(
-							RenderData_Set::shader_D[renderMesh.second.shaders_set[pos_standardShader].name_shader],
-				            renderMesh.second.shaders_set[pos_normalShader].name_shader);
+							RenderData_Set::shader_D[renderMesh.second->shaders_set[pos_standardShader].name_shader],
+				            renderMesh.second->shaders_set[pos_normalShader].name_shader);
 						// mesh.Draw_WithLights(renderMesh.second.outShader()); //DESACTIVADO TEMPORALMENTE
 						breakLoop = true;
 						break;
@@ -191,7 +191,7 @@ namespace render
 
 			for (auto& renderMesh : RenderData_Set::AssimpModel_D)
 			{
-				std::vector<Assimp_D::Mesh>& meshesSearch{ renderMesh.second.outMeshes() };
+				std::vector<Assimp_D::Mesh>& meshesSearch{ renderMesh.second->outMeshes() };
 
 				for (auto& mesh : meshesSearch)
 				{
@@ -210,8 +210,8 @@ namespace render
 							{
 					      	 SDL_Log(mesh.nameMesh.c_str());
 							}
-						mesh.Draw_WithLights(RenderData_Set::shader_D[renderMesh.second.shaders_set[pos_standardShader].name_shader],
-							renderMesh.second.shaders_set[pos_normalShader].name_shader);
+						mesh.Draw_WithLights(RenderData_Set::shader_D[renderMesh.second->shaders_set[pos_standardShader].name_shader],
+							renderMesh.second->shaders_set[pos_normalShader].name_shader);
 
 						//shading::shader& shaderUse{ renderMesh.second.outShader() };
 						//mesh.Draw_WithLights(shaderUse);
@@ -797,13 +797,13 @@ namespace renderSelection
 			glStencilFunc(GL_ALWAYS, 1, 0xFF);
 			glStencilMask(0xFF);
 
-			RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel].DrawSingleMesh(data_HitAABB::selectedObj.first.nameMesh, 1);///LISTO_NEW_SHADER
+			RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->DrawSingleMesh(data_HitAABB::selectedObj.first.nameMesh, 1);///LISTO_NEW_SHADER
 
 			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 			glStencilMask(0x00);
 			//	glDisable(GL_DEPTH_TEST);
 
-			std::vector<Assimp_D::Mesh>& meshesData{ RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel].outMeshes() };
+			std::vector<Assimp_D::Mesh>& meshesData{ RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->outMeshes() };
 			glm::mat4 modelMat{ glm::mat4(1.0f) };
 
 			RenderData_Set::stencilTest::stencilTest_shader.use();
@@ -828,7 +828,7 @@ namespace renderSelection
 			RenderData_Set::stencilTest::stencilTest_shader.setVec3("color_stencil", glm::vec3(1.0));
 			RenderData_Set::stencilTest::stencilTest_shader.setInt("selectionStencil", 0);
 
-			RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel].DrawSingleMesh(data_HitAABB::selectedObj.first.nameMesh, 0);///LISTO_NEW_SHADER
+			RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->DrawSingleMesh(data_HitAABB::selectedObj.first.nameMesh, 0);///LISTO_NEW_SHADER
 
 			glStencilMask(0xFF);
 			glStencilFunc(GL_ALWAYS, 1, 0xFF);
@@ -874,12 +874,12 @@ namespace renderSelection
 			glStencilFunc(GL_ALWAYS, 1, 0xFF);
 			glStencilMask(0xFF);
 
-			RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel].Draw_WL();
+			RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->Draw_WL();
 
 			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 			glStencilMask(0x00);
 
-			std::vector<Assimp_D::Mesh>& Meshes{ RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel].outMeshes() };
+			std::vector<Assimp_D::Mesh>& Meshes{ RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->outMeshes() };
 			for (auto& mesh : Meshes)
 			{
 				RenderData_Set::stencilTest::stencilTest_shader.use();
@@ -936,13 +936,13 @@ namespace renderSelection
 				glStencilFunc(GL_ALWAYS, 1, 0xFF);
 				glStencilMask(0xFF);
 
-				RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel].DrawSingleMesh(data_HitAABB::selectedObj.first.nameMesh, 1);///LISTO_NEW_SHADER
+				RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->DrawSingleMesh(data_HitAABB::selectedObj.first.nameMesh, 1);///LISTO_NEW_SHADER
 
 				glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 				glStencilMask(0x00);
 				//	glDisable(GL_DEPTH_TEST);
 
-				std::vector<Assimp_D::Mesh>& meshesData{ RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel].outMeshes() };
+				std::vector<Assimp_D::Mesh>& meshesData{ RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->outMeshes() };
 				glm::mat4 modelMat{ glm::mat4(1.0f) };
 
 				RenderData_Set::stencilTest::stencilTest_shader.use();
@@ -972,7 +972,7 @@ namespace renderSelection
 
 				RenderData_Set::stencilTest::stencilTest_shader.setInt("selectionStencil", 0);
 
-				RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel].DrawSingleMesh(data_HitAABB::selectedObj.first.nameMesh, 0);///LISTO_NEW_SHADER
+				RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->DrawSingleMesh(data_HitAABB::selectedObj.first.nameMesh, 0);///LISTO_NEW_SHADER
 			}
 
 			glStencilMask(0xFF);
@@ -1001,7 +1001,7 @@ namespace renderSelection
 
 		for (auto sMP : edit_visualize::nameSelect_Model)
 		{
-		   Assimp_D::Mesh& getMesh {RenderData_Set::AssimpModel_D[sMP.names.nameModel].outSpecificMesh(sMP.names.nameMesh) };
+		   Assimp_D::Mesh& getMesh {RenderData_Set::AssimpModel_D[sMP.names.nameModel]->outSpecificMesh(sMP.names.nameMesh) };
 
 			if (static_cast<int>(getMesh.nameMesh.size()) != 0)
 			{
@@ -1036,11 +1036,11 @@ namespace renderSelection
 				glStencilFunc(GL_ALWAYS, 1, 0xFF);
 				glStencilMask( 0xFF);
 
-				RenderData_Set::AssimpModel_D[getNameSelected_Models[sP]->nameModel].DrawSingleMesh(getNameSelected_Models[sP]->nameMesh, 1);///LISTO_NEW_SHADER
+				RenderData_Set::AssimpModel_D[getNameSelected_Models[sP]->nameModel]->DrawSingleMesh(getNameSelected_Models[sP]->nameMesh, 1);///LISTO_NEW_SHADER
 
 				glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 				glStencilMask(0x00);
-				Assimp_D::Mesh& mesh_Model {RenderData_Set::AssimpModel_D[getNameSelected_Models[sP]->nameModel].outSpecificMesh(getNameSelected_Models[sP]->nameMesh)};
+				Assimp_D::Mesh& mesh_Model {RenderData_Set::AssimpModel_D[getNameSelected_Models[sP]->nameModel]->outSpecificMesh(getNameSelected_Models[sP]->nameMesh)};
 
 				RenderData_Set::stencilTest::stencilTest_shader.use();
 				RenderData_Set::stencilTest::stencilTest_shader.transformMat("model", mesh_Model.MeshCoord.model);
@@ -1060,7 +1060,7 @@ namespace renderSelection
 
 				RenderData_Set::stencilTest::stencilTest_shader.setInt("selectionStencil", 0);
 
-				RenderData_Set::AssimpModel_D[getNameSelected_Models[sP]->nameModel].DrawSingleMesh(getNameSelected_Models[sP]->nameMesh, 0);
+				RenderData_Set::AssimpModel_D[getNameSelected_Models[sP]->nameModel]->DrawSingleMesh(getNameSelected_Models[sP]->nameMesh, 0);
 			}
 		}
 
@@ -1081,7 +1081,7 @@ namespace stencil_test
 
 		glStencilMask(0x00);
 		std::string back_Excluded{ "Floor" };
-		RenderData_Set::AssimpModel_D[back_Excluded].Draw_WL(); //LISTO_NEW_SHADER
+		RenderData_Set::AssimpModel_D[back_Excluded]->Draw_WL(); //LISTO_NEW_SHADER
 		render::render_ModelCreation_D();
 		render::render_MeshLights_D();
 
@@ -1134,7 +1134,7 @@ namespace stencil_test
 			
 			if (pass == false)
 			{
-				std::vector<Assimp_D::Mesh>& meshesData{ renderMAD.second.outMeshes() };
+				std::vector<Assimp_D::Mesh>& meshesData{ renderMAD.second->outMeshes() };
 				for (auto& meshes : meshesData)
 				{
 					glm::mat4 modelMesh = glm::mat4(1.0f);
@@ -1166,7 +1166,7 @@ namespace refresh_Models
 	{
 		for (auto& renderMAD : RenderData_Set::AssimpModel_D)
 		{
-			renderMAD.second.updateModel();
+			renderMAD.second->updateModel();
 		}
 
 		//RenderData_Set::pointUI_D[0].updatePoint();
@@ -1189,7 +1189,7 @@ namespace refresh_Models
 	{
 		for (auto& renderMAD : RenderData_Set::AssimpModel_D)
 		{
-			renderMAD.second.ModelCoord.lastModel = renderMAD.second.ModelCoord.model;
+			renderMAD.second->ModelCoord.lastModel = renderMAD.second->ModelCoord.model;
 		//	renderMAD.second.ModelCoord.lastTranslateM = renderMAD.second.ModelCoord.translateM;
 		//	renderMAD.second.ModelCoord.lastScaleS = renderMAD.second.ModelCoord.scaleS;
 		//	renderMAD.second.ModelCoord.lastRotateR = renderMAD.second.ModelCoord.rotateR;
@@ -1208,7 +1208,7 @@ namespace destroy
 	{
 		for (auto& val : RenderData_Set::AssimpModel_D)
 		{
-			RenderData_Set::AssimpModel_D[val.first].destroyModel();
+			RenderData_Set::AssimpModel_D[val.first]->destroyModel();
 		}
 		
 		for (auto& AABB_Mesh : AABB::meshBoundingBox)

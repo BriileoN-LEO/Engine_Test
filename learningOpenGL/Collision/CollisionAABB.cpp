@@ -26,7 +26,18 @@ namespace AABB
 		boxTrisAABB_Base = boxTrisAABB;
 		box_CoordActual = box_Coord;
 
-		modelAABB = RenderData_Set::AssimpModel_D[nameAABB.nameModel].ModelCoord.model;
+//		modelAABB = RenderData_Set::AssimpModel_D[nameAABB.nameModel]->ModelCoord.model;
+		Assimp_D::Model* model {RenderData_Set::AssimpModel_D->model_by_ID(nameAABB.model_ID)};
+		if (model != nullptr)
+		{
+			modelAABB = model->ModelCoord.model; ///DETECT IF FAILS
+		//	delete model;
+			model = nullptr;
+		}
+		else if (model == nullptr)
+		{
+		  SDL_Log("ERROR::INSERT BOUNDING BOX::NOT FIND MODEL | CollisionAABB.cpp ---> line 37");
+		}
 
 		setUpBox();
 	}
@@ -48,33 +59,34 @@ namespace AABB
 	}
 	void BoundingBox::draw()
 	{
-		shaderAABB.use();
-		
-		std::vector<Assimp_D::Mesh>& meshes_AABB{ RenderData_Set::AssimpModel_D[nameAABB.nameModel].outMeshes() };
-		bool notFind{ true };
-		for (auto& f_mesh : meshes_AABB)
-		{ 
-			if (f_mesh.nameMesh == nameAABB.nameMesh)
-			{
-				shaderAABB.transformMat("model", f_mesh.MeshCoord.model);
-				notFind = false;
-				break;
-			}
-		}
+		Assimp_D::Model* model {RenderData_Set::AssimpModel_D->model_by_ID(nameAABB.model_ID)};
 
-		if (notFind == true)
-		{
-			shaderAABB.transformMat("model", glm::mat4(1.0f));
-		}
+       if (model != nullptr) {
+	    shaderAABB.use();
 
-		//shaderAABB.transformMat("model", matModel);
-		shaderAABB.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
-		shaderAABB.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
+       	Assimp_D::Mesh& mesh_AABB{ model->outSpecificMesh(nameAABB.mesh_ID) };  //checar si puedo sacar los meshes de aqui
 
-		glBindVertexArray(VAO); 
-		glDrawArrays(GL_LINE_STRIP, 0, vertAABB.size());
-	   //	glDrawArrays(GL_LINE_STRIP, 0, (void*)0);
-		glBindVertexArray(0);
+       	if (mesh_AABB.ID != 0)
+       	{
+       		shaderAABB.transformMat("model", mesh_AABB.MeshCoord.model);
+       	}
+
+       	else if (mesh_AABB.ID == 0)
+       	{
+       		shaderAABB.transformMat("model", glm::mat4(1.0f));
+       	}
+
+       	//shaderAABB.transformMat("model", matModel);
+       	shaderAABB.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+       	shaderAABB.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
+
+       	glBindVertexArray(VAO);
+       	glDrawArrays(GL_LINE_STRIP, 0, vertAABB.size());
+       	//	glDrawArrays(GL_LINE_STRIP, 0, (void*)0);
+       	glBindVertexArray(0);
+
+       	model = nullptr;
+       }
 	}
 	void BoundingBox::destroy()
 	{
@@ -337,26 +349,26 @@ namespace AABB
 	}
 	void create_BoundingBox_Mesh()
 	{
-		for (auto& Model : RenderData_Set::AssimpModel_D)
+	   	 const std::unordered_map<std::string, uint32_t>& data_M {RenderData_Set::AssimpModel_D->out_ModelsID()};
+
+		for (const auto& [name_m, ID] : data_M)   ////////FOLLOW HERE
 		{
+			Assimp_D::Model* model {RenderData_Set::AssimpModel_D->model_by_ID(ID)};
+
 			bool existBoundingBox{ false };
-			
-			for (auto& AABB_box : meshBoundingBox)
-			{
-				if (AABB_box.nameAABB.nameModel == Model.second.nameModel)
-				{
-					existBoundingBox = true;
-					break;
-				}
-			}
-			
-			if (existBoundingBox == false)
-			{
-				std::vector<Assimp_D::Mesh>& Meshes{ Model.second.outMeshes() };
 
+		    auto find_exist_model =	std::ranges::find_if(meshBoundingBox,
+		    	[&](BoundingBox& AABB) {
+		    		return model->ID == AABB.nameAABB.model_ID;
+		    	});
 
-				for (int i = 0; i < static_cast<int>(Meshes.size()); i++)
-				{
+			
+			if (find_exist_model == std::ranges::end(meshBoundingBox))
+			{
+				//std::vector<Assimp_D::Mesh>& Meshes{ Model.second->outMeshes() };
+				std::vector<Assimp_D::Mesh>& Meshes{model->outMeshes()};
+
+				for (int i = 0; i < static_cast<int>(Meshes.size()); i++) {
 					//Calcular el centro de la geometria
 					std::vector<glm::vec3> vertex_Tris{};
 					for (auto& vert_Array : Meshes[i].vertices)
@@ -408,18 +420,20 @@ namespace AABB
 
 					std::pair<std::vector<glm::vec3>, boxAABB> box{ calcBox(minPos, maxPos) };
 					std::map<std::string, triAABB> trisAABB{ calcTrisAABB(box.second) }; ////////cambio de inicializacion
-					Assimp_D::structModelName name
+					Assimp_D::structModelName name  ///THIS CAHNGES COULD BE DANGEROUS
 					{
-						Model.second.nameModel,
-						Meshes[i].nameMesh, //REVISAR
+						model->ID,
+						Meshes[i].ID, //REVISAR
 						false
 					};
 
 					meshBoundingBox.emplace_back(BoundingBox(name, box.first, box.second, trisAABB));
 
+
 				}
 			}
-
+			//delete model;
+			model = nullptr;
 		}
 
 	};
@@ -460,35 +474,65 @@ namespace AABB
 	};
 	void updateCoordAABB_All()
 	{
-		std::string last_Model{};
+	//	std::string last_Model{};
+	//	uint32_t last_modelID{};
+
 		std::unique_ptr<std::vector<Assimp_D::Mesh>> currentMeshes{ nullptr };
 
+        for (auto& AABB_box : meshBoundingBox)
+        {
+          Assimp_D::Mesh* mesh_find {RenderData_Set::ModelsScene_D->out_mesh_fromModel(AABB_box.nameAABB.model_ID, AABB_box.nameAABB.mesh_ID)};  ///SEE IF I CAN LOAD THE MESH CORRECTLY
+
+          if (mesh_find != nullptr)
+          {
+	        AABB_box.updatePosicion(mesh_find->MeshCoord.model);
+          	AABB_box.updateBoxTrisPos(mesh_find->MeshCoord.model);
+
+          //	delete mesh_find;
+          	mesh_find = nullptr;
+          }
+
+          else if (mesh_find == nullptr)
+          {
+          	std::string nameModel{RenderData_Set::AssimpModel_D->get_nameModel(AABB_box.nameAABB.model_ID)};
+            nameModel = "AABB_ERROR::MODEL DOESN'T EXIST IN SCENE" + nameModel + " | CollisionAABB.cpp ---> updateCoordAABB_All()";
+
+            SDL_Log(nameModel.c_str());
+
+        //  	delete nameModel;
+        // 	nameModel = nullptr;
+          }
+        }
+
+
+		/*
 		for (auto& AABB_box : meshBoundingBox)
 		{
 			if (AABB_box.nameAABB.nameModel != last_Model)
 			{
 				currentMeshes.reset();
-				currentMeshes = std::make_unique<std::vector<Assimp_D::Mesh>>(RenderData_Set::AssimpModel_D[AABB_box.nameAABB.nameModel].outMeshes());
+				currentMeshes = std::make_unique<std::vector<Assimp_D::Mesh>>(RenderData_Set::AssimpModel_D[AABB_box.nameAABB.nameModel]->outMeshes());
 				last_Model = AABB_box.nameAABB.nameModel;
 			}
 
 			for (int i = 0; i < static_cast<int>(currentMeshes->size()); i++)
 			{
-				if (currentMeshes->at(i).nameMesh == AABB_box.nameAABB.nameMesh)
+				if (currentMeshes[i].nameMesh == AABB_box.nameAABB.nameMesh)
 				{
 					AABB_box.updatePosicion(currentMeshes->at(i).MeshCoord.model);
 				    AABB_box.updateBoxTrisPos(currentMeshes->at(i).MeshCoord.model);
+					break;
 				}
 
 			}
-
+*/
 			//currentMeshes.reset();
 			///test 
 		}
 
 	}
 
-}
+
 
 namespace data_HitAABB
 {

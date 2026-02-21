@@ -11,16 +11,19 @@
 #include "2D_UI/2D_screenPlayer.h"
 #include "frameBuffers.h"
 #include "2D_UI/Interface_generalUI.h"
+#include "resource_Manager/resourceManager.h"
 
 namespace RenderData_Set
 {
-	extern std::vector<Assimp_D::Model> models_D;
+//	extern std::vector<Assimp_D::Model> models_D;
 
 	extern std::map<std::string, ObjCreation::ModelCreation> ModelCreation_D;
 
 
-    extern std::map<std::string, Assimp_D::Model> AssimpModel_D; ///CHANGE THIS TO EDIT THEM LIKE A STD::MAP
-  //  extern std::map<std::string, std::unique_ptr<Assimp_D::Model>> AssimpModel_D;
+    //extern std::map<std::string, Assimp_D::Model> AssimpModel_D; ///CHANGE THIS TO EDIT THEM LIKE A STD::MAP
+    extern std::optional<resourceManager::manager_Model> AssimpModel_D;
+	extern std::optional<utilities::scene> ModelsScene_D;
+    ///extern std::unordered_map<std::string, std::unique_ptr<Assimp_D::Model>> AssimpModel_D;
 
 	extern std::vector<ObjCreation::ModelCreation> MeshLights_MCD;
 	extern std::vector<light::light1> pointLights_D;
@@ -161,9 +164,14 @@ namespace RenderData_Set
 	void setSettings_FileShader(const char* fragmentShader_Path, std::vector<std::string> values);
 	void insertSettings_FileShader();
 
-	const void set_AllObjects();
-	const void running_AllObjects();
-}
+	void init_managerResources();
+
+	void setModels_to_scene();
+
+	void set_AllObjects();
+	void running_AllObjects();
+
+ }
 
 
 

@@ -120,6 +120,8 @@ int main(int argc, char* argv[])
 {
 	init();
 
+	RenderData_Set::init_managerResources();
+
 	std::setvbuf(stdout, nullptr, _IONBF, 0);
 
 	UI::init_imGUI(gWindow, contextOpenGl);
