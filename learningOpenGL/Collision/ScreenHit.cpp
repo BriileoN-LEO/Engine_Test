@@ -250,7 +250,7 @@ namespace ScreenCalc_Hit
 		AABB::numberVertSelected numberVert{};
 		std::vector<Assimp_D::vertexD> vertex{};
 		vertex.resize(3);
-		float dist{ 200.0f };
+		float dist{ 20000.0f };
 		int meshSelected{};
 
 	//	Assimp_D::Mesh* mesh_find {RenderData_Set::ModelsScene_D->out_mesh_fromModel()
@@ -291,7 +291,7 @@ namespace ScreenCalc_Hit
 
 						if (correctIntersect == true)
 						{
-							float distancePrim{ glm::distance(pointCollision, nearPt) };
+							float distancePrim{ glm::distance2(pointCollision, nearPt) }; //SEE IF DISTANCE2 WORKS
 
 							if (distancePrim < dist)
 							{
@@ -325,7 +325,7 @@ namespace ScreenCalc_Hit
 				}
 		    }
 
-			delete mesh_find;
+		//	delete mesh_find;
 			mesh_find = nullptr;
 	    }
 

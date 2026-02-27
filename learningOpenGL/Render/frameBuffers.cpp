@@ -135,32 +135,28 @@ namespace frameBuff
 
 	void frameBuffer::useFrameBufferModel()
 	{
-		
+
 		//glDisable(GL_DEPTH_TEST);
 
 		RenderData_Set::shader_D["shaderFramebuffer"].use();
-		
-		////SI EL OBJETO DE TAMA�O ESTA CHICO, AGREGAR LA MATRIX MODEL PARA LA POSICION 
 
-		std::vector<Assimp_D::Mesh>& meshes{ RenderData_Set::AssimpModel_D[dataBuffer.nameAssimp.nameModel]->outMeshes() };  ///CONTINUE HERE
+		////SI EL OBJETO DE TAMA�O ESTA CHICO, AGREGAR LA MATRIX MODEL PARA LA POSICION
+
+		Assimp_D::Mesh* mesh_find {RenderData_Set::ModelsScene_D->out_mesh_fromModel(dataBuffer.nameAssimp.model_ID, dataBuffer.nameAssimp.mesh_ID)}; ///CHECK THIS
+
 		int sizeIndices{};
 
-		for (auto& mesh : meshes)
-		{
-		   if (mesh.nameMesh == dataBuffer.nameAssimp.nameMesh)
-		   {
-			   glm::mat4 upModelMesh = mesh.MeshCoord.model;
-			   upModelMesh = glm::translate(upModelMesh, glm::vec3(0.0f, 0.2f, 0.0f));
+		if (mesh_find != nullptr) {
+			glm::mat4 upModelMesh = mesh_find->MeshCoord.model;
+			upModelMesh = glm::translate(upModelMesh, glm::vec3(0.0f, 0.2f, 0.0f));
 
-			   RenderData_Set::shader_D["shaderFramebuffer"].transformMat("model", upModelMesh);
-			   
-			   RenderData_Set::shader_D["shaderFramebuffer"].transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
-			   RenderData_Set::shader_D["shaderFramebuffer"].transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
-			   sizeIndices = static_cast<int>(mesh.indices.size());
-			   unsigned int& VAO_mesh = mesh.outVAO();
-			   glBindVertexArray(VAO_mesh);
-			}
+			RenderData_Set::shader_D["shaderFramebuffer"].transformMat("model", upModelMesh);
 
+			RenderData_Set::shader_D["shaderFramebuffer"].transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+			RenderData_Set::shader_D["shaderFramebuffer"].transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
+			sizeIndices = static_cast<int>(mesh_find->indices.size());
+			unsigned int& VAO_mesh = mesh_find->outVAO();
+			glBindVertexArray(VAO_mesh);
 		}
 
 		RenderData_Set::shader_D["shaderFramebuffer"].setInt("screenTexture", 0);
@@ -177,70 +173,61 @@ namespace frameBuff
 
 namespace frameBuff_Obj
 {
-	void set_PlanarReflection_Dir(std::string& nameMesh, camera::camera1& cameraToUpdate)
-	{
-		for (auto& model : RenderData_Set::AssimpModel_D)
+	void set_PlanarReflection_Dir(uint32_t mesh_ID, camera::camera1& cameraToUpdate) {
+		Assimp_D::Mesh* mesh_find {RenderData_Set::ModelsScene_D->out_mesh_fromID(mesh_ID)};  ///CHECK THIS IF I GET ERROR
+
+		if (mesh_find != nullptr)
 		{
-			std::vector<Assimp_D::Mesh>& meshes{ model.second->outMeshes() };
 
-			for (auto& mesh : meshes)
+			AABB::triAABB triNormal
 			{
-				if (mesh.nameMesh == nameMesh)
-				{
-			        
-					AABB::triAABB triNormal
-					{
-					   mesh.normalsPos[0],
-					   mesh.normalsPos[1],
-					   mesh.normalsPos[2]
+				mesh_find->normalsPos[0],
+				mesh_find->normalsPos[1],
+				mesh_find->normalsPos[2]
 
-					};
+			 };
 
-					AABB::triAABB tri
-					{
-					  mesh.verticesPos[0],
-					  mesh.verticesPos[1],
-					  mesh.verticesPos[2]
-					};
-
-					
-					
-					//glm::vec3 normalFace{ opScreenHit::calc_NormalPlane(tri) };
-					glm::vec3 normalFace{ opScreenHit::calc_NormalPlane_VertNormal(triNormal, tri) };
-					//normalFace = glm::normalize(-normalFace);
-
-					//normalFace = glm::normalize(-(mesh.MeshCoord.posModel - normalFace));
-
-					/*
-					glm::vec3 posCamera{ glm::normalize(cameraToUpdate.posCam) };
-					
-					glm::vec3 newPos{ glm::cross(posCamera, normalFace) };
-					newPos = glm::cross(posCamera, newPos);
-					//newPos = cameraToUpdate.posCam + newPos;
-					*/
-					RenderData_Set::pointUI_D[1].updatePos(normalFace);
-
-					//glm::vec3 cameraTarget{ cameraToUpdate.directionView};
-					glm::vec3 cameraTarget{ cameraToUpdate.posCam + cameraToUpdate.directionView };
-
-					glm::mat4 matViewReflect{ reflectionMatrixOP::calcReflectMatrix(cameraToUpdate.posCam, mesh.verticesPos[0], normalFace, cameraToUpdate.cameraUp, cameraTarget) };
-					glm::mat4 matProjection{ reflectionMatrixOP::calcObliqueProjection(cameraToUpdate.camProjection, matViewReflect, mesh.verticesPos[0], normalFace) };
-
-					cameraToUpdate.updateSettingsCam(matViewReflect, matProjection);
-					
-				
-
-					break;
-				}
+			AABB::triAABB tri
+			{
+				mesh_find->verticesPos[0],
+				mesh_find->verticesPos[1],
+				mesh_find->verticesPos[2]
+			  };
 
 
-			}
 
+			//glm::vec3 normalFace{ opScreenHit::calc_NormalPlane(tri) };
+			glm::vec3 normalFace{ opScreenHit::calc_NormalPlane_VertNormal(triNormal, tri) };
+			//normalFace = glm::normalize(-normalFace);
 
-	    }
+			//normalFace = glm::normalize(-(mesh.MeshCoord.posModel - normalFace));
 
+			/*
+			glm::vec3 posCamera{ glm::normalize(cameraToUpdate.posCam) };
+
+			glm::vec3 newPos{ glm::cross(posCamera, normalFace) };
+			newPos = glm::cross(posCamera, newPos);
+			//newPos = cameraToUpdate.posCam + newPos;
+			*/
+			RenderData_Set::pointUI_D[1].updatePos(normalFace);
+
+			//glm::vec3 cameraTarget{ cameraToUpdate.directionView};
+			glm::vec3 cameraTarget{ cameraToUpdate.posCam + cameraToUpdate.directionView };
+
+			glm::mat4 matViewReflect{ reflectionMatrixOP::calcReflectMatrix(cameraToUpdate.posCam, mesh_find->verticesPos[0], normalFace, cameraToUpdate.cameraUp, cameraTarget) };
+			glm::mat4 matProjection{ reflectionMatrixOP::calcObliqueProjection(cameraToUpdate.camProjection, matViewReflect, mesh_find->verticesPos[0], normalFace) };
+
+			cameraToUpdate.updateSettingsCam(matViewReflect, matProjection);
+
+			mesh_find = nullptr;
+		}
+
+		else if (mesh_find == nullptr)
+	    {
+			std::string error_findMesh {"ERROR::DOESNT FIND MESH::NOT SET PLANR REFLECTION DIR"};
+
+			register_error_RM::register_error_withSentence(error_findMesh.c_str());
+		}
 
 	}
-
-
 }

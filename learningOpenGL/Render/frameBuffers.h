@@ -60,7 +60,7 @@ namespace frameBuff
 
 namespace frameBuff_Obj
 {
-	void set_PlanarReflection_Dir(std::string& nameMesh, camera::camera1& cameraToUpdate);
+	void set_PlanarReflection_Dir(uint32_t mesh_ID, camera::camera1& cameraToUpdate);
 
 }
 

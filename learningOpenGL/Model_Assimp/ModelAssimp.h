@@ -110,7 +110,7 @@ namespace Assimp_D
 		structModelName();
 		structModelName(std::string nameModel, std::string nameMesh);
 		structModelName(std::string nameModel, std::string nameMesh, bool changeStateSelection);
-		structModelName(uint32_t mesh_ID, uint32_t model_ID, bool changeStateSelection);
+		structModelName(uint32_t model_ID, uint32_t mesh_ID, bool changeStateSelection);
 		structModelName(structModelName&& insertNew) noexcept;
 		structModelName(structModelName& insertNew);
 		structModelName(structModelName* insertNew);
@@ -271,6 +271,7 @@ namespace Assimp_D
 		Mesh(std::vector<vertexD> ver, std::vector<unsigned int> indi, std::vector<textureD> texture);
 
 		Mesh(Assimp_D::loadToCPU::MeshData_loadCPU loadData);
+		///CHECK IF I NEED ~Mesh when i delete the pointers of the mesh
 
 		void update_editMode();
 
@@ -293,7 +294,11 @@ namespace Assimp_D
 	{
 	private:
 
+		std::unordered_map<uint32_t, uint32_t> pos_find_secuencial{}; //SEE IF THIS IS BETTER
+		std::vector<uint32_t> pos_meshes{};
 		std::vector<Mesh> meshes{};
+		int num_meshes_secuencial{};
+
 		std::string directory{};
 		std::vector<textureD> textures_Loaded{};
 		shading::shader shaders{};
@@ -318,15 +323,19 @@ namespace Assimp_D
 		Model();
 		Model(std::string path, const char* vertexPath, const char* fragmentPath, coordModel modelCoords, shaderSettings shaderSettings, unsigned int processFlags);
 		Model(Assimp_D::loadToCPU::ModelData_loadCPU model);
+		~Model();
 		
 		void setModelSettings(coordModel modelCoords, shaderSettings shaderSettings);
 		void Draw(camera::camera1 cam1, light::light1 light);
 		void Draw_WL();
+		void Draw_singleMesh_ID(uint32_t mesh_ID, int shaderOp);
 		void DrawSingleMesh(std::string nameMesh, int shaderOp);
 		void DrawExcludeMesh(std::string nameMesh);
 		void destroyModel();
 
+		void calculate_centerBoundingBox();
 		void updateModel();
+
 		void setNameModel(const std::string name);
 		void setModelCoord(coordModel modelCoords);
 		void SetShinessTex_Mesh(int numMesh, float valueShiness);
@@ -338,8 +347,12 @@ namespace Assimp_D
 	
 		std::vector<Mesh>& outMeshes();
 		shading::shader& outShader();
+        const int& out_numSec_meshes();  ///THIS VALUE IS THE SIZE OF THE CONTAINER OF THE MESHES
 
 		Mesh& outSpecificMesh(uint32_t mesh_ID);  ///CHANGE THIS GET A POINTER OF Mesh
+		Mesh& out_MeshByPos(uint32_t pos);
+		void insert_mesh(loadToCPU::MeshData_loadCPU mesh_D); //CHECK THIS FUNCTION IN THE FUTURE
+		void delete_mesh(uint32_t mesh_ID); //CHECK THIS FUNCTION IN THE FUTURE
 
 		int numMeshes();
 		void refresh_ModelCoord();

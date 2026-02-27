@@ -1,6 +1,7 @@
 #include "RenderData.h"
 #include "Collision/ScreenHit.h"
 #include "playTest.h"
+#include "optimize_Algorithmics/optimizeAlgorithmics.h"
 //#include "2D_UI/Interface_UI.h"
 //#include "2D_UI/2D_ScreenPlayer.h"
 
@@ -363,7 +364,7 @@ namespace RenderData_Set
 	//	std::filesystem::path path_campo_01{ campo_01 };
 		Assimp_D::loadToCPU::insertProcessModel CampoVegetacion
 		{
-			"CampoVegetacion",
+		    "CampoVegetacion",
 			campo_01,
 			shaders,
 			aiProcessFlags
@@ -390,7 +391,7 @@ namespace RenderData_Set
 
 		std::queue<Assimp_D::loadToCPU::insertProcessModel> models;
 		models.push(back_Pack);
-			//Floor,
+		//models.push(Floor);	//Floor,
 		models.push(FlashLight);
 		models.push(CampoVegetacion);
 		models.push(plant01);
@@ -479,7 +480,7 @@ namespace RenderData_Set
 		    if (model != nullptr)
 		    {
 			   model->setModelSettings(coordBackPack, ss_Model_v1);
-		    	delete model;
+		   // 	delete model;
 		    	model = nullptr;
 		    }
 
@@ -503,7 +504,7 @@ namespace RenderData_Set
 	     	if (model != nullptr)
 		    {
 		    	model->setModelSettings(coord_FloorModel, ss_Model_v2);
-	     		delete model;
+	     	//	delete model;
 	     		model = nullptr;
 		    }
 
@@ -525,7 +526,7 @@ namespace RenderData_Set
 		    if (model != nullptr)
 	     	 {
 		     	model->setModelSettings(coord_FlashLight, ss_FlashLight);
-		    	delete model;
+		    //	delete model;
 		    	model = nullptr;
 		     }
 
@@ -550,7 +551,7 @@ namespace RenderData_Set
 		     if (model != nullptr)
 		     {
 			  model->setModelSettings(coord_Campo01, ss_Campo01);
-		     	delete model;
+		    // 	delete model;
 		     	model = nullptr;
 		     }
 
@@ -579,7 +580,7 @@ namespace RenderData_Set
 		    	model->SetOrderRender_Mesh("plant01_1", Assimp_D::renderSeq::renderFar);
 		    	model->BlendModeTexture_Mesh("plant01_1", true);
 
-		    	delete model;
+		    //	delete model;
 		    	model = nullptr;
 		    }
 
@@ -593,7 +594,7 @@ namespace RenderData_Set
 		    if (model != nullptr)
 		    {
 		    	model->setModelSettings(coord_Mirror_01, ss_Plant01);
-		    	delete model;
+		//    	delete model;
 		    	model = nullptr;
 		    }
 
@@ -603,7 +604,7 @@ namespace RenderData_Set
 		    if (model != nullptr)
 		    {
 		    	model->setModelSettings(coord_TokioPlace, ss_Plant01);
-		    	delete model;
+		    //	delete model;
 		    	model = nullptr;
 	     	}
 
@@ -1127,12 +1128,15 @@ namespace RenderData_Set
 	 std::vector<individualComp::Multiple_AssimpMesh> setMulti_AssimpModel()
 	{
 		////Aqui colocar el seteo de los objetos que contendran Multiples Models
+
+		uint32_t model_name {FNV::str_to_hash("plant01")};
+		uint32_t mesh_name {FNV::str_to_hash("plant01_1")};
 		Assimp_D::structModelName sM_Plant01
 		{
-			"plant01",
-			"plant01_1",
+			model_name,
+			mesh_name,
 			true
-		};	
+		};
 
 		std::vector<glm::vec3> pos_Plant01
 		{
@@ -1144,12 +1148,12 @@ namespace RenderData_Set
 			{1.0f, 5.0f, 3.0f},
 		};
 
-		individualComp::Multiple_AssimpMesh plant01(sM_Plant01, pos_Plant01);
+		individualComp::Multiple_AssimpMesh plant01_B(sM_Plant01, pos_Plant01);
 
 		std::vector<individualComp::Multiple_AssimpMesh> multiMesh;
 
-		multiMesh.reserve(1);
-		multiMesh.push_back(std::move(plant01));
+		//multiMesh.reserve(1);
+		multiMesh.push_back(std::move(plant01_B));
 
 		return multiMesh;
 	}
@@ -1286,33 +1290,50 @@ namespace RenderData_Set
 		insertSettings_FileShader();
 		stencilTest::setStencilTest_Shader();
 
+		SDL_Log("STATE_1");
+
 		ModelCreation_D = setModelCreation_Data();
+		SDL_Log("STATE_2");
 		//AssimpModel_D = setModel_Data();   ////DESACTIVADO TEMPORALMENTE
 		MeshLights_MCD = setMeshLight_ModelCreation_Data();
+		SDL_Log("STATE_3");
 
-		multi_AssimpModel = setMulti_AssimpModel();
 
 		skybox_D::skyBoxes_D = skybox_D::setSkyBoxes_D();
 		//skybox_D::currentSkyBox_D = std::make_unique<sky::cubeMap_Skybox>(skybox_D::skyBoxes_D["skyBox_day"]);
 		skybox_D::nameSkybox = "skyBox_day";
 		skybox_D::skyBox_Current = skybox_D::activeSkybox("skyBox_day", true);
+		SDL_Log("STATE_5");
 
 		//Creacion del boundingBox
 		AABB::create_BoundingBox_Mesh();
+		SDL_Log("STATE_6");
 		//AABB::test_BoundingBos();
 		AABB::setShader_AABB();
+		SDL_Log("STATE_7");
 
 		pointUI_D = setPointUI_2D();
+		SDL_Log("STATE_8");
 
 		testFrameBuffer.loadFrameBuffer();
+		SDL_Log("STATE_9");
 		frameBuffers_D = setFrameBuffers();
+		SDL_Log("STATE_10");
 
 		textureCache::loadAll_PreLoadedTexturesToCache(); ///CARGA DE LAS TEXTURAS EN EL CACHE.
+		SDL_Log("STATE_11");
 		brii_UI::resizeUI_textures(); //TO RESIZE ALL THE TEXTURES THAT I HAVE IN MY UI
+		SDL_Log("STATE_12");
 
 		shading::register_Errors_SS::debug_BufferLayout(shader_D["shaderT1"].outID(), "lights");
+		SDL_Log("STATE_13");
 
 		setModels_to_scene();  /////PUT TO THE END TO SAVE ALL THE POINTERS CORRECTLY
+		SDL_Log("STATE_14");
+
+		multi_AssimpModel = setMulti_AssimpModel();
+		SDL_Log("STATE_15");
+
 	}
 
 	 void running_AllObjects()

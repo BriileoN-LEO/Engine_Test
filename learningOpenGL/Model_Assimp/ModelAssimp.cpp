@@ -5,7 +5,7 @@
 #include "Edit_Modes/Edit_M.h"
 #include "Render/Render.h"
 #include "optimize_Algorithmics/optimizeAlgorithmics.h"
-#include "resource_Manager/resourceManager.h"
+//#include "resource_Manager/resourceManager.h"
 
 namespace sky 
 {
@@ -393,7 +393,7 @@ namespace Assimp_D {
     mesh_ID{FNV::str_to_hash(nameMesh)},
 	changeStateSelection{changeStateSelection}
 	{};
-	structModelName::structModelName(uint32_t mesh_ID, uint32_t model_ID, bool changeStateSelection) :
+	structModelName::structModelName(uint32_t model_ID, uint32_t mesh_ID, bool changeStateSelection) :
 	mesh_ID(mesh_ID),
 	model_ID(model_ID),
 	changeStateSelection(changeStateSelection)
@@ -566,7 +566,7 @@ namespace Assimp_D {
 
 		MeshCoord.posModel_Base = transformation_basics::calcCenterGeo(verticesPos);
 		MeshCoord.posModel = MeshCoord.posModel_Base;
-		
+
 	   //para setear las texturas
 		if (static_cast<int>(texture.size()) > 0)
 		{
@@ -591,9 +591,9 @@ namespace Assimp_D {
 			if (existDiffuse == true)
 			{
 				std::reverse(texturePath.begin(), texturePath.end());
-			
+
 				int posPoint{ static_cast<int>(texturePath.find(".")) };
-		
+
 				std::string reversePath{ texturePath.substr(0, posPoint) };
 				std::reverse(reversePath.begin(), reversePath.end());
 
@@ -636,7 +636,7 @@ namespace Assimp_D {
 
 		int seqUnit{};
 
-		
+
 		for (auto textureDataCache : loadData.textures)
 		{
 			textures.textures_LoadCache.emplace_back(textureDataCache);
@@ -644,7 +644,7 @@ namespace Assimp_D {
 			if (textureDataCache.blendTexture == true && textureDataCache.typeTex == texDataManager::typeTexture::diffuse)
 			{
 				textures.active_BlendMode = true;
-				
+
 			}
 		}
 
@@ -682,7 +682,7 @@ namespace Assimp_D {
 		glGenBuffers(1, &EBO);
 
 		glBindVertexArray(VAO);
-		
+
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertexD), &vertices[0], GL_STATIC_DRAW);
 
@@ -691,13 +691,13 @@ namespace Assimp_D {
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertexD), (void*)0);
-		
+
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertexD), (void*)offsetof(vertexD, Normal));
 
 		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vertexD), (void*)offsetof(vertexD, TexCoord));
-		
+
 		//glBindBuffer(GL_ARRAY_BUFFER,S 0);
 		glBindVertexArray(0);
 
@@ -746,7 +746,7 @@ namespace Assimp_D {
 
 		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)((position.size() * sizeof(glm::vec3)) + (normals.size() * sizeof(glm::vec3))));
-		
+
 		glBindVertexArray(0);
 
 	}
@@ -824,7 +824,7 @@ namespace Assimp_D {
 
 		shader.setVec3("lightColor", light.Color);
 		shader.setVec3("lightPos", light.Posicion);
-	
+
 		shader.setVec3("Mat.ambient", shaderSet.ambient);
 		shader.setVec3("Mat.difusse", shaderSet.difusse);  ///SEE IF THIS AFFECTS THE SHADER
 		shader.setVec3("Mat.specular", shaderSet.specular);
@@ -864,7 +864,7 @@ namespace Assimp_D {
 	{
 		if (!render::oneTimeSee)
 		{
-			SDL_Log(glm::to_string(MeshCoord.model).c_str());
+	//		SDL_Log(glm::to_string(MeshCoord.model).c_str());  ///TO PRINT THE MATRIX
 		}
 
 		shader.use();
@@ -890,7 +890,7 @@ namespace Assimp_D {
 				std::string pL_ambient{ pL_name + ".ambient" };
 				std::string pL_diffuse{ pL_name + ".diffuse" };
 				std::string pL_specular{ pL_name + ".specular" };
-				 
+
 				shader.setVec3(pL_color, RenderData_Set::pointLights_D[i].Color);
 				shader.setVec3(pL_Posicion, RenderData_Set::pointLights_D[i].Posicion);
 				shader.setFloat(pL_constant, RenderData_Set::pointLights_D[i].constant);
@@ -924,7 +924,7 @@ namespace Assimp_D {
 				shader.setVec3(dL_ambient, RenderData_Set::directionalLights_D[i].Mat.ambient);
 				shader.setVec3(dL_diffuse, RenderData_Set::directionalLights_D[i].Mat.diffuse);
 				shader.setVec3(dL_specular, RenderData_Set::directionalLights_D[i].Mat.specular);
-				
+
 
 			}
 
@@ -934,7 +934,7 @@ namespace Assimp_D {
 		{
 			int sL_i{};
 
-			
+
 			for (auto& spotLight : RenderData_Set::spotLights_D)
 			{
 				std::string sL_name{ "spotLights_Array[" + std::to_string(sL_i) + "]" };
@@ -1018,12 +1018,12 @@ namespace Assimp_D {
 		}
 
 		shader.setFloat("refractiveIndex", settingsShader.refractiveIndex);
-		
+
 		shader.setVec3("Mat.ambient", shaderSet.ambient);
 		shader.setVec3("Mat.difusse", shaderSet.difusse);
 		shader.setVec3("Mat.specular", shaderSet.specular);
 		shader.setFloat("Mat.shiness", shaderSet.shiness);
-	
+
 
 		shader.setVec3("viewPos", cameras::cameras_D[cameras::name_CurrentCamera].posCam);
 		shader.transformMat3("modelMatrix", MeshCoord.normalModelMatrix);
@@ -1412,7 +1412,7 @@ namespace Assimp_D {
 	}
 	void Mesh::build_PreDraw(shading::shader& shader)
 	{
-		
+
 		shader.use();
 
 		shader.transformMat("model", MeshCoord.model);
@@ -1596,7 +1596,7 @@ namespace Assimp_D {
 		{
 		//	glm::mat4 pos{ glm::mat4(1.0f) };
 		//	pos = glm::translate(pos, vertex.posicion);
-			
+
 		//	pos = MeshCoord.model * pos;
 
 			//----ACTUALIZACION DE LA POSICION DE LOS EJES----//
@@ -1617,6 +1617,16 @@ namespace Assimp_D {
 	}
 	void Mesh::destroyMesh()
 	{
+
+		ID = 0;
+
+		nameMesh = "";
+		vertices.clear();
+		indices.clear();
+
+	    verticesPos.clear();
+		normalsPos.clear();
+
 		glDeleteVertexArrays(1, &VAO);
 		glDeleteBuffers(1, &VBO);
 		glDeleteBuffers(1, &EBO);
@@ -1658,15 +1668,24 @@ namespace Assimp_D {
 
 		//nameShader = model.nameShader;
 
+
 		for (auto& meshData : model.Meshes_LoadCPU)
 		{
 			meshes.emplace_back(Mesh(meshData)); //// ESCENCIAL PARA CARGA DE TEXTURAS, CAMBIAR LOS DATOS PARA QUE SOLAMENTE SE INGRESE EL NOMBRE DE LA TEXTURA JUNTO CON EL TIPO
 		}
 
+		calculate_centerBoundingBox();  ///TO CALCULATE THE CENTER OF THE MODEL
+
 		for (int i = 0; i < static_cast<int>(meshes.size()); i++)
 		{
 			std::string nameMeshNew{ nameModel + "_" + std::to_string(i + 1) };
+
+			meshes[i].ID = FNV::str_to_hash(nameMeshNew);
 			meshes[i].nameMesh = nameMeshNew;
+
+			pos_find_secuencial.emplace(meshes[i].ID, static_cast<uint32_t>(i));  ///TO SAVE THE POSICION TO RESEARCH MORE FASTER MY MESHES
+			pos_meshes.emplace_back(i);
+			++num_meshes_secuencial;
 
 			if (nameMeshNew == "CampoVegetacion_1")
 			{
@@ -1677,13 +1696,13 @@ namespace Assimp_D {
 			meshes[i].setMeshCoord(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 			meshes[i].MeshCoord.model = ModelCoord.model * meshes[i].MeshCoord.model;
 			meshes[i].MeshCoord.setNormalModelMatrix();
-			//meshes[i].MeshCoord.nameModel = 
+			//meshes[i].MeshCoord.nameModel =
 			//meshes[i].shaderSet = shaderSettings;
 
 		}
 
 
-	
+
 	}
 	void Model::loadModel(std::string path, const char* vertexPath, const char* fragmentPath, coordModel modelCoords, shaderSettings shaderSettings, unsigned int processFlags)
 	{
@@ -1697,10 +1716,10 @@ namespace Assimp_D {
 		//import all Assimp
 		Assimp::Importer importer;
 //		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
-	
+
 
 		const aiScene* scene = importer.ReadFile(path, processFlags);
-		 
+
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		{
 			std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << '\n';
@@ -1717,9 +1736,9 @@ namespace Assimp_D {
 			meshes[i].MeshCoord.model = ModelCoord.model * meshes[i].MeshCoord.model;
 			meshes[i].MeshCoord.setNormalModelMatrix();
 			meshes[i].shaderSet = shaderSettings; ///seteo de texturas
-			
+
 		}
-	
+
 	}
 	void Model::processNode(aiNode* node, const aiScene* scene)
 	{
@@ -1728,7 +1747,7 @@ namespace Assimp_D {
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 			meshes.emplace_back(processMesh(mesh, scene));
 		}
-		
+
 		for (int i = 0; i < node->mNumChildren; i++)
 		{
 			processNode(node->mChildren[i], scene);
@@ -1741,7 +1760,7 @@ namespace Assimp_D {
 		std::vector<vertexD> vertices{};
 		std::vector<unsigned int> indices{};
 		std::vector<textureD> textures{};
-		
+
 		for (int i = 0; i < mesh->mNumVertices; i++)
 		{
 			glm::vec3 vertex{};
@@ -1756,7 +1775,7 @@ namespace Assimp_D {
 			normals.z = mesh->mNormals[i].z;
 
 			glm::vec2 texCoords{};
-			
+
 			if (mesh->HasTextureCoords(0))
 			{
 				texCoords.x = mesh->mTextureCoords[0][i].x;
@@ -1773,7 +1792,7 @@ namespace Assimp_D {
 			vertices.emplace_back(vertex, normals, texCoords);
 			//SDL_Log(std::to_string(texCoords.x).c_str());
 		}
-		
+
 		for (int i = 0; i < mesh->mNumFaces; i++)
 		{
 			aiFace Face = mesh->mFaces[i];
@@ -1781,26 +1800,26 @@ namespace Assimp_D {
 			for (int f = 0; f < Face.mNumIndices; f++)
 			{
 				indices.emplace_back(Face.mIndices[f]);
-			}			
+			}
 		}
 
 		if (mesh->mMaterialIndex >= 0)
 		{
 			aiMaterial* material{ scene->mMaterials[mesh->mMaterialIndex] };
-	
+
 			std::vector<textureD> difusseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-		
+
 //			shaders.use();
 
 			textures.insert(textures.end(), difusseMaps.begin(), difusseMaps.end());
-			
+
 			std::vector<textureD> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
-	
+
 			textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 		}
 
 //		meshes.emplace_back(vertices, indices, textures);
-		
+
 		return Mesh(vertices, indices, textures);
 	}
 
@@ -1836,10 +1855,10 @@ namespace Assimp_D {
 				tex.emplace_back(texture);
 				textures_Loaded.emplace_back(texture);
 				SDL_Log(texture.type.c_str());
-			
+
 			}
 		}
-		
+
 		return tex;
 
 	}
@@ -1855,6 +1874,16 @@ namespace Assimp_D {
 
 		loadModel_CPU(model);
 	}
+ 	Model::~Model()
+	{
+	 std::string log_destroy {"DELETING MODEL | " + nameModel};
+
+	 SDL_Log(log_destroy.c_str());
+
+	 destroyModel();  ////SEE IF THIS DESTROYS
+
+	}
+
 	void Model::setModelSettings(coordModel modelCoords, shaderSettings shaderSettings)
 	{
 		//set transform Model General
@@ -1887,7 +1916,7 @@ namespace Assimp_D {
 
 			ModelCoord.lastModel = ModelCoord.model;
 
-		
+
 	}
 	void Model::Draw_WL()
 	{
@@ -1903,6 +1932,36 @@ namespace Assimp_D {
 		}
 
 	}
+
+	void Model::Draw_singleMesh_ID(uint32_t mesh_ID, int shaderOp)
+	{
+		auto find_mesh {pos_find_secuencial.find(mesh_ID)};
+
+		if (find_mesh != pos_find_secuencial.end())
+	    {
+			int pos = find_mesh->second;
+
+			if (shaderOp == 0)
+			{
+				meshes[pos].Draw_Alone();
+			}
+
+			else if (shaderOp == 1) {
+				shading::shader& standard_shader {RenderData_Set::shader_D[shaders_set[static_cast<Uint8>(shader_type::standard_Shader)].name_shader]};
+				meshes[pos].Draw_WithLights(
+					standard_shader,
+					shaders_set[static_cast<Uint8>(shader_type::viewNormals_Shader)].name_shader
+					);
+			}
+		}
+
+		else if (find_mesh == pos_find_secuencial.end())
+		{
+			register_error_RM::register_inexistence_Mesh(ID, mesh_ID);
+		}
+
+	}
+
 	void Model::DrawSingleMesh(std::string nameMesh, int shaderOp)
 	{
 		for (int i = 0; i < static_cast<int>(meshes.size()); i++)
@@ -1945,10 +2004,76 @@ namespace Assimp_D {
 	void Model::destroyModel()
 	{
 		for(int i = 0; i < static_cast<int>(meshes.size()); i++)
-		{ 
+		{
 			meshes[i].destroyMesh();
 		}
-		glDeleteProgram(shaders.ID);
+
+		pos_find_secuencial.clear();
+		pos_meshes.clear();
+		num_meshes_secuencial = 0;
+
+		ID = 0;
+		nameModel = "";
+		shaders_set.clear();
+
+		meshes.clear();
+		directory = "";
+		textures_Loaded.clear();
+		//glDeleteProgram(shaders.ID);   ////SEE IF I DONT INSERT SHADERS ANY MORE
+	}
+
+	void Model::calculate_centerBoundingBox()
+	{
+		glm::vec3 minPos{};
+		glm::vec3 maxPos{};
+
+		bool init_loop{};
+      for (auto& mesh : meshes)
+      {
+      	if (init_loop == false)
+      	{
+      	 minPos = mesh.MeshCoord.posModel;
+      	 maxPos = mesh.MeshCoord.posModel;
+      	 init_loop = true;
+      	}
+
+      	if (init_loop == true)
+      	{
+      		if (mesh.MeshCoord.posModel.x < minPos.x)
+      		{
+              minPos.x = mesh.MeshCoord.posModel.x;
+      		}
+
+      		else if (mesh.MeshCoord.posModel.x > maxPos.x)
+      		{
+      			maxPos.x = mesh.MeshCoord.posModel.x;
+      		}
+
+      		if (mesh.MeshCoord.posModel.y < minPos.y)
+      		{
+      			minPos.y = mesh.MeshCoord.posModel.y;
+      		}
+
+      		else if (mesh.MeshCoord.posModel.y > maxPos.y)
+      		{
+      			maxPos.y = mesh.MeshCoord.posModel.y;
+      		}
+
+      		if (mesh.MeshCoord.posModel.z < minPos.z)
+      		{
+      			minPos.z = mesh.MeshCoord.posModel.z;
+      		}
+
+      		else if (mesh.MeshCoord.posModel.z > maxPos.z)
+      		{
+      			maxPos.z = mesh.MeshCoord.posModel.z;
+      		}
+      	}
+
+      }
+		ModelCoord.posModel_Base =(minPos + maxPos) * 0.5f;
+		ModelCoord.posModel = ModelCoord.posModel_Base;
+
 	}
 
 	void Model::updateModel()
@@ -1971,6 +2096,10 @@ namespace Assimp_D {
 			meshes[i].MeshCoord.refreshCenter_Pos();
 		}
 
+		if (ModelCoord.model != ModelCoord.lastModel)
+		{
+			ModelCoord.refreshCenter_Pos();
+		}
 	//	ModelCoord.lastModel = ModelCoord.model;
 	}
 	void Model::setNameModel(const std::string name)
@@ -1995,6 +2124,8 @@ namespace Assimp_D {
 		ModelCoord.setAngRotModel(modelCoords.angRot);
 		ModelCoord.setTransformsAll();
 		ModelCoord.setNormalModelMatrix();
+
+		ModelCoord.refreshCenter_Pos();  ///TO UPDATE THE POSICION OF THE MODEL
 	}
 	void Model::SetShinessTex_Mesh(int numMesh, float valueShiness)
 	{
@@ -2065,24 +2196,83 @@ namespace Assimp_D {
 	{
 		return shaders;
 	}
+	const int& Model::out_numSec_meshes()
+	{
+		return num_meshes_secuencial;
+	}
+
 
 	Mesh& Model::outSpecificMesh(uint32_t mesh_ID)
 	{
-		int return_p {};
-		auto find_M { std::ranges::find_if(meshes, [&](Mesh& dMesh)
-		{
-			++return_p;
-           return dMesh.ID == mesh_ID;
-		})};
+		auto find_mesh {pos_find_secuencial.find(mesh_ID)};
 
-	    if (find_M != std::ranges::end(meshes))
-	    {
-		    --return_p;
-	    	return meshes[return_p];
-	    }
+		if (find_mesh != pos_find_secuencial.end())
+		{
+		   uint32_t& m_pos{find_mesh->second};
+           uint32_t& pos_vector{pos_meshes[m_pos]};
+
+		   return meshes[pos_vector];
+		}
+
+		else if (find_mesh == pos_find_secuencial.end())
+		{
+			std::string log_error_mesh {"ERROR::WE CANNOT FIND A MESH IN THE MODEL (" + nameModel + ")"};
+			register_error_RM::register_error_withSentence(log_error_mesh.c_str());
+		}
 
        return RenderData_Set::error_MeshF;
 	}
+	Mesh& Model::out_MeshByPos(uint32_t pos)
+	{
+	   if (pos <= num_meshes_secuencial - 1)
+	   {
+	  // 	SDL_Log(meshes[pos].nameMesh.c_str());
+         return meshes[pos];
+	   }
+
+		return RenderData_Set::error_MeshF;
+	}
+
+	void Model::insert_mesh(loadToCPU::MeshData_loadCPU mesh_D)
+	{
+		meshes.emplace_back(mesh_D);
+
+		pos_find_secuencial.emplace(meshes[num_meshes_secuencial - 1].ID, num_meshes_secuencial);
+		pos_meshes.emplace_back(num_meshes_secuencial);
+
+		++num_meshes_secuencial;
+
+	}
+	void Model::delete_mesh(uint32_t mesh_ID)
+	{
+		auto find_mesh {pos_find_secuencial.find(mesh_ID)};
+
+		if (find_mesh != pos_find_secuencial.end())
+	    {
+           uint32_t current_pos {pos_find_secuencial[mesh_ID]};
+           int pos = pos_meshes[current_pos];
+
+		   std::swap(meshes[pos], meshes[num_meshes_secuencial - 1]);
+		   meshes[num_meshes_secuencial - 1].destroyMesh();
+		   meshes.pop_back();
+
+		   std::swap(pos_meshes[pos], pos_meshes[num_meshes_secuencial - 1]);
+		   pos_meshes[pos] = pos;
+		   pos_meshes.pop_back();
+
+		   pos_find_secuencial[meshes[pos].ID] = pos_meshes[pos];
+		   pos_find_secuencial.erase(mesh_ID);
+
+		   --num_meshes_secuencial;
+		}
+
+		else if (find_mesh == pos_find_secuencial.end())
+		{
+			register_error_RM::register_error_withSentence("ERROR::WE CANNOT DELETE THE MESH::WE CANNOT FIND IT");
+		}
+	}
+
+
 
 	int Model::numMeshes()
 	{
@@ -2559,7 +2749,7 @@ namespace individualComp
        		}
        	}
 
-       	std::cout << VAO << '\n';
+       //	std::cout << VAO << '\n';
 
        	glBindVertexArray(VAO);
        	glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -2585,14 +2775,12 @@ namespace individualComp
 
 	//	utilities::entity* entity_model {RenderData_Set::ModelsScene_D->out_entity_model(name.model_ID)};  ///TEST IF WORKS
 		Assimp_D::Mesh* model_Entity {RenderData_Set::ModelsScene_D->out_mesh_fromModel(name.model_ID, name.mesh_ID)};///TEST IF WORKS
+
+
 			if (model_Entity != nullptr)
 			{
-	//			Assimp_D::Mesh& entity_mesh {entity_model->model_entity->outSpecificMesh(name.mesh_ID)};
+			    model = model_Entity->MeshCoord.model;
 
-					model = model_Entity->MeshCoord.model;
-
-		//			register_error_RM::register_inexistence_Mesh(name.model_ID, name.mesh_ID);  ///SEE IF I HAVE AN ERROR AND THIS REGISTER THEM
-		//		delete model_Entity;
 				model_Entity = nullptr;
 			}
 
@@ -2724,9 +2912,8 @@ namespace individualComp
 
 	void Multiple_AssimpMesh::setMultipleMesh(Assimp_D::structModelName meshToCopy, std::vector<glm::vec3> quantityMesh)
 	{
-		Assimp_D::Mesh* mesh_Entity {RenderData_Set::ModelsScene_D->out_mesh_fromModel(name.model_ID, name.mesh_ID)};
 
-		///Para colocar la copia de los meshes
+		Assimp_D::Mesh* mesh_Entity {RenderData_Set::ModelsScene_D->out_mesh_fromModel(meshToCopy.model_ID, meshToCopy.mesh_ID)};
 
 			if (mesh_Entity != nullptr)///Si lo encuentra hara una compia dependiendo de la cantidad de posiciones de quantityMesh
 			{
@@ -2761,7 +2948,7 @@ namespace individualComp
 
 		else if (mesh_Entity == nullptr)
 		{
-			register_error_RM::register_inexistence_Mesh(name.model_ID, name.mesh_ID); /// SEE IF WORKS
+			register_error_RM::register_inexistence_Mesh(meshToCopy.model_ID, meshToCopy.mesh_ID); /// SEE IF WORKS
 		}
 	}
 
@@ -2794,7 +2981,7 @@ namespace individualComp
 
 									float distLenght_Current{ glm::length(cameras::cameras_D[cameras::name_CurrentCamera].posCam - meshCopy.posicion) };
 
-									for (int i = 0; i < static_cast<int>(setDataMesh_Multi.size()); i++)
+				 				for (int i = 0; i < static_cast<int>(setDataMesh_Multi.size()); i++)
 									{
 										float distLenght_seq{ glm::length(cameras::cameras_D[cameras::name_CurrentCamera].posCam - setDataMesh_Multi[i].posicion) };
 

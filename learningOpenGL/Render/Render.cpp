@@ -2,6 +2,7 @@
 #include "RenderData.h"
 #include "threadSystem/thread_System.h"
 #include "Edit_Modes/Edit_M.h"
+#include "optimize_Algorithmics/optimizeAlgorithmics.h"
 //#include "playTest.h"
 //#include "Collision/ScreenHit.h"
 
@@ -20,154 +21,47 @@ namespace render
 
 	void render_classicModelAssimp_D()
 	{
-		for (auto& renderMAD : RenderData_Set::AssimpModel_D)
-		{
-			renderMAD.second->Draw_WL();
-		}
+	    RenderData_Set::ModelsScene_D->renderAll();  ///CHECK THIS
 	}
 
 	void render_ModelAssimp_D(std::vector<Assimp_D::excluded_Obj> excluded_Objs)
 	{
 
-		glEnable(GL_DEPTH_TEST);
+		std::vector<uint32_t> excluded_meshes{};
+		utilities::entity* entity_model{nullptr};
 
-		std::map<std::string, float> meshesNear{};
-		std::map<std::string, float> meshesFar{};
-
-		for (auto& modelSearch : RenderData_Set::AssimpModel_D)
-		{
-			bool pass_excluded_model{};
-
-			for (auto excludedModel : excluded_Objs)
+		for (auto& objs : excluded_Objs)
+	    {
+			if (objs.exclude_Type == Assimp_D::excludedOP::exclude_complete_model)  ///CONTINUAR AQUI PARA RENDERIZAR LOS MESHES Y LOS QUE NO QUIERO
 			{
-				if (modelSearch.second->nameModel == excludedModel.nameModel && excludedModel.exclude_Type == Assimp_D::excludedOP::exclude_complete_model)
-				{
-					pass_excluded_model = true;
-					break;
-				}
+			  entity_model = RenderData_Set::ModelsScene_D->out_entity_model(objs.model_ID);
+               std::vector<Assimp_D::Mesh>& meshes {entity_model->model_entity->outMeshes()};
+
+			   for (auto& ms : meshes)
+			   {
+				excluded_meshes.emplace_back(ms.ID);
+			   }
+
+				entity_model = nullptr;
 			}
 
-			if (pass_excluded_model == false)
-			{
-				std::vector<Assimp_D::Mesh>& meshesSearch{ modelSearch.second->outMeshes() };
+		    else if (objs.exclude_Type == Assimp_D::excludedOP::exclude_only_meshes)
+		    {
+			  for (auto& ms : objs.meshes_ID)
+			  {
+				excluded_meshes.emplace_back(ms);
+			  }
 
-				for (auto& meshS : meshesSearch)
-					{
-					bool pass_excluded_mesh{};
-                    bool find_mesh{};
-
-					for (auto excludedModel : excluded_Objs)
-					{
-						if (modelSearch.second->nameModel == excludedModel.nameModel)
-						{
-							for (auto excludedMesh : excludedModel.nameMeshes)
-							{
-								if (meshS.nameMesh == excludedMesh && excludedModel.exclude_Type == Assimp_D::excludedOP::exclude_only_meshes)
-								{
-									pass_excluded_mesh = true;
-									find_mesh = true;
-                                    break;
-								}
-
-							}
-
-							if (find_mesh == true)
-							{
-								break;
-							}
-						}
-
-					}
-
-					if (pass_excluded_mesh == false)
-					{
-						float dist{ glm::distance(meshS.MeshCoord.posModel,  cameras::cameras_D[cameras::name_CurrentCamera].posCam) };
-                     //   std::cout << dist << std::endl;s
-                       // SDL_Log(std::to_string(dist).c_str());
-
-					//	if (oneTimeSee == false)
-					//	{
-						// SDL_Log(meshS.nameMesh.c_str());
-					//	}
-
-						switch (meshS.renderP)
-						{
-						case Assimp_D::renderSeq::renderNear:
-							meshesNear.emplace(meshS.nameMesh, dist);
-							break;
-
-						case Assimp_D::renderSeq::renderFar:
-							meshesFar.emplace(meshS.nameMesh, dist);
-							break;
-						}
-						/**
-						if (meshS.renderP == Assimp::renderSeq::renderNear)
-						{
-							meshesNear.emplace(meshS.nameMesh, dist);
-						}
-
-						else if (meshS.renderP == Assimp::renderSeq::renderFar)
-						{
-							meshesFar.emplace(meshS.nameMesh, dist);
-
-						}
-						*/
-					}
-				}
-			}
+		    }
 		}
 
-		Uint8 pos_standardShader {static_cast<Uint8>(Assimp_D::shader_type::standard_Shader)};
-		Uint8 pos_normalShader {static_cast<Uint8>(Assimp_D::shader_type::viewNormals_Shader)};
-		float minNear{};
+		glEnable(GL_DEPTH_TEST); ////CONTINUE HERE
 
-		for (int i = 0; i < static_cast<int>(meshesNear.size()); i++)
-		{
-			std::string meshToRender{};
-			float maxNear{ 10000.0f };
+	//	std::map<std::string, float> meshesFar{}
 
-			for (auto& meshNear : meshesNear)
-			{
-				if (meshNear.second < maxNear && meshNear.second > minNear)
-				{
-					maxNear = meshNear.second;
-					meshToRender = meshNear.first;
-				}
+		RenderData_Set::ModelsScene_D->render_nearPos(excluded_meshes); // I HOPE IT WORKS
 
-			}
-
-			minNear = maxNear;
-			bool breakLoop{ false };
-
-			for (auto& renderMesh : RenderData_Set::AssimpModel_D)
-			{
-				std::vector<Assimp_D::Mesh>& meshesSearch{ renderMesh.second->outMeshes() };
-
-				for (auto& mesh : meshesSearch)
-				{
-					if (mesh.nameMesh == meshToRender)
-					{
-						if (oneTimeSee == false)
-						{
-							SDL_Log(mesh.nameMesh.c_str());
-						}
-						//mesh.Draw_WithLights02(RenderData_Set::shader_D["shaderT1"]);  ///LAST WAY TO LOAD SHADERS
-						mesh.Draw_WithLights(
-							RenderData_Set::shader_D[renderMesh.second->shaders_set[pos_standardShader].name_shader],
-				            renderMesh.second->shaders_set[pos_normalShader].name_shader);
-						// mesh.Draw_WithLights(renderMesh.second.outShader()); //DESACTIVADO TEMPORALMENTE
-						breakLoop = true;
-						break;
-					}
-				}
-
-				if (breakLoop == true)
-				{
-					break;
-				}
-			}
-		}
-
+		/*
 		float maxDist{ 10000.0f };
 
 		for (int i = 0; i < static_cast<int>(meshesFar.size()); i++)
@@ -239,6 +133,7 @@ namespace render
 		}
 
 		oneTimeSee = true;
+		*/
 	}
 
 	void render_MultiAssimp_D()
@@ -305,7 +200,7 @@ namespace render
 		{
 			std::vector<Assimp_D::excluded_Obj> excluded_NormalScenario
 			{
-				Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
+				Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, FNV::str_to_hash("mirror_01")),
 			};
 
 
@@ -319,6 +214,7 @@ namespace render
 			render_MeshLights_D();
 			render_AABB();
 			render_ModelAssimp_D(excluded_NormalScenario);
+		//	render_classicModelAssimp_D();
 			//render_classicModelAssimp_D();
 			//render_ModelAssimp_D();
 
@@ -334,8 +230,8 @@ namespace render
 		{
 			std::vector<Assimp_D::excluded_Obj> excluded_Stencil
 			{
-				Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
-				Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "Floor"),
+				Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, FNV::str_to_hash("mirror_01")),
+				Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, FNV::str_to_hash("Floor")),
 
 			};
 
@@ -352,7 +248,7 @@ namespace render
 
 				std::vector<Assimp_D::excluded_Obj> excluded_triangle
 				{
-					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
+					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, FNV::str_to_hash("mirror_01")),
 
 				};
 
@@ -364,12 +260,15 @@ namespace render
 
 			if (ControlScenarios::sceneAABB == ControlScenarios::scenarioAABB::Mesh)
 			{
+				std::vector<uint32_t> meshID{};
+				meshID.emplace_back(data_HitAABB::selectedObj.first.mesh_ID);
+
 				std::vector<Assimp_D::excluded_Obj> excluded_Mesh
 				{
-					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
+					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, FNV::str_to_hash("mirror_01")),
 
-					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_only_meshes, data_HitAABB::selectedObj.first.nameModel,
-						std::vector<std::string>({data_HitAABB::selectedObj.first.nameMesh}))
+					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_only_meshes, data_HitAABB::selectedObj.first.model_ID,
+						meshID)
 
 				};
 
@@ -383,9 +282,9 @@ namespace render
 			{
 				std::vector<Assimp_D::excluded_Obj> excluded_Model
 				{
-					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
+					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, FNV::str_to_hash("mirror_01")),
 
-					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, data_HitAABB::selectedObj.first.nameModel)
+					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, data_HitAABB::selectedObj.first.model_ID)
 				};
 
 
@@ -406,12 +305,15 @@ namespace render
 
 			if (data_HitAABB::renderSelection == true)
 			{
+				std::vector<uint32_t> ms{};
+				ms.emplace_back(data_HitAABB::selectedObj.first.mesh_ID);
+
 				std::vector<Assimp_D::excluded_Obj> excluded_Mesh
 				{
-					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
+					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, FNV::str_to_hash("mirror_01")),
 
-					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_only_meshes, data_HitAABB::selectedObj.first.nameModel,
-						std::vector<std::string>({data_HitAABB::selectedObj.first.nameMesh}))
+					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_only_meshes, data_HitAABB::selectedObj.first.model_ID,
+						ms)
 
 				};
 
@@ -434,13 +336,16 @@ namespace render
 				ControlScenarios::cleanScenario = false;
 			}
 
+			std::vector<uint32_t> ms{};
+			ms.emplace_back(data_HitAABB::selectedObj.first.mesh_ID);
+
 			std::vector<Assimp_D::excluded_Obj> excluded_Mesh
 			{
-				Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
+				Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, FNV::str_to_hash("mirror_01")),
 				Assimp_D::excluded_Obj(
 				Assimp_D::excludedOP::exclude_only_meshes,
-				data_HitAABB::selectedObj.first.nameModel,
-		        std::vector<std::string>({data_HitAABB::selectedObj.first.nameMesh}))
+				data_HitAABB::selectedObj.first.model_ID,
+		        ms)
 			};
 
 		    excluded_Mesh.insert(excluded_Mesh.end(), edit_visualize::exclude_EditMeshes.begin(), edit_visualize::exclude_EditMeshes.end());
@@ -610,7 +515,7 @@ namespace render
 	void renderPlanarReflection()
 	{
 
-		frameBuff_Obj::set_PlanarReflection_Dir(RenderData_Set::frameBuffers_D["mirror_01"].dataBuffer.nameAssimp.nameMesh, cameras::cameras_D[cameras::name_CurrentCamera]);
+		frameBuff_Obj::set_PlanarReflection_Dir(RenderData_Set::frameBuffers_D["mirror_01"].dataBuffer.nameAssimp.mesh_ID, cameras::cameras_D[cameras::name_CurrentCamera]); ///CHECK IF THIS WORKS
 		render::renderAll();
 		cameras::cameras_D[cameras::name_CurrentCamera].updateCameraOut();
 
@@ -797,26 +702,37 @@ namespace renderSelection
 			glStencilFunc(GL_ALWAYS, 1, 0xFF);
 			glStencilMask(0xFF);
 
-			RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->DrawSingleMesh(data_HitAABB::selectedObj.first.nameMesh, 1);///LISTO_NEW_SHADER
+			RenderData_Set::ModelsScene_D->render_singleMesh(data_HitAABB::selectedObj.first.model_ID, data_HitAABB::selectedObj.first.mesh_ID, 1); //CHECK
+		//	RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->DrawSingleMesh(data_HitAABB::selectedObj.first.nameMesh, 1);///LISTO_NEW_SHADER
 
 			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 			glStencilMask(0x00);
 			//	glDisable(GL_DEPTH_TEST);
 
-			std::vector<Assimp_D::Mesh>& meshesData{ RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->outMeshes() };
+			Assimp_D::Mesh* mesh_out {RenderData_Set::ModelsScene_D->out_mesh_fromModel(data_HitAABB::selectedObj.first.model_ID, data_HitAABB::selectedObj.first.mesh_ID)};
+		//	std::vector<Assimp_D::Mesh>& meshesData{ RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->outMeshes() };
 			glm::mat4 modelMat{ glm::mat4(1.0f) };
 
 			RenderData_Set::stencilTest::stencilTest_shader.use();
 
-			for (auto& mesh : meshesData)
+		//	for (auto& mesh : meshesData)
+		//	{
+		//		if (mesh.nameMesh == data_HitAABB::selectedObj.first.nameMesh)
+		//		{
+			if (mesh_out != nullptr)
 			{
-				if (mesh.nameMesh == data_HitAABB::selectedObj.first.nameMesh)
-				{
-					RenderData_Set::stencilTest::stencilTest_shader.transformMat("model", mesh.MeshCoord.model);
-					break;
-				}
-
+				RenderData_Set::stencilTest::stencilTest_shader.transformMat("model", mesh_out->MeshCoord.model);
+				mesh_out = nullptr;
 			}
+
+			else if (mesh_out == nullptr)
+			{
+				RenderData_Set::stencilTest::stencilTest_shader.transformMat("model", modelMat);
+			}
+		//			break;
+			//	}
+
+		//	}
 
 			//glm::mat4 modelMesh = glm::mat4(1.0f);
 			//modelMesh = glm::scale(modelMesh, glm::vec3(1.1f));
@@ -828,10 +744,13 @@ namespace renderSelection
 			RenderData_Set::stencilTest::stencilTest_shader.setVec3("color_stencil", glm::vec3(1.0));
 			RenderData_Set::stencilTest::stencilTest_shader.setInt("selectionStencil", 0);
 
-			RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->DrawSingleMesh(data_HitAABB::selectedObj.first.nameMesh, 0);///LISTO_NEW_SHADER
+			//RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->DrawSingleMesh(data_HitAABB::selectedObj.first.nameMesh, 0);///LISTO_NEW_SHADER
+			RenderData_Set::ModelsScene_D->render_singleMesh(data_HitAABB::selectedObj.first.model_ID, data_HitAABB::selectedObj.first.mesh_ID, 0);//CHECK
 
 			glStencilMask(0xFF);
 			glStencilFunc(GL_ALWAYS, 1, 0xFF);
+
+			mesh_out = nullptr;
 			//glEnable(GL_DEPTH_TEST);
 	
 			/*
@@ -874,12 +793,17 @@ namespace renderSelection
 			glStencilFunc(GL_ALWAYS, 1, 0xFF);
 			glStencilMask(0xFF);
 
-			RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->Draw_WL();
+		//	RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->Draw_WL();
+			RenderData_Set::ModelsScene_D->render_singleModel(data_HitAABB::selectedObj.first.model_ID);  //CHECK IF IT RENDERS
 
 			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 			glStencilMask(0x00);
 
-			std::vector<Assimp_D::Mesh>& Meshes{ RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->outMeshes() };
+            utilities::entity* entity_model {RenderData_Set::ModelsScene_D->out_entity_model(data_HitAABB::selectedObj.first.model_ID)};
+
+			//std::vector<Assimp_D::Mesh>& Meshes{ RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->outMeshes() };
+			std::vector<Assimp_D::Mesh>& Meshes{ entity_model->model_entity->outMeshes() };
+
 			for (auto& mesh : Meshes)
 			{
 				RenderData_Set::stencilTest::stencilTest_shader.use();
@@ -896,6 +820,7 @@ namespace renderSelection
 			glStencilFunc(GL_ALWAYS, 1, 0xFF);
 			glStencilMask(0xFF);
 
+			entity_model = nullptr;
 			/*
 			for (auto& renderMAD : RenderData_Set::AssimpModel_D)
 			{
@@ -936,26 +861,36 @@ namespace renderSelection
 				glStencilFunc(GL_ALWAYS, 1, 0xFF);
 				glStencilMask(0xFF);
 
-				RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->DrawSingleMesh(data_HitAABB::selectedObj.first.nameMesh, 1);///LISTO_NEW_SHADER
+			//	RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->DrawSingleMesh(data_HitAABB::selectedObj.first.nameMesh, 1);///LISTO_NEW_SHADER
+				RenderData_Set::ModelsScene_D->render_singleMesh(data_HitAABB::selectedObj.first.model_ID, data_HitAABB::selectedObj.first.mesh_ID, 1);
 
 				glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 				glStencilMask(0x00);
 				//	glDisable(GL_DEPTH_TEST);
 
-				std::vector<Assimp_D::Mesh>& meshesData{ RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->outMeshes() };
+				Assimp_D::Mesh* meshesData{	RenderData_Set::ModelsScene_D->out_mesh_fromModel(data_HitAABB::selectedObj.first.model_ID, data_HitAABB::selectedObj.first.mesh_ID)};   ////////PROBABLY THIS IS THE ERROR
+				//std::vector<Assimp_D::Mesh>& meshesData{ RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->outMeshes() };
 				glm::mat4 modelMat{ glm::mat4(1.0f) };
 
 				RenderData_Set::stencilTest::stencilTest_shader.use();
 
-				for (auto& mesh : meshesData)
-				{
-					if (mesh.nameMesh == data_HitAABB::selectedObj.first.nameMesh)
+			//	for (auto& mesh : meshesData)
+			//	{
+					if (meshesData != nullptr)
 					{
-						RenderData_Set::stencilTest::stencilTest_shader.transformMat("model", mesh.MeshCoord.model);
-						break;
+						RenderData_Set::stencilTest::stencilTest_shader.transformMat("model", meshesData->MeshCoord.model);
+
+						meshesData = nullptr;
+						//break;
 					}
 
-				}
+				    else if (meshesData == nullptr)
+				    {
+				    	RenderData_Set::stencilTest::stencilTest_shader.transformMat("model", modelMat);
+				    }
+
+
+				//}
 
 				//glm::mat4 modelMesh = glm::mat4(1.0f);
 				//modelMesh = glm::scale(modelMesh, glm::vec3(1.1f));
@@ -972,7 +907,8 @@ namespace renderSelection
 
 				RenderData_Set::stencilTest::stencilTest_shader.setInt("selectionStencil", 0);
 
-				RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->DrawSingleMesh(data_HitAABB::selectedObj.first.nameMesh, 0);///LISTO_NEW_SHADER
+				//RenderData_Set::AssimpModel_D[data_HitAABB::selectedObj.first.nameModel]->DrawSingleMesh(data_HitAABB::selectedObj.first.nameMesh, 0);///LISTO_NEW_SHADER
+				RenderData_Set::ModelsScene_D->render_singleMesh(data_HitAABB::selectedObj.first.model_ID, data_HitAABB::selectedObj.first.mesh_ID, 0);  ////////PROBABLY THIS IS THE ERROR
 			}
 
 			glStencilMask(0xFF);
@@ -992,7 +928,8 @@ namespace renderSelection
 		int size_SM { static_cast<int>(edit_visualize::nameSelect_Model.size()) };
 
 
-		std::vector<std::unique_ptr<Assimp_D::structModelName>> getNameSelected_Models(size_SM);
+		//std::vector<std::unique_ptr<Assimp_D::structModelName>> getNameSelected_Models(size_SM);
+		std::vector<Assimp_D::structModelName*> getNameSelected_Models(size_SM);
 		//std::vector<Assimp_D::structModelName> getNameSelected_Models{};
 
 		glm::vec3& posCamera{cameras::cameras_D[cameras::name_CurrentCamera].posCam};
@@ -1001,15 +938,19 @@ namespace renderSelection
 
 		for (auto sMP : edit_visualize::nameSelect_Model)
 		{
-		   Assimp_D::Mesh& getMesh {RenderData_Set::AssimpModel_D[sMP.names.nameModel]->outSpecificMesh(sMP.names.nameMesh) };
 
-			if (static_cast<int>(getMesh.nameMesh.size()) != 0)
+		   //Assimp_D::Mesh& getMesh {RenderData_Set::AssimpModel_D[sMP.names.nameModel]->outSpecificMesh(sMP.names.nameMesh) };
+             Assimp_D::Mesh* getMesh {RenderData_Set::ModelsScene_D->out_mesh_fromModel(sMP.names.model_ID, sMP.names.mesh_ID )};
+
+			if (getMesh != nullptr)
 			{
-				glm::vec3& posObj_P {getMesh.MeshCoord.posModel};
+				glm::vec3& posObj_P {getMesh->MeshCoord.posModel};
 
 				float dist_t{glm::distance2(posObj_P, posCamera)};
 
 				pos_Detect.emplace_back(dist_t);
+
+				getMesh = nullptr;
 			}
 		}
 
@@ -1026,30 +967,36 @@ namespace renderSelection
 			 }
 		   }
 			//getNameSelected_Models.emplace_back(std::make_unique<Assimp_D::structModelName>(edit_visualize::nameSelect_Model[pos_D]));
-			std::unique_ptr<Assimp_D::structModelName> container_Sp{std::make_unique<Assimp_D::structModelName>(edit_visualize::nameSelect_Model[pos_D].names)};
-			getNameSelected_Models.emplace_back(std::move(container_Sp));
+
+			//std::unique_ptr<Assimp_D::structModelName> container_Sp{std::make_unique<Assimp_D::structModelName>(edit_visualize::nameSelect_Model[pos_D].names)};
+			//getNameSelected_Models.emplace_back(std::move(container_Sp));
+			getNameSelected_Models.emplace_back(&edit_visualize::nameSelect_Model[pos_D].names);
 		}
 
 		for (int sP = 0; sP < static_cast<int>(getNameSelected_Models.size()); sP++)
 		{
-			if (getNameSelected_Models[sP] != nullptr) {
+			if (getNameSelected_Models[sP] != nullptr)
+			{
 				glStencilFunc(GL_ALWAYS, 1, 0xFF);
 				glStencilMask( 0xFF);
 
-				RenderData_Set::AssimpModel_D[getNameSelected_Models[sP]->nameModel]->DrawSingleMesh(getNameSelected_Models[sP]->nameMesh, 1);///LISTO_NEW_SHADER
+			//	RenderData_Set::AssimpModel_D[getNameSelected_Models[sP]->nameModel]->DrawSingleMesh(getNameSelected_Models[sP]->nameMesh, 1);///LISTO_NEW_SHADER
+				RenderData_Set::ModelsScene_D->render_singleMesh(getNameSelected_Models[sP]->model_ID, getNameSelected_Models[sP]->mesh_ID, 1);
 
 				glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 				glStencilMask(0x00);
-				Assimp_D::Mesh& mesh_Model {RenderData_Set::AssimpModel_D[getNameSelected_Models[sP]->nameModel]->outSpecificMesh(getNameSelected_Models[sP]->nameMesh)};
+			//	Assimp_D::Mesh& mesh_Model {RenderData_Set::AssimpModel_D[getNameSelected_Models[sP]->nameModel]->outSpecificMesh(getNameSelected_Models[sP]->nameMesh)};
+				Assimp_D::Mesh* mesh_Model {RenderData_Set::ModelsScene_D->out_mesh_fromModel(getNameSelected_Models[sP]->model_ID, getNameSelected_Models[sP]->mesh_ID )};
 
 				RenderData_Set::stencilTest::stencilTest_shader.use();
-				RenderData_Set::stencilTest::stencilTest_shader.transformMat("model", mesh_Model.MeshCoord.model);
+				RenderData_Set::stencilTest::stencilTest_shader.transformMat("model", mesh_Model->MeshCoord.model);
 				RenderData_Set::stencilTest::stencilTest_shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
 				RenderData_Set::stencilTest::stencilTest_shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 
+				mesh_Model = nullptr;
 
-			   if (getNameSelected_Models[sP]->nameModel == data_HitAABB::selectedObj.first.nameModel &&
-			   	getNameSelected_Models[sP]->nameMesh == data_HitAABB::selectedObj.first.nameMesh)
+			   if (getNameSelected_Models[sP]->model_ID == data_HitAABB::selectedObj.first.model_ID &&
+			   	getNameSelected_Models[sP]->mesh_ID == data_HitAABB::selectedObj.first.mesh_ID)
 			    {
 			    	RenderData_Set::stencilTest::stencilTest_shader.setVec3("color_stencil", glm::vec3(0.937f, 0.505f, 0.078f));
 			    }
@@ -1060,7 +1007,10 @@ namespace renderSelection
 
 				RenderData_Set::stencilTest::stencilTest_shader.setInt("selectionStencil", 0);
 
-				RenderData_Set::AssimpModel_D[getNameSelected_Models[sP]->nameModel]->DrawSingleMesh(getNameSelected_Models[sP]->nameMesh, 0);
+			//	RenderData_Set::AssimpModel_D[getNameSelected_Models[sP]->nameModel]->DrawSingleMesh(getNameSelected_Models[sP]->nameMesh, 0);
+				RenderData_Set::ModelsScene_D->render_singleMesh(getNameSelected_Models[sP]->model_ID, getNameSelected_Models[sP]->mesh_ID, 0);
+
+				getNameSelected_Models[sP] = nullptr;
 			}
 		}
 
@@ -1081,7 +1031,9 @@ namespace stencil_test
 
 		glStencilMask(0x00);
 		std::string back_Excluded{ "Floor" };
-		RenderData_Set::AssimpModel_D[back_Excluded]->Draw_WL(); //LISTO_NEW_SHADER
+		//RenderData_Set::AssimpModel_D[back_Excluded]->Draw_WL(); //LISTO_NEW_SHADER
+		RenderData_Set::ModelsScene_D->render_singleModel(FNV::str_to_hash(back_Excluded));  ///CONTINUE HERE
+
 		render::render_ModelCreation_D();
 		render::render_MeshLights_D();
 
@@ -1119,6 +1071,50 @@ namespace stencil_test
 
 	void renderScaleUp_ST(std::vector<std::string>& notVisible)
 	{
+
+		for (auto& nameNV : notVisible)
+		{
+		    uint32_t model_ID_conv {FNV::str_to_hash(nameNV)};
+
+            utilities::entity* model_entity{RenderData_Set::ModelsScene_D->out_entity_model(model_ID_conv)}; //MAKING ALL THE CHANGES
+
+			if (model_entity != nullptr)
+			{
+             std::vector<Assimp_D::Mesh>& meshes_entities {model_entity->model_entity->outMeshes()};
+
+			 for (auto& mesh : meshes_entities)
+			 {
+			 	glm::mat4 modelMesh = glm::mat4(1.0f);
+			 	modelMesh = glm::scale(modelMesh, glm::vec3(1.2f));
+			 	//modelMesh = meshes.MeshCoord.model * modelMesh;
+			 	modelMesh = modelMesh * mesh.MeshCoord.model;
+
+			 	RenderData_Set::stencilTest::stencilTest_shader.use();
+
+			 	RenderData_Set::stencilTest::stencilTest_shader.transformMat("model", mesh.MeshCoord.model);
+			 	RenderData_Set::stencilTest::stencilTest_shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+			 	RenderData_Set::stencilTest::stencilTest_shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
+
+			 	RenderData_Set::stencilTest::stencilTest_shader.setInt("selectionStencil", 0);
+
+			 	mesh.Draw_Alone();
+			 }
+
+				model_entity = nullptr;
+			}
+
+			else if (model_entity == nullptr)
+			{
+				std::string log_error {"MISSING MODEL::NOT FIND THE MODEL::(" + nameNV + ")"};
+				register_error_RM::register_error_withSentence(log_error.c_str());
+			}
+
+
+		}
+
+
+
+/*
 		for (auto& renderMAD : RenderData_Set::AssimpModel_D)
 		{
 			bool pass{ false };
@@ -1155,7 +1151,7 @@ namespace stencil_test
 				}
 			}
 		}
-
+		*/
 	}
 
 }
@@ -1164,10 +1160,25 @@ namespace refresh_Models
 {
 	void refreshAll_Models()
 	{
-		for (auto& renderMAD : RenderData_Set::AssimpModel_D)
+
+		const uint32_t& size_m {RenderData_Set::ModelsScene_D->size_VM()};
+
+
+		for (uint32_t r = 0; r < size_m; r++)
 		{
-			renderMAD.second->updateModel();
+			utilities::entity* entity_model{RenderData_Set::ModelsScene_D->out_entity_model_byPos(r)};
+
+           if (entity_model != nullptr) {
+	           entity_model->model_entity->updateModel();
+           	entity_model = nullptr;
+           }
+
 		}
+
+	//	for (auto& renderMAD : RenderData_Set::AssimpModel_D)
+	//	{
+	//		renderMAD.second->updateModel();
+	//	}
 
 		//RenderData_Set::pointUI_D[0].updatePoint();
 		
@@ -1187,14 +1198,28 @@ namespace refresh_Models
 
 	void refreshAll_LastModels()
 	{
-		for (auto& renderMAD : RenderData_Set::AssimpModel_D)
-		{
-			renderMAD.second->ModelCoord.lastModel = renderMAD.second->ModelCoord.model;
+		const uint32_t& size_m {RenderData_Set::ModelsScene_D->size_VM()};
+
+
+		for (uint32_t r = 0; r < size_m; r++)
+	    {
+			utilities::entity* entity_model{RenderData_Set::ModelsScene_D->out_entity_model_byPos(r)};
+
+			if (entity_model != nullptr)
+			{
+              entity_model->model_entity->ModelCoord.lastModel =  entity_model->model_entity->ModelCoord.model;  //NEW METHOD
+			}
+
+		}
+
+//		for (auto& renderMAD : RenderData_Set::AssimpModel_D)
+//		{
+//			renderMAD.second->ModelCoord.lastModel = renderMAD.second->ModelCoord.model; //LAST METHOD
 		//	renderMAD.second.ModelCoord.lastTranslateM = renderMAD.second.ModelCoord.translateM;
 		//	renderMAD.second.ModelCoord.lastScaleS = renderMAD.second.ModelCoord.scaleS;
 		//	renderMAD.second.ModelCoord.lastRotateR = renderMAD.second.ModelCoord.rotateR;
 
-		}
+//		}
 	}
 
 	///añadir aqui para refrescar las posiciones y los cambios de los modelos
@@ -1206,11 +1231,28 @@ namespace destroy
 {
 	void destroyModels()
 	{
-		for (auto& val : RenderData_Set::AssimpModel_D)
-		{
-			RenderData_Set::AssimpModel_D[val.first]->destroyModel();
-		}
-		
+
+		RenderData_Set::ModelsScene_D->cleanAll_scene();
+		RenderData_Set::AssimpModel_D->clean_data();
+	//	const uint32_t& size_m {RenderData_Set::ModelsScene_D->size_VM()};
+
+
+	//	for (uint32_t r = 0; r < size_m; r++)
+	//	{
+	//		utilities::entity* entity_model{RenderData_Set::ModelsScene_D->out_entity_model_byPos(r)};
+
+	//		if (entity_model != nullptr)
+	//		{
+	//			entity_model->model_entity->destroyModel();  //NEW METHOD
+	//		}
+
+		//}
+
+//		for (auto& val : RenderData_Set::AssimpModel_D)
+//		{
+//			RenderData_Set::AssimpModel_D[val.first]->destroyModel(); ///LAST METHOD
+//		}
+
 		for (auto& AABB_Mesh : AABB::meshBoundingBox)
 		{
 			AABB_Mesh.destroy();

@@ -480,51 +480,7 @@ int main(int argc, char* argv[])
 				UI::start_NewFrameUI();
 
 				threadSystem::ControlPhysics_Events.timeInterpolation.loopAcomulator();
-				////AQUI IBA LA SECCION DE CONTROL DE EVENTS CAMERA.
 
-
-				/*
-				std::vector<light::light1> pointLights
-				{
-					lightTest_01
-				};
-
-				std::vector<light::DirectionalLight> directionalLights
-				{
-					directionalLight_1
-				};
-
-				//FirstModelTest
-				testTransLight.transformMeshLight(&BasicLight, &lightTest_01);
-				testTranforms.transformUniqueModel(&FirstModel, aerialCamera, lightTest_01);
-				FirstModel.renderMultipleModels(1, aerialCamera, lightTest_01);/////Colocamos el light para saber la posicion del light
-				BasicLight.renderMeshLight(aerialCamera, lightTest_01);
-
-				///Draw Backpack
-				//modelBackpack.Draw(aerialCamera, lightTest_01);
-				modelBackpack.Draw_WL(aerialCamera, pointLights, directionalLights);
-				testBackPack.transformModel_test1(&coordBackPack);
-				modelBackpack.setModelCoord(coordBackPack);
-
-				///Draw Floor model
-				//model_Floor.Draw(aerialCamera, lightTest_01);
-				model_Floor.Draw_WL(aerialCamera, pointLights, directionalLights); ///para renderizar con directional lights
-				testFloor.moveModel_Test(&coord_FloorModel);
-				model_Floor.setModelCoord(coord_FloorModel);
-				*/
-
-				/*
-				refresh_Models::refreshAll_Models();
-				AABB::updateCoordAABB_All();
-				ScreenCalc_Hit::calc_IntersectALL();
-				*/
-				//AABB::updateCoordAABB_All();
-
-				//render::renderAll();
-
-		//		stencil_test::renderStencilTest();
-				//testPlay::renderTranformations_Objects();
-		//		AABB::updateCoordAABB_All();
 	
 				if (RenderData_Set::finishLoadALL == true)
 				{

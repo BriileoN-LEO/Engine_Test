@@ -1,6 +1,7 @@
 #include "playTest.h"
 #include "Render/RenderData.h"
 #include "threadSystem/thread_System.h"
+#include "optimize_Algorithmics/optimizeAlgorithmics.h"
 
 namespace testPlay
 {
@@ -203,12 +204,45 @@ namespace testPlay
 		RenderData_Set::ModelCreation_D["MinecraftCube"].updateMultipleModels();
 
 		//Transformacion del backpack para que gireq
-		testBackPack.transformModel_test1(&RenderData_Set::AssimpModel_D["backPack"].ModelGlobal_Coord);
-		RenderData_Set::AssimpModel_D["backPack"].refresh_ModelCoord();
-		
+
+		utilities::entity* entity_model {RenderData_Set::ModelsScene_D->out_entity_model(FNV::str_to_hash("backPack"))};
+
+		if (entity_model != nullptr)
+		{
+			testBackPack.transformModel_test1(&entity_model->model_entity->ModelGlobal_Coord);  //NEW METHOD
+			entity_model->model_entity->refresh_ModelCoord();//NEW METHOD
+			entity_model = nullptr;
+		}
+		else if (entity_model == nullptr)
+		{
+			std::string log_error {"MISSING MODEL::NOT FIND THE MODEL::(backPack)"};
+			register_error_RM::register_error_withSentence(log_error.c_str());
+		}
+
+		//testBackPack.transformModel_test1(&RenderData_Set::AssimpModel_D["backPack"].ModelGlobal_Coord); ///LAST METHOD
+	//	RenderData_Set::AssimpModel_D["backPack"].refresh_ModelCoord();///LAST METHOD
+
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//transformacion del floor para que se mueva
-		testFloor.moveModel_Test(&RenderData_Set::AssimpModel_D["Floor"].ModelGlobal_Coord);
-		RenderData_Set::AssimpModel_D["Floor"].refresh_ModelCoord();
+
+		///THIS MODEL CONTAINS ERRORS
+		/*
+		entity_model = RenderData_Set::ModelsScene_D->out_entity_model(FNV::str_to_hash("Floor"));
+
+		if (entity_model != nullptr)
+		{
+			testBackPack.moveModel_Test(&entity_model->model_entity->ModelGlobal_Coord);  //NEW METHOD
+			entity_model->model_entity->refresh_ModelCoord();//NEW METHOD
+			entity_model = nullptr;
+		}
+		else if (entity_model == nullptr)
+		{
+			std::string log_error {"MISSING MODEL::NOT FIND THE MODEL::(Floor)"};
+			register_error_RM::register_error_withSentence(log_error.c_str());
+		}
+*/
+		//testFloor.moveModel_Test(&RenderData_Set::AssimpModel_D["Floor"].ModelGlobal_Coord); ///LAST METHOD
+	//	RenderData_Set::AssimpModel_D["Floor"].refresh_ModelCoord(); ///LAST METHOD
 
 	//	camera_Transforms::setAllTranforms_Cam();
 	//	light_Transforms::setAllTranforms_light();
@@ -282,7 +316,19 @@ namespace camera_Transforms
 	{
 		if (cameras::cameras_D[cameras::name_CurrentCamera].type != camera::typeCam::editMode)
 		{
-			camera_Transforms::attachObject_Cam(RenderData_Set::AssimpModel_D["FlashLight"].ModelCoord, cameras::cameras_D[cameras::name_CurrentCamera]);
+			utilities::entity* entity_model {RenderData_Set::ModelsScene_D->out_entity_model(FNV::str_to_hash("FlashLight"))};
+
+			if (entity_model != nullptr)
+			{
+				camera_Transforms::attachObject_Cam(entity_model->model_entity->ModelCoord, cameras::cameras_D[cameras::name_CurrentCamera]); //NEW METHOD
+			}
+
+			else if (entity_model == nullptr)
+			{
+				std::string log_error {"MISSING MODEL::NOT FIND THE MODEL::(FlashLight)"};
+				register_error_RM::register_error_withSentence(log_error.c_str());
+			}
+	//		camera_Transforms::attachObject_Cam(RenderData_Set::AssimpModel_D["FlashLight"].ModelCoord, cameras::cameras_D[cameras::name_CurrentCamera]); ///LAST METHOD
 
 		}
 	};
@@ -297,7 +343,20 @@ namespace light_Transforms
 
 	void setAllTranforms_light()
 	{
-		spotLight_AttachLintern(RenderData_Set::spotLights_D["FlashLight_SpotLight"], RenderData_Set::AssimpModel_D["FlashLight"].ModelCoord);
+		utilities::entity* entity_model {RenderData_Set::ModelsScene_D->out_entity_model(FNV::str_to_hash("FlashLight"))};
+
+		if (entity_model != nullptr)
+		{
+			spotLight_AttachLintern(RenderData_Set::spotLights_D["FlashLight_SpotLight"], entity_model->model_entity->ModelCoord); //NEW METHOD
+		}
+
+		else if (entity_model == nullptr)
+		{
+			std::string log_error {"MISSING MODEL::NOT FIND THE MODEL::(FlashLight)"};
+			register_error_RM::register_error_withSentence(log_error.c_str());
+		}
+
+	//	spotLight_AttachLintern(RenderData_Set::spotLights_D["FlashLight_SpotLight"], RenderData_Set::AssimpModel_D["FlashLight"].ModelCoord); ///LAST METHOD
 	}
 }
 

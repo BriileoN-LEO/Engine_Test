@@ -13,11 +13,11 @@ namespace AABB
 	}
 
 	BoundingBox::BoundingBox() {};
-	BoundingBox::BoundingBox(Assimp_D::structModelName nameAABB, std::vector<glm::vec3> vertAABB, boxAABB box_Coord, std::map<std::string, triAABB> boxTrisAABB)
+	BoundingBox::BoundingBox(Assimp_D::structModelName nameAABB, std::vector<glm::vec3> vertAABB, boxAABB box_Coord, std::map<std::string, triAABB> boxTrisAABB, glm::mat4 model_p)
 	{
-		loadBoundingBox(nameAABB, vertAABB, box_Coord, boxTrisAABB);
+		loadBoundingBox(nameAABB, vertAABB, box_Coord, boxTrisAABB, model_p);
 	}
-	void BoundingBox::loadBoundingBox(Assimp_D::structModelName nameAABB, std::vector<glm::vec3> vertAABB, boxAABB box_Coord, std::map<std::string, triAABB> boxTrisAABB)
+	void BoundingBox::loadBoundingBox(Assimp_D::structModelName nameAABB, std::vector<glm::vec3> vertAABB, boxAABB box_Coord, std::map<std::string, triAABB> boxTrisAABB, glm::mat4 model_p)
 	{
 		this->nameAABB = nameAABB;
 		this->vertAABB = vertAABB;
@@ -27,17 +27,17 @@ namespace AABB
 		box_CoordActual = box_Coord;
 
 //		modelAABB = RenderData_Set::AssimpModel_D[nameAABB.nameModel]->ModelCoord.model;
-		Assimp_D::Model* model {RenderData_Set::AssimpModel_D->model_by_ID(nameAABB.model_ID)};
-		if (model != nullptr)
-		{
-			modelAABB = model->ModelCoord.model; ///DETECT IF FAILS
-		//	delete model;
-			model = nullptr;
-		}
-		else if (model == nullptr)
-		{
-		  SDL_Log("ERROR::INSERT BOUNDING BOX::NOT FIND MODEL | CollisionAABB.cpp ---> line 37");
-		}
+	//	Assimp_D::Model* model {RenderData_Set::AssimpModel_D->model_by_ID(nameAABB.model_ID)};
+		///if (model != nullptr)
+	///	{
+			modelAABB = model_p; ///DETECT IF FAILS
+	//	//	delete model;
+		//	model = nullptr;
+	//	}
+		//else if (model == nullptr)
+		//{
+		//  SDL_Log("ERROR::INSERT BOUNDING BOX::NOT FIND MODEL | CollisionAABB.cpp ---> line 39");
+		//}
 
 		setUpBox();
 	}
@@ -351,86 +351,95 @@ namespace AABB
 	{
 	   	 const std::unordered_map<std::string, uint32_t>& data_M {RenderData_Set::AssimpModel_D->out_ModelsID()};
 
-		for (const auto& [name_m, ID] : data_M)   ////////FOLLOW HERE
+		for (auto& ID : data_M)   ////////FOLLOW HERE
 		{
-			Assimp_D::Model* model {RenderData_Set::AssimpModel_D->model_by_ID(ID)};
+			Assimp_D::Model* model {RenderData_Set::AssimpModel_D->model_by_ID(ID.second)};
 
-			bool existBoundingBox{ false };
+			if (model != nullptr) {
+				bool existBoundingBox{ false };
 
-		    auto find_exist_model =	std::ranges::find_if(meshBoundingBox,
-		    	[&](BoundingBox& AABB) {
-		    		return model->ID == AABB.nameAABB.model_ID;
-		    	});
+				auto find_exist_model =	std::ranges::find_if(meshBoundingBox,
+					[&](BoundingBox& AABB) {
+						return model->ID == AABB.nameAABB.model_ID;
+					});
 
-			
-			if (find_exist_model == std::ranges::end(meshBoundingBox))
-			{
-				//std::vector<Assimp_D::Mesh>& Meshes{ Model.second->outMeshes() };
-				std::vector<Assimp_D::Mesh>& Meshes{model->outMeshes()};
 
-				for (int i = 0; i < static_cast<int>(Meshes.size()); i++) {
-					//Calcular el centro de la geometria
-					std::vector<glm::vec3> vertex_Tris{};
-					for (auto& vert_Array : Meshes[i].vertices)
-					{
-						vertex_Tris.emplace_back(vert_Array.posicion);
+				if (find_exist_model == std::ranges::end(meshBoundingBox))
+				{
+					//std::vector<Assimp_D::Mesh>& Meshes{ Model.second->outMeshes() };
+					std::vector<Assimp_D::Mesh>& Meshes{model->outMeshes()};
+
+					for (int i = 0; i < static_cast<int>(Meshes.size()); i++) {
+						//Calcular el centro de la geometria
+						std::vector<glm::vec3> vertex_Tris{};
+						for (auto& vert_Array : Meshes[i].vertices)
+						{
+							vertex_Tris.emplace_back(vert_Array.posicion);
+
+						}
+
+						glm::vec3 centerMesh{ transformation_basics::calcCenterGeo(vertex_Tris) };
+
+						glm::vec3 minPos{ centerMesh };
+						glm::vec3 maxPos{ centerMesh };
+
+						for (auto& vertex : Meshes[i].vertices)
+						{
+							if (vertex.posicion.x < minPos.x)
+							{
+								minPos.x = vertex.posicion.x;
+							}
+
+							if (vertex.posicion.y < minPos.y)
+							{
+								minPos.y = vertex.posicion.y;
+							}
+
+							if (vertex.posicion.z < minPos.z)
+							{
+								minPos.z = vertex.posicion.z;
+							}
+
+							if (vertex.posicion.x > maxPos.x)
+							{
+								maxPos.x = vertex.posicion.x;
+							}
+
+							if (vertex.posicion.y > maxPos.y)
+							{
+								maxPos.y = vertex.posicion.y;
+
+							}
+
+							if (vertex.posicion.z > maxPos.z)
+							{
+								maxPos.z = vertex.posicion.z;
+
+							}
+
+						}
+
+						std::pair<std::vector<glm::vec3>, boxAABB> box{ calcBox(minPos, maxPos) };
+						std::map<std::string, triAABB> trisAABB{ calcTrisAABB(box.second) }; ////////cambio de inicializacion
+						Assimp_D::structModelName name  ///THIS CHANGE COULD BE DANGEROUS
+						{
+							model->ID,
+							Meshes[i].ID, //REVISAR
+							false
+						};
+
+						meshBoundingBox.emplace_back(BoundingBox(name, box.first, box.second, trisAABB, model->ModelCoord.model));
 
 					}
-
-					glm::vec3 centerMesh{ transformation_basics::calcCenterGeo(vertex_Tris) };
-
-					glm::vec3 minPos{ centerMesh };
-					glm::vec3 maxPos{ centerMesh };
-
-					for (auto& vertex : Meshes[i].vertices)
-					{
-						if (vertex.posicion.x < minPos.x)
-						{
-							minPos.x = vertex.posicion.x;
-						}
-
-						if (vertex.posicion.y < minPos.y)
-						{
-							minPos.y = vertex.posicion.y;
-						}
-
-						if (vertex.posicion.z < minPos.z)
-						{
-							minPos.z = vertex.posicion.z;
-						}
-
-						if (vertex.posicion.x > maxPos.x)
-						{
-							maxPos.x = vertex.posicion.x;
-						}
-
-						if (vertex.posicion.y > maxPos.y)
-						{
-							maxPos.y = vertex.posicion.y;
-
-						}
-
-						if (vertex.posicion.z > maxPos.z)
-						{
-							maxPos.z = vertex.posicion.z;
-
-						}
-
-					}
-
-					std::pair<std::vector<glm::vec3>, boxAABB> box{ calcBox(minPos, maxPos) };
-					std::map<std::string, triAABB> trisAABB{ calcTrisAABB(box.second) }; ////////cambio de inicializacion
-					Assimp_D::structModelName name  ///THIS CAHNGES COULD BE DANGEROUS
-					{
-						model->ID,
-						Meshes[i].ID, //REVISAR
-						false
-					};
-
-					meshBoundingBox.emplace_back(BoundingBox(name, box.first, box.second, trisAABB));
-
-
 				}
+				model = nullptr;
+
+			}
+			else if (model == nullptr)
+		    {
+
+			  std::string log_error{"ERROR::NOT FIND MODEL TO CREATE BOUNDING BOX (" + ID.first + ")"};
+			  register_error_RM::register_error_withSentence(log_error.c_str());
 			}
 			//delete model;
 			model = nullptr;
@@ -495,9 +504,9 @@ namespace AABB
           else if (mesh_find == nullptr)
           {
           	std::string nameModel{RenderData_Set::AssimpModel_D->get_nameModel(AABB_box.nameAABB.model_ID)};
-            nameModel = "AABB_ERROR::MODEL DOESN'T EXIST IN SCENE" + nameModel + " | CollisionAABB.cpp ---> updateCoordAABB_All()";
+          	nameModel = "AABB_ERROR::MODEL DOESN'T EXIST IN SCENE::" + nameModel;
 
-            SDL_Log(nameModel.c_str());
+        //  	register_error_RM::register_error_withSentence(nameModel.c_str());  ///FOR A MOMENT
 
         //  	delete nameModel;
         // 	nameModel = nullptr;

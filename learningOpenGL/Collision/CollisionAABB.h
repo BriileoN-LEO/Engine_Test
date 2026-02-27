@@ -53,8 +53,8 @@ namespace AABB
 		shading::shader shaderAABB{};
 		
 		BoundingBox();
-		BoundingBox(Assimp_D::structModelName nameAABB, std::vector<glm::vec3> vertAABB, boxAABB box_Coord, std::map<std::string, triAABB> boxTrisAABB);
-		void loadBoundingBox(Assimp_D::structModelName nameAABB, std::vector<glm::vec3> vertAABB, boxAABB box_Coord, std::map<std::string, triAABB> boxTrisAABB);
+		BoundingBox(Assimp_D::structModelName nameAABB, std::vector<glm::vec3> vertAABB, boxAABB box_Coord, std::map<std::string, triAABB> boxTrisAABB, glm::mat4 model_p);
+		void loadBoundingBox(Assimp_D::structModelName nameAABB, std::vector<glm::vec3> vertAABB, boxAABB box_Coord, std::map<std::string, triAABB> boxTrisAABB, glm::mat4 model_p);
 		void setUpBox();
 		void draw();
 		void destroy();
