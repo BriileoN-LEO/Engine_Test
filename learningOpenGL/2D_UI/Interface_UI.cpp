@@ -5,57 +5,99 @@
 namespace UI_EditMode
 {
 	bool buttom_active{};
-	std::array<exit_Buttom_EM, 3> lastButtom
+	std::array<exit_Buttom_EM, 4> lastButtom
 	{
 		exit_Buttom_EM(editMode_S::SELECTION_ON_OFF, false),
 		exit_Buttom_EM(editMode_S::SELECTION_EXPLODE, false),
-		exit_Buttom_EM(editMode_S::SELECTION_SHOW_NORMALS, false)
+		exit_Buttom_EM(editMode_S::SELECTION_SHOW_NORMALS, false),
+
+		exit_Buttom_EM(editMode_S::SHADING_BLINN_PHONG_ON_OFF, false)
+
 	};
+
+
+	 std::array<bool*, 4> buttom_detect
+	{
+	  new bool(false),
+      new bool(false),
+	  new bool(false),
+	  new bool(false)
+	};
+
+//	bool* selection_on_off { nullptr };
+//	bool* selection_explode { nullptr };
+//	bool* selection_show_normals { nullptr };
+
+	void render_colorButtom(const bool& buttom_press)
+	{
+		if (buttom_press == true)
+		{
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.6f, 0.0f, 1.0f));
+		}
+		else if (buttom_press == false)
+		{
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.6f, 1.0f, 1.0f));
+		}
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0, 0.5f, 0.0f, 1.0f));
+
+	}
+
+	void render_Buttom(const editMode_S& buttom)
+	{
+		uint32_t pos_buttom{static_cast<uint32_t>(buttom)};
+
+		switch (buttom)
+		{
+			case (editMode_S::SELECTION_ON_OFF)	:
+				buttom_detect[pos_buttom] = nullptr;
+				buttom_detect[pos_buttom] = new bool(ImGui::Button("selection : ON/OFF"));
+				break;
+			case (editMode_S::SELECTION_EXPLODE) :
+				buttom_detect[pos_buttom]  = nullptr;
+				buttom_detect[pos_buttom]  = new bool(ImGui::Button("selection explode"));
+				break;
+			case (editMode_S::SELECTION_SHOW_NORMALS) :
+				buttom_detect[pos_buttom]  = nullptr;
+				buttom_detect[pos_buttom]  = new bool(ImGui::Button("selection show normals"));
+				break;
+			case(editMode_S::SHADING_BLINN_PHONG_ON_OFF) :
+				const char* str_blinn {nullptr};
+
+				if (lastButtom[pos_buttom].press == false)
+				{
+					str_blinn = "Blinn Phong : ON";
+				}
+
+				else if (lastButtom[pos_buttom].press == true)
+				{
+					str_blinn = "Blinn Phong : OFF";
+				}
+
+				buttom_detect[pos_buttom]  = nullptr;
+				buttom_detect[pos_buttom]  = new bool(ImGui::Button(str_blinn));  ///TEST THIS
+
+		}
+	}
 
 	void render_SelectionObj() {
 		//bool* selection_on_off { new bool(ImGui::Button("selection : ON/OFF")) };
-		bool* selection_on_off { nullptr };
-		bool* selection_explode { nullptr };
-		bool* selection_show_normals { nullptr };
-
-		auto buttomSelect = [&](editMode_S& buttom)
-		{
-		  switch (buttom)
-		  {
-		  	case (editMode_S::SELECTION_ON_OFF)	:
-		  		selection_on_off = new bool(ImGui::Button("selection : ON/OFF"));
-		  		break;
-		  	case (editMode_S::SELECTION_EXPLODE) :
-		  		selection_explode = new bool(ImGui::Button("selection explode"));
-		  		break;
-		  	case (editMode_S::SELECTION_SHOW_NORMALS) :
-		  		selection_show_normals = new bool(ImGui::Button("selection show normals"));
-		  		break;
-		  }
-		};
 
 		ImGui::Begin("EditMode");
 
-		 for (auto& eBM : lastButtom)
-		 {
-		 	if (eBM.press == true)
-		 	{
-		 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.6f, 0.0f, 1.0f));
-		 	}
-		 	else
-		 	{
-		 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.6f, 1.0f, 1.0f));
-		 	}
-		 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0, 0.5f, 0.0f, 1.0f));
 
-		 	buttomSelect(eBM.buttom);
+		uint32_t pos {static_cast<uint32_t>(editMode_S::SHADING_BLINN_PHONG_ON_OFF)};
+
+		for (uint32_t i = 0; i < pos; i++)
+		{
+			render_colorButtom(lastButtom[i].press);
+			render_Buttom(lastButtom[i].buttom);
 		 }
 
 		std::array<bool*, 3> selections
 		{
-			std::move(selection_on_off),
-			std::move(selection_explode),
-			std::move(selection_show_normals)
+			buttom_detect[static_cast<uint32_t>(editMode_S::SELECTION_ON_OFF)],
+			buttom_detect[static_cast<uint32_t>(editMode_S::SELECTION_EXPLODE)],
+			buttom_detect[static_cast<uint32_t>(editMode_S::SELECTION_SHOW_NORMALS)],
 		};
 
 		int fS{};
@@ -119,11 +161,83 @@ namespace UI_EditMode
 
 		}
 
-		  ImGui::PopStyleColor(2 * static_cast<int>(lastButtom.size()));
+		for (uint32_t i = 0; i < static_cast<uint32_t>(selections.size()); i++)
+		{
+			selections[i] = nullptr;
+		}
+
+		  ImGui::PopStyleColor(2 * static_cast<int>(selections.size()));
 
 
 		ImGui::End();
 	}
+
+	void render_shading_selection()
+	{
+		ImGui::Begin("shading_settings");
+
+		uint32_t pos {static_cast<uint32_t>(editMode_S::SHADING_BLINN_PHONG_ON_OFF)};
+
+		for (uint32_t i = pos; i < pos + 1; i++)
+		{
+			render_colorButtom(lastButtom[i].press);
+			render_Buttom(lastButtom[i].buttom);
+		}
+
+		std::array<bool*, 1> selections
+		{
+			buttom_detect[static_cast<uint32_t>(editMode_S::SHADING_BLINN_PHONG_ON_OFF)],
+		};
+
+		int fS{dataConvert::cast_int<editMode_S>(editMode_S::SHADING_BLINN_PHONG_ON_OFF)};
+		auto find_S = std::ranges::find_if(selections,
+			[&](bool* detect) {
+				++fS;
+				return *detect == true;
+			});
+
+		if (find_S != selections.end())
+		{
+			--fS;
+			editMode_S typeEditSelection { dataConvert::s_cast<editMode_S>(fS) };
+
+			switch (typeEditSelection)
+			{
+				case (editMode_S::SHADING_BLINN_PHONG_ON_OFF) :
+
+					if (lastButtom[fS].press == false)
+					{
+						edit_visualize::shading_Blinn_Phong_Active = true;
+						lastButtom[fS].press = true;
+
+					}
+
+					else if (lastButtom[fS].press == true)
+					{
+						edit_visualize::shading_Blinn_Phong_Active = false;
+						lastButtom[fS].press = false;
+                        SDL_Log("PRESS::BUTTOM");
+					}
+
+				break;
+
+			}
+
+		}
+
+		for (uint32_t i = 0; i < static_cast<uint32_t>(selections.size()); i++)
+		{
+			*selections[i] = false;
+			selections[i] = nullptr;
+		}
+
+		ImGui::PopStyleColor(2 * static_cast<int>(selections.size()));
+
+
+		ImGui::End();
+	}
+
+
 }
 
 
@@ -226,6 +340,7 @@ namespace UI
 		if (cameras::cameras_D[cameras::name_CurrentCamera].type == camera::typeCam::editMode)
 		{
           UI_EditMode::render_SelectionObj();
+		  UI_EditMode::render_shading_selection();
 		}
 
 		ImGui::Render();

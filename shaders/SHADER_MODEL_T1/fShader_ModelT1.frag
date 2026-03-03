@@ -26,7 +26,13 @@ uniform float refractiveIndex;
 uniform bool editMode;
 
 float near = 0.001;
-float far = 500.0;  
+float far = 500.0;
+
+bool blinn_phong_S = true;
+
+bool automatic_LIGHT_shininess = true;  ////relative brightness
+const float pi = 3.14159265;
+const float kShininess = 16.0;
 
 struct directional_Light
 {
@@ -99,6 +105,13 @@ directional_Light directionalLight_1[NUM_DIRECTIONAL_LIGHTS];
 point_Light pointLights_Array[NUM_POINT_LIGHTS];
 spot_Light spotLights_Array[NUM_SPOT_LIGHTS];
 };
+
+
+  layout(std140, binding = 2) uniform shading_settings
+ {
+  vec3 pad_001;
+  bool blinn_phong_active;
+ };
 
 struct material_maps
 {
@@ -204,10 +217,37 @@ vec3 CalcPointLight(point_Light pointLight, vec3 normal_Face, vec3 viewDir, bool
   
   float diff = max(dot(lightDir, normal_Face), 0.0);
 
-  vec3 reflectDir = reflect(-lightDir, normal_Face);
-  
-  float spec = pow(max(dot(viewDir, reflectDir), 0.0), Mat.shiness);
-  
+  vec3 reflectDir;
+  float spec;
+
+  if(automatic_LIGHT_shininess == true && blinn_phong_active == true)
+  {
+   const float energy_Conservation = (8.0 + kShininess) / (8.0 + pi);
+   reflectDir = normalize(lightDir + viewDir);
+   spec = energy_Conservation * pow(max(dot(normal_Face, reflectDir), 0.0), kShininess);
+  }
+
+  else if(automatic_LIGHT_shininess == true && blinn_phong_active == false)
+  {
+   const float energy_Conservation = (8.0 + kShininess) / (8.0 + pi);
+   reflectDir = reflect(-lightDir, normal_Face);
+   spec = energy_Conservation * pow(max(dot(viewDir, reflectDir), 0.0), Mat.shiness);
+  }
+
+  else if(blinn_phong_active == true)
+  {
+    reflectDir = normalize(lightDir + viewDir);  /// THE REFLECTION HALFWAYDIR
+   spec = pow(max(dot(normal_Face, reflectDir), 0.0), Mat.shiness);
+
+  }
+
+  else if(blinn_phong_active == false)
+  {
+    vec3 reflectDir = reflect(-lightDir, normal_Face);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), Mat.shiness);
+  }
+
+
   float distance_attenuation = length(pointLight.lightPos - FragPos);
   float attenuation = 1.0 / (pointLight.constant + pointLight.linear * distance_attenuation + pointLight.quadratic * (distance_attenuation * distance_attenuation));
 
@@ -491,13 +531,15 @@ vec4 renderCoordTextures = vec4(coordTexOut.x, coordTexOut.y, 0.0, 1.0);
 
 
 
-FragColor = renderFrontFacing(renderStandard);
+ FragColor = renderFrontFacing(renderStandard);
+
  //FragColor = vec4(1.0, 0.0, 0.0, 1.0);
 
 //FragColor = vec4(1.0);
-//gl_FragDepth = gl_FragCoord.z + 50.0;
 
+ //FragColor = vec4(coordTexOut.x, coordTexOut.y, 0.0, 1.0);
 
+//  gl_FragDepth = gl_FragCoord.z + 50.0;
 //renderWithTextures(renderStandard, renderCoordTextures);
 
 //FragColor = opCalc_existTextures(resultVec4, specExist, texSpecMulti);
@@ -516,191 +558,6 @@ FragColor = renderFrontFacing(renderStandard);
 //FragColor = skyBox_reflection;
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

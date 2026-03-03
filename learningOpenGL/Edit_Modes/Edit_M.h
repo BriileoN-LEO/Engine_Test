@@ -51,6 +51,9 @@ namespace edit_visualize
  extern float max_EOS;
 
  extern bool show_normals_active;
+
+ extern bool shading_Blinn_Phong_Active;
+
  ////MAKING A VISUALIZER OF EXPLOTED OBJECTS
  ///MAKING A VISUALIZER OF NORMAL OBJECTSr
 }

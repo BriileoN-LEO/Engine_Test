@@ -42,7 +42,11 @@ void main()
   //gl_Position =  projection_c * view_c * model * vec4(0.0f, 0.0f, 0.0f, 1.0);
   vs_out.FragPos_ = vec3(model * vec4(aPos.xyz, 1.0));
  //ormal = modelMatrix * aNormal; ///Calcularlo desde el codigo(CPU) para enviarlo a Uniform
-  vs_out.Normal_ = mat3(transpose(inverse(model))) * aNormal;
+
+  mat3 normalMatrix = mat3(transpose(inverse(view_c * model)));
+  vs_out.Normal_ = normalize(vec3(vec4(normalMatrix * aNormal, 0.0)));
+
+  //vs_out.Normal_ = mat3(transpose(inverse(model))) * aNormal;  ///change
 
   vs_out.coordTexOut_ = aCoordTex;///
 }

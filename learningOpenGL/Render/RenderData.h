@@ -196,6 +196,7 @@ namespace Shader_Set
 
 	void setUB_MatCam(bool& check_Exist);
 	void setLights_SSBO(bool& check_Exist);
+	void setShader_settings(bool& check_Exist);
 
 	void set_All_UB();
 }

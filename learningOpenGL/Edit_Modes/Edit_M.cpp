@@ -39,6 +39,8 @@ namespace edit_visualize {
     float max_EOS {0.4f};
 
     bool show_normals_active{false};
+
+    bool shading_Blinn_Phong_Active{false};
     ////MAKING A VISUALIZER OF EXPLOTED OBJECTS
     ///MAKING A VISUALIZER OF NORMAL OBJECTS
 

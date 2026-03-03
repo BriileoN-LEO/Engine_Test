@@ -95,7 +95,7 @@ namespace frameBuff
 
 		glGenVertexArrays(1, &dataBuffer.VAO);
 		glGenBuffers(1, &dataBuffer.VBO);
-		glGenBuffers(1, &dataBuffer.EBO);
+		//glGenBuffers(1, &dataBuffer.EBO);
 
 		glBindVertexArray(dataBuffer.VAO);
 
@@ -122,7 +122,7 @@ namespace frameBuff
 	}
 	void frameBuffer::useFrameBufferScreen()
 	{
-		RenderData_Set::shader_D["shaderFramebuffer"].use();
+		RenderData_Set::shader_D["shaderFramebuffer"].use();   //////////SEE IF I NEED TO ADD THE FRAMEBUFFER OBJ
 		glBindVertexArray(dataBuffer.VAO);
 		glDisable(GL_DEPTH_TEST);
 		RenderData_Set::shader_D["shaderFramebuffer"].setInt("screenTexture", 0);
@@ -166,6 +166,16 @@ namespace frameBuff
 		glBindVertexArray(0);
 
 
+	}
+
+	void frameBuffer::clear()
+	{
+		glDeleteVertexArrays(1, &dataBuffer.VAO);
+		glDeleteBuffers(1, &dataBuffer.VBO);
+		glDeleteBuffers(1, &dataBuffer.EBO);
+
+		glDeleteRenderbuffers(1, &dataBuffer.RBO);
+		glDeleteFramebuffers(1, &dataBuffer.FBO);
 	}
 
 }

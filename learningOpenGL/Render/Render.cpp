@@ -212,7 +212,7 @@ namespace render
 			//render_ModelAssimp_D(excluded_NormalScenario);///LISTO_NEW_SHADER
 			//render_MultiAssimp_D();///LISTO_NEW_SHADER
 			render_MeshLights_D();
-			render_AABB();
+		//	render_AABB();
 			render_ModelAssimp_D(excluded_NormalScenario);
 		//	render_classicModelAssimp_D();
 			//render_classicModelAssimp_D();
@@ -395,113 +395,6 @@ namespace render
 
 		}
 
-		/*
-		if (ControlScenarios::scene == ControlScenarios::stateScenarios::normalSceneario)
-		{
-			std::vector<Assimp_D::excluded_Obj> excluded_NormalScenario
-			{
-				Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
-			};
-
-
-			//render_Skybox();
-
-			render_Points();
-			//render_classicModelAssimp_D();
-			//render_ModelCreation_D();
-			//render_ModelAssimp_D(excluded_NormalScenario);///LISTO_NEW_SHADER
-			//render_MultiAssimp_D();///LISTO_NEW_SHADER
-			render_MeshLights_D();	
-			render_AABB();
-			render_ModelAssimp_D(excluded_NormalScenario);
-			//render_classicModelAssimp_D();
-			//render_ModelAssimp_D(excluded_NormalScenario);///LISTO_NEW_SHADER
-
-			render_Skybox();
-			render_MultiAssimp_D();///LISTO_NEW_SHADER
-		//	data_HitAABB::triangleStencil.drawTest_2();
-	
-		}
-
-		else if (ControlScenarios::scene == ControlScenarios::stateScenarios::stencilTestAll)
-		{
-			std::vector<Assimp_D::excluded_Obj> excluded_Stencil
-			{
-				Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
-				Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "Floor"),
-				
-			};
-
-			render_Points();
-			stencil_test::renderStencilTest();///LISTO_NEW_SHADER
-			render_Skybox();
-		   // render_AABB();
-		}
-
-		else if (ControlScenarios::scene == ControlScenarios::stateScenarios::detectAABB)
-		{
-			if (ControlScenarios::sceneAABB == ControlScenarios::scenarioAABB::Triangle)
-			{
-
-				std::vector<Assimp_D::excluded_Obj> excluded_triangle
-				{
-					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
-
-				};
-
-				render_Points();
-				renderSelection::renderSelection_Triangle(excluded_triangle);///LISTO_NEW_SHADER
-				render_Skybox();
-		
-			}
-
-			if (ControlScenarios::sceneAABB == ControlScenarios::scenarioAABB::Mesh)
-			{
-				std::vector<Assimp_D::excluded_Obj> excluded_Mesh
-				{
-					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
-
-					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_only_meshes, data_HitAABB::selectedObj.first.nameModel, 
-						std::vector<std::string>({data_HitAABB::selectedObj.first.nameMesh}))
-
-				};
-
-				render_Points();
-				renderSelection::renderSelection_Mesh(excluded_Mesh);///LISTO_NEW_SHADER
-				render_Skybox();
-		
-			}
-
-			if (ControlScenarios::sceneAABB == ControlScenarios::scenarioAABB::Model)
-			{
-				std::vector<Assimp_D::excluded_Obj> excluded_Model
-				{
-					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, "mirror_01"),
-
-					Assimp_D::excluded_Obj(Assimp_D::excludedOP::exclude_complete_model, data_HitAABB::selectedObj.first.nameModel)
-				};
-
-
-				render_Points();
-				renderSelection::renderSelection_Model(excluded_Model);///LISTO_NEW_SHADER
-				render_Skybox();
-			
-			}
- 
-		}
-
-		else if (ControlScenarios::scene == ControlScenarios::stateScenarios::edit_Scene)
-		{
-			if (ControlScenarios::cleanScenario == true)
-			{
-				data_HitAABB::resetSelectedObj();
-				ControlScenarios::cleanScenario = false;
-			}
-
-			if()
-
-		}
-		*/
 	}
 	void renderInvertAll()
 	{
@@ -523,6 +416,10 @@ namespace render
 
 	void renderPhase()
 	{
+
+		//Shader_Set::set_All_UB();
+
+	//	RenderData_Set::frameBuffers_D["screen"].bindFrameBuffer(); ///TO BIND THE FRAMEBUFFER
 		openGL_render::clearOpenGL();
 
 		//render::renderPlanarReflection(); ///Para renderizar el espejo invertido.
@@ -531,10 +428,12 @@ namespace render
 
 		render::renderAll();
 
-		render::render_brii_UI();
+	//	render::render_brii_UI();
+
+	//	openGL_render::secondClearOpenGL();  ///SECOND CLEAR
+	//	RenderData_Set::frameBuffers_D["screen"].useFrameBufferScreen(); ///TO USE THE FRAMEBUFFER BIND
 
      //	RenderData_Set::frameBuffers_D["mirror_01"].useFrameBufferModel();
-
 
 
 	}
@@ -595,10 +494,10 @@ namespace openGL_render
 	void clearOpenGL()
 	{
 	//RenderData_Set::testFrameBuffer.bindFrameBuffer();
-	//	RenderData_Set::frameBuffers_D["mirror_01"].bindFrameBuffer();  ///se blindea el Framebuffer para recibir el render 
+	//	RenderData_Set::frameBuffers_D["mirror_01"].bindFrameBuffer();  ///se blindea el Framebuffer para recibir el render
 		glDepthMask(GL_TRUE);
 		//glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-		glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glClearDepth(1.0);
@@ -610,8 +509,8 @@ namespace openGL_render
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT);
 //		RenderData_Set::frameBuffers_D["Mirror"].useFrameBufferModel();
 		
 	    
@@ -1259,5 +1158,11 @@ namespace destroy
 		}
 
 	}
-
+	void destroyFrameBuffers()
+	{
+	   for (auto& FB : RenderData_Set::frameBuffers_D)
+	   {
+         FB.second.clear();
+	   }
+	}
 }

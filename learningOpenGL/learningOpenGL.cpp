@@ -525,6 +525,7 @@ int main(int argc, char* argv[])
 	UI::destroyUI();
 	threadSystem::ControlPhysics_Events.destroy();
 	destroy::destroyModels();
+	destroy::destroyFrameBuffers();
 	SDL_GL_DestroyContext(contextOpenGl);
 	SDL_DestroyWindow(gWindow);
 	SDL_Quit();

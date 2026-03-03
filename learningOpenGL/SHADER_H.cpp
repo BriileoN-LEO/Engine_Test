@@ -62,7 +62,7 @@ namespace shading
 			glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), nullptr, GL_STATIC_DRAW);
 			glBindBuffer(GL_UNIFORM_BUFFER, index);
 
-			glBindBufferRange(GL_UNIFORM_BUFFER, 0, UBO, 0, 2 * sizeof(glm::mat4));
+			glBindBufferRange(GL_UNIFORM_BUFFER, index, UBO, 0, 2 * sizeof(glm::mat4));
 
 			return UBO;
 
@@ -159,7 +159,25 @@ namespace shading
 
 			break;
 		}
-		default:
+
+		case layoutType::SHADER_SETTINGS :
+		{
+			unsigned int UBO{};
+			glGenBuffers(1, &UBO);
+
+			glBindBuffer(GL_UNIFORM_BUFFER, UBO);
+
+			glBufferData(GL_UNIFORM_BUFFER, sizeof(shading::shading_settings_LU), nullptr, GL_STATIC_DRAW);
+			glBindBuffer(GL_UNIFORM_BUFFER, index);
+
+			glBindBufferRange(GL_UNIFORM_BUFFER, index, UBO, 0, sizeof(shading::shading_settings_LU));
+
+			return UBO;
+
+			break;
+		}
+
+			case layoutType::NONE:
 		{
 			std::cout << "ERROR::I CANNOT SEARCH THE LAYOUT TYPE \n";
 			break;
@@ -208,16 +226,16 @@ namespace shading
 	{
 		shaderCreation(vertexPath, fragmentPath);  ///HERE CREATES THE ID
 		
-		if (data_Layout[0] != layoutType::NONE &&
-			data_Layout[0] != layoutType::LIGHTS)
+		for (auto& dL : data_Layout)
 		{
-			for (auto& dL : data_Layout)
+			if (dL == layoutType::MATRIX_OBJ ||
+			   dL == layoutType::SHADER_SETTINGS)
 			{
-			//	unsigned int setUniformBlockIndex{ glGetUniformBlockIndex(ID, shaders_LayoutB[dL].outNameBlockD().c_str()) };
-			//	glUniformBlockBinding(ID, setUniformBlockIndex, shaders_LayoutB[dL].outIndexP());
-		
-					unsigned int setUniformBlockIndex{ glGetUniformBlockIndex(ID, settings_LayoutUni[dL].first.c_str()) };
-					glUniformBlockBinding(ID, setUniformBlockIndex, settings_LayoutUni[dL].second);
+				//	unsigned int setUniformBlockIndex{ glGetUniformBlockIndex(ID, shaders_LayoutB[dL].outNameBlockD().c_str()) };
+				//	glUniformBlockBinding(ID, setUniformBlockIndex, shaders_LayoutB[dL].outIndexP());
+
+				unsigned int setUniformBlockIndex{ glGetUniformBlockIndex(ID, settings_LayoutUni[dL].first.c_str()) };
+				glUniformBlockBinding(ID, setUniformBlockIndex, settings_LayoutUni[dL].second);
 
 			}
 		}
@@ -228,8 +246,8 @@ namespace shading
 
 			for (auto& dL : data_Layout)
 			{
-				if (dL != layoutType::NONE &&
-		           dL != layoutType::LIGHTS)
+				if (dL == layoutType::MATRIX_OBJ ||
+		           dL == layoutType::SHADER_SETTINGS)
 				{
 				//	unsigned int setUniformBlockIndex{ glGetUniformBlockIndex(ID, shaders_LayoutB[dL].outNameBlockD().c_str()) };
 				//	glUniformBlockBinding(ID, setUniformBlockIndex, shaders_LayoutB[dL].outIndexP());
@@ -238,7 +256,7 @@ namespace shading
 				glUniformBlockBinding(ID, setUniformBlockIndex, settings_LayoutUni[dL].second);
 
 		       	}
-		}
+		    }
 	}
 	/////
 	void shader::shaderCreation(const char* vertexPath, const char* fragmentPath, const char* geometryPath)

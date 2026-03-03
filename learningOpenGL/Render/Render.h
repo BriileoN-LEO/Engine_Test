@@ -73,7 +73,7 @@ namespace refresh_Models
 namespace destroy
 {
 	void destroyModels();
-
+    void destroyFrameBuffers();
 }
 
 

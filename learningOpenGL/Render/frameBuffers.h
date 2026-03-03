@@ -53,6 +53,7 @@ namespace frameBuff
 		void useFrameBufferScreen();
 		void useFrameBufferModel();
 
+        void clear();
 
 	};
 

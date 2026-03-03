@@ -2,6 +2,7 @@
 #include "Collision/ScreenHit.h"
 #include "playTest.h"
 #include "optimize_Algorithmics/optimizeAlgorithmics.h"
+#include "Edit_Modes/Edit_M.h"
 //#include "2D_UI/Interface_UI.h"
 //#include "2D_UI/2D_ScreenPlayer.h"
 
@@ -285,6 +286,11 @@ namespace RenderData_Set
 		shading::settings_LayoutUni.emplace(
 			shading::layoutType::LIGHTS,
 			std::pair<std::string, int>("lights", 1)
+		);
+
+		shading::settings_LayoutUni.emplace(  /////RESOLVE WHY I QUIT THIS AND ALL CONVERTS TO INVICIBLE
+		shading::layoutType::SHADER_SETTINGS,
+	    std::pair<std::string, int>("shading_settings", 2)
 		);
 
 	}
@@ -619,7 +625,9 @@ namespace RenderData_Set
 	{
 		std::vector <shading::layoutType> LB_01
 		{
-			 shading::layoutType::MATRIX_OBJ, shading::layoutType::LIGHTS
+			 shading::layoutType::MATRIX_OBJ,
+			 shading::layoutType::LIGHTS,
+			 shading::layoutType::SHADER_SETTINGS
 		};
 
 		std::vector <shading::layoutType> LB_MAT
@@ -1166,6 +1174,7 @@ namespace RenderData_Set
 		frameBuff::frameBuffer frameBufferModel_01("mirror_01", frameBuff::typeFrameBuffer::bufferAssimp, nameFrameBuff_01);
 
 		std::map<std::string, frameBuff::frameBuffer> FB;
+		FB.emplace("screen", std::move(frameBufferScreen));
 		FB.emplace("mirror_01", std::move(frameBufferModel_01));
 
 		return FB;
@@ -1340,9 +1349,9 @@ namespace RenderData_Set
 	{
 		//loadLayoutBuffer_shader();  ///TO LOAD THE LAYOUTS OF UNIFORM BUFFERS IN THE SHADER
 
-		loadSettings_LayoutUni();
+		loadSettings_LayoutUni(); ///LOADED THE BUFFER SETTINGS
 
-		loadAll_DataCPU();
+		loadAll_DataCPU();  ///CRITICAL FASE TO LOAD ALL THE DATA, MODELS, SHADERS, ETC
 
 		while (!finishLoadALL.load())
 		{
@@ -1427,7 +1436,8 @@ namespace Shader_Set
 {
 	std::map<shading::layoutType, bool> usageExistence_LT{
 		{ shading::layoutType::MATRIX_OBJ, true },
-		{ shading::layoutType::LIGHTS, true}
+		{ shading::layoutType::LIGHTS, true},
+        { shading::layoutType::SHADER_SETTINGS, true}
 	};
 
 	void setUB_MatCam(bool& check_Exist)
@@ -1532,7 +1542,7 @@ namespace Shader_Set
 			////CHECK IF I CAN LOAD THE LIGHTS WITH THE BUFFER 
 
 			unsigned int& ID_SSBO{ shading::shaders_LayoutB[shading::layoutType::LIGHTS].use() };
-			const int& indexP{ shading::shaders_LayoutB[shading::layoutType::LIGHTS].outIndexP() };
+		//	const int& indexP{ shading::shaders_LayoutB[shading::layoutType::LIGHTS].outIndexP() };
 
 			glBindBuffer(GL_SHADER_STORAGE_BUFFER, ID_SSBO);
 
@@ -1565,6 +1575,31 @@ namespace Shader_Set
 
 	}
 
+	void setShader_settings(bool& check_Exist)
+	{
+
+		if (shading::shaders_LayoutB.find(shading::layoutType::SHADER_SETTINGS) != shading::shaders_LayoutB.end())
+		{
+			shading::shading_settings_LU s_Set;
+			s_Set.blinn_phong_active = static_cast<int>(edit_visualize::shading_Blinn_Phong_Active);
+
+			unsigned int& useUBO{ shading::shaders_LayoutB[shading::layoutType::SHADER_SETTINGS].use() };
+
+			glBindBuffer(GL_UNIFORM_BUFFER, useUBO);
+
+			glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(shading::shading_settings_LU), &s_Set);
+		//	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::vec3), sizeof(int), glm::value_ptr(b));
+
+			glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+		}
+
+		else
+		{
+			check_Exist = false;
+		}
+	}
+
 	void set_All_UB()
 	{
 		if (usageExistence_LT[shading::layoutType::MATRIX_OBJ] == true)
@@ -1575,6 +1610,11 @@ namespace Shader_Set
 		if (usageExistence_LT[shading::layoutType::LIGHTS] == true)
 		{
 			setLights_SSBO(usageExistence_LT[shading::layoutType::LIGHTS]);
+		}
+
+		if (usageExistence_LT[shading::layoutType::SHADER_SETTINGS] == true)
+		{
+			setShader_settings(usageExistence_LT[shading::layoutType::SHADER_SETTINGS]);
 		}
 
 	}

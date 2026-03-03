@@ -85,11 +85,18 @@ namespace shading
 
 	};
 
+	struct shading_settings_LU
+	{
+	 float pad_001[3];
+	 int blinn_phong_active;
+	};
+
 	enum class layoutType
 	{
-		NONE,
-		MATRIX_OBJ,
-		LIGHTS
+		NONE = 0,
+		MATRIX_OBJ = 1,
+		LIGHTS = 2,
+		SHADER_SETTINGS = 3
 	};
 
 	namespace register_Errors_SS
