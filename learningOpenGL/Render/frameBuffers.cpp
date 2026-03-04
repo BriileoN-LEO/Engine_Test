@@ -122,9 +122,9 @@ namespace frameBuff
 	}
 	void frameBuffer::useFrameBufferScreen()
 	{
-		RenderData_Set::shader_D["shaderFramebuffer"].use();   //////////SEE IF I NEED TO ADD THE FRAMEBUFFER OBJ
+		RenderData_Set::shader_D["shaderFramebuffer"].use();
 		glBindVertexArray(dataBuffer.VAO);
-		glDisable(GL_DEPTH_TEST);
+		//glDisable(GL_DEPTH_TEST);
 		RenderData_Set::shader_D["shaderFramebuffer"].setInt("screenTexture", 0);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, dataBuffer.TCB);

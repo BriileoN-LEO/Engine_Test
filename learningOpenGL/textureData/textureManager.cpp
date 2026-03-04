@@ -1,6 +1,19 @@
 #include "textureManager.h"
 #include "stb_image.h"
 
+namespace KTX_lib
+{
+	void viewInternalFormat(ktxTexture* texKTX)
+	{
+	ktxTexture2* k2Texture = reinterpret_cast<ktxTexture2*>(texKTX);
+
+	//khr_df_transfer_e transferFunc = ktxTexture2_GetTransferFunction_e(texKTX);
+
+	//	ktxTexture = nullptr;
+	}
+
+}
+
 namespace texDataManager
 {
 	 std::map<std::string, typeTexture> typeTex_String
@@ -11,7 +24,7 @@ namespace texDataManager
 	 std::map<typeTexture, texToShader> typeTex_T
 	{
 		{typeTexture::diffuse, texToShader(
-			"texture_diffuse", 
+			"texture_diffuse",
 		    "use_texture_diffuse"
 		)},
 
@@ -25,11 +38,11 @@ namespace texDataManager
 
 
 	 standardTexture::standardTexture() {};
-	 standardTexture::standardTexture(unsigned char* dataTexture, int width, int height, int nrChannels) : 
-		 width(width), 
-		 height(height), 
+	 standardTexture::standardTexture(unsigned char* dataTexture, int width, int height, int nrChannels) :
+		 width(width),
+		 height(height),
 		 nrChannels(nrChannels) {
-	 
+
 		 if (dataTexture)
 		 {
 			 this->dataTexture = dataTexture;
@@ -132,7 +145,7 @@ namespace texDataManager
 			completePath(preTex.completePath),
 			format(preTex.format),
 			tex_coord(preTex.tex_coord) {
-		
+
 			if (std::holds_alternative<texDataManager::standardTexture>(preTex.textureData_F))
 			{
 				texDataManager::standardTexture& texGet{ std::get<0>(preTex.textureData_F) };
@@ -288,7 +301,7 @@ namespace textureCache
 	//	path_to_KTX2 = directory + '/' + path_to_KTX2;
 
 
-		///SI LA TEXTURA ES PNG, TIENE BLENDMODE 
+		///SI LA TEXTURA ES PNG, TIENE BLENDMODE
 		std::string formatImage{ path };
 		std::reverse(formatImage.begin(), formatImage.end());
 		formatImage = formatImage.substr(0, formatImage.find_last_of('.'));
@@ -305,7 +318,7 @@ namespace textureCache
 		}
 
 		std::string path_Normal{ directory + '/' + path };
-		
+
 		//std::cout << path_to_KTX2 << "\n";
 
 		for (auto& tex : textureCache::preLoadedTextures)
@@ -396,15 +409,15 @@ namespace textureCache
  	}
 
 	//PRELOAD TEXTURES FOR UI
-	texDataManager::TextureData_File managePreLoadedTexturesUI(std::string directory, std::string nameUI, std::string nameSection) ///put more info 
+	texDataManager::TextureData_File managePreLoadedTexturesUI(std::string directory, std::string nameUI, std::string nameSection) ///put more info
 	{
 		texDataManager::TextureData_File textureData{};
-	    
+
 		bool existenceTexture{};
 
 
 		auto find_existenceTex{ std::ranges::find_if(preLoadedTexturesUI,
-			[&](const auto& v) { 
+			[&](const auto& v) {
 				return v.nameMenuUI == nameUI && v.nameSectionUI == nameSection; } //CHANGE IF THE POINTER FAILS
 			) };
 
@@ -427,11 +440,11 @@ namespace textureCache
 				textureData.typeTex = find_insideD->typeTex;
 				textureData.completePath = directory;
 				textureData.format = find_insideD->format;
-				textureData.index_layer_tex = find_layer; //find the index layer of the tex if its the same texture but in other vertex data 
+				textureData.index_layer_tex = find_layer; //find the index layer of the tex if its the same texture but in other vertex data
 
 				existenceTexture = true;
 			}
-	
+
 			find_layer++;
 				//	}
 			//	}
@@ -455,7 +468,7 @@ namespace textureCache
 			pathName = pathName.substr(0, pathTUI.find_last_of('/'));
 			std::reverse(pathName.begin(), pathName.end());
 			pathName = pathName.substr(0, pathTUI.find_last_of("."));
-		
+
 			texDataManager::texTypeFile texLoadVariant{};
 
 			bool existTexture{};
@@ -464,14 +477,14 @@ namespace textureCache
 			{
 				textureData.format = texDataManager::formatImage::KTX;
 				texLoadVariant = std::move(loadTexture_PreCompress_KTX(directory.c_str(), existTexture));
-		
+
 			}
-			
+
 			else if (pathTUI == "png" || pathTUI == "jpg")
 			{
 				textureData.format = texDataManager::formatImage::standard;
 				texLoadVariant = std::move(loadTexture_CompressInCompile(directory.c_str(), existTexture, 4));
-		
+
 			}
 
 			if (existTexture == true)
@@ -527,7 +540,7 @@ namespace textureCache
 				textureData.index_layer_tex = nextLayer;
 				//INFO OF TEXTURE CREATION
 			}
-			
+
 			else if (existTexture == false)
 			{
 				SDL_Log(std::string("ERROR::PATH--->" + directory + "DOESN�T FIND A TEXTURE UI").c_str());
@@ -539,7 +552,7 @@ namespace textureCache
 
 		return textureData;
 	}
-	
+
 	///LOADED TO GPU
 	GLuint loadTextureKTX(ktxTexture* texKTX)
 	{
@@ -563,14 +576,14 @@ namespace textureCache
 
 		return idTexture;
 	}
-	GLuint loadTextureStandard(texDataManager::standardTexture& texStandard)
+	GLuint loadTextureStandard(texDataManager::standardTexture& texStandard, texDataManager::color_space colorSpace)
 	{
 		GLuint idTexture{};
 		GLenum format{};
 		GLenum sec_Format{};
 	//	std::cout << "INSERTING::TEXTURES\n";
 		if(texStandard.dataTexture)
-		{ 
+		{
 			//std::cout << "INSERTING::TEXTURES\n";
 		if (texStandard.nrChannels == 1)
 		{
@@ -581,7 +594,17 @@ namespace textureCache
 		if (texStandard.nrChannels == 3)
 		{
 			//format = GL_RGB;
-			format = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+			if (colorSpace == texDataManager::color_space::RGB)
+			{
+				format = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+
+			}
+
+			else if (colorSpace == texDataManager::color_space::sRGB)
+			{
+				format = GL_COMPRESSED_SRGB_S3TC_DXT1_EXT;
+
+			}
 			sec_Format = GL_RGB;
 		}
 
@@ -589,7 +612,16 @@ namespace textureCache
 		{
 			//format = GL_RGBA;
 			//format = GL_RGBA8;
-			format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+			if (colorSpace == texDataManager::color_space::RGB)
+			{
+				format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+			}
+
+			else if (colorSpace == texDataManager::color_space::sRGB)
+			{
+				format = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
+			}
+
 			sec_Format = GL_RGBA;
 		}
 
@@ -628,7 +660,7 @@ namespace textureCache
 	{
 		GLuint texID_array{};
 		int layers{ static_cast<int>(allTexturesToLoad.size()) };
-		
+
 		glGenTextures(1, &texID_array);
 		glBindTexture(GL_TEXTURE_2D_ARRAY, texID_array);
 
@@ -641,9 +673,9 @@ namespace textureCache
 
 		for (int sT = 0; sT < layers; sT++)
 		{
-	
+
 			//std::unique_ptr<texDataManager::standardTexture> ptr_tex{ std::move(allTexturesToLoad[sT]) };
-			
+
 			unsigned char* dataTex{ std::move(allTexturesToLoad[sT].dataTexture) };
 			allTexturesToLoad[sT].dataTexture = nullptr;
 
@@ -664,13 +696,13 @@ namespace textureCache
 				std::cout << "ERROR::TEXTURE_UI::ARRAY_2D::LAYER" << dataTex << '\n';
 			}
 
-		
+
 		}
 
 
 		return texID_array;
 	}
-	
+
 	void loadAll_PreLoadedTexturesToCache()
 	{
 		auto saveTexuresPreloaded = [&](
@@ -691,7 +723,15 @@ namespace textureCache
 
 						else if (std::holds_alternative<texDataManager::standardTexture>(preLoaded.textureData_F))
 						{
-							textureID = loadTextureStandard(std::get<texDataManager::standardTexture>(preLoaded.textureData_F));
+							if (preLoaded.typeTex == texDataManager::typeTexture::diffuse)
+							{
+								textureID = loadTextureStandard(std::get<texDataManager::standardTexture>(preLoaded.textureData_F), texDataManager::color_space::sRGB);
+							}
+
+							if (preLoaded.typeTex != texDataManager::typeTexture::diffuse)
+							{
+								textureID = loadTextureStandard(std::get<texDataManager::standardTexture>(preLoaded.textureData_F), texDataManager::color_space::RGB);
+							}
 						}
 
 					//	std::map<std::string, texDataManager::textureD_info>& texToSave{std::get<0>(dirTextureSave)};
@@ -721,13 +761,13 @@ namespace textureCache
 						std::vector<texDataManager::standardTexture> allTex;
 						std::vector<texDataManager::textureD_info_contentUI> textures_data_UI{};
 
-						std::pair<float, float> maxCoords_padd{};   
+						std::pair<float, float> maxCoords_padd{};
 
 						int batch_layer{};
 						for (auto& textures_data : preLoaded.texturesID)
 						{
 							//std::unique_ptr<texDataManager::standardTexture> ptr_tex_DataF{ std::make_unique<texDataManager::standardTexture>(std::get<texDataManager::standardTexture>(textures_data.textureData_F)) };
-						
+
 							//allTex.emplace_back(std::get<texDataManager::standardTexture>(textures_data.textureData_F));;   ///ANTERIOR METODO
 							//allTex.emplace_back(std::make_unique<texDataManager::standardTexture>(std::get<texDataManager::standardTexture>(textures_data.textureData_F)));
 
@@ -760,7 +800,7 @@ namespace textureCache
 							//texture_Data.data_debug();
 
 							allTex.emplace_back(std::move(texture_Data));
-						
+
 							batch_layer++;
 						}
 
@@ -785,7 +825,7 @@ namespace textureCache
 
 					}
 
-				
+
 				}
 
 					/*
@@ -816,9 +856,9 @@ namespace textureCache
 					);
 
 					*/
-			
 
-				
+
+
 			};
 
 
@@ -830,15 +870,15 @@ namespace textureCache
 
 	}
 
-	void uploadEngineTextures_Preloaded(const char* path) 
+	void uploadEngineTextures_Preloaded(const char* path)
 	{
-		
+
 
 	}
 
 	void texture_Data::use_MaterialTextures(shading::shader& shader, int textureMax)
 	{
-		
+
 		shader.setBool("blendTexture", active_BlendMode);
 
 		std::map<texDataManager::typeTexture, int> texturesNr
@@ -851,7 +891,7 @@ namespace textureCache
 		std::string prefixTexture{};
 		int totalSizeTex{};
 
-	
+
 		auto indices{ std::views::iota(0) };
 		for (auto [idx, texMat] : std::views::zip(indices, textures_LoadCache))
 		{
@@ -861,19 +901,19 @@ namespace textureCache
 				prefixTexture = "Mat_" + numberTex + ".";
 				std::string nameTexBool{ prefixTexture + texDataManager::typeTex_T[texMat.typeTex].textureBool };
 				shader.setBool(nameTexBool, true);
-				
-				////ACABAR DE INSERTAR LAS TEXTURAS 
+
+				////ACABAR DE INSERTAR LAS TEXTURAS
 
 				std::string nameTexT{ prefixTexture + texDataManager::typeTex_T[texMat.typeTex].textureInsert };
 				shader.setInt(nameTexT, idx);
 				glActiveTexture(GL_TEXTURE0 + idx);
 				glBindTexture(GL_TEXTURE_2D, textures[texMat.nameTexture].textureID);
-	
+
 				texturesNr[texMat.typeTex]++; //SUMA DE PATRON;
 				totalSizeTex = idx;
 			}
 		}
-		
+
 		for (auto texNr : texturesNr)
 		{
 			int texPlus{};
@@ -915,13 +955,13 @@ namespace textureCache
 	{
 		std::string nameTex{ pathTexture };
 		std::reverse(nameTex.begin(), nameTex.end());
-		
+
 		std::string pathFormat = nameTex.substr(0, nameTex.find_last_of("."));
 		nameTex = nameTex.substr(0, nameTex.find_last_of("/"));
 
 		std::reverse(pathFormat.begin(), pathFormat.end());
 		std::reverse(nameTex.begin(), nameTex.end());
-		
+
 		nameTex = nameTex.substr(0, nameTex.find_last_of("."));
 
 		bool existTexture{};
@@ -949,8 +989,17 @@ namespace textureCache
 
 			if (existTexture == true)
 			{
-		
-				GLuint texID{ loadTextureStandard(texStandard) };
+				GLuint texID{};
+
+				if (tex == texDataManager::typeTexture::diffuse)
+				{
+					texID = loadTextureStandard(texStandard, texDataManager::color_space::sRGB);
+				}
+
+				else if (tex != texDataManager::typeTexture::diffuse)
+				{
+					texID = loadTextureStandard(texStandard, texDataManager::color_space::RGB);
+				}
 
 				textureToLoad.textureID = texID;
 				textureToLoad.nameTexture = nameTex;
@@ -963,7 +1012,7 @@ namespace textureCache
 				textureToLoad.nrChannels = texStandard.nrChannels;
 			}
 		}
-		
+
 		if (existTexture == true)
 		{
 			textures.emplace(

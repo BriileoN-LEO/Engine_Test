@@ -5,6 +5,12 @@
 #include "SHADER_H.h"
 //#include "2D_UI/Interface_generalUI.h"
 
+namespace KTX_lib
+{
+  void viewInternalFormat(ktxTexture* texKTX);
+
+}
+
 namespace texDataManager
 {
 	enum class typeTexture
@@ -28,6 +34,12 @@ namespace texDataManager
 	{
 		standard = 0,
 		KTX = 1
+	};
+
+	enum class color_space  //TO ASSIGN THE TYPE OF COLOR SPACE
+	{
+	  RGB = 0,
+	  sRGB = 1
 	};
 
 	struct standardTexture
@@ -175,8 +187,8 @@ namespace textureCache
 
 	texDataManager::TextureData_File managePreLoadedTexturesUI(std::string directory, std::string nameUI, std::string nameSection);
 
-	GLuint loadTextureKTX(ktxTexture* texKTX);
-	GLuint loadTextureStandard(texDataManager::standardTexture& texStandard);
+	GLuint loadTextureKTX(ktxTexture* texKTX);  ////HERE ANALIZE WHAT TYPE COLOR SPACE I HAVE FOR EACH TEXTURE
+	GLuint loadTextureStandard(texDataManager::standardTexture& texStandard, texDataManager::color_space colorSpace);
 
 	GLuint loadTexturesUI(std::vector<texDataManager::standardTexture> allTexturesToLoad, int max_w, int max_h);
 

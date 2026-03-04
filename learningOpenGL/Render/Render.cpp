@@ -419,7 +419,7 @@ namespace render
 
 		//Shader_Set::set_All_UB();
 
-	//	RenderData_Set::frameBuffers_D["screen"].bindFrameBuffer(); ///TO BIND THE FRAMEBUFFER
+		RenderData_Set::frameBuffers_D["screen"].bindFrameBuffer(); ///TO BIND THE FRAMEBUFFER
 		openGL_render::clearOpenGL();
 
 		//render::renderPlanarReflection(); ///Para renderizar el espejo invertido.
@@ -430,8 +430,8 @@ namespace render
 
 	//	render::render_brii_UI();
 
-	//	openGL_render::secondClearOpenGL();  ///SECOND CLEAR
-	//	RenderData_Set::frameBuffers_D["screen"].useFrameBufferScreen(); ///TO USE THE FRAMEBUFFER BIND
+		openGL_render::secondClearOpenGL();  ///SECOND CLEAR
+		RenderData_Set::frameBuffers_D["screen"].useFrameBufferScreen(); ///TO USE THE FRAMEBUFFER BIND
 
      //	RenderData_Set::frameBuffers_D["mirror_01"].useFrameBufferModel();
 
@@ -508,6 +508,7 @@ namespace openGL_render
 	void secondClearOpenGL()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glDisable(GL_DEPTH_TEST);
 		glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
 		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glClear(GL_COLOR_BUFFER_BIT);

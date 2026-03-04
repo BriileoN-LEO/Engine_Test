@@ -643,7 +643,7 @@ namespace RenderData_Set
 		shading::loadToCPU::shaderData_loadCPU shaderT1("shaderT1", vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), LB_01, gShader_ModelT1.c_str());  //TEST
 		shading::loadToCPU::shaderData_loadCPU shaderT1_normals("normals_shaderT1", vShader_ModelT1_Normals.c_str(), fShader_ModelT1_Normals.c_str(), LB_MAT, gShader_ModelT1_Normals.c_str());
 		shading::loadToCPU::shaderData_loadCPU shaderStandard("shaderStandard", vShader_Standard_v1.c_str(), fShader_Standard_v1.c_str(), LB_02);
-		shading::loadToCPU::shaderData_loadCPU shaderFramebuffer("shaderFramebuffer", vShader_Framebuffer_V01.c_str(), fShader_Framebuffer_V01.c_str(), LB_02);
+		shading::loadToCPU::shaderData_loadCPU shaderFramebuffer("shaderFramebuffer", vShader_Framebuffer_V01.c_str(), fShader_Framebuffer_V01.c_str(), LB_MAT);
 		shading::loadToCPU::shaderData_loadCPU shaderPoint("shaderPoint", vShader_Pointer.c_str(), fShader_Pointer.c_str(), LB_02);
 		shading::loadToCPU::shaderData_loadCPU shaderSkybox_01("shaderSkybox_01", vShader_Skybox_V01.c_str(), fShader_Skybox_V01.c_str(), LB_02);
 		shading::loadToCPU::shaderData_loadCPU shader_briiUI_01("brii_UI_01", vShader_briiUI_V01.c_str(), fShader_briiUI_V01.c_str(), LB_02);
