@@ -10,6 +10,7 @@
 #include <glm/gtx/norm.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <ktx.h> ///NUEVA LIBRERIA PARA CARGAR IMAGENES
+#include <KHR/khr_df.h>
 #include <iostream>
 #include <string>
 #include <vector>

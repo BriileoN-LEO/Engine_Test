@@ -85,8 +85,8 @@ namespace transformation_basics
 
 		glm::mat4 lastModel{  1.0f  };
 
-		glm::mat4 model{ 1.0f };
-		glm::mat4 modelCurrent{ 1.0f };
+		glm::mat4 model{ glm::mat4(1.0f) };
+		glm::mat4 modelCurrent{ glm::mat4(1.0f) };
 		glm::mat3 normalModelMatrix{ 1.0f };
 
 		glm::vec3 translateM{};

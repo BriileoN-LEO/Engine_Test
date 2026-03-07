@@ -5,6 +5,7 @@
 #include "Edit_Modes/Edit_M.h"
 #include "Render/Render.h"
 #include "optimize_Algorithmics/optimizeAlgorithmics.h"
+#include "Assimp_lib.h"
 //#include "resource_Manager/resourceManager.h"
 
 namespace sky 
@@ -633,11 +634,15 @@ namespace Assimp_D {
 
 		MeshCoord.posModel_Base = transformation_basics::calcCenterGeo(verticesPos);
 		MeshCoord.posModel = MeshCoord.posModel_Base;
+		MeshCoord.model = loadData.model_matrix * MeshCoord.model;
+		MeshCoord.modelCurrent = MeshCoord.model;
+		MeshCoord.lastModel = MeshCoord.model;
 
 		int seqUnit{};
 
+		textures.insert_TexturesData(loadData.textures);
 
-		for (auto textureDataCache : loadData.textures)
+	/*	for (auto textureDataCache : loadData.textures)
 		{
 			textures.textures_LoadCache.emplace_back(textureDataCache);
 
@@ -646,7 +651,7 @@ namespace Assimp_D {
 				textures.active_BlendMode = true;
 
 			}
-		}
+		}*/
 
 		//OLD WAY TO LOAD TEXTURES
 		/*
@@ -1693,7 +1698,7 @@ namespace Assimp_D {
 
 			}
 
-			meshes[i].setMeshCoord(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+		//	meshes[i].setMeshCoord(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 			meshes[i].MeshCoord.model = ModelCoord.model * meshes[i].MeshCoord.model;
 			meshes[i].MeshCoord.setNormalModelMatrix();
 			//meshes[i].MeshCoord.nameModel =
@@ -2324,41 +2329,61 @@ namespace Assimp_D {
 		Assimp::Importer importer{};
 
 		///FUNCTION LEGACY::LOAD TEXTURES
-		std::vector<texDataManager::TextureData_File> loadMatTextures(aiMaterial* mat, aiTextureType matType, std::string typeName, std::string directory)
+		std::vector<texDataManager::TextureData_File> loadMatTextures(aiMaterial* mat, aiTextureType matType, std::string typeName, std::string directory, const aiScene* scene)
 		{
 			std::vector<texDataManager::TextureData_File> tex{};
 			std::vector<texDataManager::TextureData_File> tex_Loaded{};
 			//aiGetMaterialTexture()
+
+			uint8_t num_tex{};
+
 			for (int i = 0; i < mat->GetTextureCount(matType); i++)
 			{
 				aiString str{};
 				mat->GetTexture(matType, i, &str);
 				//textureD texture{};
-				bool skip{ false };
 
-			//	SDL_Log(str.C_Str());
+				std::string type_rute {str.C_Str()};
 
-				for (int i = 0; i < static_cast<int>(tex_Loaded.size()); i++)
+				size_t find_binary_rute {type_rute.find_first_of("*")};
+
+				if (find_binary_rute == std::string::npos)
 				{
-					if (std::strcmp(tex_Loaded[i].completePath.c_str(), str.C_Str()) == 0)
+					bool skip{ false };
+
+					//	SDL_Log(str.C_Str());
+
+					for (int i = 0; i < static_cast<int>(tex_Loaded.size()); i++)
 					{
-						skip = true;
-						break;
+						if (std::strcmp(tex_Loaded[i].completePath.c_str(), str.C_Str()) == 0)
+						{
+							skip = true;
+							break;
+						}
+
 					}
 
+					if (!skip)
+					{
+
+						//texDataManager::TextureData_File texture{ LoadTextureFromFile(str.C_Str(), directory, typeName) }; ////OLD WAY TO LOAD TEXTURES
+						texDataManager::TextureData_File textureLoad{ textureCache::manageLoadTexture(str.C_Str(), directory, typeName) }; ////NEW WAY TO LOAD TEXTURES
+						tex.emplace_back(textureLoad);
+						tex_Loaded.emplace_back(textureLoad);
+
+						//SDL_Log(texDataManager::typeTex_String[texture.typeTexture].c_str());
+						//SDL_Log(texture.typeTexture.c_str());
+
+					}
 				}
 
-				if (!skip)
+				else if (find_binary_rute != std::string::npos)
 				{
-
-					//texDataManager::TextureData_File texture{ LoadTextureFromFile(str.C_Str(), directory, typeName) }; ////OLD WAY TO LOAD TEXTURES
-					texDataManager::TextureData_File textureLoad{ textureCache::manageLoadTexture(str.C_Str(), directory, typeName) }; ////NEW WAY TO LOAD TEXTURES
-					tex.emplace_back(textureLoad);
-					tex_Loaded.emplace_back(textureLoad);
-
-					//SDL_Log(texDataManager::typeTex_String[texture.typeTexture].c_str());
-					//SDL_Log(texture.typeTexture.c_str());
-
+                /////HERE THE WAY OF EMBEDED TEXTURES
+                    const aiTexture* scene_embededTex { scene->mTextures[find_binary_rute]};
+					++num_tex;
+					texDataManager::TextureData_File* textureLoad {textureCache::loadEmbeddedTextures_PreCompress(scene_embededTex, directory, typeName, num_tex)}; /////here i load the embeded texture
+				    ///COMPLETE HERE 06/03/2026
 				}
 			}
 
@@ -2373,10 +2398,10 @@ namespace Assimp_D {
 			{
 				aiString pathStr{};
 				mat->GetTexture(matType, i, &pathStr);
-				
+
 				const char* path = pathStr.C_Str();
 				dataTextures.emplace_back(textureCache::manageLoadTexture(std::string(path), directory, typeName));
-		
+
 			}
 
 			return dataTextures;
@@ -2457,10 +2482,16 @@ namespace Assimp_D {
 		void processNode(aiNode* node, const aiScene* scene, std::vector<MeshData_loadCPU>& meshes, std::string directory)
 		{
 			int countMeshName{ 1 };
+			aiMatrix4x4 aiModelMat {node->mTransformation}; ///TRANSFORM THIS MODEL MATRIX TO NORMAL GLM::MATRIX
+
+            glm::mat4 glmModelMat {data_Assimp::aiMat4_to_glmMat4(aiModelMat)}; ///GET THE MODEL MATRIX FROM THE NODE
+
+			glmModelMat = glmModelMat * glm::mat4(1.0f);
+
 			for (int i = 0; i < node->mNumMeshes; i++)
 			{
 				aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-				meshes.emplace_back(processMesh(mesh, scene, directory));
+				meshes.emplace_back(processMesh(mesh, scene, directory, glmModelMat));
 				countMeshName++;
 				//SDL_Log(nameMesh.c_str());
 			}
@@ -2472,7 +2503,7 @@ namespace Assimp_D {
 			}
 
 		}
-		MeshData_loadCPU processMesh(aiMesh* mesh, const aiScene* scene, std::string directory)
+		MeshData_loadCPU processMesh(aiMesh* mesh, const aiScene* scene, std::string directory, glm::mat4& model_matrix)
 		{
 			std::vector<vertexD> vertices{};
 			std::vector<unsigned int> indices{};
@@ -2520,22 +2551,20 @@ namespace Assimp_D {
 				}
 			}
 
-
-
 			if (mesh->mMaterialIndex >= 0)
 			{
 				aiMaterial* material{ scene->mMaterials[mesh->mMaterialIndex] };
 
-				std::vector<texDataManager::TextureData_File> difusseMaps{ loadMatTextures(material, aiTextureType_DIFFUSE, "texture_diffuse", directory) };
+				std::vector<texDataManager::TextureData_File> difusseMaps{ loadMatTextures(material, aiTextureType_DIFFUSE, "texture_diffuse", directory, scene) };
 
 				textures.insert(textures.end(), difusseMaps.begin(), difusseMaps.end());
 
-				std::vector<texDataManager::TextureData_File> specularMaps{ loadMatTextures(material, aiTextureType_SPECULAR, "texture_specular", directory) };
+				std::vector<texDataManager::TextureData_File> specularMaps{ loadMatTextures(material, aiTextureType_SPECULAR, "texture_specular", directory, scene) };
 
 				textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 			}
 
-			return MeshData_loadCPU(vertices, indices, textures);
+			return MeshData_loadCPU(vertices, indices, textures, model_matrix);
 
 		}
 

@@ -3,12 +3,13 @@
 
 #include "learningOpenGL.h"
 #include "SHADER_H.h"
+#include "Model_Assimp/Assimp_lib.h"
 //#include "2D_UI/Interface_generalUI.h"
 
 namespace KTX_lib
 {
-  void viewInternalFormat(ktxTexture* texKTX);
-
+  void viewInternalFormat_(ktxTexture* texKTX, std::string& nameTexture, const char* file, int line);
+#define viewInternalFormat(texKTX, nameTexture) viewInternalFormat_(texKTX, nameTexture, __FILE__, __LINE__)
 }
 
 namespace texDataManager
@@ -100,7 +101,7 @@ namespace texDataManager
 		std::vector<textureD_info_contentUI> textures{};
 	};
 
-	using texTypeFile = std::variant<standardTexture, ktxTexture*>;
+	using texTypeFile = std::variant<standardTexture, ktxTexture*, unsigned char*>;
 
 	struct preloaded_TextureD_info
 	{
@@ -183,12 +184,19 @@ namespace textureCache
 
 	ktxTexture* loadTexture_PreCompress_KTX(const char* path, bool& exist);//WORK IN SEPARATE THREAD, THREAD LOADING
 	texDataManager::standardTexture loadTexture_CompressInCompile(const char* path, bool& exist, int numChannels); //WORK IN SEPARATE THREAD, THREAD LOADING
+
+	texDataManager::TextureData_File* loadEmbeddedTextures_PreCompress_(const aiTexture* textureAssimp, std::string& directory, std::string& typeTextures, uint8_t& num_tex, const char* file, int line);  ////TO LOAD THE NEW BINARY TEXTURES FROM glFT
+#define loadEmbeddedTextures_PreCompress(textureAssimp, directory, typeTextures, num_tex) loadEmbeddedTextures_PreCompress_(textureAssimp, directory, typeTextures, num_tex, __FILE__, __LINE__)
+
 	texDataManager::TextureData_File manageLoadTexture(std::string path, std::string directory, std::string typeTextures); //WORK IN SEPARATE THREAD, THREAD LOADING
 
 	texDataManager::TextureData_File managePreLoadedTexturesUI(std::string directory, std::string nameUI, std::string nameSection);
 
-	GLuint loadTextureKTX(ktxTexture* texKTX);  ////HERE ANALIZE WHAT TYPE COLOR SPACE I HAVE FOR EACH TEXTURE
-	GLuint loadTextureStandard(texDataManager::standardTexture& texStandard, texDataManager::color_space colorSpace);
+	GLuint loadTextureKTX_(ktxTexture* texKTX, std::string& nameTexture, const char* file, int line);  ////HERE ANALIZE WHAT TYPE COLOR SPACE I HAVE FOR EACH TEXTURE
+#define loadTextureKTX(texKTX, nameTexture) loadTextureKTX_(texKTX, nameTexture, __FILE__, __LINE__)
+
+	GLuint loadTextureStandard_(std::string& nameTexture, texDataManager::standardTexture& texStandard, texDataManager::color_space colorSpace, const char* file, int line);
+#define loadTextureStandard(nameTexture, texStandard, colorSpace) loadTextureStandard_(nameTexture, texStandard, colorSpace, __FILE__, __LINE__)
 
 	GLuint loadTexturesUI(std::vector<texDataManager::standardTexture> allTexturesToLoad, int max_w, int max_h);
 
@@ -199,10 +207,17 @@ namespace textureCache
 	class texture_Data
 	{
 	public:
-		std::vector<texDataManager::TextureData_File> textures_LoadCache{}; 
+		std::vector<texDataManager::TextureData_File> textures_LoadCache{};
+
+		uint32_t size_diffuse_texture{};
+		uint32_t size_specular_texture{};
+
 		float shiness{};
 		bool active_BlendMode{};
 
+		texture_Data();
+
+		void insert_TexturesData(std::vector<texDataManager::TextureData_File>& tex_data);  ////THIS INSERT THE TEXTURE OF ALL THE LOADED ASSIMP
 		void use_MaterialTextures(shading::shader& shader, int textureMax);
 		void insertNewTexture(const char* pathTexture, texDataManager::typeTexture tex);
 

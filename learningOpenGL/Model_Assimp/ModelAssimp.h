@@ -1,9 +1,7 @@
 #ifndef ModelAssimp
 #define ModelAssimp
 
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+#include "Assimp_lib.h"
 #include "SHADER_H.h"
 #include "stb_image.h"
 #include "textureData/textureManager.h"
@@ -189,6 +187,7 @@ namespace Assimp_D
 			std::vector<vertexD> vertices{};
 			std::vector<unsigned int> indices{};
 			std::vector<texDataManager::TextureData_File> textures{};
+		    glm::mat4 model_matrix{};
 		};
 
 		struct ModelData_loadCPU
@@ -225,14 +224,14 @@ namespace Assimp_D
 
 		texDataManager::TextureData_File LoadTextureFromFile(const char* path, std::string directory = "", std::string typeTexture = "", bool gamma = false);
 
-		std::vector<texDataManager::TextureData_File> loadMatTextures(aiMaterial* mat, aiTextureType matType, std::string typeName, std::string directory); ///FUNCTION LEGACY::LOAD TEXTURES
+		std::vector<texDataManager::TextureData_File> loadMatTextures(aiMaterial* mat, aiTextureType matType, std::string typeName, std::string directory, const aiScene* scene);///FUNCTION LEGACY::LOAD TEXTURES
 		std::vector<texDataManager::TextureData_File> loadMatTextures_Cache(aiMaterial* mat, aiTextureType matType, std::string typeName, std::string directory);
 
 		void loadModelsThread(std::queue<insertProcessModel> models);
 
 		ModelData_loadCPU processModel(insertProcessModel dataModel);
 		void processNode(aiNode* node, const aiScene* scene, std::vector<MeshData_loadCPU>& meshes, std::string directory);
-		MeshData_loadCPU processMesh(aiMesh* mesh, const aiScene* scene, std::string directory);
+		MeshData_loadCPU processMesh(aiMesh* mesh, const aiScene* scene, std::string directory, glm::mat4& model_matrix);
 
 
 	}

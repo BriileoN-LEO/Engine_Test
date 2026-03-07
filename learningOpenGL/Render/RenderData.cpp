@@ -336,6 +336,16 @@ namespace RenderData_Set
 
 
 	//	std::filesystem::path pathBackpack{ backpack_Model };
+
+		Assimp_D::loadToCPU::insertProcessModel Sponza_model
+		{
+		 "sponza_model",
+	     sponza_2_model,
+		 shaders,
+		 aiProcessFlags
+
+		};
+
 		Assimp_D::loadToCPU::insertProcessModel back_Pack
 		{
 			"backPack",
@@ -398,6 +408,7 @@ namespace RenderData_Set
 		std::queue<Assimp_D::loadToCPU::insertProcessModel> models;
 		models.push(back_Pack);
 		//models.push(Floor);	//Floor,
+		models.push(Sponza_model);
 		models.push(FlashLight);
 		models.push(CampoVegetacion);
 		models.push(plant01);
@@ -481,6 +492,15 @@ namespace RenderData_Set
 				glm::vec3(0.8f),
 				32.0f
 			};
+
+		    Assimp_D::coordModel coordSponza { glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.2f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f };
+		    model = AssimpModel_D->model_by_str("sponza_model");
+		    if (model != nullptr)
+		    {
+			  model->setModelSettings(coordSponza, ss_Model_v1);
+		      model = nullptr;
+		    }
+
 			Assimp_D::coordModel coordBackPack{ glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f), glm::vec3(1.0f, 0.0f, 0.0f), 210.0f };
 		    model = AssimpModel_D->model_by_str("backPack");
 		    if (model != nullptr)

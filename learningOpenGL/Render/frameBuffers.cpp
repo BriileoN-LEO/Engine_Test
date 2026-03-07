@@ -37,7 +37,7 @@ namespace frameBuff
 
 		glGenTextures(1, &dataBuffer.TCB);
 		glBindTexture(GL_TEXTURE_2D, dataBuffer.TCB);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, screenSettings::screen_w, screenSettings::screen_h, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, screenSettings::screen_w, screenSettings::screen_h, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glBindTexture(GL_TEXTURE_2D, 0);

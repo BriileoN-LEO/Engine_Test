@@ -531,7 +531,9 @@ vec4 renderCoordTextures = vec4(coordTexOut.x, coordTexOut.y, 0.0, 1.0);
 
 
 
- FragColor = renderFrontFacing(renderStandard);
+ ///FragColor = renderFrontFacing(renderStandard);
+  FragColor = renderStandard;
+
 
  //FragColor = vec4(1.0, 0.0, 0.0, 1.0);
 
@@ -558,6 +560,51 @@ vec4 renderCoordTextures = vec4(coordTexOut.x, coordTexOut.y, 0.0, 1.0);
 //FragColor = skyBox_reflection;
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

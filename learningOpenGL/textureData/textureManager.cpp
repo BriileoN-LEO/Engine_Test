@@ -3,14 +3,35 @@
 
 namespace KTX_lib
 {
-	void viewInternalFormat(ktxTexture* texKTX)
+	void viewInternalFormat_(ktxTexture* texKTX, std::string& nameTexture, const char* file, int line)
 	{
-	ktxTexture2* k2Texture = reinterpret_cast<ktxTexture2*>(texKTX);
+		ktxTexture2* k2Texture = reinterpret_cast<ktxTexture2*>(texKTX);
+		ktx_uint32_t transferFunc = ktxTexture2_GetOETF(k2Texture);
 
-	//khr_df_transfer_e transferFunc = ktxTexture2_GetTransferFunction_e(texKTX);
+		if (transferFunc == KHR_DF_TRANSFER_SRGB)
+		{
+			std::string log_ktx {"USING SRGB TEXTURE::" + nameTexture + " | "};
+			log_ktx += file;
+			log_ktx += " ---> line: ";
+			log_ktx += std::to_string(line);
 
-	//	ktxTexture = nullptr;
+			SDL_Log(log_ktx.c_str());
+
+		}
+
+		else
+		{
+			std::string log_ktx {"USING RGB TEXTURE::" + nameTexture + " | "};
+			log_ktx += file;
+			log_ktx += " ---> line: ";
+			log_ktx += std::to_string(line);
+
+			SDL_Log(log_ktx.c_str());
+		}
+
 	}
+	//	ktxTexture = nullptr;
+
 
 }
 
@@ -288,6 +309,62 @@ namespace textureCache
 
 		return texDataManager::standardTexture(DataT, width, height, nrChannels);
 	}
+
+
+
+	texDataManager::TextureData_File* loadEmbeddedTextures_PreCompress_(const aiTexture* textureAssimp, std::string& directory, std::string& typeTextures, uint8_t& numberTex, const char* file, int line)
+    {
+	    int width{};
+		int height{};
+		int channels{};
+
+		unsigned char* embedded_texPixels {
+		stbi_load_from_memory(
+		 reinterpret_cast<const unsigned char*>(textureAssimp->pcData),
+		 textureAssimp->mWidth,
+		 &width, &height, &channels, 4
+		)
+		};
+
+		if (embedded_texPixels != nullptr) {
+			std::string nameTexture {directory};
+			std::reverse(nameTexture.begin(), nameTexture.end());
+			nameTexture = nameTexture.substr(0, nameTexture.find_last_of('/'));
+			std::reverse(nameTexture.begin(), nameTexture.end());
+
+			nameTexture = typeTextures + "_" + nameTexture + std::to_string(numberTex);  /// FOR EXAMPLE: texture_diffuse_sponza_1  ---> texture_diffuse == typeTexture ---> sponza == sponzaDirectory
+
+			std::string completePath {directory + "/" + nameTexture}; ///THIS PATH DOESNT EXIST, BUT ITS TO COMPROBATE IF THERES MORE EQUAL TEXTURES.
+
+			texDataManager::preloaded_TextureD_info preLoadTex
+			{
+				nameTexture,
+				texDataManager::typeTex_String[typeTextures],
+                completePath,
+				embedded_texPixels,
+				texDataManager::formatImage::standard
+			};
+
+			texDataManager::TextureData_File texturesData
+ 			{
+				preLoadTex.nameTexture,
+			    preLoadTex.typeTex,
+				preLoadTex.completePath,
+				preLoadTex.format
+			};
+
+			textureCache::preLoadedTextures.emplace_back(std::move(preLoadTex));
+
+			return new texDataManager::TextureData_File(texturesData);
+		}
+
+        std::string log_notFindTex {"NOT FIND EMBEDDED TEXTURE:: DIRECTORY -> " + directory + " :: TYPE TEXTURE -> " + typeTextures + " | " + file + "-->" + std::to_string(line) };
+
+		SDL_Log(log_notFindTex.c_str());
+
+		return nullptr;
+	}
+
 	texDataManager::TextureData_File manageLoadTexture(std::string path, std::string directory, std::string typeTextures) ///Insertar texturas en el cache de textura, pasar la informa
 	{
 		texDataManager::TextureData_File texturesData{};
@@ -297,9 +374,8 @@ namespace textureCache
 		//std::reverse(path_to_DDS.begin(), path_to_DDS.end());
 		path_to_KTX2 = path_to_KTX2.substr(0, path_to_KTX2.find_last_of('.'));
 		path_to_KTX2 += ".ktx2";
-		path_to_KTX2 = directory + path_to_KTX2;
+		path_to_KTX2 = directory + "/"+ path_to_KTX2;
 	//	path_to_KTX2 = directory + '/' + path_to_KTX2;
-
 
 		///SI LA TEXTURA ES PNG, TIENE BLENDMODE
 		std::string formatImage{ path };
@@ -413,7 +489,7 @@ namespace textureCache
 	{
 		texDataManager::TextureData_File textureData{};
 
-		bool existenceTexture{};
+		//bool existenceTexture{};
 
 
 		auto find_existenceTex{ std::ranges::find_if(preLoadedTexturesUI,
@@ -442,7 +518,7 @@ namespace textureCache
 				textureData.format = find_insideD->format;
 				textureData.index_layer_tex = find_layer; //find the index layer of the tex if its the same texture but in other vertex data
 
-				existenceTexture = true;
+				//existenceTexture = true;
 			}
 
 			find_layer++;
@@ -453,7 +529,7 @@ namespace textureCache
 		}
 
 
-		if (existenceTexture == false)
+		if (find_existenceTex == preLoadedTexturesUI.end())
 		{
 			std::string pathTUI{ directory };
 			std::reverse(pathTUI.begin(), pathTUI.end());
@@ -554,13 +630,15 @@ namespace textureCache
 	}
 
 	///LOADED TO GPU
-	GLuint loadTextureKTX(ktxTexture* texKTX)
+	GLuint loadTextureKTX_(ktxTexture* texKTX, std::string& nameTexture, const char* file, int line)
 	{
 		KTX_error_code resultLoad;
 		GLuint idTexture{};
 		GLenum target{}, glerror{};
 
 		resultLoad = ktxTexture_GLUpload(texKTX, &idTexture, &target, &glerror);
+
+		KTX_lib::viewInternalFormat(texKTX, nameTexture);
 
 		glBindTexture(target, idTexture);
 
@@ -572,11 +650,16 @@ namespace textureCache
 		ktxTexture_Destroy(texKTX);
 		glBindTexture(target, 0);
 
-		std::cout << "LOADING::KTX\n";
+	//	std::cout << "LOADING::KTX\n";
+		std::string log_loading {"LOADING::KTX TEXTURE::" + nameTexture + " | "};
+		log_loading += file;
+		log_loading += " ---> ";
+		log_loading += std::to_string(line);
+		SDL_Log(log_loading.c_str());
 
 		return idTexture;
 	}
-	GLuint loadTextureStandard(texDataManager::standardTexture& texStandard, texDataManager::color_space colorSpace)
+	GLuint loadTextureStandard_( std::string& nameTexture, texDataManager::standardTexture& texStandard, texDataManager::color_space colorSpace, const char* file, int line)
 	{
 		GLuint idTexture{};
 		GLenum format{};
@@ -642,7 +725,12 @@ namespace textureCache
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		std::cout << "LOADING::STANDARD\n";
+	    std::string log_loading {"LOADING::STANDARD TEXTURE::" + nameTexture + " | "};
+		log_loading += file;
+		log_loading += " ---> ";
+		log_loading += std::to_string(line);
+	    SDL_Log(log_loading.c_str());
+//		std::cout << "LOADING::STANDARD\n";
 
 		stbi_image_free(texStandard.dataTexture);
 	}
@@ -655,7 +743,6 @@ namespace textureCache
 
 		return idTexture;
 	}
-
 	GLuint loadTexturesUI(std::vector<texDataManager::standardTexture> allTexturesToLoad, int max_w, int max_h)
 	{
 		GLuint texID_array{};
@@ -718,19 +805,19 @@ namespace textureCache
 
 						if (std::holds_alternative<ktxTexture*>(preLoaded.textureData_F))
 						{
-							textureID = loadTextureKTX(std::get<ktxTexture*>(preLoaded.textureData_F));
+							textureID = loadTextureKTX(std::get<ktxTexture*>(preLoaded.textureData_F), preLoaded.nameTexture);
 						}
 
 						else if (std::holds_alternative<texDataManager::standardTexture>(preLoaded.textureData_F))
 						{
 							if (preLoaded.typeTex == texDataManager::typeTexture::diffuse)
 							{
-								textureID = loadTextureStandard(std::get<texDataManager::standardTexture>(preLoaded.textureData_F), texDataManager::color_space::sRGB);
+								textureID = loadTextureStandard(preLoaded.nameTexture, std::get<texDataManager::standardTexture>(preLoaded.textureData_F), texDataManager::color_space::sRGB);
 							}
 
-							if (preLoaded.typeTex != texDataManager::typeTexture::diffuse)
+							else if (preLoaded.typeTex != texDataManager::typeTexture::diffuse)
 							{
-								textureID = loadTextureStandard(std::get<texDataManager::standardTexture>(preLoaded.textureData_F), texDataManager::color_space::RGB);
+								textureID = loadTextureStandard(preLoaded.nameTexture, std::get<texDataManager::standardTexture>(preLoaded.textureData_F), texDataManager::color_space::RGB);
 							}
 						}
 
@@ -876,15 +963,43 @@ namespace textureCache
 
 	}
 
+
+	texture_Data::texture_Data(){};
+
+	void texture_Data::insert_TexturesData(std::vector<texDataManager::TextureData_File>& tex_data)
+	{
+		for (auto tex_DC : tex_data)
+		{
+			textures_LoadCache.emplace_back(tex_DC);
+
+			if (tex_DC.typeTex == texDataManager::typeTexture::diffuse)
+			{
+				size_diffuse_texture += 1;
+			}
+
+			else if (tex_DC.typeTex == texDataManager::typeTexture::specular)
+			{
+			    size_specular_texture += 1;
+			}
+
+			if (tex_DC.blendTexture == true && tex_DC.typeTex == texDataManager::typeTexture::diffuse)
+			{
+				active_BlendMode = true;
+
+			}
+		}
+	}
 	void texture_Data::use_MaterialTextures(shading::shader& shader, int textureMax)
 	{
 
 		shader.setBool("blendTexture", active_BlendMode);
 
+		////HERE ADD A SERCH OF HOW MUCH TEXTURE I HAVE
+
 		std::map<texDataManager::typeTexture, int> texturesNr
 		{
-			{texDataManager::typeTexture::diffuse, 1},
-			{texDataManager::typeTexture::specular, 1 }
+			{texDataManager::typeTexture::diffuse, size_diffuse_texture },
+			{texDataManager::typeTexture::specular, size_specular_texture }
 		};
 
 		std::string numberTex{};
@@ -964,6 +1079,14 @@ namespace textureCache
 
 		nameTex = nameTex.substr(0, nameTex.find_last_of("."));
 
+
+		std::string nameTexture { pathTexture };
+		nameTexture = nameTex.substr(0, nameTex.find_last_of("."));
+		std::reverse(nameTex.begin(), nameTex.end());
+		nameTexture = nameTex.substr(0, nameTex.find_last_of("/"));
+		std::reverse(nameTex.begin(), nameTex.end());
+
+
 		bool existTexture{};
 		texDataManager::textureD_info textureToLoad{};
 
@@ -973,7 +1096,7 @@ namespace textureCache
 
 			if (existTexture == true)
 			{
-				GLuint texID{ loadTextureKTX(texKTX) };
+				GLuint texID{ loadTextureKTX(texKTX, nameTexture) };
 
 				textureToLoad.textureID = texID;
 				textureToLoad.nameTexture = nameTex;
@@ -991,14 +1114,17 @@ namespace textureCache
 			{
 				GLuint texID{};
 
+
+				std::string log_name {"NOT_NAME"};
+
 				if (tex == texDataManager::typeTexture::diffuse)
 				{
-					texID = loadTextureStandard(texStandard, texDataManager::color_space::sRGB);
+					texID = loadTextureStandard(log_name, texStandard, texDataManager::color_space::sRGB);
 				}
 
 				else if (tex != texDataManager::typeTexture::diffuse)
 				{
-					texID = loadTextureStandard(texStandard, texDataManager::color_space::RGB);
+					texID = loadTextureStandard(log_name, texStandard, texDataManager::color_space::RGB);
 				}
 
 				textureToLoad.textureID = texID;

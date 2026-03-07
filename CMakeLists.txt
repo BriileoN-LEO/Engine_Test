@@ -30,7 +30,7 @@ set(DATA_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/shaders/shader_v_v1.vs"
 "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_SKYBOX/vShader_skybox_v1.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_SKYBOX/fShader_skybox_v1.frag"
 "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_UI/vShader_briiUI_1.vert" "${CMAKE_CURRENT_SOURCE_DIR}/shaders/SHADER_UI/fShader_briiUI_1.frag"
 "${CMAKE_CURRENT_SOURCE_DIR}/images/container.jpg"
-"${CMAKE_CURRENT_SOURCE_DIR}/imad<ges/awesomeface.png"
+"${CMAKE_CURRENT_SOURCE_DIR}/images/awesomeface.png"
 "${CMAKE_CURRENT_SOURCE_DIR}/images/CubeGrass_Down.png"
 "${CMAKE_CURRENT_SOURCE_DIR}/images/CubeGrass_laterals.png"
 "${CMAKE_CURRENT_SOURCE_DIR}/images/CubeGrass_Top.png"
@@ -146,6 +146,8 @@ set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
 set(ASSIMP_INJECT_DEBUG_POSTFIX OFF CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_SAMPLES OFF CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_GLTF_IMPORTER ON CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_GLTF2_IMPORTER ON CACHE BOOL "" FORCE)
 
 FetchContent_Declare(
 imgui
@@ -185,8 +187,11 @@ add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/lear
 "learningOpenGL/2D_UI/system_UI/system_UI_B.cpp" "learningOpenGL/2D_UI/system_UI/system_UI_B.h"
 "learningOpenGL/resource_Manager/resourceManager.h" "learningOpenGL/resource_Manager/resourceManager.cpp"
 "learningOpenGL/optimize_Algorithmics/optimizeAlgorithmics.h" "learningOpenGL/optimize_Algorithmics/optimizeAlgorithmics.cpp"
+"learningOpenGL/Model_Assimp/Assimp_lib.h"  "learningOpenGL/Model_Assimp/Assimp_lib.cpp"
 "learningOpenGL/libFile.h"
 "learningOpenGL/STB_IMAGE_IMPLEMENT.cpp"
+        learningOpenGL/Model_Assimp/Assimp_lib.h
+        learningOpenGL/Model_Assimp/Assimp_lib.cpp
         #"libs/SDL/lib/arm64"
 
 )

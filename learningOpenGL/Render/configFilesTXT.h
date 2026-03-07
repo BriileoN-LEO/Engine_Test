@@ -85,4 +85,6 @@ const std::string tokio_Place = "assets_engine/tokio_place/source/testexport.fbx
 const std::string campo_01 = "assets_engine/Campo/Campo_Floor.obj";
 const std::string vegetacion_01 = "assets_engine/vegetacion_01/vegetacion_01.obj";
 
+const std::string sponza_2_model = "assets_engine/Sponza_2/Sponza_2.gltf";
+
 
