@@ -166,6 +166,7 @@ imgui
 #target_ling_libraries(imgui PUBLIC SDL3::SDL3 OpenGL::GL )
 
 add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/learningOpenGL.h"
+"learningOpenGL/libFile.h"
 "learningOpenGL/config_window.h" "learningOpenGL/config_window.cpp" "learningOpenGL/data_save.h" "learningOpenGL/data_save.cpp"
 "learningOpenGL/control.cpp" "learningOpenGL/control.h" 
 "learningOpenGL/SHADER_H.cpp" "learningOpenGL/SHADER_H.h" 
@@ -188,10 +189,10 @@ add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/lear
 "learningOpenGL/resource_Manager/resourceManager.h" "learningOpenGL/resource_Manager/resourceManager.cpp"
 "learningOpenGL/optimize_Algorithmics/optimizeAlgorithmics.h" "learningOpenGL/optimize_Algorithmics/optimizeAlgorithmics.cpp"
 "learningOpenGL/Model_Assimp/Assimp_lib.h"  "learningOpenGL/Model_Assimp/Assimp_lib.cpp"
-"learningOpenGL/libFile.h"
+"learningOpenGL/shadows_manager/shadows_D.h"  "learningOpenGL/shadows_manager/shadows_D.cpp"
 "learningOpenGL/STB_IMAGE_IMPLEMENT.cpp"
-        learningOpenGL/Model_Assimp/Assimp_lib.h
-        learningOpenGL/Model_Assimp/Assimp_lib.cpp
+"learningOpenGL/Model_Assimp/Assimp_lib.h" "learningOpenGL/Model_Assimp/Assimp_lib.cpp"
+"learningOpenGL/2D_geo/basic_geometry_D.cpp" "learningOpenGL/2D_geo/basic_geometry_D.h"
         #"libs/SDL/lib/arm64"
 
 )

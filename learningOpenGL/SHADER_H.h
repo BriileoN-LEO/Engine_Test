@@ -537,7 +537,7 @@ namespace ObjCreation
 		void renderModelMultiple(camera::camera1 cam, glm::mat4 model, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights, std::map<std::string, light::SpotLight>& spotLights);
 		void drawModelMultiple(camera::camera1 cam, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights, std::map<std::string, light::SpotLight>& spotLights, double& alpha);
 		void renderModel(camera::camera1 cam, light::light1 light);
-		void renderMeshLight(camera::camera1 cam, light::light1 light);
+		void renderMeshLight(camera::camera1 cam, glm::vec3& color);
 
 		void renderMultipleModels(int numScene, camera::camera1 cam, std::vector<light::light1>& pointLights, std::vector<light::DirectionalLight>& directionalLights, std::map<std::string, light::SpotLight>& spotLights, double& alphaInterpolation);
 		void updateMultipleModels();

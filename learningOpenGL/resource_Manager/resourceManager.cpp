@@ -1,6 +1,10 @@
+#include "Model_Assimp/ModelAssimp.h"
 #include "resource_Manager/resourceManager.h"
 #include "optimize_Algorithmics/optimizeAlgorithmics.h"
 #include "Render/RenderData.h"
+#include "2D_geo/basic_geometry_D.h"
+#include "LIGHTS_test.h"
+
 
 namespace resourceManager
 {
@@ -96,6 +100,60 @@ namespace resourceManager
   }
 
 
+  manager_PointLights::manager_PointLights(){};
+
+  void manager_PointLights::insert_PL(std::string nameStr, pointLight pL_D)
+  {
+    uint32_t hashID{FNV::str_to_hash(nameStr)};
+
+    pL_find_pos.emplace_back(hashID);
+    pL_find_str.emplace(nameStr, hashID);
+    pointLight_D.emplace(hashID, std::move(pL_D));
+
+    ++sizeContainer_PL;
+  };
+  pLight_raw manager_PointLights::pL_by_ID(uint32_t ID)
+  {
+    auto find_ID {pointLight_D.find(ID)};
+
+    if (find_ID != pointLight_D.end())
+    {
+      return find_ID->second.get();
+    }
+
+    return nullptr;
+  };
+  pLight_raw manager_PointLights::pL_by_str(std::string str_ID)
+  {
+    auto find_Str {pL_find_str.find(str_ID)};
+
+    if (find_Str != pL_find_str.end())
+    {
+      return pointLight_D[find_Str->second].get();
+    }
+
+  };
+  pLight_raw manager_PointLights::pL_by_num(uint32_t pos)
+  {
+    if (pos <= sizeContainer_PL - 1)
+    {
+     return pointLight_D[pL_find_pos[pos]].get();
+    }
+
+    return nullptr;
+  };
+
+  const uint32_t& manager_PointLights::out_size()
+  {
+    return sizeContainer_PL;
+  };
+
+  void manager_PointLights::clean_data()
+  {
+    pL_find_pos.clear();
+    pL_find_str.clear();
+    pointLight_D.clear();
+  }
 
 }
 
@@ -410,6 +468,80 @@ namespace utilities {
     models_pos.clear();
     pos_entities.clear();
     current_size_M = 0;
+  }
+
+}
+
+namespace utilities_pointLight
+{
+
+
+  entity_pL::entity_pL(){};
+  entity_pL::entity_pL(pLight_raw pL_entity) : pL_entity(std::move(pL_entity)){};
+
+  scene_pointLights::scene_pointLights()
+  {
+    point_geo2D p2D {std::make_unique<geo_2D::point_geo>()};
+    point_geo = std::move(p2D);
+  }
+
+  void scene_pointLights::setPoint_geo(point_geo2D point_geo)
+  {
+   this->point_geo = nullptr;
+   this->point_geo = std::move(point_geo);
+  }
+
+  void scene_pointLights::insert(pLight_raw pL_entity)
+  {
+
+    if (pL_entity != nullptr)
+    {
+      uint32_t& ID {pL_entity->ID};
+
+      pL_pos.emplace(ID, current_size_M);
+      pos_pL_entity.emplace_back(ID);
+      pL_entities.emplace_back(std::move(pL_entity));
+      ++current_size_M;
+    }
+  }
+
+  entity_pL* scene_pointLights::entity_by_ID(uint32_t ID)
+  {
+    auto find_pL {pL_pos.find(ID)};
+
+    if (find_pL != pL_pos.end())
+    {
+      return &pL_entities[find_pL->second];
+    }
+
+    return nullptr;
+  }
+
+  entity_pL* scene_pointLights::entity_by_Pos(uint32_t pos)
+  {
+    if (pos < current_size_M)
+    {
+      uint32_t& ID{ pos_pL_entity[pos] };
+      return &pL_entities[ID];
+    }
+
+    return nullptr;
+  }
+
+  const uint32_t& scene_pointLights::num_pointLights()
+  {
+   return current_size_M;
+  }
+
+  void scene_pointLights::renderAll()
+  {
+    for (auto& pL : pL_entities)
+    {
+      point_geo->setPosicion(pL.pL_entity->Posicion);
+      point_geo->setColor(pL.pL_entity->Color);
+      point_geo->draw();
+    }
+
   }
 
 }

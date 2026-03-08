@@ -16,6 +16,11 @@ namespace render
 	void render_Skybox();
 	void render_brii_UI();
 
+	namespace lights
+	{
+	  void render_PointLight_D();
+	}
+
 	namespace renderOP
 	{
 		void renderNormalScenario();

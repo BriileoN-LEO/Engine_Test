@@ -13,6 +13,7 @@
 #include "2D_UI/Interface_generalUI.h"
 #include "resource_Manager/resourceManager.h"
 
+
 namespace RenderData_Set
 {
 //	extern std::vector<Assimp_D::Model> models_D;
@@ -23,10 +24,13 @@ namespace RenderData_Set
     //extern std::map<std::string, Assimp_D::Model> AssimpModel_D; ///CHANGE THIS TO EDIT THEM LIKE A STD::MAP
     extern std::optional<resourceManager::manager_Model> AssimpModel_D;
 	extern std::optional<utilities::scene> ModelsScene_D;
+
+	extern std::optional<resourceManager::manager_PointLights> pointLights_D;
+	extern std::optional<utilities_pointLight::scene_pointLights> pointLights_Scene_D;
     ///extern std::unordered_map<std::string, std::unique_ptr<Assimp_D::Model>> AssimpModel_D;
 
 	extern std::vector<ObjCreation::ModelCreation> MeshLights_MCD;
-	extern std::vector<light::light1> pointLights_D;
+	//extern std::vector<light::light1> pointLights_D;
 	extern std::vector<light::DirectionalLight> directionalLights_D;
 	extern std::map<std::string, light::SpotLight> spotLights_D;
 	extern std::vector<screenUI::pointerScreen> pointUI_D;
@@ -153,7 +157,10 @@ namespace RenderData_Set
 	const void loadAll_DataCPU();
 
 	 std::vector<ObjCreation::ModelCreation> setMeshLight_ModelCreation_Data();
-	 std::vector<light::light1> setPointLights();
+
+	 void setPointLights();
+	 void setPointLights_Scene();
+
 	 std::vector<light::DirectionalLight> setDirectionalLights();
 	 std::map<std::string, light::SpotLight> setSpotLights();
 	 std::vector<screenUI::pointerScreen> setPointUI_2D();

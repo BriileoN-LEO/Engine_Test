@@ -1,3 +1,6 @@
+#ifndef LIB_FILE
+#define LIB_FILE
+
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_mouse.h>
 #include <glad/glad.h>
@@ -24,3 +27,5 @@
 #include <atomic>
 #include <queue>
 #include <mutex>
+
+#endif //LIB_FILE

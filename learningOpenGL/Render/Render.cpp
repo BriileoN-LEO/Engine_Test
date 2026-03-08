@@ -3,6 +3,7 @@
 #include "threadSystem/thread_System.h"
 #include "Edit_Modes/Edit_M.h"
 #include "optimize_Algorithmics/optimizeAlgorithmics.h"
+
 //#include "playTest.h"
 //#include "Collision/ScreenHit.h"
 
@@ -15,7 +16,7 @@ namespace render
 		for (auto& renderMCD : RenderData_Set::ModelCreation_D)
 		{
 			//renderMCD.second.renderMultipleModels(1, cameras::aerialCamera, RenderData_Set::pointLights_D, RenderData_Set::directionalLights_D, RenderData_Set::spotLights_D, threadSystem::ControlPhysics_Events.timeInterpolation.alpha);
-			renderMCD.second.drawModelMultiple(cameras::cameras_D[cameras::name_CurrentCamera], RenderData_Set::pointLights_D, RenderData_Set::directionalLights_D, RenderData_Set::spotLights_D, threadSystem::ControlPhysics_Events.timeInterpolation.alpha);
+		//	renderMCD.second.drawModelMultiple(cameras::cameras_D[cameras::name_CurrentCamera], RenderData_Set::pointLights_D, RenderData_Set::directionalLights_D, RenderData_Set::spotLights_D, threadSystem::ControlPhysics_Events.timeInterpolation.alpha);
 		}
 	}
 
@@ -149,10 +150,13 @@ namespace render
 	void render_MeshLights_D()
 	{
 		int posLight{ 0 };
+		utilities_pointLight::entity_pL* pL{ nullptr };
+
 		for (auto& renderMCD : RenderData_Set::MeshLights_MCD)
 		{
-			renderMCD.renderMeshLight(cameras::cameras_D[cameras::name_CurrentCamera], RenderData_Set::pointLights_D[posLight]);
-			posLight++;
+			pL = RenderData_Set::pointLights_Scene_D->entity_by_Pos(posLight);
+			renderMCD.renderMeshLight(cameras::cameras_D[cameras::name_CurrentCamera], pL->pL_entity->Color);
+			++posLight;
 		}
 
 	}
@@ -193,6 +197,13 @@ namespace render
 
 	}
 
+	namespace lights
+	{
+		void render_PointLight_D()
+		{
+		  RenderData_Set::pointLights_Scene_D->renderAll();
+		}
+	}
 
 	namespace renderOP
 	{
@@ -212,6 +223,7 @@ namespace render
 			//render_ModelAssimp_D(excluded_NormalScenario);///LISTO_NEW_SHADER
 			//render_MultiAssimp_D();///LISTO_NEW_SHADER
 			render_MeshLights_D();
+			lights::render_PointLight_D();
 		//	render_AABB();
 			render_ModelAssimp_D(excluded_NormalScenario);
 		//	render_classicModelAssimp_D();
@@ -565,6 +577,8 @@ namespace renderSelection
 			
 			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 			glStencilMask(0x00);
+
+			render::lights::render_PointLight_D();
 			render::render_ModelAssimp_D(excluded_Objs);
 		//	render::render_ModelAssimp_D();
 			render::render_MultiAssimp_D();
@@ -587,6 +601,7 @@ namespace renderSelection
 		else
 		{
 			//render::render_ModelAssimp_D();
+			render::lights::render_PointLight_D();
 			render::render_ModelAssimp_D(excluded_Objs);
 			render::render_MultiAssimp_D();
 		//	render::render_ModelCreation_D();
@@ -675,6 +690,7 @@ namespace renderSelection
 			render::render_MultiAssimp_D();
 		//	render::render_ModelCreation_D();
 			render::render_MeshLights_D();
+			render::lights::render_PointLight_D();
 		}
 
 		else
@@ -683,6 +699,7 @@ namespace renderSelection
 			render::render_MultiAssimp_D();
 			render::render_ModelAssimp_D();
 			render::render_MeshLights_D();
+			render::lights::render_PointLight_D();
 		}
 	}
 	void renderSelection_Model(std::vector<Assimp_D::excluded_Obj> excluded_Objs)
@@ -737,6 +754,7 @@ namespace renderSelection
 			render::render_MultiAssimp_D();
 		//	render::render_ModelCreation_D();
 			render::render_MeshLights_D();
+			render::lights::render_PointLight_D();
 
 		}
 
@@ -746,6 +764,7 @@ namespace renderSelection
 			render::render_MultiAssimp_D();
 			render::render_ModelAssimp_D();
 			render::render_MeshLights_D();
+			render::lights::render_PointLight_D();
 
 		}
 
@@ -818,6 +837,7 @@ namespace renderSelection
 			render::render_MultiAssimp_D();
 		//	render::render_ModelCreation_D();
 			render::render_MeshLights_D();
+		    render::lights::render_PointLight_D();
 
 	}
 	void render_EditMode_SelectionMesh(std::vector<Assimp_D::excluded_Obj> excluded_Objs) {

@@ -136,7 +136,24 @@ namespace testPlay
 	 testPlay::tranformationT testTranforms{};
 	 testPlay::tranformationT testBackPack{};
 	 testPlay::tranformationT testFloor{};
-	
+
+
+	void transform_light_rotate(tranformationT* t, light::light1* light)
+	{
+		t->ang += t->velocityAng;
+
+		light->lightCoord.translateModel(t->posicion);
+		light->lightCoord.scaleModel(t->scale);
+		light->lightCoord.setPivotRotModel(t->pivotRotPos);
+		light->lightCoord.setAngRotModel(t->ang);
+		light->lightCoord.setInverseTransformsAll();
+		light->Posicion = light->lightCoord.translateM;
+
+		t = nullptr;
+		light = nullptr;
+	}
+
+
 	void setTransformation_Objects()
 	{
 		testTransLight = getTranformationT_randomPivot(glm::vec3(6.0f, 6.0f, 6.0f), glm::vec3(1.0f), 0.0f, 0.05f);
@@ -191,11 +208,17 @@ namespace testPlay
 
 		}
 		*/
-		
+
+		utilities_pointLight::entity_pL* e_pL { nullptr };
 		for (int i = 0; i < static_cast<int>(lightTransSet.size()); i++)
 		{
-			lightTransSet[i].transformMeshLight(&RenderData_Set::MeshLights_MCD[i], &RenderData_Set::pointLights_D[i]);
+			//lightTransSet[i].transformMeshLight(&RenderData_Set::MeshLights_MCD[i], &RenderData_Set::pointLights_D[i]);
+			e_pL = RenderData_Set::pointLights_Scene_D->entity_by_Pos(i);
 
+			if (e_pL != nullptr)
+			{
+				transform_light_rotate(&lightTransSet[i], e_pL->pL_entity);
+			}
 		}
 		
 

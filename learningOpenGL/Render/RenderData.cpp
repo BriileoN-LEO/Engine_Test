@@ -3,6 +3,7 @@
 #include "playTest.h"
 #include "optimize_Algorithmics/optimizeAlgorithmics.h"
 #include "Edit_Modes/Edit_M.h"
+#include "2D_geo/basic_geometry_D.h"
 //#include "2D_UI/Interface_UI.h"
 //#include "2D_UI/2D_ScreenPlayer.h"
 
@@ -22,9 +23,12 @@ namespace RenderData_Set
 	std::optional<resourceManager::manager_Model> AssimpModel_D;
 	std::optional<utilities::scene> ModelsScene_D;
 
+	std::optional<resourceManager::manager_PointLights> pointLights_D;
+	std::optional<utilities_pointLight::scene_pointLights> pointLights_Scene_D;
+
 	std::vector<ObjCreation::ModelCreation> MeshLights_MCD{};
 
-	std::vector<light::light1> pointLights_D{};
+	//std::vector<light::light1> pointLights_D{};
 	std::vector<light::DirectionalLight> directionalLights_D{};
 	std::map<std::string, light::SpotLight> spotLights_D{};
 
@@ -408,7 +412,7 @@ namespace RenderData_Set
 		std::queue<Assimp_D::loadToCPU::insertProcessModel> models;
 		models.push(back_Pack);
 		//models.push(Floor);	//Floor,
-		models.push(Sponza_model);
+		//models.push(Sponza_model);
 		models.push(FlashLight);
 		models.push(CampoVegetacion);
 		models.push(plant01);
@@ -1028,7 +1032,7 @@ namespace RenderData_Set
 
 		return MeshLight;
 	}
-	 std::vector<light::light1> setPointLights()
+	 void setPointLights() ///SEE
 	{
 
 		glm::vec3 purpleLight{ 0.7f, 0.5f, 1.0f };
@@ -1046,7 +1050,7 @@ namespace RenderData_Set
 		light::light1 pointLight_01(glm::vec3(3.0f, 3.0f, 3.0f), witheLight);
 		pointLight_01.setAttenuation(1.0f, 0.8f, 0.0035f);
 		pointLight_01.setMatProperties(witheLight, witheLight, witheLight);
-	
+
 		light::light1 pointLight_02(glm::vec3(9.0f, 4.0f, 9.0f), purpleLight);
 		pointLight_02.setAttenuation(1.0f, 0.8f, 0.0035f);
 		pointLight_02.setMatProperties(purpleLight, purpleLight, purpleLight);
@@ -1079,22 +1083,62 @@ namespace RenderData_Set
 		pointLight_09.setAttenuation(1.0f, 0.8f, 0.0035f);
 		pointLight_09.setMatProperties(randomColor7, randomColor7, randomColor7);
 
-		std::vector<light::light1> pointLights
-		{
-			pointLight_01,
-			pointLight_02,
-			pointLight_03,
-			pointLight_04,
-			pointLight_05,
-			pointLight_06,
-			pointLight_07,
-			pointLight_08,
-			pointLight_09
-		};
+		std::unique_ptr<light::light1> pt_light {std::make_unique<light::light1>(pointLight_01)};
+		pointLights_D->insert_PL("pointLight_01", std::move(pt_light));
 
+		pt_light = nullptr;
+		pt_light = std::make_unique<light::light1>(pointLight_02);
+		pointLights_D->insert_PL("pointLight_02", std::move(pt_light));
 
-		return pointLights;
+		pt_light = nullptr;
+		pt_light = std::make_unique<light::light1>(pointLight_03);
+		pointLights_D->insert_PL("pointLight_03", std::move(pt_light));
+
+		pt_light = nullptr;
+		pt_light = std::make_unique<light::light1>(pointLight_04);
+		pointLights_D->insert_PL("pointLight_04", std::move(pt_light));
+
+		pt_light = nullptr;
+		pt_light = std::make_unique<light::light1>(pointLight_05);
+		pointLights_D->insert_PL("pointLight_05", std::move(pt_light));
+
+		pt_light = nullptr;
+		pt_light = std::make_unique<light::light1>(pointLight_06);
+		pointLights_D->insert_PL("pointLight_06", std::move(pt_light));
+
+		pt_light = nullptr;
+		pt_light = std::make_unique<light::light1>(pointLight_07);
+		pointLights_D->insert_PL("pointLight_07", std::move(pt_light));
+
+		pt_light = nullptr;
+		pt_light = std::make_unique<light::light1>(pointLight_08);
+		pointLights_D->insert_PL("pointLight_08", std::move(pt_light));
+
+		pt_light = nullptr;
+		pt_light = std::make_unique<light::light1>(pointLight_09);
+		pointLights_D->insert_PL("pointLight_09", std::move(pt_light));
+
 	}
+	 void setPointLights_Scene()
+	{
+	  const uint32_t& size {pointLights_D->out_size() };
+      for (uint32_t i = 0; i < size; i++)
+      {
+      	pointLights_Scene_D->insert(pointLights_D->pL_by_num(i));
+      }
+
+	  std::unique_ptr<geo_2D::point_geo> pointGEO{
+	  	std::make_unique<geo_2D::point_geo>(
+	  		glm::vec3(0.0f),
+            glm::vec3(1.0f),
+            2.0f,
+            "shaderPoint"
+	  	)};
+
+		pointLights_Scene_D->setPoint_geo(std::move(pointGEO));
+
+	}
+
 	 std::vector<light::DirectionalLight> setDirectionalLights()
 	{
 		glm::vec3 white_Color{ 1.0f, 1.0f, 1.0f };
@@ -1270,7 +1314,7 @@ namespace RenderData_Set
 	void insertSettings_FileShader()
 	{
 		
-		std::string numberPointLights{ "#define NUM_POINT_LIGHTS " + std::to_string(pointLights_D.size()) };
+		std::string numberPointLights{ "#define NUM_POINT_LIGHTS " + std::to_string(pointLights_Scene_D->num_pointLights()) };  ///this is the size of the pointLights per scene
 		std::string numberDirectionalLights{ "#define NUM_DIRECTIONAL_LIGHTS " + std::to_string(directionalLights_D.size()) };
 		std::string numberSpotLights{ "#define NUM_SPOT_LIGHTS " + std::to_string(spotLights_D.size()) };
 
@@ -1292,6 +1336,9 @@ namespace RenderData_Set
 	{
 		AssimpModel_D.emplace();
 		ModelsScene_D.emplace();
+
+		pointLights_D.emplace();
+		pointLights_Scene_D.emplace();
 	}
 
 	void setModels_to_scene()
@@ -1312,7 +1359,9 @@ namespace RenderData_Set
 	 void set_AllObjects()   /////////Cambiar esta funcion para que pueda utilizar la nueva carga de Modelos
 	{
 
-		pointLights_D = setPointLights();
+		setPointLights();
+		setPointLights_Scene();
+
 		directionalLights_D = setDirectionalLights();
 		spotLights_D = setSpotLights();
 
@@ -1324,7 +1373,8 @@ namespace RenderData_Set
 		ModelCreation_D = setModelCreation_Data();
 		SDL_Log("STATE_2");
 		//AssimpModel_D = setModel_Data();   ////DESACTIVADO TEMPORALMENTE
-		MeshLights_MCD = setMeshLight_ModelCreation_Data();
+
+		MeshLights_MCD = setMeshLight_ModelCreation_Data();   /////TO CREATE THE MESH OF THE SHADERS
 		SDL_Log("STATE_3");
 
 
@@ -1516,21 +1566,28 @@ namespace Shader_Set
 
 			}
 
-			for (auto& pointLight : RenderData_Set::pointLights_D)
+		    const uint32_t& size_pL{ RenderData_Set::pointLights_Scene_D->num_pointLights() };
+			utilities_pointLight::entity_pL* entity_pL{ nullptr };
+			for (uint32_t i = 0; i < size_pL; i++)
 			{
-				SS_PL.emplace_back(
-					glm::vec3(pointLight.Posicion),
-					0.0f,
-					glm::vec3(pointLight.Mat.ambient),
-					pointLight.constant,
-					glm::vec3(pointLight.Mat.diffuse),
-					pointLight.linear,
-					glm::vec3(pointLight.Mat.specular),
-					pointLight.quadratic,
-					glm::vec3(0.0f),
-					static_cast<int>(pointLight.stateLight)
-				);
-			
+				entity_pL = RenderData_Set::pointLights_Scene_D->entity_by_Pos(i);
+
+				if (entity_pL != nullptr) { /// see this
+					SS_PL.emplace_back(
+						glm::vec3(entity_pL->pL_entity->Posicion),
+						0.0f,
+						glm::vec3(entity_pL->pL_entity->Mat.ambient),
+						entity_pL->pL_entity->constant,
+						glm::vec3(entity_pL->pL_entity->Mat.diffuse),
+						entity_pL->pL_entity->linear,
+						glm::vec3(entity_pL->pL_entity->Mat.specular),
+						entity_pL->pL_entity->quadratic,
+						glm::vec3(0.0f),
+						static_cast<int>(entity_pL->pL_entity->stateLight)
+					);
+
+					entity_pL = nullptr;
+				}
 
 			}
 

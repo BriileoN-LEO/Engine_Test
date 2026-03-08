@@ -25,7 +25,11 @@ namespace light
 	{
 	public:
 
+		uint32_t ID{};
+
 		posicion Posicion{};
+		transformation_basics::basics_Model3D lightCoord{};
+
 		color Color{};
 
 		lightShader Mat{};

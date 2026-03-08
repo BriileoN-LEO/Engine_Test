@@ -33,7 +33,9 @@ namespace testPlay
 
 	tranformationT getTranformationT_randomPivot(glm::vec3 posicion, glm::vec3 scale, GLfloat ang, GLfloat velocityAng);
 	tranformationT getTranformationT_radial(glm::vec3 posicion, glm::vec3 scale, glm::vec3 pivotRotPos, GLfloat ang, GLfloat velocityAng);
-	
+
+	void transform_light_rotate(tranformationT* t, light::light1* light);
+
 	void setTransformation_Objects();
 	void renderTranformations_Objects();
 	void transformation_handCamara();

@@ -95,22 +95,28 @@ namespace shading
 
 			}
 
-			for (auto& pointLight : RenderData_Set::pointLights_D)
+			const uint32_t& size_pL{ RenderData_Set::pointLights_Scene_D->num_pointLights() };
+			utilities_pointLight::entity_pL* entity_pL{ nullptr };
+			for (uint32_t i = 0; i < size_pL; i++)
 			{
-				SS_PL.emplace_back(
-					glm::vec3(pointLight.Posicion),
-					0.0f,
-					glm::vec3(pointLight.Mat.ambient),
-					pointLight.constant,
-					glm::vec3(pointLight.Mat.diffuse),
-					pointLight.linear,
-					glm::vec3(pointLight.Mat.specular),
-					pointLight.quadratic,
-					glm::vec3(0.0f),
-					static_cast<int>(pointLight.stateLight)
-				);
+				entity_pL = RenderData_Set::pointLights_Scene_D->entity_by_Pos(i);
 
+				if (entity_pL != nullptr) { /// see this
+					SS_PL.emplace_back(
+						glm::vec3(entity_pL->pL_entity->Posicion),
+						0.0f,
+						glm::vec3(entity_pL->pL_entity->Mat.ambient),
+						entity_pL->pL_entity->constant,
+						glm::vec3(entity_pL->pL_entity->Mat.diffuse),
+						entity_pL->pL_entity->linear,
+						glm::vec3(entity_pL->pL_entity->Mat.specular),
+						entity_pL->pL_entity->quadratic,
+						glm::vec3(0.0f),
+						static_cast<int>(entity_pL->pL_entity->stateLight)
+					);
 
+					entity_pL = nullptr;
+				}
 			}
 
 			for (auto& spotLight : RenderData_Set::spotLights_D)
@@ -2169,14 +2175,14 @@ namespace ObjCreation
 
 		}
 	}
-	void ModelCreation::renderMeshLight(camera::camera1 cam, light::light1 light)
+	void ModelCreation::renderMeshLight(camera::camera1 cam, glm::vec3& color)
 	{
 		for (int i = 0; i < static_cast<int>(numberTris); i++)
 		{
 
 			shaderColor.use();
 			setModelCoord(modelCoord.model);
-			shaderColor.setVec3("lightColor", light.Color);
+			shaderColor.setVec3("lightColor", color);
 			setCameraTransforms(cam);
 			vertexData.useMultipleVAO(i);
 			glDrawArrays(GL_TRIANGLES, 0, 3);
