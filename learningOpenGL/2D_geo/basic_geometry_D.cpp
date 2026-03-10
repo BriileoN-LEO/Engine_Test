@@ -61,7 +61,6 @@ namespace geo_2D
     shading::shader& shaderPt{ RenderData_Set::shader_D[shaderID] };
 
     shaderPt.use();
-    shaderPt.use();
     shaderPt.transformMat("model", pointCoord->model);
     shaderPt.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
     shaderPt.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);

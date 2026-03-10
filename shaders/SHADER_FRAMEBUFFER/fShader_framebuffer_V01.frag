@@ -67,7 +67,7 @@ void firstKernelShader()
 
 void gamma_correction(vec3 color_scene)
 {
-  float gamma = 2.2;
+  float gamma = 1.2;
 
   vec3 s_gamma = pow(color_scene, vec3(1.0/gamma));
 

@@ -412,7 +412,7 @@ namespace RenderData_Set
 		std::queue<Assimp_D::loadToCPU::insertProcessModel> models;
 		models.push(back_Pack);
 		//models.push(Floor);	//Floor,
-		//models.push(Sponza_model);
+		models.push(Sponza_model);
 		models.push(FlashLight);
 		models.push(CampoVegetacion);
 		models.push(plant01);
@@ -1131,7 +1131,7 @@ namespace RenderData_Set
 	  	std::make_unique<geo_2D::point_geo>(
 	  		glm::vec3(0.0f),
             glm::vec3(1.0f),
-            2.0f,
+            8.0f,
             "shaderPoint"
 	  	)};
 
@@ -1572,7 +1572,9 @@ namespace Shader_Set
 			{
 				entity_pL = RenderData_Set::pointLights_Scene_D->entity_by_Pos(i);
 
-				if (entity_pL != nullptr) { /// see this
+				if (entity_pL != nullptr)
+				    {  /// see this
+
 					SS_PL.emplace_back(
 						glm::vec3(entity_pL->pL_entity->Posicion),
 						0.0f,
@@ -1585,8 +1587,13 @@ namespace Shader_Set
 						glm::vec3(0.0f),
 						static_cast<int>(entity_pL->pL_entity->stateLight)
 					);
-
 					entity_pL = nullptr;
+				}
+
+				else if (entity_pL == nullptr) {
+
+					std::string log_findError {"NOT FIND THE POINT LIGHT IN POS:: POS = " + std::to_string(i)};
+					register_error_RM::register_error_withSentence(log_findError.c_str());
 				}
 
 			}

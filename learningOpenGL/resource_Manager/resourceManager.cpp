@@ -121,6 +121,9 @@ namespace resourceManager
       return find_ID->second.get();
     }
 
+    std::string error_log {"NOT FIND POINT LIGHT WITH ID:: ID = " + std::to_string(ID)};
+    register_error_RM::register_error_withSentence(error_log.c_str());
+
     return nullptr;
   };
   pLight_raw manager_PointLights::pL_by_str(std::string str_ID)
@@ -132,6 +135,10 @@ namespace resourceManager
       return pointLight_D[find_Str->second].get();
     }
 
+    std::string error_log {"NOT FIND POINT LIGHT WITH (NAME):: NAME = " + str_ID};
+    register_error_RM::register_error_withSentence(error_log.c_str());
+
+    return nullptr;
   };
   pLight_raw manager_PointLights::pL_by_num(uint32_t pos)
   {
@@ -139,6 +146,9 @@ namespace resourceManager
     {
      return pointLight_D[pL_find_pos[pos]].get();
     }
+
+    std::string error_log {"NOT FIND POINT LIGHT IN POSICION:: POSICION = " + std::to_string(pos)};
+    register_error_RM::register_error_withSentence(error_log.c_str());
 
     return nullptr;
   };
@@ -493,13 +503,12 @@ namespace utilities_pointLight
 
   void scene_pointLights::insert(pLight_raw pL_entity)
   {
-
     if (pL_entity != nullptr)
     {
-      uint32_t& ID {pL_entity->ID};
+      uint32_t& ID { pL_entity->ID };
 
       pL_pos.emplace(ID, current_size_M);
-      pos_pL_entity.emplace_back(ID);
+      pos_pL_entity.emplace_back(current_size_M);
       pL_entities.emplace_back(std::move(pL_entity));
       ++current_size_M;
     }
@@ -514,6 +523,10 @@ namespace utilities_pointLight
       return &pL_entities[find_pL->second];
     }
 
+
+    std::string error_log {"NOT FIND ENTITY WITH THE ID:: ID = " + std::to_string(ID)};
+    register_error_RM::register_error_withSentence(error_log.c_str());
+
     return nullptr;
   }
 
@@ -524,6 +537,9 @@ namespace utilities_pointLight
       uint32_t& ID{ pos_pL_entity[pos] };
       return &pL_entities[ID];
     }
+
+    std::string error_log {"NOT FIND ENTITY WITH THE POSICION:: POSICION = " + std::to_string(pos)};
+    register_error_RM::register_error_withSentence(error_log.c_str());
 
     return nullptr;
   }
