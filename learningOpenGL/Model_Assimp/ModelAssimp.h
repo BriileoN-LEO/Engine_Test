@@ -66,7 +66,7 @@ namespace Assimp_D
 		renderNear = 0,
 		renderFar = 1
 	};
-	enum class excludedOP
+	enum class excludedOP : Uint8
 	{
 		exclude_complete_model = 0,
 		exclude_only_meshes = 1,
@@ -294,7 +294,7 @@ namespace Assimp_D
 	private:
 
 		std::unordered_map<uint32_t, uint32_t> pos_find_secuencial{}; //SEE IF THIS IS BETTER
-		std::vector<uint32_t> pos_meshes{};
+		std::vector<uint32_t> pos_meshes{};  ///out mesh by posicion
 		std::vector<Mesh> meshes{};
 		int num_meshes_secuencial{};
 
@@ -350,6 +350,7 @@ namespace Assimp_D
 
 		Mesh& outSpecificMesh(uint32_t mesh_ID);  ///CHANGE THIS GET A POINTER OF Mesh
 		Mesh& out_MeshByPos(uint32_t pos);
+		uint32_t* out_MeshID_ByPos(uint32_t pos);
 		void insert_mesh(loadToCPU::MeshData_loadCPU mesh_D); //CHECK THIS FUNCTION IN THE FUTURE
 		void delete_mesh(uint32_t mesh_ID); //CHECK THIS FUNCTION IN THE FUTURE
 

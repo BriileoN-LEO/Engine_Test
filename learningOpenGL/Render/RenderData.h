@@ -14,6 +14,12 @@
 #include "resource_Manager/resourceManager.h"
 
 
+namespace shadowsManager
+{
+	class directional_shadowMap_dL;
+}
+
+
 namespace RenderData_Set
 {
 //	extern std::vector<Assimp_D::Model> models_D;
@@ -24,6 +30,7 @@ namespace RenderData_Set
     //extern std::map<std::string, Assimp_D::Model> AssimpModel_D; ///CHANGE THIS TO EDIT THEM LIKE A STD::MAP
     extern std::optional<resourceManager::manager_Model> AssimpModel_D;
 	extern std::optional<utilities::scene> ModelsScene_D;
+	extern std::optional<discard_objs::discard_objs_scenario> discardObj_D;
 
 	extern std::optional<resourceManager::manager_PointLights> pointLights_D;
 	extern std::optional<utilities_pointLight::scene_pointLights> pointLights_Scene_D;
@@ -31,7 +38,10 @@ namespace RenderData_Set
 
 	extern std::vector<ObjCreation::ModelCreation> MeshLights_MCD;
 	//extern std::vector<light::light1> pointLights_D;
+
 	extern std::vector<light::DirectionalLight> directionalLights_D;
+	extern std::optional<shadowsManager::directional_shadowMap_dL> dL_shadows_D;
+
 	extern std::map<std::string, light::SpotLight> spotLights_D;
 	extern std::vector<screenUI::pointerScreen> pointUI_D;
 	extern std::vector<individualComp::Multiple_AssimpMesh> multi_AssimpModel;
@@ -162,6 +172,8 @@ namespace RenderData_Set
 	 void setPointLights_Scene();
 
 	 std::vector<light::DirectionalLight> setDirectionalLights();
+     void setDirectionalLight_Shadows();  ////TO SET DIRECTIONAL SHADOWS
+
 	 std::map<std::string, light::SpotLight> setSpotLights();
 	 std::vector<screenUI::pointerScreen> setPointUI_2D();
 	 std::vector<individualComp::Multiple_AssimpMesh> setMulti_AssimpModel();
@@ -174,6 +186,7 @@ namespace RenderData_Set
 	void init_managerResources();
 
 	void setModels_to_scene();
+	void setDiscard_Objs();
 
 	void set_AllObjects();
 	void running_AllObjects();

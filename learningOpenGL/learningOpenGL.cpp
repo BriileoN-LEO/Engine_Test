@@ -139,6 +139,8 @@ int main(int argc, char* argv[])
 
 	int controlScene{};
 
+	openGL_render::setGlobalRender_OpenGL();
+
 	camera::camState camP{ camera::camState::cameraAE };
 	cameras::setCameras();
 	//RenderData_Set::set_AllObjects(); DESACTIVADO TEMPORALMENTE
@@ -147,9 +149,7 @@ int main(int argc, char* argv[])
 
 	SDL_SetWindowRelativeMouseMode(gWindow, true);
 	SDL_WarpMouseInWindow(gWindow, static_cast<float>(screenSettings::screen_w) * 0.5f, static_cast<float>(screenSettings::screen_w) * 0.5f);
-	//screenSettings::vSync::inFPS(screenSettings::fps); 
-
-	openGL_render::setGlobalRender_OpenGL();
+	//screenSettings::vSync::inFPS(screenSettings::fps);
 
 //penGL_render::setGlobalRender_OpenGL();
 	 
@@ -525,6 +525,7 @@ int main(int argc, char* argv[])
 	UI::destroyUI();
 	threadSystem::ControlPhysics_Events.destroy();
 	destroy::destroyModels();
+	destroy::destroyLights();
 	destroy::destroyFrameBuffers();
 	SDL_GL_DestroyContext(contextOpenGl);
 	SDL_DestroyWindow(gWindow);

@@ -5,6 +5,202 @@
 #include "2D_geo/basic_geometry_D.h"
 #include "LIGHTS_test.h"
 
+namespace discard_objs
+{
+  void objs_Discard::update_meshes()
+  {
+
+    indices_MeshDiscard.clear();
+    meshes_discard.clear();
+    size_meshes = 0;
+
+    for (auto& data_Eobj : e_obj)
+    {
+      Assimp_D::excludedOP& excludedT {data_Eobj.exclude_Type };
+
+      switch (excludedT)
+      {
+        case Assimp_D::excludedOP::exclude_complete_model :
+        {
+          utilities::entity* entity_model {RenderData_Set::ModelsScene_D->out_entity_model(data_Eobj.model_ID)};
+
+          if (entity_model != nullptr)
+          {
+            const int& numMeshes {entity_model->model_entity->out_numSec_meshes()};
+            for (uint32_t i = 0; i < numMeshes; i++)
+            {
+              uint32_t* meshID{entity_model->model_entity->out_MeshID_ByPos(i)};
+              meshes_discard.emplace_back(*meshID);  /////
+              indices_MeshDiscard.emplace(*meshID, size_meshes);
+             data_Eobj.meshes_ID.emplace_back(*meshID); ////THIS to remplace all the data
+
+              ++size_meshes;
+
+              meshID = nullptr;
+            }
+            entity_model = nullptr;
+          }
+
+          else
+          {
+            register_error_RM::register_error_withSentence("ERROR FIND MODEL TO DISCARD");
+          }
+
+          break;
+        }
+        case Assimp_D::excludedOP::exclude_only_meshes :
+        {
+          uint32_t numMesh {static_cast<uint32_t>(data_Eobj.meshes_ID.size())};
+
+          for (uint32_t i = 0; i < numMesh; i++)
+          {
+            meshes_discard.emplace_back(data_Eobj.meshes_ID[i]);  /////
+            indices_MeshDiscard.emplace(data_Eobj.meshes_ID[i], size_meshes);
+            ++size_meshes;
+          }
+
+          break;
+        }
+      }
+
+    }
+
+  }
+  void objs_Discard::add_meshes_pos(uint32_t& pos)
+  {
+
+    Assimp_D::excludedOP& excludedT {e_obj[pos].exclude_Type };
+
+    switch (excludedT)
+    {
+      case Assimp_D::excludedOP::exclude_complete_model :
+      {
+        utilities::entity* entity_model {RenderData_Set::ModelsScene_D->out_entity_model(e_obj[pos].model_ID)};
+        const int& numMeshes {entity_model->model_entity->out_numSec_meshes()};
+
+        if (entity_model != nullptr)
+        {
+          for (uint32_t i = 0; i < numMeshes; i++)
+          {
+            uint32_t* meshID{entity_model->model_entity->out_MeshID_ByPos(i)};
+            meshes_discard.emplace_back(*meshID);  /////
+            indices_MeshDiscard.emplace(*meshID, size_meshes);
+            e_obj[pos].meshes_ID.emplace_back(*meshID); ////THIS to remplace all the data
+
+            ++size_meshes;
+
+            meshID = nullptr;
+          }
+          entity_model = nullptr;
+        }
+        break;
+      }
+      case Assimp_D::excludedOP::exclude_only_meshes :
+      {
+        uint32_t numMesh {static_cast<uint32_t>(e_obj[pos].meshes_ID.size())};
+
+        for (uint32_t i = 0; i < numMesh; i++)
+        {
+          meshes_discard.emplace_back(e_obj[pos].meshes_ID[i]);  /////
+          indices_MeshDiscard.emplace(e_obj[pos].meshes_ID[i], size_meshes);
+          ++size_meshes;
+        }
+
+        break;
+      }
+    }
+  }
+  void objs_Discard::delete_meshes_pos(uint32_t& pos)
+  {
+    uint32_t size_m {static_cast<uint32_t>(e_obj[pos].meshes_ID.size())};
+    for (uint32_t i = 0; i < size_m; i++)
+    {
+      /////continuar aqui // TO REMPLACE MESHES AND DELETE INSIDE THE VECTOR;
+      uint32_t& pos {indices_MeshDiscard[e_obj[pos].meshes_ID[i]]};
+      std::swap(meshes_discard[pos], meshes_discard[size_meshes-1]);
+      indices_MeshDiscard[e_obj[pos].meshes_ID[i]] = pos;
+      meshes_discard.pop_back();
+
+      --size_meshes;
+    }
+  }
+
+  objs_Discard::objs_Discard() = default;
+  objs_Discard::objs_Discard(std::vector<Assimp_D::excluded_Obj>& e_obj)
+  {
+    size_eObj = static_cast<uint32_t>(e_obj.size());
+    this->e_obj.clear();
+    this->e_obj = e_obj;
+ //   std::swap(this->e_obj, e_obj);
+    SDL_Log("UPDATE_MESHES_DISCARD");
+    update_meshes();
+
+  }
+  objs_Discard::~objs_Discard()
+  {
+    e_obj.clear();
+    indices_MeshDiscard.clear();
+    meshes_discard.clear();
+    size_meshes = 0;
+  }
+  void objs_Discard::remplace_obj(uint32_t& pos, Assimp_D::excluded_Obj& obj_remplace)
+  {
+    if (pos < size_eObj)
+    {
+      delete_meshes_pos(pos);
+
+      e_obj.emplace_back(obj_remplace);
+      std::swap(e_obj[pos], e_obj[size_eObj]);
+      e_obj.pop_back();
+
+      add_meshes_pos(pos);
+
+
+      return;
+    }
+
+    std::string error_log {"ERROR::POS IS MUCH BIGGER THAN THE ARRAY TO REMPLACE:: discard_objs_scenario"};
+    register_error_RM::register_error_withSentence(error_log.c_str());
+  }
+
+  bool objs_Discard::find_mesh(uint32_t& meshID)
+  {
+    return indices_MeshDiscard.contains(meshID);
+  }
+
+  discard_objs_scenario::discard_objs_scenario(){};
+  void discard_objs_scenario::insert_objs_Discard(ControlScenarios::stateScenarios scene, std::vector<Assimp_D::excluded_Obj> obj_to_discard)
+  {
+    std::unique_ptr<objs_Discard> obj_D {std::make_unique<objs_Discard>(obj_to_discard)};
+
+      if (research_discard.contains(scene))
+      {
+        obj_discard[scene].reset();
+        obj_discard[scene] = nullptr;
+        obj_discard[scene] = std::move(obj_D);
+      }
+
+      else
+      {
+        research_discard.emplace(scene);
+        obj_discard.emplace(scene, std::move(obj_D));
+      }
+  }
+  void discard_objs_scenario::remplace_excluded_Obj(ControlScenarios::stateScenarios scene, uint32_t pos, Assimp_D::excluded_Obj obj_remplace)
+  {
+    if (research_discard.contains(scene))
+    {
+     obj_discard[scene]->remplace_obj(pos, obj_remplace);
+     return;
+    }
+
+    std::string error_log {"ERROR::NOT FIND THE SCENE TO REMPLACE:: discard_objs_scenario"};
+    register_error_RM::register_error_withSentence(error_log.c_str());
+
+  }
+
+}
+
 
 namespace resourceManager
 {
@@ -177,8 +373,14 @@ namespace utilities {
   {
     if (model_entity != nullptr)
     {
-      uint32_t ID_model = model_entity->ID;
+      std::vector<Assimp_D::Mesh>& meshes_data { model_entity->outMeshes()};
 
+      for (auto& mesh : meshes_data)
+      {
+        ordered_allMeshes.emplace_back(mesh.ID);
+      }
+
+      uint32_t ID_model = model_entity->ID;
       ///SDL_Log(std::to_string(ID_model).c_str()); ///SEE THE ID
 
       models_pos.emplace(ID_model, current_size_M);
@@ -201,13 +403,12 @@ namespace utilities {
     if (find_m != models_pos.end())
     {
      // return std::to_address(find_model);  ///this probably get an error, so detects
-      uint32_t& pos {pos_entities[models_pos[model_ID]]}
-;      return &models_entities[pos];
+      uint32_t& pos {pos_entities[models_pos[model_ID]]};
+      return &models_entities[pos];
     }
 
     else if (find_m == models_pos.end())
     {
-
       std::string error_log { "ERROR::NOT FIND MODEL"};
       register_error_RM::register_error_withSentence(error_log.c_str());
     }
@@ -382,6 +583,22 @@ namespace utilities {
 
   }
 
+  void scene::order_MeshesID()
+  {
+   std::ranges::sort(ordered_allMeshes);
+  }
+
+  void scene::order_nearPosMeshes()
+  {
+
+   // std::vector<render_data_D> render_meshes{};
+   // std::vector<render_entity> renderBlocking{};
+  }
+
+  void scene::order_farPosMeshes()
+  {
+
+  }
 
   void scene::render_nearPos(std::vector<uint32_t>& meshes_to_discard)
   {
@@ -402,6 +619,13 @@ namespace utilities {
         Assimp_D::Mesh& out_mesh {model_entity.model_entity->out_MeshByPos(i)};
 
         auto find_mesh {std::find(meshes_to_discard.begin(), meshes_to_discard.end(), out_mesh.ID)}; //CHANGES THIS TO MORE FASTER SEARCH
+       // auto find_mesh {std::ranges::find_if(meshes_to_discard,
+       // [&](uint32_t& f_mesh)
+      //  {
+       //   return (out_mesh.ID == f_mesh);
+      //  }
+      //  )};
+
 
         if (find_mesh == meshes_to_discard.end())
         {
@@ -466,6 +690,16 @@ namespace utilities {
 
   }
 
+  void scene::render_nearPos_shadows(std::vector<uint32_t>& meshes_to_discard, shading::shader* shaderShadow)
+  {
+
+  }
+
+  void scene::render_farPos_shadows(std::vector<uint32_t>& meshes_to_discard,  shading::shader* shaderShadow)
+  {
+
+  }
+
   void scene::cleanAll_scene()
   {
     for (int i = 0; i < static_cast<uint32_t>(models_entities.size()); i++)
@@ -494,7 +728,11 @@ namespace utilities_pointLight
     point_geo2D p2D {std::make_unique<geo_2D::point_geo>()};
     point_geo = std::move(p2D);
   }
-
+  entity_pL::~entity_pL()
+  {
+    pL_entity = nullptr;
+    delete pL_entity;
+  }
   void scene_pointLights::setPoint_geo(point_geo2D point_geo)
   {
    this->point_geo = nullptr;
@@ -557,6 +795,26 @@ namespace utilities_pointLight
       point_geo->setColor(pL.pL_entity->Color);
       point_geo->draw();
     }
+
+  }
+
+  void scene_pointLights::clean_data()
+  {
+   for (uint32_t i = current_size_M; i >= 0; --i)
+     {
+       //uint32_t p {i};
+      // p = p & ~(current_size_M >> 31);
+
+        if (i < current_size_M)
+        {
+          std::swap(pL_entities[0], pL_entities[i]);
+          pL_entities[i].pL_entity = nullptr;
+          pL_entities.pop_back();
+        }
+     }
+
+    pL_pos.clear();
+    pos_pL_entity.clear();
 
   }
 

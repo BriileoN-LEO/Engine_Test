@@ -32,6 +32,50 @@ using point_geo2D = std::unique_ptr<geo_2D::point_geo>;
 using pLight_raw = light::light1*;
 //using pGeo2D_raw = geo_2D::point_geo*;
 
+namespace discard_objs  ///////////CONTINUE WITH DISCARD SCENARIOS
+{
+  class objs_Discard
+  {
+  private:
+   std::vector<Assimp_D::excluded_Obj> e_obj{};
+   uint32_t size_eObj{};
+
+   std::unordered_map<uint32_t, uint32_t> indices_MeshDiscard{};
+   std::vector<uint32_t> meshes_discard{};
+   uint32_t size_meshes{};
+
+   void update_meshes();
+   void add_meshes_pos(uint32_t& pos);
+   void delete_meshes_pos(uint32_t& pos);
+
+  public:
+   objs_Discard();
+   objs_Discard(std::vector<Assimp_D::excluded_Obj>& e_obj);
+   ~objs_Discard();
+
+   void remplace_obj(uint32_t& pos, Assimp_D::excluded_Obj& obj_remplace);
+   bool find_mesh(uint32_t& meshID);
+  };
+
+  class discard_objs_scenario
+  {
+  private:
+
+     std::unordered_set<ControlScenarios::stateScenarios> research_discard{};
+     std::unordered_map<ControlScenarios::stateScenarios, std::unique_ptr<objs_Discard>> obj_discard{};
+
+  public:
+
+    discard_objs_scenario();
+    void insert_objs_Discard(ControlScenarios::stateScenarios scene, std::vector<Assimp_D::excluded_Obj> obj_to_discard);
+    void remplace_excluded_Obj(ControlScenarios::stateScenarios scene, uint32_t pos, Assimp_D::excluded_Obj obj_remplace);
+
+
+  };
+
+
+}
+
 namespace resourceManager
 {
     class manager_Model
@@ -118,6 +162,11 @@ namespace utilities
     std::vector<entity> models_entities{};
     uint32_t current_size_M{};
 
+    std::vector<uint32_t> ordered_allMeshes{};  ////to find if i discard some meshes
+
+    std::vector<render_data_D> render_meshes{}; ///TO SAVE ALL THE ID OF MESHES IN THE SCENE
+    std::vector<render_entity> renderBlocking{}; //TO SAVE THE CORRECTO POSICION OF EACH MESH INSIDE OF THE MODEL ID
+
   public :
 
     scene();
@@ -135,8 +184,17 @@ namespace utilities
     void renderAll();
     void render_singleModel(uint32_t model_ID);
     void render_singleMesh(uint32_t model_ID, uint32_t mesh_ID, int shaderOP);
+
+    void order_MeshesID();
+
+    void order_nearPosMeshes(); ///TO ORDER THE POSICION ONCE TO DRAW AFTER
+    void order_farPosMeshes();
+
     void render_nearPos(std::vector<uint32_t>& meshes_to_discard);
     void render_farPos(std::vector<uint32_t>& meshes_to_discard);
+
+    void render_nearPos_shadows(std::vector<uint32_t>& meshes_to_discard, shading::shader* shaderShadow); ///TO RENDER NEAR OBJECTS TO SHADOW MAP
+    void render_farPos_shadows(std::vector<uint32_t>& meshes_to_discard,  shading::shader* shaderShadow); ///TO RENDER FAR OBJECTS TO SHADOW MAP
 
     void cleanAll_scene();
   };
@@ -151,6 +209,7 @@ namespace utilities_pointLight
 
     entity_pL();
     entity_pL(pLight_raw pL_entity);
+    ~entity_pL();
   };
 
   class scene_pointLights
@@ -176,6 +235,7 @@ namespace utilities_pointLight
    const uint32_t& num_pointLights();
 
    void renderAll();
+   void clean_data();
   };
 
 

@@ -55,6 +55,7 @@ namespace light
 	{
 	public:
 
+		posicion Posicion{};
 		direction Direction{};
 		color Color{};
 		lightShader Mat{};
@@ -62,9 +63,9 @@ namespace light
 		bool stateLight{ true };
 
 		DirectionalLight();
-		DirectionalLight(direction Direction, color lightColor);
+		DirectionalLight(posicion Posicion, direction Direction, color lightColor);
 
-		void set_DirectionalLight(direction Direction, color lightColor);
+		void set_DirectionalLight(posicion Posicion, direction Direction, color lightColor);
 		void setMatProperties(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular);
 
 	};

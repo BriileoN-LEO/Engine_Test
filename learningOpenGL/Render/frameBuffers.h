@@ -15,9 +15,9 @@ namespace frameBuff
 
 	struct data_frameBuffer
 	{
-		unsigned int FBO;
-		unsigned int TCB;
-		unsigned int RBO;
+		unsigned int FBO; //FRAMEBUFFER
+		unsigned int TCB; //TEXTURE
+		unsigned int RBO; //RENDER BUFFER OBJECT
 
 		[[maybe_unused]] unsigned int VAO;
 		[[maybe_unused]] unsigned int VBO;

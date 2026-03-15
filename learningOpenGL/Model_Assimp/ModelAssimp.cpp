@@ -2238,6 +2238,17 @@ namespace Assimp_D {
 		return RenderData_Set::error_MeshF;
 	}
 
+	uint32_t* Model::out_MeshID_ByPos(uint32_t pos)
+	{
+		if (pos <= num_meshes_secuencial - 1)
+		{
+
+			return &meshes[pos].ID;
+		}
+
+		return nullptr;
+	}
+
 	void Model::insert_mesh(loadToCPU::MeshData_loadCPU mesh_D)
 	{
 		meshes.emplace_back(mesh_D);

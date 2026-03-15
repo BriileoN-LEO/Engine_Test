@@ -4,6 +4,7 @@
 #include "optimize_Algorithmics/optimizeAlgorithmics.h"
 #include "Edit_Modes/Edit_M.h"
 #include "2D_geo/basic_geometry_D.h"
+#include "shadows_manager/shadows_D.h"
 //#include "2D_UI/Interface_UI.h"
 //#include "2D_UI/2D_ScreenPlayer.h"
 
@@ -22,6 +23,7 @@ namespace RenderData_Set
 	//std::map<std::string, Assimp_D::Model> AssimpModel_D{};  ////OFF FOR ONE MOMENT
 	std::optional<resourceManager::manager_Model> AssimpModel_D;
 	std::optional<utilities::scene> ModelsScene_D;
+	std::optional<discard_objs::discard_objs_scenario> discardObj_D;
 
 	std::optional<resourceManager::manager_PointLights> pointLights_D;
 	std::optional<utilities_pointLight::scene_pointLights> pointLights_Scene_D;
@@ -30,6 +32,8 @@ namespace RenderData_Set
 
 	//std::vector<light::light1> pointLights_D{};
 	std::vector<light::DirectionalLight> directionalLights_D{};
+    std::optional<shadowsManager::directional_shadowMap_dL> dL_shadows_D;
+
 	std::map<std::string, light::SpotLight> spotLights_D{};
 
 	std::vector<screenUI::pointerScreen> pointUI_D{};
@@ -671,6 +675,7 @@ namespace RenderData_Set
 		shading::loadToCPU::shaderData_loadCPU shaderPoint("shaderPoint", vShader_Pointer.c_str(), fShader_Pointer.c_str(), LB_02);
 		shading::loadToCPU::shaderData_loadCPU shaderSkybox_01("shaderSkybox_01", vShader_Skybox_V01.c_str(), fShader_Skybox_V01.c_str(), LB_02);
 		shading::loadToCPU::shaderData_loadCPU shader_briiUI_01("brii_UI_01", vShader_briiUI_V01.c_str(), fShader_briiUI_V01.c_str(), LB_02);
+		shading::loadToCPU::shaderData_loadCPU shader_shadow_v01("shadow_shader_v1", vShader_Shadow_V1.c_str(), fShader_Shadow_V1.c_str(), LB_02);
 
 		std::vector<shading::loadToCPU::shaderData_loadCPU> shadersLoad
 		{
@@ -1139,11 +1144,12 @@ namespace RenderData_Set
 
 	}
 
+
 	 std::vector<light::DirectionalLight> setDirectionalLights()
 	{
 		glm::vec3 white_Color{ 1.0f, 1.0f, 1.0f };
 
-		light::DirectionalLight directionalLight_1(glm::vec3(0.0f, -1.0f, 2.0f), glm::vec3(0.1f, 0.1f, 0.1f));
+		light::DirectionalLight directionalLight_1(glm::vec3(1.2f, 5.0f, 0.0f), glm::vec3(0.0f, -1.0f, 2.0f), glm::vec3(0.1f, 0.1f, 0.1f));
 		directionalLight_1.setMatProperties(white_Color * 0.1f, white_Color * 0.1f, white_Color * 0.1f);
 
 		std::vector<light::DirectionalLight> DirectionalLights
@@ -1154,6 +1160,14 @@ namespace RenderData_Set
 
 		return DirectionalLights;
 	}
+
+	void setDirectionalLight_Shadows()  ////TO SET DIRECTIONAL SHADOWS
+	{
+		dL_shadows_D->loadShadow_Data();
+		dL_shadows_D->setShader("shadow_shader_v1");
+	    dL_shadows_D->insert_directionalLight(0);
+	}
+
 	 std::map<std::string, light::SpotLight> setSpotLights()
 	{
 		matSettings matSP_1
@@ -1336,9 +1350,12 @@ namespace RenderData_Set
 	{
 		AssimpModel_D.emplace();
 		ModelsScene_D.emplace();
+		discardObj_D.emplace();
 
 		pointLights_D.emplace();
 		pointLights_Scene_D.emplace();
+
+		dL_shadows_D.emplace();
 	}
 
 	void setModels_to_scene()
@@ -1354,6 +1371,41 @@ namespace RenderData_Set
 
        }
 
+		ModelsScene_D->order_MeshesID();  //TO SET AND ORDER ALL THE MESHES
+
+	}
+
+	void setDiscard_Objs()
+	{
+		std::vector<Assimp_D::excluded_Obj> v_excluded{};
+
+		Assimp_D::excluded_Obj obj_mirror {Assimp_D::excludedOP::exclude_complete_model, FNV::str_to_hash("mirror_01") };
+		Assimp_D::excluded_Obj obj_floor {Assimp_D::excludedOP::exclude_complete_model, FNV::str_to_hash("Floor") };
+
+		std::vector<uint32_t> meshID{};
+		meshID.emplace_back(data_HitAABB::selectedObj.first.mesh_ID);
+		Assimp_D::excluded_Obj obj_meshSelected {Assimp_D::excludedOP::exclude_only_meshes, data_HitAABB::selectedObj.first.model_ID, meshID};
+		Assimp_D::excluded_Obj obj_modelSelected {Assimp_D::excludedOP::exclude_complete_model, data_HitAABB::selectedObj.first.model_ID };
+
+		v_excluded.emplace_back(obj_mirror);
+		discardObj_D->insert_objs_Discard(ControlScenarios::stateScenarios::normalSceneario, v_excluded);
+
+		v_excluded.emplace_back(obj_floor);
+		discardObj_D->insert_objs_Discard(ControlScenarios::stateScenarios::stencilTestAll, v_excluded);
+
+		v_excluded.pop_back();
+		v_excluded.emplace_back(obj_meshSelected);
+		v_excluded.emplace_back(obj_modelSelected);
+		discardObj_D->insert_objs_Discard(ControlScenarios::stateScenarios::detectAABB, v_excluded);
+
+		v_excluded.pop_back();
+		discardObj_D->insert_objs_Discard(ControlScenarios::stateScenarios::edit_Scene, v_excluded);
+
+		discardObj_D->insert_objs_Discard(ControlScenarios::stateScenarios::editMode_advance, v_excluded);
+
+		v_excluded.clear();
+
+
 	}
 
 	 void set_AllObjects()   /////////Cambiar esta funcion para que pueda utilizar la nueva carga de Modelos
@@ -1363,52 +1415,52 @@ namespace RenderData_Set
 		setPointLights_Scene();
 
 		directionalLights_D = setDirectionalLights();
+	    setDirectionalLight_Shadows();
+
 		spotLights_D = setSpotLights();
 
 		insertSettings_FileShader();
 		stencilTest::setStencilTest_Shader();
 
-		SDL_Log("STATE_1");
 
 		ModelCreation_D = setModelCreation_Data();
-		SDL_Log("STATE_2");
+
 		//AssimpModel_D = setModel_Data();   ////DESACTIVADO TEMPORALMENTE
 
 		MeshLights_MCD = setMeshLight_ModelCreation_Data();   /////TO CREATE THE MESH OF THE SHADERS
-		SDL_Log("STATE_3");
+
 
 
 		skybox_D::skyBoxes_D = skybox_D::setSkyBoxes_D();
 		//skybox_D::currentSkyBox_D = std::make_unique<sky::cubeMap_Skybox>(skybox_D::skyBoxes_D["skyBox_day"]);
 		skybox_D::nameSkybox = "skyBox_day";
 		skybox_D::skyBox_Current = skybox_D::activeSkybox("skyBox_day", true);
-		SDL_Log("STATE_5");
+
 
 		//Creacion del boundingBox
 		AABB::create_BoundingBox_Mesh();
-		SDL_Log("STATE_6");
+
 		//AABB::test_BoundingBos();
 		AABB::setShader_AABB();
-		SDL_Log("STATE_7");
+
 
 		pointUI_D = setPointUI_2D();
-		SDL_Log("STATE_8");
+
 
 		testFrameBuffer.loadFrameBuffer();
-		SDL_Log("STATE_9");
+
 		frameBuffers_D = setFrameBuffers();
-		SDL_Log("STATE_10");
+
 
 		textureCache::loadAll_PreLoadedTexturesToCache(); ///CARGA DE LAS TEXTURAS EN EL CACHE.
-		SDL_Log("STATE_11");
+
 		brii_UI::resizeUI_textures(); //TO RESIZE ALL THE TEXTURES THAT I HAVE IN MY UI
-		SDL_Log("STATE_12");
+
 
 		shading::register_Errors_SS::debug_BufferLayout(shader_D["shaderT1"].outID(), "lights");
-		SDL_Log("STATE_13");
 
 		setModels_to_scene();  /////PUT TO THE END TO SAVE ALL THE POINTERS CORRECTLY
-		SDL_Log("STATE_14");
+		setDiscard_Objs();
 
 		multi_AssimpModel = setMulti_AssimpModel();
 		SDL_Log("STATE_15");

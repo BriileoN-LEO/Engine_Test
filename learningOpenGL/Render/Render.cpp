@@ -3,7 +3,7 @@
 #include "threadSystem/thread_System.h"
 #include "Edit_Modes/Edit_M.h"
 #include "optimize_Algorithmics/optimizeAlgorithmics.h"
-
+#include "shadows_manager/shadows_D.h"
 //#include "playTest.h"
 //#include "Collision/ScreenHit.h"
 
@@ -202,6 +202,37 @@ namespace render
 		void render_PointLight_D()
 		{
 		  RenderData_Set::pointLights_Scene_D->renderAll();
+		}
+	}
+
+	namespace shadows
+	{
+
+		void render_MeshLights_D(shading::shader* shader_shadowMap)
+		{
+
+		}
+		void render_ModelAssimp_D_shadowMap(std::vector<Assimp_D::excluded_Obj> excluded_Objs, shading::shader* shader_shadowMap)
+		{
+		  ///HERE RENDER THE MODEL ASSIMP WITH THE SHADOW MAPS
+
+		}
+
+		void render_AllShadowMap_dL(shading::shader* shader_shadowMap)
+		{
+			switch (ControlScenarios::scene)
+			{
+             ///CONTINUE HERE TO RENDER AL THE SHADOW MAPS
+
+			}
+
+
+		}
+
+		void set_renderShadowMap_dL()
+		{
+			RenderData_Set::dL_shadows_D->draw_ShadowMap();
+			render_AllShadowMap_dL(RenderData_Set::dL_shadows_D->out_shader());
 		}
 	}
 
@@ -430,6 +461,10 @@ namespace render
 	{
 
 		//Shader_Set::set_All_UB();
+
+		////HERE SET THE RENDER SHADOWS
+
+
 
 		RenderData_Set::frameBuffers_D["screen"].bindFrameBuffer(); ///TO BIND THE FRAMEBUFFER
 		openGL_render::clearOpenGL();
@@ -1178,6 +1213,11 @@ namespace destroy
 			AABB_Mesh.destroy();
 		}
 
+	}
+	void destroyLights()
+	{
+		RenderData_Set::pointLights_Scene_D->clean_data();
+	    RenderData_Set::pointLights_D->clean_data();
 	}
 	void destroyFrameBuffers()
 	{

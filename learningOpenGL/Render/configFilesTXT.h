@@ -26,6 +26,11 @@ const std::string fShader_Standard_v1 = "shaders/SHADER_STANDARD/fShader_Standar
 const std::string vShader_Light_V1 = "shaders/SHADER_LIGHT/vShader_Light_v1.vert";
 const std::string fShader_Light_V1 = "shaders/SHADER_LIGHT/fShader_Light_v1.frag";
 
+///SHADOW SHADERS
+const std::string vShader_Shadow_V1 = "shaders/SHADER_SHADOW/shader_shadows.vert";
+const std::string fShader_Shadow_V1 = "shaders/SHADER_SHADOW/shader_shadows.frag";
+
+///STENCIL SHADERS
 const std::string vShader_StencilTest = "shaders/SHADER_STENCIL_TEST/vShader_stencil_test.vert";
 const std::string fShader_StencilTest = "shaders/SHADER_STENCIL_TEST/fShader_stencil_test.frag";
 

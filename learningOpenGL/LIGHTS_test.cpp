@@ -27,16 +27,19 @@ namespace light
 	}
 
 	DirectionalLight::DirectionalLight() {};
-	DirectionalLight::DirectionalLight(direction Direction, color color)
+	DirectionalLight::DirectionalLight(posicion Posicion, direction Direction, color color)
 	{
-		set_DirectionalLight(Direction, color);
+		set_DirectionalLight(Posicion, Direction, color);
 	}
 
-	void DirectionalLight::set_DirectionalLight(direction Direction, color Color)
+	void DirectionalLight::set_DirectionalLight(posicion Posicion, direction Direction, color Color)
 	{
-		this->Direction = glm::normalize(Direction);
+		this->Posicion = Posicion;
+	//	this->Direction = glm::normalize(Direction);
+		this->Direction = Direction;
 		this->Color = Color;
 	}
+
 	void DirectionalLight::setMatProperties(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
 	{
 		Mat.ambient = ambient;

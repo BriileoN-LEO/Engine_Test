@@ -21,6 +21,15 @@ namespace render
 	  void render_PointLight_D();
 	}
 
+	namespace shadows
+	{
+	  void render_MeshLights_D(shading::shader* shader_shadowMap);
+	  void render_ModelAssimp_D_shadowMap(std::vector<Assimp_D::excluded_Obj> excluded_Objs = std::vector<Assimp_D::excluded_Obj>(), shading::shader* shader_shadowMap = nullptr);
+
+      void render_AllShadowMap_dL(shading::shader* shader_shadowMap);
+	  void set_renderShadowMap_dL();
+	}
+
 	namespace renderOP
 	{
 		void renderNormalScenario();
@@ -78,6 +87,7 @@ namespace refresh_Models
 namespace destroy
 {
 	void destroyModels();
+	void destroyLights();
     void destroyFrameBuffers();
 }
 
