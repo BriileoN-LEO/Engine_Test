@@ -84,6 +84,7 @@ namespace threadSystem
 				AABB::updateCoordAABB_All();
 				ScreenCalc_Hit::calc_IntersectALL();
 
+
 				///SDL_Log("UPDATE_THREAD");
 
 				startSystem = false;
@@ -129,7 +130,10 @@ namespace threadSystem
 				
 				AABB::updateCoordAABB_All();
 				ScreenCalc_Hit::calc_IntersectALL();
-			
+
+			    control_models::update_discardModels();
+			    control_models::update_posRenderModels();
+
 			//	fps_Thread.resetTime();
 		//	}
 

@@ -54,7 +54,11 @@ namespace discard_objs  ///////////CONTINUE WITH DISCARD SCENARIOS
    ~objs_Discard();
 
    void remplace_obj(uint32_t& pos, Assimp_D::excluded_Obj& obj_remplace);
+   void delete_obj(uint32_t& pos);
    bool find_mesh(uint32_t& meshID);
+   uint32_t& out_size_eObjs();
+   const std::vector<Assimp_D::excluded_Obj>& out_eObj_vec();
+
   };
 
   class discard_objs_scenario
@@ -69,7 +73,9 @@ namespace discard_objs  ///////////CONTINUE WITH DISCARD SCENARIOS
     discard_objs_scenario();
     void insert_objs_Discard(ControlScenarios::stateScenarios scene, std::vector<Assimp_D::excluded_Obj> obj_to_discard);
     void remplace_excluded_Obj(ControlScenarios::stateScenarios scene, uint32_t pos, Assimp_D::excluded_Obj obj_remplace);
+    void delete_excluded_Obj(ControlScenarios::stateScenarios scene, uint32_t pos);
 
+    bool find_existence_mesh(ControlScenarios::stateScenarios scene, uint32_t& meshID);
 
   };
 
@@ -190,8 +196,8 @@ namespace utilities
     void order_nearPosMeshes(); ///TO ORDER THE POSICION ONCE TO DRAW AFTER
     void order_farPosMeshes();
 
-    void render_nearPos(std::vector<uint32_t>& meshes_to_discard);
-    void render_farPos(std::vector<uint32_t>& meshes_to_discard);
+    void render_nearPos();
+    void render_farPos();
 
     void render_nearPos_shadows(std::vector<uint32_t>& meshes_to_discard, shading::shader* shaderShadow); ///TO RENDER NEAR OBJECTS TO SHADOW MAP
     void render_farPos_shadows(std::vector<uint32_t>& meshes_to_discard,  shading::shader* shaderShadow); ///TO RENDER FAR OBJECTS TO SHADOW MAP

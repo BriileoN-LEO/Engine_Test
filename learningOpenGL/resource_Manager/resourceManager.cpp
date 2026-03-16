@@ -116,12 +116,25 @@ namespace discard_objs
     for (uint32_t i = 0; i < size_m; i++)
     {
       /////continuar aqui // TO REMPLACE MESHES AND DELETE INSIDE THE VECTOR;
-      uint32_t& pos {indices_MeshDiscard[e_obj[pos].meshes_ID[i]]};
-      std::swap(meshes_discard[pos], meshes_discard[size_meshes-1]);
-      indices_MeshDiscard[e_obj[pos].meshes_ID[i]] = pos;
-      meshes_discard.pop_back();
+      auto find_mesh {indices_MeshDiscard.find(e_obj[pos].meshes_ID[i])};
 
-      --size_meshes;
+      if (find_mesh != indices_MeshDiscard.end())
+      {
+        uint32_t pos {find_mesh->second};
+
+        std::swap(meshes_discard[pos], meshes_discard[size_meshes-1]);
+        indices_MeshDiscard[meshes_discard[pos]] = pos;
+
+        indices_MeshDiscard.erase(find_mesh);
+        meshes_discard.pop_back();
+
+        --size_meshes;
+      }
+
+      else
+      {
+       SDL_Log("ERROR_FIND_MESH");
+      }
     }
   }
 
@@ -147,25 +160,52 @@ namespace discard_objs
   {
     if (pos < size_eObj)
     {
+      SDL_Log("DELETE_MESHES");
       delete_meshes_pos(pos);
 
       e_obj.emplace_back(obj_remplace);
-      std::swap(e_obj[pos], e_obj[size_eObj]);
+      std::swap(e_obj[pos], e_obj[size_eObj-1]);
       e_obj.pop_back();
 
+      SDL_Log("ADD_MESHES");
       add_meshes_pos(pos);
-
-
       return;
+    }
+
+    else
+    {
+      e_obj.emplace_back(obj_remplace);
+      add_meshes_pos(size_eObj);
+      ++size_eObj;
     }
 
     std::string error_log {"ERROR::POS IS MUCH BIGGER THAN THE ARRAY TO REMPLACE:: discard_objs_scenario"};
     register_error_RM::register_error_withSentence(error_log.c_str());
   }
 
+  void objs_Discard::delete_obj(uint32_t& pos)
+  {
+    if (pos < size_eObj)
+    {
+      delete_meshes_pos(pos);
+      std::swap(e_obj[pos], e_obj[--size_eObj]);  ///CHECK THIS
+      e_obj.pop_back();
+
+    }
+  }
+
   bool objs_Discard::find_mesh(uint32_t& meshID)
   {
     return indices_MeshDiscard.contains(meshID);
+  }
+
+  uint32_t& objs_Discard::out_size_eObjs()
+  {
+    return size_eObj;
+  }
+  const std::vector<Assimp_D::excluded_Obj>& objs_Discard::out_eObj_vec()
+  {
+   return e_obj;
   }
 
   discard_objs_scenario::discard_objs_scenario(){};
@@ -197,6 +237,24 @@ namespace discard_objs
     std::string error_log {"ERROR::NOT FIND THE SCENE TO REMPLACE:: discard_objs_scenario"};
     register_error_RM::register_error_withSentence(error_log.c_str());
 
+  }
+  void discard_objs_scenario::delete_excluded_Obj(ControlScenarios::stateScenarios scene, uint32_t pos)
+  {
+    if (research_discard.contains(scene))
+    {
+      obj_discard[scene]->delete_obj(pos);
+    }
+
+  }
+
+  bool discard_objs_scenario::find_existence_mesh(ControlScenarios::stateScenarios scene, uint32_t& meshID)
+  {
+    if (research_discard.contains(scene))
+    {
+      return obj_discard[scene]->find_mesh(meshID);
+    }
+
+    return false;
   }
 
 }
@@ -590,20 +648,8 @@ namespace utilities {
 
   void scene::order_nearPosMeshes()
   {
-
-   // std::vector<render_data_D> render_meshes{};
-   // std::vector<render_entity> renderBlocking{};
-  }
-
-  void scene::order_farPosMeshes()
-  {
-
-  }
-
-  void scene::render_nearPos(std::vector<uint32_t>& meshes_to_discard)
-  {
-    std::vector<render_data_D> render_meshes{};
-    std::vector<render_entity> renderBlocking{};
+    render_meshes.clear();
+    renderBlocking.clear();
 
     uint32_t pos_start_meshes{}; //0
     uint32_t pos_end_meshes{}; // 0
@@ -618,16 +664,11 @@ namespace utilities {
       {
         Assimp_D::Mesh& out_mesh {model_entity.model_entity->out_MeshByPos(i)};
 
-        auto find_mesh {std::find(meshes_to_discard.begin(), meshes_to_discard.end(), out_mesh.ID)}; //CHANGES THIS TO MORE FASTER SEARCH
-       // auto find_mesh {std::ranges::find_if(meshes_to_discard,
-       // [&](uint32_t& f_mesh)
-      //  {
-       //   return (out_mesh.ID == f_mesh);
-      //  }
-      //  )};
+       //auto find_mesh {std::find(meshes_to_discard.begin(), meshes_to_discard.end(), out_mesh.ID)}; //CHANGES THIS TO MORE FASTER SEARCH
+        bool find_mesh {RenderData_Set::discardObj_D->find_existence_mesh(ControlScenarios::scene, out_mesh.ID)};
 
-
-        if (find_mesh == meshes_to_discard.end())
+       // if (!find_mesh)
+         if (!find_mesh)
         {
           double dist_mesh {glm::distance2(out_mesh.MeshCoord.posModel, cameras::cameras_D[cameras::name_CurrentCamera].posCam)};
           render_meshes.emplace_back(out_mesh.ID, dist_mesh);
@@ -675,6 +716,18 @@ namespace utilities {
         ++current_posModel;
     }
 
+   // std::vector<render_data_D> render_meshes{};
+   // std::vector<render_entity> renderBlocking{};
+  }
+
+  void scene::order_farPosMeshes()
+  {
+
+  }
+
+  void scene::render_nearPos()
+  {
+
     for (auto& model_render : renderBlocking)
     {
       for (uint32_t renderP = model_render.meshes_start; renderP <= model_render.meshes_end; renderP++)
@@ -685,7 +738,7 @@ namespace utilities {
     }
 
   }
-  void scene::render_farPos(std::vector<uint32_t>& meshes_to_discard)
+  void scene::render_farPos()
   {
 
   }

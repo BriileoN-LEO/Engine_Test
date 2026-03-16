@@ -2242,7 +2242,6 @@ namespace Assimp_D {
 	{
 		if (pos <= num_meshes_secuencial - 1)
 		{
-
 			return &meshes[pos].ID;
 		}
 

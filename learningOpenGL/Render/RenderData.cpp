@@ -1494,6 +1494,76 @@ namespace RenderData_Set
 	
 }
 
+namespace control_models
+{
+	void update_discardModels()
+	{
+		switch (ControlScenarios::scene)
+	    {
+
+			case ControlScenarios::stateScenarios::detectAABB:
+			{
+				switch (ControlScenarios::sceneAABB)
+				{
+					case ControlScenarios::scenarioAABB::Triangle :
+					{
+						RenderData_Set::discardObj_D->delete_excluded_Obj(ControlScenarios::stateScenarios::detectAABB, 1);
+						break;
+					}
+					case ControlScenarios::scenarioAABB::Mesh :
+					{
+						std::vector<uint32_t> meshID{};
+						meshID.emplace_back(data_HitAABB::selectedObj.first.mesh_ID);
+						Assimp_D::excluded_Obj excluded_mesh {Assimp_D::excludedOP::exclude_only_meshes, data_HitAABB::selectedObj.first.model_ID, meshID};
+
+						RenderData_Set::discardObj_D->remplace_excluded_Obj(ControlScenarios::stateScenarios::detectAABB, 1, excluded_mesh);
+						break;
+					}
+					case ControlScenarios::scenarioAABB::Model :
+					{
+
+						Assimp_D::excluded_Obj excluded_model {Assimp_D::excludedOP::exclude_complete_model, data_HitAABB::selectedObj.first.model_ID};
+						RenderData_Set::discardObj_D->remplace_excluded_Obj(ControlScenarios::stateScenarios::detectAABB, 1, excluded_model);
+						break;
+					}
+				}
+
+				break;
+			}
+			case ControlScenarios::stateScenarios::edit_Scene:
+			{
+				std::vector<uint32_t> ms{};
+				ms.emplace_back(data_HitAABB::selectedObj.first.mesh_ID);
+
+				Assimp_D::excluded_Obj excluded_model {Assimp_D::excludedOP::exclude_only_meshes, data_HitAABB::selectedObj.first.model_ID, ms};
+				RenderData_Set::discardObj_D->remplace_excluded_Obj(ControlScenarios::stateScenarios::edit_Scene, 1, excluded_model);
+
+				break;
+			}
+			case ControlScenarios::stateScenarios::editMode_advance :
+			{
+
+				std::vector<uint32_t> ms{};
+				ms.emplace_back(data_HitAABB::selectedObj.first.mesh_ID);
+
+				Assimp_D::excluded_Obj excluded_model {Assimp_D::excludedOP::exclude_only_meshes, data_HitAABB::selectedObj.first.model_ID, ms};
+				RenderData_Set::discardObj_D->remplace_excluded_Obj(ControlScenarios::stateScenarios::editMode_advance, 1, excluded_model);
+
+
+				break;
+			}
+		}
+
+	}
+	void update_posRenderModels()
+	{
+		RenderData_Set::ModelsScene_D->order_nearPosMeshes();
+		RenderData_Set::ModelsScene_D->order_farPosMeshes();
+
+	}
+}
+
+
 namespace cameras
 {
 	std::map<std::string, camera::camera1> cameras_D{};

@@ -8,7 +8,7 @@ namespace render
 
 	void render_ModelCreation_D();
 	void render_classicModelAssimp_D();
-	void render_ModelAssimp_D(std::vector<Assimp_D::excluded_Obj> excluded_Objs = std::vector<Assimp_D::excluded_Obj>());
+	void render_ModelAssimp_D();
 	void render_MultiAssimp_D();
 	void render_MeshLights_D();
 	void render_AABB();
@@ -59,18 +59,18 @@ namespace openGL_render
 
 namespace renderSelection
 {
-	void renderSelection_Triangle(std::vector<Assimp_D::excluded_Obj> excluded_Objs = std::vector<Assimp_D::excluded_Obj>());
-	void renderSelection_Mesh(std::vector<Assimp_D::excluded_Obj> excluded_Objs = std::vector<Assimp_D::excluded_Obj>());
-	void renderSelection_Model(std::vector<Assimp_D::excluded_Obj> excluded_Objs = std::vector<Assimp_D::excluded_Obj>());
+	void renderSelection_Triangle();
+	void renderSelection_Mesh();
+	void renderSelection_Model();
 
-	void render_AdvanceSelection_Mesh(std::vector<Assimp_D::excluded_Obj>excluded_Objs = std::vector<Assimp_D::excluded_Obj>());
-	void render_EditMode_SelectionMesh(std::vector<Assimp_D::excluded_Obj> excluded_Objs = std::vector<Assimp_D::excluded_Obj>());
+	void render_AdvanceSelection_Mesh();
+	void render_EditMode_SelectionMesh();
 }
 
 namespace stencil_test
 {
 
-	void renderStencilTest(std::vector<Assimp_D::excluded_Obj> excluded_Objs = std::vector<Assimp_D::excluded_Obj>());
+	void renderStencilTest();
 	void renderScaleUp_ST(std::vector<std::string>& notVisible);
 
 }
