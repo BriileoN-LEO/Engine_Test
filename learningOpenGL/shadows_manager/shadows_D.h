@@ -54,10 +54,9 @@ namespace shadowsManager {
   void insert_directionalLight(uint32_t ID);
   void update_Lights();
   shading::shader* out_shader();
+  const std::string* out_shaderID();
 
   void draw_ShadowMap();
-
-
 
  };
 

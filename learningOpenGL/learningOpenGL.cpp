@@ -498,6 +498,7 @@ int main(int argc, char* argv[])
 					//ScreenCalc_Hit::calc_IntersectALL();
 
 					render::renderPhase();
+					//render::shadows::set_renderShadowMap_dL();
 					refresh_Models::refreshAll_LastModels();
 
 					UI::render_All_ImGui(gWindow);

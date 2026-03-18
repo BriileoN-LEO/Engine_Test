@@ -180,31 +180,31 @@ namespace render
 	namespace shadows
 	{
 
-		void render_MeshLights_D(shading::shader* shader_shadowMap)
+		void render_AllShadowMap_dL(const std::string* shader_shadowMap)
 		{
-
-		}
-		void render_ModelAssimp_D_shadowMap(std::vector<Assimp_D::excluded_Obj> excluded_Objs, shading::shader* shader_shadowMap)
-		{
-		  ///HERE RENDER THE MODEL ASSIMP WITH THE SHADOW MAPS
-
-		}
-
-		void render_AllShadowMap_dL(shading::shader* shader_shadowMap)
-		{
-			switch (ControlScenarios::scene)
-			{
-             ///CONTINUE HERE TO RENDER AL THE SHADOW MAPS
-
-			}
-
-
+			RenderData_Set::ModelsScene_D->render_nearPos_depthMapShadow(shader_shadowMap);
+			shader_shadowMap = nullptr;
 		}
 
 		void set_renderShadowMap_dL()
 		{
 			RenderData_Set::dL_shadows_D->draw_ShadowMap();
-			render_AllShadowMap_dL(RenderData_Set::dL_shadows_D->out_shader());
+
+			const std::string* shaderID { RenderData_Set::dL_shadows_D->out_shaderID()};
+
+			if (shaderID != nullptr)
+			{
+				render_AllShadowMap_dL(shaderID);
+			}
+
+			else if (shaderID == nullptr)
+			{
+				register_error_RM::register_error_withSentence("ERROR FIND SHADER FOR SHADOW MAPPING");
+			}
+
+			//glViewport(0, 0, screenSettings::screen_w, screenSettings::screen_h);
+			openGL_render::viewportSet(0, 0, screenSettings::screen_w, screenSettings::screen_h);
+
 		}
 	}
 
@@ -432,7 +432,7 @@ namespace render
 
 		////HERE SET THE RENDER SHADOWS
 
-
+		//shadows::set_renderShadowMap_dL();
 
 		RenderData_Set::frameBuffers_D["screen"].bindFrameBuffer(); ///TO BIND THE FRAMEBUFFER
 		openGL_render::clearOpenGL();

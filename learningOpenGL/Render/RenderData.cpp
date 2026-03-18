@@ -341,7 +341,7 @@ namespace RenderData_Set
 		std::vector<Assimp_D::shader_SetType> shaders{};
 		shaders.emplace_back("shaderT1", Assimp_D::shader_type::standard_Shader);
 		shaders.emplace_back("normals_shaderT1", Assimp_D::shader_type::viewNormals_Shader);
-
+        shaders.emplace_back("shadow_shader_v1", Assimp_D::shader_type::depthMapShadow_Shader);
 
 	//	std::filesystem::path pathBackpack{ backpack_Model };
 
@@ -686,6 +686,7 @@ namespace RenderData_Set
 			shaderPoint,
 			shaderSkybox_01,
 			shader_briiUI_01,
+			shader_shadow_v01
 		};
 
 		shading::loadToCPU::atomic_sizeShader.fetch_add(static_cast<int>(shadersLoad.size()));

@@ -6,6 +6,7 @@
 #include "Render/frameBuffers.h"
 #include "Render/RenderData.h"
 #include "SHADER_H.h"
+#include "Render/Render.h"
 
 namespace shadowsManager {
 
@@ -87,6 +88,23 @@ namespace shadowsManager {
     return nullptr;
   }
 
+  const std::string* directional_shadowMap_dL::out_shaderID()
+  {
+    auto findShader {RenderData_Set::shader_D.find(shaderID)};
+
+    if (findShader != RenderData_Set::shader_D.end())
+    {
+      return &shaderID;
+    }
+
+     const std::string log_error_find {"ERROR FIND SHADER::" + shaderID};
+
+     register_error_RM::register_error_withSentence(log_error_find.c_str());
+
+
+    return nullptr;
+  }
+
   void directional_shadowMap_dL::draw_ShadowMap()
   {
     shading::shader* shaderShadowDL {directional_shadowMap_dL::out_shader()};
@@ -94,12 +112,14 @@ namespace shadowsManager {
     shaderShadowDL->use();
     shaderShadowDL->transformMat("lightSpaceMatrix", lightSpaceMatrix);
 
-    glViewport(0, 0, dataBuffer->width_Shadow, dataBuffer->height_Shadow);
+    ///glViewport(0, 0, dataBuffer->width_Shadow, dataBuffer->height_Shadow);
+    openGL_render::viewportSet(0, 0, dataBuffer->width_Shadow, dataBuffer->height_Shadow);
+
     glBindFramebuffer(GL_FRAMEBUFFER, dataBuffer->FBO);
     update_Lights();
 
     shaderShadowDL = nullptr;
-    delete shaderShadowDL;
+    ///delete shaderShadowDL;
 
   }
 

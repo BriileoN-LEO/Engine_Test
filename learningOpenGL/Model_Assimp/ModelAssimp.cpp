@@ -379,7 +379,7 @@ namespace Assimp_D {
 		return id;
 	}
 
-	Uint8 size_shaderType{2};
+	Uint8 size_shaderType{3};
 
 	structModelName::structModelName() = default;
 
@@ -1254,6 +1254,13 @@ namespace Assimp_D {
 
 	//	std::cout << glGetError() << '\n';
 	}
+	void Mesh::Draw_DepthMap(shading::shader& shader)
+	{
+		shader.transformMat("model", MeshCoord.model);
+	    glBindVertexArray(VAO);
+		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
+		glBindVertexArray(0);
+	}
 	void Mesh::Draw_Alone()
 	{
 		glBindVertexArray(VAO);
@@ -1647,7 +1654,7 @@ namespace Assimp_D {
 
         for (Uint8 i = 0; i < size_shaderType; i++)
         {
-        	if (i != size_shaderType) {
+        	if (i != size_shaderType) {  ////QUIT THIS IF
         		shader_type find_type {static_cast<shader_type>(i)};
 
         		Uint8 pos {};
@@ -2003,6 +2010,20 @@ namespace Assimp_D {
 							shaders_set[static_cast<Uint8>(shader_type::viewNormals_Shader)].name_shader);;  ///changes if i wrong
 			}
 		}
+
+	}
+
+	void Model::Draw_DepthMapShadow(uint32_t mesh_ID, const std::string* shader_ID)
+	{
+      auto find_mesh {pos_find_secuencial.find(mesh_ID)};
+
+		if (find_mesh != pos_find_secuencial.end())
+		{
+		  uint32_t& pos {pos_find_secuencial[mesh_ID]};
+		  meshes[pos].Draw_DepthMap(RenderData_Set::shader_D[*shader_ID]);
+		}
+
+		shader_ID = nullptr;
 
 	}
 

@@ -196,6 +196,7 @@ namespace utilities
     void order_nearPosMeshes(); ///TO ORDER THE POSICION ONCE TO DRAW AFTER
     void order_farPosMeshes();
 
+    void render_nearPos_depthMapShadow(const std::string* shader_ID);
     void render_nearPos();
     void render_farPos();
 

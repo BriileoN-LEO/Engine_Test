@@ -725,6 +725,20 @@ namespace utilities {
 
   }
 
+  void scene::render_nearPos_depthMapShadow(const std::string* shader_ID)
+  {
+    for (auto& model_render : renderBlocking)
+    {
+      for (uint32_t renderP = model_render.meshes_start; renderP <= model_render.meshes_end; renderP++)
+      {
+        models_entities[model_render.model_pos].model_entity->Draw_DepthMapShadow(render_meshes[renderP].meshID, shader_ID);  ///test if this render the mesh
+      }
+
+    }
+    shader_ID = nullptr;
+
+  }
+
   void scene::render_nearPos()
   {
 

@@ -76,6 +76,7 @@ namespace Assimp_D
 	{
 	   standard_Shader = 0,
        viewNormals_Shader = 1,
+       depthMapShadow_Shader = 2
     };
 	extern Uint8 size_shaderType;
 
@@ -278,6 +279,7 @@ namespace Assimp_D
 		void Draw(camera::camera1 cam1, light::light1 light, shading::shader& shader, std::string& shaderNormals_ID);
 		void Draw_WithLights(shading::shader& shader, std::string& shaderNormals_ID);
 		void Draw_WithLights02(shading::shader& shader);
+		void Draw_DepthMap(shading::shader& shader);
 		void Draw_Alone();
 		void Draw_WithoutModel(shading::shader& shader, std::string shaderNormals_ID);
 		void build_PreDraw(shading::shader& shader);  ///SEARCH THIS IF I NEED IT
@@ -330,6 +332,7 @@ namespace Assimp_D
 		void Draw_singleMesh_ID(uint32_t mesh_ID, int shaderOp);
 		void DrawSingleMesh(std::string nameMesh, int shaderOp);
 		void DrawExcludeMesh(std::string nameMesh);
+		void Draw_DepthMapShadow(uint32_t mesh_ID, const std::string* shader_ID);
 		void destroyModel();
 
 		void calculate_centerBoundingBox();
