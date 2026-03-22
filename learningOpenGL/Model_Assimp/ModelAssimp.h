@@ -332,7 +332,7 @@ namespace Assimp_D
 		void Draw_singleMesh_ID(uint32_t mesh_ID, int shaderOp);
 		void DrawSingleMesh(std::string nameMesh, int shaderOp);
 		void DrawExcludeMesh(std::string nameMesh);
-		void Draw_DepthMapShadow(uint32_t mesh_ID, const std::string* shader_ID);
+		void Draw_DepthMapShadow(uint32_t mesh_ID, std::string* shader_ID);
 		void destroyModel();
 
 		void calculate_centerBoundingBox();

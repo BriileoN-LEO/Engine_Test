@@ -8,11 +8,11 @@ layout (location = 1) in vec2 aTexCoords;
 
 out vec2 texCoords;
 
-layout (std140, binding = 0) uniform matrices_cam
-{
- mat4 view_c;
- mat4 projection_c;
-};
+//layout (std140, binding = 0) uniform matrices_cam
+//{
+ //mat4 view_c;
+ //mat4 projection_c;
+//};
 
 
 //uniform mat4 model; //Agregado
@@ -25,8 +25,7 @@ void main()
 
 //gl_Position = projection_c * view_c * vec4(aPos, 1.0);
  gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0);
-
-texCoords = aTexCoords;
+ texCoords = aTexCoords;
 
 
 }

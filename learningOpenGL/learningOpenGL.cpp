@@ -19,6 +19,7 @@
 #include "Collision/ScreenHit.h"
 #include "threadSystem/thread_System.h"
 #include "Edit_Modes/Edit_M.h"
+#include "shadows_manager/shadows_D.h"
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -498,7 +499,8 @@ int main(int argc, char* argv[])
 					//ScreenCalc_Hit::calc_IntersectALL();
 
 					render::renderPhase();
-					//render::shadows::set_renderShadowMap_dL();
+					//render::shadows::set_renderShadowMap_dL(shadowsManager::shadow_render::RENDER_SAVE_TEXTURE_SHADOW);
+
 					refresh_Models::refreshAll_LastModels();
 
 					UI::render_All_ImGui(gWindow);
@@ -523,14 +525,14 @@ int main(int argc, char* argv[])
 	}
 
 	//multiplesTriangles.destroy();
+	SDL_GL_DestroyContext(contextOpenGl);
+	SDL_DestroyWindow(gWindow);
+	SDL_Quit();
 	UI::destroyUI();
 	threadSystem::ControlPhysics_Events.destroy();
 	destroy::destroyModels();
 	destroy::destroyLights();
 	destroy::destroyFrameBuffers();
-	SDL_GL_DestroyContext(contextOpenGl);
-	SDL_DestroyWindow(gWindow);
-	SDL_Quit();
 
 	return 0;
 }

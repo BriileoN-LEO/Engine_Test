@@ -47,6 +47,10 @@ const std::string fShader_Pointer = "shaders/SHADER_UI/fShader_Pointer.frag";
 const std::string vShader_Framebuffer_V01 = "shaders/SHADER_FRAMEBUFFER/vShader_framebuffer_V01.vert";
 const std::string fShader_Framebuffer_V01 = "shaders/SHADER_FRAMEBUFFER/fShader_framebuffer_V01.frag";
 
+const std::string vShader_FrameBuffer_shadow = "shaders/SHADER_FRAMEBUFFER/vShader_frameBuffer_shadow.vert";
+const std::string fShader_FrameBuffer_shadow = "shaders/SHADER_FRAMEBUFFER/fShader_frameBuffer_shadow.frag";
+
+
 //SHADERS SKYBOX
 const std::string vShader_Skybox_V01 = "shaders/SHADER_SKYBOX/vShader_skybox_v1.vert";
 const std::string fShader_Skybox_V01 = "shaders/SHADER_SKYBOX/fShader_skybox_v1.frag";

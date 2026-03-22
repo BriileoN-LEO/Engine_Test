@@ -2,6 +2,11 @@
 #define Render
 #include "RenderData.h"
 
+namespace shadowsManager
+{
+	enum class shadow_render : uint8_t;
+}
+
 namespace render
 {
     extern bool oneTimeSee;
@@ -24,7 +29,8 @@ namespace render
 	namespace shadows
 	{
       void render_AllShadowMap_dL(shading::shader* shader_shadowMap);
-	  void set_renderShadowMap_dL();
+	  void set_renderShadowMap_dL(shadowsManager::shadow_render shadowRenderType);
+      void render_currentShadowMap_dL();
 	}
 
 	namespace renderOP

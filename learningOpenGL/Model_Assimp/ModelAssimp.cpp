@@ -6,6 +6,7 @@
 #include "Render/Render.h"
 #include "optimize_Algorithmics/optimizeAlgorithmics.h"
 #include "Assimp_lib.h"
+#include "shadows_manager/shadows_D.h"
 //#include "resource_Manager/resourceManager.h"
 
 namespace sky 
@@ -879,105 +880,15 @@ namespace Assimp_D {
 	//	shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 		shader.setVec3("objectColor", shaderSet.objectColor);
 
-		/*
-		if (static_cast<int>(RenderData_Set::pointLights_D.size()) > 0)
-		{
-
-			for (int i = 0; i < static_cast<int>(RenderData_Set::pointLights_D.size()); i++)
-			{
-				std::string pL_name{ "pointLights_Array[" + std::to_string(i) + "]" };
-
-				std::string pL_color{ pL_name + ".lightColor" };
-				std::string pL_Posicion{ pL_name + ".lightPos" };
-				std::string pL_constant{ pL_name + ".constant" };
-				std::string pL_linear{ pL_name + ".linear" };
-				std::string pL_quadratic{ pL_name + ".quadratic" };
-				std::string pL_ambient{ pL_name + ".ambient" };
-				std::string pL_diffuse{ pL_name + ".diffuse" };
-				std::string pL_specular{ pL_name + ".specular" };
-
-				shader.setVec3(pL_color, RenderData_Set::pointLights_D[i].Color);
-				shader.setVec3(pL_Posicion, RenderData_Set::pointLights_D[i].Posicion);
-				shader.setFloat(pL_constant, RenderData_Set::pointLights_D[i].constant);
-				shader.setFloat(pL_linear, RenderData_Set::pointLights_D[i].linear);
-				shader.setFloat(pL_quadratic, RenderData_Set::pointLights_D[i].quadratic);
-				shader.setVec3(pL_ambient, RenderData_Set::pointLights_D[i].Mat.ambient);
-				shader.setVec3(pL_diffuse, RenderData_Set::pointLights_D[i].Mat.diffuse);
-				shader.setVec3(pL_specular, RenderData_Set::pointLights_D[i].Mat.specular);
-
-			}
-		}
-
-		////////////Corregir aqui y revisar si funciona nullptr
-		if (static_cast<int>(RenderData_Set::directionalLights_D.size()) > 0)
-		{
-			int dirLight_pos{ 1 };
-
-			for (int i = 0; i < static_cast<int>(RenderData_Set::directionalLights_D.size()); i++)
-			{
-				//for (auto& dL : *directionalLights)
-				//{
-				std::string dL_name{ "directionalLight_" + std::to_string(dirLight_pos++) };
-			//	std::string dL_color{ dL_name + ".lightColor" };
-				std::string dL_direction{ dL_name + ".lightDir" };
-				std::string dL_ambient{ dL_name + ".ambient" };
-				std::string dL_diffuse{ dL_name + "diffuse" };
-				std::string dL_specular{ dL_name + ".specular" };
-
-				//shader.setVec3(dL_color, directionalLights[i].Color);
-				shader.setVec3(dL_direction, RenderData_Set::directionalLights_D[i].Direction);
-				shader.setVec3(dL_ambient, RenderData_Set::directionalLights_D[i].Mat.ambient);
-				shader.setVec3(dL_diffuse, RenderData_Set::directionalLights_D[i].Mat.diffuse);
-				shader.setVec3(dL_specular, RenderData_Set::directionalLights_D[i].Mat.specular);
+		///SET LIGHT SPACE MATRIX FOR SHADOW MAPPING
+		shader.transformMat("lightSpaceMatrix", RenderData_Set::dL_shadows_D->out_lightSpaceMatrix());
 
 
-			}
-
-		}
-
-		if (static_cast<int>(RenderData_Set::spotLights_D.size()) > 0)
-		{
-			int sL_i{};
-
-
-			for (auto& spotLight : RenderData_Set::spotLights_D)
-			{
-				std::string sL_name{ "spotLights_Array[" + std::to_string(sL_i) + "]" };
-
-				std::string sL_Posicion{ sL_name + ".lightPos" };
-				std::string sL_Direction{ sL_name + ".lightDir" };
-				std::string sL_cutOff{ sL_name + ".cutOff" };
-				std::string sL_outerCutOff{ sL_name + ".outerCutOff" };
-				std::string sL_constant{ sL_name + ".constant" };
-				std::string sL_linear{ sL_name + ".linear" };
-				std::string sL_quadratic{ sL_name + ".quadratic" };
-				std::string sL_ambient{ sL_name + ".ambient" };
-				std::string sL_diffuse{ sL_name + ".diffuse" };
-				std::string sL_specular{ sL_name + ".specular" };
-				std::string sL_lightState{ sL_name + ".lightState" };
-
-				shader.setVec3(sL_Posicion, spotLight.second.Posicion);
-				shader.setVec3(sL_Direction, spotLight.second.Direction);
-				shader.setFloat(sL_cutOff, glm::cos(glm::radians(spotLight.second.cutOff)));
-				shader.setFloat(sL_outerCutOff, glm::cos(glm::radians(spotLight.second.outerCutOff)));
-				shader.setFloat(sL_constant, spotLight.second.constant);
-				shader.setFloat(sL_linear, spotLight.second.linear);
-				shader.setFloat(sL_quadratic, spotLight.second.quadratic);
-				shader.setVec3(sL_ambient, spotLight.second.Mat.ambient);
-				shader.setVec3(sL_diffuse, spotLight.second.Mat.diffuse);
-				shader.setVec3(sL_specular, spotLight.second.Mat.specular);
-				shader.setBool(sL_lightState, spotLight.second.stateLight);
-
-				sL_i++;
-			}
-
-		}
-		*/
+		int sizeTextures {static_cast<int>(textures.textures_LoadCache.size())};
+		texture::textureUnits textureUnit{};
 
 		if(!textures.textures_LoadCache.empty())
-		//if (!textures.texU_Data.empty()) ///OLD WAY TO USE TEXTURES
 		{
-			//textures.useTextures_PerMaterial(shader, 1); ///OLD WAY TO USE TEXTURES
 			textures.use_MaterialTextures(shader, 1);
 			shader.setBool("NotTexture", false);
 
@@ -988,13 +899,20 @@ namespace Assimp_D {
 
 			if (RenderData_Set::skybox_D::skyBox_Current.active == true && !RenderData_Set::skybox_D::skyBox_Current.nameSkybox.empty())
 			{
-				texture::textureUnits textureUnit{ static_cast<texture::textureUnits>(static_cast<int>(textures.textures_LoadCache.size()) + 1) };
+				++sizeTextures;
+				textureUnit = static_cast<texture::textureUnits>(sizeTextures);
 
 				RenderData_Set::skybox_D::skyBoxes_D[RenderData_Set::skybox_D::skyBox_Current.nameSkybox].bind_Texture(shader, "skybox", textureUnit);
 				shader.transformMat3("transformation_SkyBox", RenderData_Set::skybox_D::skyBoxes_D["skyBox_day"].transform_SkyBox.rotationVec);
 				shader.setBool("activeSkybox", true);
 
 			}
+
+			//////////////TO BLIND SHADOW TEXTURES/////////////////////////
+			/////////////////ONLY FOR TEST ///////////////////////////////
+         ++sizeTextures;
+			textureUnit = static_cast<texture::textureUnits>(sizeTextures);
+			texture::bind_texture(shader, RenderData_Set::dL_shadows_D->out_texture(), "shadowMap", textureUnit, texture::GL_typeTexture::TEXTURE_2D);
 
 		}
 
@@ -1013,6 +931,9 @@ namespace Assimp_D {
 			shader.setBool("activeSkybox", false);
 			//glActiveTexture(GL_TEXTURE0);
 			//glBindTexture(GL_TEXTURE_2D, 0);
+
+			textureUnit = static_cast<texture::textureUnits>(sizeTextures);
+			texture::bind_texture(shader, RenderData_Set::dL_shadows_D->out_texture(), "shadowMap", textureUnit, texture::GL_typeTexture::TEXTURE_2D);
 		}
 
 
@@ -2013,18 +1934,25 @@ namespace Assimp_D {
 
 	}
 
-	void Model::Draw_DepthMapShadow(uint32_t mesh_ID, const std::string* shader_ID)
+	void Model::Draw_DepthMapShadow(uint32_t mesh_ID, std::string* shader_ID)
 	{
-      auto find_mesh {pos_find_secuencial.find(mesh_ID)};
+	  if (shader_ID != nullptr)
+	  {
+		  auto find_mesh {pos_find_secuencial.find(mesh_ID)};
 
-		if (find_mesh != pos_find_secuencial.end())
-		{
-		  uint32_t& pos {pos_find_secuencial[mesh_ID]};
-		  meshes[pos].Draw_DepthMap(RenderData_Set::shader_D[*shader_ID]);
-		}
+	  	if (find_mesh != pos_find_secuencial.end())
+	  	{
+	  		uint32_t& pos {pos_find_secuencial[mesh_ID]};
+	  		meshes[pos].Draw_DepthMap(RenderData_Set::shader_D[*shader_ID]);
+	  	}
 
-		shader_ID = nullptr;
+	  	shader_ID = nullptr;
+	  }
 
+	  else
+	  {
+	  	register_error_RM::register_error_withSentence("ERROR::SHADER_ID == NULLPTR");
+	  }
 	}
 
 	void Model::destroyModel()

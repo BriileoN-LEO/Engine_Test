@@ -7,7 +7,6 @@ in vec2 texCoords;
 uniform sampler2D screenTexture;
 
 
-
 void grayScale_Filter()
 {
   FragColor = texture(screenTexture, texCoords);
@@ -80,9 +79,15 @@ void normalFilter()
 {
  vec3 normalFilt = texture(screenTexture, texCoords).rgb;
  gamma_correction(normalFilt);
-// FragColor = vec4(normalFilt, 1.0);
+ //FragColor = vec4(normalFilt, 1.0);
 }
 
+void depthBufferTest()
+{
+ float depthValue = texture(screenTexture, texCoords).r;
+ FragColor = vec4(vec3(depthValue), 1.0);
+
+}
 
 void main()
 {
@@ -91,6 +96,8 @@ void main()
  //FragColor = vec4(vec3(1.0 - texture(screenTexture, texCoords)), 1.0);
  //FragColor = vec4(1.0f, 0.3f, 0.6f, 1.0f);
 // firstKernelShader();
+
  normalFilter();
+// depthBufferTest();
 
 }

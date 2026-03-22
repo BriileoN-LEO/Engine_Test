@@ -55,7 +55,7 @@ namespace frameBuff
 
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		{
-			SDL_Log("ERROR::FRAMEBUFFER::NOT COMPLETE!");
+			register_error_RM::register_error_withSentence("ERROR::FRAMEBUFFER::NOT COMPLETE!");
 		}
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -131,6 +131,19 @@ namespace frameBuff
 	//lDrawElements(GL_TRIANGLES, sizeIndices, GL_UNSIGNED_INT, 0);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindVertexArray(0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+	void frameBuffer::useFrameBuffer_texture(unsigned int& TCB) {
+		RenderData_Set::shader_D["shaderFramebuffer_shadow"].use();
+		glBindVertexArray(dataBuffer.VAO);
+		//glDisable(GL_DEPTH_TEST);
+		RenderData_Set::shader_D["shaderFramebuffer_shadow"].setInt("screenTexture", 0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, TCB);
+		//lDrawElements(GL_TRIANGLES, sizeIndices, GL_UNSIGNED_INT, 0);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindVertexArray(0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
 	void frameBuffer::useFrameBufferModel()

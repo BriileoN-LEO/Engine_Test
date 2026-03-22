@@ -725,7 +725,7 @@ namespace utilities {
 
   }
 
-  void scene::render_nearPos_depthMapShadow(const std::string* shader_ID)
+  void scene::render_nearPos_depthMapShadow(std::string* shader_ID)
   {
     for (auto& model_render : renderBlocking)
     {
@@ -735,6 +735,7 @@ namespace utilities {
       }
 
     }
+
     shader_ID = nullptr;
 
   }

@@ -363,6 +363,17 @@ namespace texture
 
 	};
 
+	enum class GL_typeTexture
+	{
+	  TEXTURE_2D = 0,
+	  TEXTURE_3D = 1,
+	  TEXTURE_CUBE_MAP = 2
+	};
+
+	GLenum GL_typeTexTranslate(GL_typeTexture& GL_TT);
+
+	void bind_texture(const shading::shader& shader, const unsigned int& textureID, std::string nameTexture, const textureUnits& unit, GL_typeTexture GL_TypeTex);
+
 }
 
 namespace ObjCreation

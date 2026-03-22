@@ -10,6 +10,7 @@ out vec4 FragColor;
 in vec3 Normal;
 in vec3 FragPos;
 in vec2 coordTexOut;
+in vec4 FragPos_LightSpace_sDl;
 
 uniform vec3 objectColor;
 uniform vec3 lightColor;
@@ -33,6 +34,45 @@ bool blinn_phong_S = true;
 bool automatic_LIGHT_shininess = true;  ////relative brightness
 const float pi = 3.14159265;
 const float kShininess = 16.0;
+
+///////////SHADOW MAP///////////////
+uniform sampler2D shadowMap;
+
+float Shadow_calculation_dirLight(vec4 fragPosLightSpace, float bias)
+{
+  vec3 projCoord = fragPosLightSpace.xyz / fragPosLightSpace.w;
+  projCoord = projCoord * 0.5 + 0.5;
+  //float closestDepth = texture(shadowMap, projCoord.xy).r;
+  float depthFragment = projCoord.z;
+
+  float shadowCalc = 0.0;
+
+   /*
+  if(projCoord.z <= 1.0)
+  {
+   shadowCalc = depthFragment - bias > closestDepth ? 1.0 : 0.0;
+  }
+*/
+
+  if(projCoord.z <= 1.0)
+  {
+      vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
+      float sofftness_shadow = 1.0;
+      for (int x = -1; x <= 1; ++x)
+      {
+          for (int y = -1; y <= 1; ++y)
+          {
+              float closest_pcfDepth = texture(shadowMap, projCoord.xy + vec2(x, y) * texelSize).r;
+              shadowCalc += depthFragment - bias > closest_pcfDepth ? 1.0 : 0.0;
+          }
+      }
+
+      shadowCalc /= 9.0;
+  }
+
+  return shadowCalc;
+}
+
 
 struct directional_Light
 {
@@ -175,40 +215,85 @@ return result;
 vec3 CalcDirLight(directional_Light dirLight_Cal, vec3 normal_Face, vec3 viewDir, bool diffuseExist, bool specExist)
 {
    vec3 lightDir = normalize(dirLight_Cal.lightDir);
-   
+
    float diff = max(dot(lightDir, normal_Face), 0.0);
-   
-   vec3 reflectDir = reflect(-lightDir, normal_Face);
-   float spec = pow(max(dot(viewDir, reflectDir), 0.0), Mat.shiness);
+
+   vec3 reflectDir;
+   float spec;
+
+   if(automatic_LIGHT_shininess == true && blinn_phong_active == true)
+  {
+   const float energy_Conservation = (8.0 + kShininess) / (8.0 + pi);
+   reflectDir = normalize(lightDir + viewDir);
+   spec = energy_Conservation * pow(max(dot(normal_Face, reflectDir), 0.0), kShininess);
+  }
+
+  else if(automatic_LIGHT_shininess == true && blinn_phong_active == false)
+  {
+   const float energy_Conservation = (8.0 + kShininess) / (8.0 + pi);
+   reflectDir = reflect(-lightDir, normal_Face);
+   spec = energy_Conservation * pow(max(dot(viewDir, reflectDir), 0.0), Mat.shiness);
+  }
+
+  else if(blinn_phong_active == true)
+  {
+   reflectDir = normalize(lightDir + viewDir);  /// THE REFLECTION HALFWAYDIR
+   spec = pow(max(dot(normal_Face, reflectDir), 0.0), Mat.shiness);
+
+  }
+
+  else if(blinn_phong_active == false)
+  {
+    vec3 reflectDir = reflect(-lightDir, normal_Face);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), Mat.shiness);
+  }
 
   vec3 ambient;
   vec3 diffuse;
   vec3 specular;
+  //vec3 lightColor = vec3(1.0f);
+
+  vec3 color;
 
   if(diffuseExist == true)
   {
-  ambient = dirLight_Cal.ambient * vec3(texture(Mat_1.texture_diffuse, coordTexOut));
-  diffuse = dirLight_Cal.diffuse * diff * vec3(texture(Mat_1.texture_diffuse, coordTexOut));
+  vec3 diffuseTexture = vec3(texture(Mat_1.texture_diffuse, coordTexOut));
+
+  ambient = dirLight_Cal.ambient * Mat.ambient;
+  //ambient = dirLight_Cal.ambient * diffuseTexture;
+  diffuse = dirLight_Cal.diffuse * diff;
+  //diffuse = dirLight_Cal.diffuse * diff * diffuseTexture;
+  color = diffuseTexture;
 
   }
 
   else if(diffuseExist == false)
   {
   ambient = dirLight_Cal.ambient * Mat.ambient;
-  diffuse = dirLight_Cal.diffuse * diff * Mat.difusse;
-
+  diffuse = dirLight_Cal.diffuse * diff;
+  //diffuse = dirLight_Cal.diffuse * diff * Mat.difusse;
+  color = Mat.difusse;
   }
 
   if(specExist == true)
   {
-  specular = dirLight_Cal.specular * spec * vec3(texture(Mat_1.texture_specular, coordTexOut));
+   specular = dirLight_Cal.specular * spec * vec3(texture(Mat_1.texture_specular, coordTexOut));
   }
   else if(specExist == false)
   {
-  specular = dirLight_Cal.specular * spec * Mat.specular;
+   specular = dirLight_Cal.specular * spec * Mat.specular;
   }
 
-  return (ambient + diffuse + specular);
+
+  vec3 lastCalcDir = (ambient + diffuse + specular) * color;
+
+  ///HERE SHADOW MAPPING COLOR
+  float bias = max(0.05 * (1.0 - dot(normal_Face, lightDir)), 0.005);
+
+  float shadow_dirLight = Shadow_calculation_dirLight(FragPos_LightSpace_sDl, bias);
+  vec3 lightDirCalc = (ambient + (1.0 - shadow_dirLight) * (diffuse + specular)) * color;
+
+  return lightDirCalc;
 }
 
 vec3 CalcPointLight(point_Light pointLight, vec3 normal_Face, vec3 viewDir, bool diffuseExist, bool specExist)
@@ -381,7 +466,7 @@ if(activeSkybox == true)
 
 if(existTexSpec == false)
 {
-finalResult = result;
+ finalResult = result;
 
 }
 
@@ -484,7 +569,7 @@ result += CalcDirLight(directionalLight_1[i], normal_Face, viewDir, diffExist, s
 for(int i = 0; i < NUM_POINT_LIGHTS; i++)
 {
 
-result += CalcPointLight(pointLights_Array[i], normal_Face, viewDir, diffExist, specExist);
+ result += CalcPointLight(pointLights_Array[i], normal_Face, viewDir, diffExist, specExist);
 
 }
 
@@ -532,7 +617,9 @@ vec4 renderCoordTextures = vec4(coordTexOut.x, coordTexOut.y, 0.0, 1.0);
 
 
  ///FragColor = renderFrontFacing(renderStandard);
-  FragColor = renderStandard;
+  //FragColor = renderStandard;
+  FragColor = resultVec4;
+
 
 
  //FragColor = vec4(1.0, 0.0, 0.0, 1.0);
@@ -560,103 +647,6 @@ vec4 renderCoordTextures = vec4(coordTexOut.x, coordTexOut.y, 0.0, 1.0);
 //FragColor = skyBox_reflection;
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

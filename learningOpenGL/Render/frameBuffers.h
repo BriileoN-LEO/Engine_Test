@@ -51,6 +51,8 @@ namespace frameBuff
 		void loadScreenView();
 		void bindFrameBuffer();
 		void useFrameBufferScreen();
+		void useFrameBuffer_texture(unsigned int& TCB);
+
 		void useFrameBufferModel();
 
         void clear();

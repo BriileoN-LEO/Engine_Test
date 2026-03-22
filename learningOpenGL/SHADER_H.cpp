@@ -375,7 +375,6 @@ namespace shading
 	void shader::use()
 	{
 		glUseProgram(ID);
-
 	}
 	void shader::setBool(const std::string& name, bool value) const
 	{
@@ -1301,6 +1300,38 @@ namespace texture
 
 		texU_Data.clear();
 		texU_Data.shrink_to_fit();
+
+	}
+
+	GLenum GL_typeTexTranslate(GL_typeTexture& GL_TT)
+	{
+	  switch (GL_TT)
+	  {
+	  	case GL_typeTexture::TEXTURE_2D :
+
+	  		return GL_TEXTURE_2D;
+	  		break;
+
+	  	case GL_typeTexture::TEXTURE_3D :
+
+	  		return GL_TEXTURE_3D;
+	  		break;
+
+	  	case GL_typeTexture::TEXTURE_CUBE_MAP :
+
+	  		return GL_TEXTURE_CUBE_MAP;
+	  		break;
+
+	  }
+	}
+
+	void bind_texture(const shading::shader& shader, const unsigned int& textureID, std::string nameTexture, const textureUnits& unit, GL_typeTexture GL_TypeTex)
+	{
+		GLenum typeTexture {GL_typeTexTranslate(GL_TypeTex)};
+
+    	shader.setInt(nameTexture, static_cast<int>(unit));
+		glActiveTexture(GL_TEXTURE0 + static_cast<int>(unit));
+		glBindTexture(typeTexture, textureID);
 
 	}
 

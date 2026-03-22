@@ -180,32 +180,26 @@ namespace render
 	namespace shadows
 	{
 
-		void render_AllShadowMap_dL(const std::string* shader_shadowMap)
+		void render_AllShadowMap_dL(std::string* shader_shadowMap)
 		{
 			RenderData_Set::ModelsScene_D->render_nearPos_depthMapShadow(shader_shadowMap);
 			shader_shadowMap = nullptr;
 		}
 
-		void set_renderShadowMap_dL()
+		void set_renderShadowMap_dL(shadowsManager::shadow_render shadowRenderType)
 		{
-			RenderData_Set::dL_shadows_D->draw_ShadowMap();
-
-			const std::string* shaderID { RenderData_Set::dL_shadows_D->out_shaderID()};
-
-			if (shaderID != nullptr)
-			{
-				render_AllShadowMap_dL(shaderID);
-			}
-
-			else if (shaderID == nullptr)
-			{
-				register_error_RM::register_error_withSentence("ERROR FIND SHADER FOR SHADOW MAPPING");
-			}
-
-			//glViewport(0, 0, screenSettings::screen_w, screenSettings::screen_h);
-			openGL_render::viewportSet(0, 0, screenSettings::screen_w, screenSettings::screen_h);
-
+			RenderData_Set::dL_shadows_D->set_ShadowMap(shadowRenderType);
 		}
+
+		void render_currentShadowMap_dL()
+		{
+			//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+			//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+			glEnable(GL_DEPTH_TEST);
+			openGL_render::viewportSet(0, 0, RenderData_Set::dL_shadows_D->out_widthViewShadow(), RenderData_Set::dL_shadows_D->out_heightViewShadow());
+			RenderData_Set::dL_shadows_D->render_FrameBuffer();
+		}
+
 	}
 
 	namespace renderOP
@@ -432,7 +426,7 @@ namespace render
 
 		////HERE SET THE RENDER SHADOWS
 
-		//shadows::set_renderShadowMap_dL();
+		shadows::set_renderShadowMap_dL(shadowsManager::shadow_render::SAVE_TEXTURE_SHADOW);
 
 		RenderData_Set::frameBuffers_D["screen"].bindFrameBuffer(); ///TO BIND THE FRAMEBUFFER
 		openGL_render::clearOpenGL();
@@ -442,14 +436,16 @@ namespace render
 		Shader_Set::set_All_UB();
 
 		render::renderAll();
+	//	shadows::set_renderShadowMap_dL();
 
 	//	render::render_brii_UI();
 
 		openGL_render::secondClearOpenGL();  ///SECOND CLEAR
 		RenderData_Set::frameBuffers_D["screen"].useFrameBufferScreen(); ///TO USE THE FRAMEBUFFER BIND
 
-     //	RenderData_Set::frameBuffers_D["mirror_01"].useFrameBufferModel();
+    // 	RenderData_Set::frameBuffers_D["mirror_01"].useFrameBufferModel();
 
+	//	shadows::render_currentShadowMap_dL();
 
 	}
 
@@ -526,7 +522,7 @@ namespace openGL_render
 		glDisable(GL_DEPTH_TEST);
 		glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
 		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 //		RenderData_Set::frameBuffers_D["Mirror"].useFrameBufferModel();
 		
 	    

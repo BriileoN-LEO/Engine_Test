@@ -993,7 +993,6 @@ namespace textureCache
 	{
 
 		shader.setBool("blendTexture", active_BlendMode);
-
 		////HERE ADD A SERCH OF HOW MUCH TEXTURE I HAVE
 
 		std::map<texDataManager::typeTexture, int> texturesNr
@@ -1064,6 +1063,44 @@ namespace textureCache
 			}
 
 		}
+
+
+		////HERE ADD A SERCH OF HOW MUCH TEXTURE I HAVE
+
+		/*
+		std::map<texDataManager::typeTexture, int> texturesNr
+		{
+			{texDataManager::typeTexture::diffuse, 0 },
+			{texDataManager::typeTexture::specular, 0 }
+		};
+
+		std::string numberTex{};
+		std::string prefixTexture{};
+		int totalSizeTex{};
+
+
+		auto indices{ std::views::iota(0) };
+		for (auto [idx, texMat] : std::views::zip(indices, textures_LoadCache))
+		{
+			if (texturesNr[texMat.typeTex] < textureMax)
+			{
+				numberTex = std::to_string(++texturesNr[texMat.typeTex]);
+				prefixTexture = "Mat_" + numberTex + ".";
+				std::string nameTexBool{ prefixTexture + texDataManager::typeTex_T[texMat.typeTex].textureBool };
+				shader.setBool(nameTexBool, true);
+
+				////ACABAR DE INSERTAR LAS TEXTURAS
+
+				std::string nameTexT{ prefixTexture + texDataManager::typeTex_T[texMat.typeTex].textureInsert };
+				shader.setInt(nameTexT, idx);
+				glActiveTexture(GL_TEXTURE0 + totalSizeTex);
+				glBindTexture(GL_TEXTURE_2D, textures[texMat.nameTexture].textureID);
+
+				//texturesNr[texMat.typeTex]++; //SUMA DE PATRON;
+				++totalSizeTex;
+			}
+		}
+*/
 
 	}
 	void texture_Data::insertNewTexture(const char* pathTexture, texDataManager::typeTexture tex)
