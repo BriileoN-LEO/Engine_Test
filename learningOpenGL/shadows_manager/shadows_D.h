@@ -46,7 +46,13 @@ namespace shadowsManager {
 
   glm::mat4 model{};
 
-  glm::mat4 lightSpaceMatrix{};
+  std::array<float, 5> distances_CSM{};
+  std::array<glm::vec4, 8> frustrumCorners_preLoad{};
+  std::array<glm::mat4, 4> lightSpaceMatrices {};
+  int size_LSM{4};
+
+  glm::mat4 lightSpaceMat{};
+ // glm::mat4 lightSpaceMatrix{};
 
   std::string shaderID{};
 
@@ -58,8 +64,14 @@ namespace shadowsManager {
   directional_shadowMap_dL(unsigned int resolution_width, unsigned int resolution_height);
   void loadShadow_Data(unsigned int resolution_width, unsigned int resolution_height);
   void setShader(std::string shaderID);
+  void set_FrustrumCorners();
   void insert_directionalLight(uint32_t ID);
-  void update_Lights();
+
+  glm::mat4 calc_LightSpaceMatrix_CSM(const float& nearSplit, const float& farSplit);
+
+  void update_Lights();  ////THIS IS THE FIRST VERSION
+  void update_CascadeShadowMapping(); ////THIS IS THE NEW VERSION
+  void update_shadowDistances();
 
   void blind_FrameBuffer();
   void render_FrameBuffer();
@@ -69,7 +81,22 @@ namespace shadowsManager {
   const std::string* out_shaderID();
   inline const glm::mat4& out_lightSpaceMatrix()
   {
-   return lightSpaceMatrix;
+   return lightSpaceMat;
+  }
+  inline std::vector<float*> out_distancesCSM()
+  {
+   std::vector<float*> LightSpaceMatrix_Array{};
+
+   for (auto& LSM : distances_CSM)
+   {
+    LightSpaceMatrix_Array.emplace_back(&LSM);
+   }
+
+   return std::move(LightSpaceMatrix_Array);
+  }
+  inline const size_t size_LightSpaceMatrix()
+  {
+   return lightSpaceMatrices.size();
   }
   inline const unsigned int& out_widthViewShadow()
   {
@@ -79,7 +106,32 @@ namespace shadowsManager {
   {
    return dataBuffer->height_Shadow;
   }
+  inline const glm::mat4* out_LightSpaceMatrix(uint8_t pos)
+  {
+     const size_t sizeArray_LSM {size_LightSpaceMatrix()};
 
+     //int mask_bit {-(pos < sizeArray_LSM)};
+     //nt pos_bit {pos & mask_bit};
+     if (static_cast<size_t>(pos) < sizeArray_LSM)
+     {
+       return &lightSpaceMatrices[pos];
+     }
+
+   // register_error_RM::register_error_withSentence("ERROR::VALUE OUT OF SIZE::OVERSIZE LIGHT SPACE MATRIX ARRAY");
+    SDL_Log("ERROR::VALUE OUT OF SIZE::OVERSIZE LIGHT SPACE MATRIX ARRAY");
+    return nullptr;
+  }
+  inline std::vector<glm::mat4*> out_LightSpaceMatrix_array()
+  {
+    std::vector<glm::mat4*> LightSpaceMatrix_Array{};
+
+    for (auto& LSM : lightSpaceMatrices)
+    {
+     LightSpaceMatrix_Array.emplace_back(&LSM);
+    }
+
+   return std::move(LightSpaceMatrix_Array);
+  }
 
   void set_ShadowMap(shadow_render shadow_set);
 

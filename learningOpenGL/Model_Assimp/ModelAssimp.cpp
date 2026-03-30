@@ -866,24 +866,54 @@ namespace Assimp_D {
 			Draw_Normals(shaderNormals_ID); //DRAW NORMALS IF I SELECT THE OPTION
 		}
 	}
-	void Mesh::Draw_WithLights(shading::shader& shader, std::string& shaderNormals_ID)
-	{
+	void Mesh::Draw_WithLights(shading::shader& shader, std::string& shaderNormals_ID) {
 		if (!render::oneTimeSee)
 		{
-	//		SDL_Log(glm::to_string(MeshCoord.model).c_str());  ///TO PRINT THE MATRIX
+			//		SDL_Log(glm::to_string(MeshCoord.model).c_str());  ///TO PRINT THE MATRIX
 		}
 
 		shader.use();
 
 		shader.transformMat("model", MeshCoord.model);
-	//	shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
-	//	shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
+		//	shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+		//	shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
 		shader.setVec3("objectColor", shaderSet.objectColor);
 
+		//SET CASCADE SHADOW DISTANCES
+
+        std::vector<float*> vec_distancesCSM{RenderData_Set::dL_shadows_D->out_distancesCSM()};
+
+		shader.setFLoat_array_ptr("cascadeDistances", vec_distancesCSM);
+
 		///SET LIGHT SPACE MATRIX FOR SHADOW MAPPING
-		shader.transformMat("lightSpaceMatrix", RenderData_Set::dL_shadows_D->out_lightSpaceMatrix());
+		const size_t size_ArrayLSM { RenderData_Set::dL_shadows_D->size_LightSpaceMatrix()};
+        //std::string nameLSM_pos{"lightSpaceMatrices"}; //// I THINK HERE IS THE ERROR
+		std::vector<glm::mat4*> vec_LSM {RenderData_Set::dL_shadows_D->out_LightSpaceMatrix_array()};
 
+		shader.setMat4_array_ptr("lightSpaceMatrices", vec_LSM);
 
+		shader.transformMat("lightSpace_Mat", RenderData_Set::dL_shadows_D->out_lightSpaceMatrix());
+
+		/*
+		for (uint8_t i = 0; i < size_ArrayLSM; ++i)
+		{
+			const glm::mat4* out_LSM_dL { RenderData_Set::dL_shadows_D->out_LightSpaceMatrix(i)};
+
+			if (out_LSM_dL != nullptr )
+			{
+				nameLSM_pos = "lightSpaceMatrices";
+                nameLSM_pos = nameLSM_pos + "[" + std::to_string(i) + "]";
+				//SDL_Log(nameLSM_pos.c_str());
+
+				shader.transformMat(nameLSM_pos, *out_LSM_dL);
+				//size_t pos{nameLSM_pos.find_last_of("[")};
+	            //nameLSM_pos = nameLSM_pos.substr(0, pos);
+
+				out_LSM_dL = nullptr;
+			}
+
+		}
+*/
 		int sizeTextures {static_cast<int>(textures.textures_LoadCache.size())};
 		texture::textureUnits textureUnit{};
 
@@ -912,7 +942,7 @@ namespace Assimp_D {
 			/////////////////ONLY FOR TEST ///////////////////////////////
          ++sizeTextures;
 			textureUnit = static_cast<texture::textureUnits>(sizeTextures);
-			texture::bind_texture(shader, RenderData_Set::dL_shadows_D->out_texture(), "shadowMap", textureUnit, texture::GL_typeTexture::TEXTURE_2D);
+			texture::bind_texture(shader, RenderData_Set::dL_shadows_D->out_texture(), "shadowMap", textureUnit, texture::GL_typeTexture::TEXTURE_2D_ARRAY);
 
 		}
 
@@ -932,8 +962,8 @@ namespace Assimp_D {
 			//glActiveTexture(GL_TEXTURE0);
 			//glBindTexture(GL_TEXTURE_2D, 0);
 
-			textureUnit = static_cast<texture::textureUnits>(sizeTextures);
-			texture::bind_texture(shader, RenderData_Set::dL_shadows_D->out_texture(), "shadowMap", textureUnit, texture::GL_typeTexture::TEXTURE_2D);
+			textureUnit = static_cast<texture::textureUnits>(1);
+			texture::bind_texture(shader, RenderData_Set::dL_shadows_D->out_texture(), "shadowMap", textureUnit, texture::GL_typeTexture::TEXTURE_2D_ARRAY);
 		}
 
 
@@ -979,6 +1009,18 @@ namespace Assimp_D {
 			Draw_Normals(shaderNormals_ID); //DRAW NORMALS IF I SELECT THE OPTION
 		}
 
+
+          ///DELETE ALL THE LIGHTS
+
+		for (uint8_t i = 0; i < static_cast<uint8_t>(vec_distancesCSM.size()); i++)
+		{
+			vec_distancesCSM[i] = nullptr;
+		}
+
+		for (uint8_t i = 0; i < size_ArrayLSM; i++)
+		{
+			vec_LSM[i] = nullptr;
+		}
 
 
 		///Terminar con la textura

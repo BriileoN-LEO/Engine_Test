@@ -154,6 +154,8 @@ namespace shading
 		void setBool(const std::string& name, bool value) const;
 		void setInt(const std::string& name, int value) const;
 		void setFloat(const std::string& name, float value) const;
+		void setFLoat_array(const std::string& name, std::vector<float>& values) const;
+		void setFLoat_array_ptr(const std::string& name, std::vector<float*>& values) const;
 		void setVec3(const std::string& name, glm::vec3 value) const;
 
 		void sumRotAng();
@@ -164,6 +166,9 @@ namespace shading
 
 		void transformMat(const std::string& name, glm::mat4 valueT) const;
 		void transformMat3(const std::string& name, glm::mat3 valueT) const;
+
+		void setMat4_array(const std::string& name, const std::vector<glm::mat4>& values);
+		void setMat4_array_ptr(const std::string& name, const std::vector<glm::mat4*>& values);
 
 		void setMat4_UB(const std::string& uniform_Layout, const std::string& name, glm::mat4 valueT) const;
 
@@ -366,14 +371,14 @@ namespace texture
 	enum class GL_typeTexture
 	{
 	  TEXTURE_2D = 0,
-	  TEXTURE_3D = 1,
-	  TEXTURE_CUBE_MAP = 2
+	  TEXTURE_2D_ARRAY = 1,
+	  TEXTURE_3D = 2,
+	  TEXTURE_CUBE_MAP = 3
 	};
 
 	GLenum GL_typeTexTranslate(GL_typeTexture& GL_TT);
 
 	void bind_texture(const shading::shader& shader, const unsigned int& textureID, std::string nameTexture, const textureUnits& unit, GL_typeTexture GL_TypeTex);
-
 }
 
 namespace ObjCreation

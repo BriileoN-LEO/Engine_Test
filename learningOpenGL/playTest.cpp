@@ -191,7 +191,7 @@ namespace testPlay
 		lightTransSet = pre_PL_2;
 
 		testTranforms = getTranformationT_randomPivot(glm::vec3(2.0f, 3.0f, 2.0f), glm::vec3(1.0f), 0.0f, 0.1f);
-		testBackPack = tranformationT(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.001f);
+		testBackPack = tranformationT(glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.001f);
 		testFloor = tranformationT(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.001f);
 
 	}

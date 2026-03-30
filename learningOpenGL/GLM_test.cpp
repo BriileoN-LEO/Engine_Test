@@ -610,7 +610,6 @@ namespace camera
 	camera1::camera1(typeCam type, glm::vec3 posCam, GLfloat fovCam, GLfloat nearCut, GLfloat maxCut)
 	{
 		setSettingsCamera(type, posCam, fovCam, nearCut, maxCut);
-
 	};
 
 	void camera1::setSettingsCamera(typeCam type, glm::vec3 posCam, GLfloat fovCam, GLfloat nearCut, GLfloat maxCut)
@@ -620,12 +619,13 @@ namespace camera
 		this->fovCam = fovCam;
 		this->nearCut = nearCut;
 		this->maxCut = maxCut;
+		aspectRatio =  static_cast<float>(screenSettings::screen_w) / static_cast<float>(screenSettings::screen_h);
 
 		editMode_Cam.posDirectionView = directionView;
 		cam = glm::lookAt(posCam, posCam + directionView, glm::vec3(0.0f, 1.0f, 0.0f));
 		//to rot cam
 	//	cam = glm::rotate(cam, 180.0f, directionView);
-		camProjection = glm::perspective(glm::radians(this->fovCam), static_cast<float>(screenSettings::screen_w) / static_cast<float>(screenSettings::screen_h), this->nearCut, this->maxCut);
+		camProjection = glm::perspective(glm::radians(this->fovCam), aspectRatio, this->nearCut, this->maxCut);
 	};
 
 	void camera1::rotateCam()

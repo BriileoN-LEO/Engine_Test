@@ -7,13 +7,13 @@ in VS_OUT {
     vec3 Normal_;
     vec3 FragPos_;
     vec2 coordTexOut_;
-    vec4 FragPos_LightSpace_;
+    vec3 FragPosViewSpace_;
 } gs_in[];
 
 out vec3 Normal;
 out vec3 FragPos;
 out vec2 coordTexOut;
-out vec4 FragPos_LightSpace_sDl;
+out vec3 FragPosViewSpace;
 
 uniform bool active_exploded;
 uniform float dist_exploded;
@@ -49,8 +49,9 @@ void main() {
 
         Normal = gs_in[i].Normal_;
         FragPos = gs_in[i].FragPos_;
+        FragPosViewSpace = gs_in[i].FragPosViewSpace_;
         coordTexOut = gs_in[i].coordTexOut_;
-        FragPos_LightSpace_sDl = gs_in[i].FragPos_LightSpace_;
+
         EmitVertex();
     }
     EndPrimitive();

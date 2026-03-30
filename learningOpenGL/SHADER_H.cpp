@@ -5,6 +5,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "SHADER_H.h"
 #include "Render/RenderData.h"
+#include "log_Errors/log_error_General.h"
+#include "libCust_openGL/lib_openGL.h"
 
 namespace shading
 {
@@ -380,36 +382,83 @@ namespace shading
 	{
 		int location{ glGetUniformLocation(ID, name.c_str()) };
 
-		if (location == -1)
-		{
-		//	SDL_Log(std::string("ERROR LOCATION::" + name).c_str());
+		//if (location == -1)
+		//{
+		//	log_ErrorG::register_w("WARNING::SHADER::SET BOOL IN SHADER");
+	//	}
 
-		}
+	//	else
+	 //   {
+			lib_SHADER_openGL::set_glUniform1i(location, value ? 1 : 0);
+	//	}
 
-		glUniform1i(location, value ? 1 : 0);
+	//	glUniform1i(location, value ? 1 : 0);
+
 	}
 	void shader::setInt(const std::string& name, int value) const
 	{
 		int location{ glGetUniformLocation(ID, name.c_str()) };
 		
-		if (location == -1)
-		{
-		//	SDL_Log(std::string("ERROR LOCATION::" + name).c_str());
+		//if (location == -1)
+		//{
+	//		log_ErrorG::register_w("WARNING::SHADER::SET INT IN SHADER");
+	//	}
 
-		}
+	//	else
+	//	{
+			lib_SHADER_openGL::set_glUniform1i(location, value);
+	//	}
 
-		glUniform1i(location, static_cast<int>(value));
+		//glUniform1i(location, static_cast<int>(value));
 	}
 	void shader::setFloat(const std::string& name, float value) const
 	{
 		int location{ glGetUniformLocation(ID, name.c_str()) };
-		glUniform1f(location, value);
+
+	//	if (location == -1)
+	//	{
+	//		log_ErrorG::register_w("WARNING::SHADER::SET FLOAT IN SHADER");
+	//	}
+
+	//	else
+	//	{
+			lib_SHADER_openGL::set_glUniform1f(location, value);
+	//	}
+
+
+		//glUniform1f(location, value);
 
 	}
+	void shader::setFLoat_array(const std::string& name, std::vector<float>& values) const
+	{
+		std::string nameArray {name + "[0]"};
+		int location{ glGetUniformLocation(ID, nameArray.c_str()) };
+		lib_SHADER_openGL::set_glUniform1f_array(location, values);
+	}
+
+	void shader::setFLoat_array_ptr(const std::string& name, std::vector<float*>& values) const
+	{
+		std::string nameArray {name + "[0]"};
+		int location{ glGetUniformLocation(ID, nameArray.c_str()) };
+		lib_SHADER_openGL::set_glUniform1f_array_ptr(location, values);
+	}
+
 	void shader::setVec3(const std::string& name, glm::vec3 value) const
 	{
 		int location{ glGetUniformLocation(ID, name.c_str()) };
-		glUniform3fv(location, GL_TRUE, glm::value_ptr(value));
+
+	//	if (location == -1)
+	//	{
+	//		log_ErrorG::register_w("WARNING::SHADER::SET VEC3 IN SHADER");
+	//	}
+
+	//	else
+	//	{
+			lib_SHADER_openGL::set_glUniform3fv(location, value);
+	//	}
+
+
+		//glUniform3fv(location, GL_TRUE, glm::value_ptr(value));
 	
 	}
 
@@ -420,39 +469,118 @@ namespace shading
 	void shader::rotateTex(const std::string& name) const
 	{
 		int location{ glGetUniformLocation(ID, name.c_str()) };
-		glUniform1f(location, rotAng);
+
+		//if (location == -1)
+		//{
+		//	log_ErrorG::register_w("WARNING::SHADER::SET ROT_TEX IN SHADER");
+		//}
+
+	//	else
+	//	{
+			lib_SHADER_openGL::set_glUniform1f(location, rotAng);
+	//	}
+
+		//glUniform1f(location, rotAng);
 	}
 
 	void shader::transformMat(const std::string& name, glm::mat4 valueT) const
 	{
-		unsigned int transMat = glGetUniformLocation(ID, name.c_str());
-		glUniformMatrix4fv(transMat, 1, GL_FALSE, glm::value_ptr(valueT));
-	
+		unsigned int location = glGetUniformLocation(ID, name.c_str());
+
+	//	if (location == -1)
+	//	{
+	//		log_ErrorG::register_w("WARNING::SHADER::SET MAT4 IN SHADER");
+	//	}
+
+	//	else
+	//	{
+			lib_SHADER_openGL::set_glUniformMatrix4fv(location, valueT);
+	//	}
+
+		//glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(valueT));
 	}
 	void shader::transformMat3(const std::string& name, glm::mat3 valueT) const
 	{
-		unsigned int transMat = glGetUniformLocation(ID, name.c_str());
-		glUniformMatrix3fv(transMat, 1, GL_FALSE, glm::value_ptr(valueT));
+		unsigned int location = glGetUniformLocation(ID, name.c_str());
+
+		//if (location == -1)
+	//	{
+	//		log_ErrorG::register_w("WARNING::SHADER::SET MAT3 IN SHADER");
+	//	}
+
+	//	else
+	//	{
+			lib_SHADER_openGL::set_glUniformMatrix3fv(location, valueT);
+	//	}
+
+		//glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(valueT));
+	}
+
+	void shader::setMat4_array(const std::string& name, const std::vector<glm::mat4>& values)
+	{
+      std::string nameArray {name + "[0]"};
+	  unsigned int location = glGetUniformLocation(ID, nameArray.c_str());
+      lib_SHADER_openGL::set_glUniformMatrix4fv_array(location, values);
+	}
+
+	void shader::setMat4_array_ptr(const std::string& name, const std::vector<glm::mat4*>& values)
+	{
+		std::string nameArray {name + "[0]"};
+		unsigned int location = glGetUniformLocation(ID, nameArray.c_str());
+		lib_SHADER_openGL::set_glUniformMatrix4fv_array_ptr(location, values);
 	}
 
 	void shader::setMat4_UB(const std::string& uniform_Layout, const std::string& name, glm::mat4 valueT) const
 	{
 		std::string name_UB{ uniform_Layout + "." + name };
-		unsigned int transMatUB = glGetUniformLocation(ID, name_UB.c_str());
-		glUniformMatrix4fv(transMatUB, 1, GL_FALSE, glm::value_ptr(valueT));
+		unsigned int location = glGetUniformLocation(ID, name_UB.c_str());
+
+	//	if (location == -1)
+	//	{
+	//		log_ErrorG::register_w("WARNING::SHADER::SET MAT4_UB IN SHADER");
+	//	}
+
+	//	else
+	//	{
+			lib_SHADER_openGL::set_glUniformMatrix4fv(location, valueT);
+	//	}
+
+	///	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(valueT));
 	}
 
 	void shader::scaleTex(const std::string& name, vec::vec2 size) const
 	{
 		int location{ glGetUniformLocation(ID, name.c_str()) };
-		glUniform2f(location, size.s, size.t);
+
+	//	if (location == -1)
+	//	{
+	//		log_ErrorG::register_w("WARNING::SHADER::SET scaleTex IN SHADER");
+	//	}
+
+	//	else
+	//	{
+			lib_SHADER_openGL::set_glUniform2f(location, glm::vec2(size.s, size.t));
+	//	}
+
+		//glUniform2f(location, size.s, size.t);
 		
 	}
 	
 	void shader::GLM_scaleTex(const std::string& name, glm::vec2 size) const
 	{
 		int location{ glGetUniformLocation(ID, name.c_str()) };
-		glUniform2f(location, size.x, size.y);
+
+		//if (location == -1)
+		//{
+		///	log_ErrorG::register_w("WARNING::SHADER::SET GLM_scaleTex IN SHADER");
+		//}
+
+	//	else
+		//{
+			lib_SHADER_openGL::set_glUniform2f(location, size);
+	//	}
+
+		//glUniform2f(location, size.x, size.y);
        
 	}
 
@@ -1312,6 +1440,10 @@ namespace texture
 	  		return GL_TEXTURE_2D;
 	  		break;
 
+	  	case GL_typeTexture::TEXTURE_2D_ARRAY :
+	  		return GL_TEXTURE_2D_ARRAY;
+	  		break;
+
 	  	case GL_typeTexture::TEXTURE_3D :
 
 	  		return GL_TEXTURE_3D;
@@ -1329,12 +1461,10 @@ namespace texture
 	{
 		GLenum typeTexture {GL_typeTexTranslate(GL_TypeTex)};
 
-    	shader.setInt(nameTexture, static_cast<int>(unit));
 		glActiveTexture(GL_TEXTURE0 + static_cast<int>(unit));
 		glBindTexture(typeTexture, textureID);
-
+		shader.setInt(nameTexture, static_cast<int>(unit));
 	}
-
 }
 
 namespace ObjCreation

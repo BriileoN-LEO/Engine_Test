@@ -509,7 +509,7 @@ namespace RenderData_Set
 		      model = nullptr;
 		    }
 
-			Assimp_D::coordModel coordBackPack{ glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f), glm::vec3(1.0f, 0.0f, 0.0f), 210.0f };
+			Assimp_D::coordModel coordBackPack{ glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(1.0f), glm::vec3(1.0f, 0.0f, 0.0f), 210.0f };
 		    model = AssimpModel_D->model_by_str("backPack");
 		    if (model != nullptr)
 		    {
@@ -676,7 +676,7 @@ namespace RenderData_Set
 		shading::loadToCPU::shaderData_loadCPU shaderPoint("shaderPoint", vShader_Pointer.c_str(), fShader_Pointer.c_str(), LB_02);
 		shading::loadToCPU::shaderData_loadCPU shaderSkybox_01("shaderSkybox_01", vShader_Skybox_V01.c_str(), fShader_Skybox_V01.c_str(), LB_02);
 		shading::loadToCPU::shaderData_loadCPU shader_briiUI_01("brii_UI_01", vShader_briiUI_V01.c_str(), fShader_briiUI_V01.c_str(), LB_02);
-		shading::loadToCPU::shaderData_loadCPU shader_shadow_v01("shadow_shader_v1", vShader_Shadow_V1.c_str(), fShader_Shadow_V1.c_str(), LB_02);
+		shading::loadToCPU::shaderData_loadCPU shader_shadow_v01("shadow_shader_v1", vShader_Shadow_V1.c_str(), fShader_Shadow_V1.c_str(), LB_02, gShader_Shadow_V1.c_str());
 
 		std::vector<shading::loadToCPU::shaderData_loadCPU> shadersLoad
 		{
@@ -1150,9 +1150,9 @@ namespace RenderData_Set
 
 	 std::vector<light::DirectionalLight> setDirectionalLights()
 	{
-		glm::vec3 white_Color{0.2f};
+		glm::vec3 white_Color{0.8f};
 
-		light::DirectionalLight directionalLight_1(glm::vec3(3.0f, 5.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), white_Color);
+		light::DirectionalLight directionalLight_1(glm::vec3(0.1f, 2.0f, 0.0f), glm::normalize(glm::vec3(0.01f, -0.2f, 0.01f)), white_Color);
 		directionalLight_1.setMatProperties(white_Color, glm::vec3(0.8f), glm::vec3(0.5f));
 
 		std::vector<light::DirectionalLight> DirectionalLights
@@ -1167,7 +1167,7 @@ namespace RenderData_Set
 	void setDirectionalLight_Shadows()  ////TO SET DIRECTIONAL SHADOWS
 	{
 
-		dL_shadows_D->loadShadow_Data(1024, 1024);
+		dL_shadows_D->loadShadow_Data(2048, 2048);
 		dL_shadows_D->setShader("shadow_shader_v1");
 	    dL_shadows_D->insert_directionalLight(0);
 	}

@@ -133,13 +133,19 @@ namespace frameBuff
 		glBindVertexArray(0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
-	void frameBuffer::useFrameBuffer_texture(unsigned int& TCB) {
-		RenderData_Set::shader_D["shaderFramebuffer_shadow"].use();
+	void frameBuffer::useFrameBuffer_textureShadow(unsigned int& TCB, uint8_t layer)
+	{
+		shading::shader& shader_textureShadow {RenderData_Set::shader_D["shaderFramebuffer_shadow"]};
+
+		shader_textureShadow.use();
 		glBindVertexArray(dataBuffer.VAO);
 		//glDisable(GL_DEPTH_TEST);
-		RenderData_Set::shader_D["shaderFramebuffer_shadow"].setInt("screenTexture", 0);
+		shader_textureShadow.setInt("screenTexture", 0);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, TCB);
+		glBindTexture(GL_TEXTURE_2D_ARRAY, TCB);
+
+		shader_textureShadow.setInt("layerTexture", layer);
+
 		//lDrawElements(GL_TRIANGLES, sizeIndices, GL_UNSIGNED_INT, 0);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindVertexArray(0);

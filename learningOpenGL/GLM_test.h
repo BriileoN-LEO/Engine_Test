@@ -199,6 +199,8 @@ namespace camera
 		GLfloat maxCut{};
 		bool cameraFovTest{};
 
+		float aspectRatio{};
+
 
 		data_EditModeCam editMode_Cam{};
 

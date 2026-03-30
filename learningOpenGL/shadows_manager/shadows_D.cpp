@@ -10,26 +10,39 @@
 
 namespace shadowsManager {
 
-  void directional_shadowMap_dL::load_ShadowMap(unsigned int resolution_width = 1024, unsigned int resolution_height = 1024)
+  void directional_shadowMap_dL::load_ShadowMap(unsigned int resolution_width = 1024, unsigned int resolution_height = 1024)   /////////AQUI IMPLEMENTAR CASCADE SHADOW MAPPING
   {
+
+    distances_CSM[0] = cameras::cameras_D[cameras::name_CurrentCamera].nearCut;
+    distances_CSM[1] = 5.0f;
+    distances_CSM[2] = 15.0f;
+    distances_CSM[3] = 45.0f;
+    distances_CSM[4] = 85.0f;
+
+    set_FrustrumCorners();
+
     unsigned int FBO{};
     glGenFramebuffers(1, &FBO);
-   // glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    // glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
     unsigned int TCB{};
     glGenTextures(1, &TCB);
-    glBindTexture(GL_TEXTURE_2D, TCB);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, resolution_width, resolution_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); //GL_REPEAT  // GL_CLAMP_TO_BORDER
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, TCB);
+
+    //    glTexImage2D(GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT, resolution_width, resolution_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT32F, resolution_width, resolution_height, 4, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST); //GL_REPEAT  // GL_CLAMP_TO_BORDER
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
     float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    glTexParameterfv(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BORDER_COLOR, borderColor);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, TCB, 0);
+    //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_ARRAY, TCB, 0);
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, TCB, 0);
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
 
@@ -61,9 +74,101 @@ namespace shadowsManager {
     this->shaderID = shaderID;
   }
 
+  void directional_shadowMap_dL::set_FrustrumCorners()
+  {
+    frustrumCorners_preLoad[0] = glm::vec4{-1.0f, -1.0f, -1.0f, 1.0f};
+    frustrumCorners_preLoad[1] = glm::vec4{ 1.0f, -1.0f, -1.0f, 1.0f};
+    frustrumCorners_preLoad[2] = glm::vec4{-1.0f,  1.0f, -1.0f, 1.0f};
+    frustrumCorners_preLoad[3] = glm::vec4{ 1.0f,  1.0f, -1.0f, 1.0f};
+    frustrumCorners_preLoad[4] = glm::vec4{-1.0f, -1.0f,  1.0f, 1.0f};
+    frustrumCorners_preLoad[5] = glm::vec4{ 1.0f, -1.0f,  1.0f, 1.0f};
+    frustrumCorners_preLoad[6] = glm::vec4{-1.0f,  1.0f,  1.0f, 1.0f};
+    frustrumCorners_preLoad[7] = glm::vec4{ 1.0f,  1.0f,  1.0f, 1.0f};
+  }
+
   void directional_shadowMap_dL::insert_directionalLight(uint32_t ID)
   {
    ID_dL.emplace_back(ID);
+  }
+
+
+  glm::mat4 directional_shadowMap_dL::calc_LightSpaceMatrix_CSM(const float& nearSplit, const float& farSplit)
+  {
+    light::DirectionalLight& dirLight { RenderData_Set::directionalLights_D[ID_dL[0]] };
+    camera::camera1& cam_L { cameras::cameras_D[cameras::name_CurrentCamera]};
+
+    glm::mat4 projectionCam {glm::perspective(glm::radians(cam_L.fovCam), cam_L.aspectRatio, nearSplit, farSplit)};
+
+
+ //////CALCULAR ESTE LIGHT SPACE MATRIX DEL
+
+    glm::mat4 camView {glm::lookAt(cam_L.posCam, cam_L.directionView - cam_L.posCam, glm::vec3(0.0f, 1.0f, 0.0f))};
+  //  glm::mat4 camView {glm::lookAt(cam_L.posCam, dirLight.Direction - cam_L.posCam, glm::vec3(0.0f, 1.0f, 0.0f))};
+
+    glm::mat4 cam_invViewProj {glm::inverse(projectionCam * cam_L.cam)};
+   // glm::mat4 cam_invViewProj {glm::inverse(projectionCam * camView)};
+
+    glm::vec3 center {0.0f};
+    std::array<glm::vec4, 8> current_FrustumCorners;
+
+    uint8_t n{};
+    for (auto& fC : frustrumCorners_preLoad)
+    {
+      glm::vec4 current_FC = cam_invViewProj * fC;
+      current_FrustumCorners[n] = current_FC / current_FC.w;
+
+      center += glm::vec3(current_FrustumCorners[n]);
+      ++n;
+    }
+
+    center /= 8.0f; ///8 is the size of frustrumCorners
+
+    glm::vec3 up_LV {glm::vec3(0.0f, 1.0f, 0.0f)};
+
+    if (abs(dirLight.Direction.y) > 0.999f)
+    {
+      up_LV = glm::vec3(0.0f, 0.0f, 1.0f);
+    }
+
+    glm::mat4 lightView {glm::lookAt(center - dirLight.Direction, center, up_LV)};
+
+    float minX = std::numeric_limits<float>::max();
+    float maxX = std::numeric_limits<float>::lowest();
+    float minY = std::numeric_limits<float>::max();
+    float maxY = std::numeric_limits<float>::lowest();
+    float minZ = std::numeric_limits<float>::max();
+    float maxZ = std::numeric_limits<float>::lowest();
+
+    for (const auto& cfC : current_FrustumCorners)
+    {
+      glm::vec4 trf {lightView * cfC};
+      minX = glm::min(minX, trf.x);
+      maxX = glm::max(maxX, trf.x);
+      minY = glm::min(minY, trf.y);
+      maxY = glm::max(maxY, trf.y);
+      minZ = glm::min(minZ, trf.z);
+      maxZ = glm::max(maxZ, trf.z);
+
+    }
+
+
+    float unitTexelX {(maxX - minX) / static_cast<float>(dataBuffer->width_Shadow)};
+    float unitTexelY {(maxY - minY) / static_cast<float>(dataBuffer->height_Shadow)};
+
+    minX = std::floor(minX / unitTexelX) * unitTexelX;
+    maxX = std::floor(maxX / unitTexelX) * unitTexelX;
+    minY = std::floor(minY / unitTexelY) * unitTexelY;
+    maxY = std::floor(maxY / unitTexelY) * unitTexelY;
+
+
+    const float zMulti {10.0f};
+
+    minZ = (minZ < 0) ? minZ * zMulti : minZ / zMulti;
+    maxZ = (maxZ < 0) ? maxZ / zMulti : maxZ * zMulti;
+
+    glm::mat4 lightProjection {glm::ortho(minX, maxX, minY, maxY, minZ, maxZ)};
+
+    return lightProjection * lightView;
   }
 
   void directional_shadowMap_dL::update_Lights()
@@ -73,8 +178,25 @@ namespace shadowsManager {
     float orthoCalc { 10.0f };
     glm::mat4 lightProjection {glm::ortho(-orthoCalc, orthoCalc, -orthoCalc, orthoCalc, 0.5f, 18.0f)};
     glm::mat4 lightView {glm::lookAt(dirLight.Posicion, dirLight.Direction, glm::vec3(0.0f, 1.0f, 0.0f))};
-    lightSpaceMatrix = lightProjection * lightView;
+    lightSpaceMat = lightProjection * lightView;
+  }
 
+  void directional_shadowMap_dL::update_CascadeShadowMapping()
+  {
+    for (uint8_t n = 0; n < static_cast<uint8_t>(distances_CSM.size()) - 1; ++n)
+    {
+       const float& nearSplit {distances_CSM[n]};
+       const float& farSplit {distances_CSM[n + 1]};
+
+      lightSpaceMatrices[n] = calc_LightSpaceMatrix_CSM(nearSplit, farSplit);
+      //lightSpaceMatrices[n] = lightSpaceMat;
+    }
+
+  }
+
+  void directional_shadowMap_dL::update_shadowDistances()
+  {
+    distances_CSM[0] = cameras::cameras_D[cameras::name_CurrentCamera].nearCut;
   }
 
   void directional_shadowMap_dL::blind_FrameBuffer()
@@ -83,7 +205,7 @@ namespace shadowsManager {
   };
   void directional_shadowMap_dL::render_FrameBuffer()
   {
-    RenderData_Set::frameBuffers_D["screen"].useFrameBuffer_texture(dataBuffer->TCB);
+    RenderData_Set::frameBuffers_D["screen"].useFrameBuffer_textureShadow(dataBuffer->TCB, 0);
   };
 
   shading::shader* directional_shadowMap_dL::out_shader()
@@ -132,16 +254,35 @@ namespace shadowsManager {
   {
     openGL_render::viewportSet(0, 0, dataBuffer->width_Shadow, dataBuffer->height_Shadow);
     glBindFramebuffer(GL_FRAMEBUFFER, dataBuffer->FBO);
-    glClear(GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
 
     update_Lights();
+    update_CascadeShadowMapping();
+    update_shadowDistances();
 
-   shading::shader* shaderShadowDL {directional_shadowMap_dL::out_shader()};
+    // shading::shader* shaderShadowDL {directional_shadowMap_dL::out_shader()};
+     std::string* shader_shadowMap { &shaderID };
+
+    shading::shader* shaderShadowDL {directional_shadowMap_dL::out_shader()};
+
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, dataBuffer->TCB, 0);
+
+    glClear(GL_DEPTH_BUFFER_BIT);
 
     shaderShadowDL->use();
-    shaderShadowDL->transformMat("lightSpaceMatrix", lightSpaceMatrix);
-    std::string* shader_shadowMap { &shaderID };
+
+    const std::string nameSLM{"lightSpaceMatrices"};
+    std::vector<glm::mat4> lightSpaceMatrices_array
+    {
+      lightSpaceMatrices[0],
+      lightSpaceMatrices[1],
+      lightSpaceMatrices[2],
+      lightSpaceMatrices[3]
+    };
+
+    shaderShadowDL->setMat4_array(nameSLM, lightSpaceMatrices_array);  ///FOR BETTER OPTIMIZATION
+
+    shaderShadowDL->setInt("size_LSM", size_LSM);
 
     shaderShadowDL = nullptr;
     glCullFace(GL_FRONT);
@@ -149,6 +290,28 @@ namespace shadowsManager {
     glCullFace(GL_BACK);
     shader_shadowMap = nullptr;
 
+/*
+    uint8_t layer_p {};
+    for (const auto& lightSpaceMatrix : lightSpaceMatrices)
+    {
+
+      shading::shader* shaderShadowDL {directional_shadowMap_dL::out_shader()};
+
+      shaderShadowDL->use();
+
+      glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, dataBuffer->TCB, 0, layer_p++);
+      glClear(GL_DEPTH_BUFFER_BIT); /// SEE IF THIS AFFECTS AFTER RENDER WITHOUT CALLING SHADOW->use();
+
+      shaderShadowDL->transformMat("lightSpaceMatrix", lightSpaceMatrix);
+
+      shaderShadowDL = nullptr;
+      glCullFace(GL_FRONT);
+      RenderData_Set::ModelsScene_D->render_nearPos_depthMapShadow(shader_shadowMap);
+      glCullFace(GL_BACK);
+      //shader_shadowMap = nullptr;
+
+    }
+*/
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

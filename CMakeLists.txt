@@ -194,6 +194,8 @@ add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/lear
 "learningOpenGL/STB_IMAGE_IMPLEMENT.cpp"
 "learningOpenGL/Model_Assimp/Assimp_lib.h" "learningOpenGL/Model_Assimp/Assimp_lib.cpp"
 "learningOpenGL/2D_geo/basic_geometry_D.cpp" "learningOpenGL/2D_geo/basic_geometry_D.h"
+"learningOpenGL/log_Errors/log_error_General.cpp" "learningOpenGL/log_Errors/log_error_General.h"
+"learningOpenGL/libCust_openGL/lib_openGL.cpp" "learningOpenGL/libCust_openGL/lib_openGL.h"
         #"libs/SDL/lib/arm64"
 
 )

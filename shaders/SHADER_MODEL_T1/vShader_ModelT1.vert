@@ -15,7 +15,7 @@ out VS_OUT
 vec3 Normal_;
 vec3 FragPos_;
 vec2 coordTexOut_;
-vec4 FragPos_LightSpace_;
+vec3 FragPosViewSpace_;
 } vs_out;
 
 //out vec3 Normal;
@@ -23,7 +23,6 @@ vec4 FragPos_LightSpace_;
 //out vec2 coordTexOut;
 
 uniform mat4 model;
-uniform mat4 lightSpaceMatrix;
 //uniform mat4 view;
 //uniform mat4 projection;
 
@@ -41,14 +40,17 @@ void main()
  // gl_Position =  projection * view * model * vec4(aPos.xyz, 1.0);
   gl_Position = projection_c * view_c * model * vec4(aPos.xyz, 1.0);
   //gl_Position =  projection_c * view_c * model * vec4(0.0f, 0.0f, 0.0f, 1.0);
-  vs_out.FragPos_ = vec3(model * vec4(aPos.xyz, 1.0));
+  vs_out.FragPos_ = vec3(model * vec4(aPos, 1.0));
+
+  vs_out.FragPosViewSpace_ = vec3(view_c * model * vec4(aPos.xyz, 1.0));
  //ormal = modelMatrix * aNormal; ///Calcularlo desde el codigo(CPU) para enviarlo a Uniform
 
-  mat3 normalMatrix = mat3(transpose(inverse(view_c * model)));
-  vs_out.Normal_ = normalize(vec3(vec4(normalMatrix * aNormal, 0.0)));
+  //mat3 normalMatrix = mat3(transpose(inverse(view_c * model)));
+  //vs_out.Normal_ = normalize(vec3(vec4(normalMatrix * aNormal, 0.0)));
+  mat3 normalMatrix = mat3(transpose(inverse(model)));
+  vs_out.Normal_ = normalize(normalMatrix * aNormal);
 
-  ///FRAG_POS_LIGHT_SPACE --- FOR SHADOW MAPPING
-  vs_out.FragPos_LightSpace_ = lightSpaceMatrix * vec4(vs_out.FragPos_, 1.0);
+  //vs_out.FragPos_LightSpace_ = lightSpaceMatrix * vec4(vs_out.FragPos_, 1.0);
   //vs_out.Normal_ = mat3(transpose(inverse(model))) * aNormal;  ///change
 
   vs_out.coordTexOut_ = aCoordTex;///
