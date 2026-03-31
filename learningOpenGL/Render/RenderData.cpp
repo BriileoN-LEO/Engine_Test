@@ -1152,7 +1152,7 @@ namespace RenderData_Set
 	{
 		glm::vec3 white_Color{0.8f};
 
-		light::DirectionalLight directionalLight_1(glm::vec3(0.1f, 2.0f, 0.0f), glm::normalize(glm::vec3(0.01f, -0.2f, 0.01f)), white_Color);
+		light::DirectionalLight directionalLight_1(glm::vec3(0.1f, 2.0f, 0.0f), glm::normalize(glm::vec3(0.01f, -0.2f, 0.3f)), white_Color);
 		directionalLight_1.setMatProperties(white_Color, glm::vec3(0.8f), glm::vec3(0.5f));
 
 		std::vector<light::DirectionalLight> DirectionalLights

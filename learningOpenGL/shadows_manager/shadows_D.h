@@ -50,6 +50,7 @@ namespace shadowsManager {
   std::array<glm::vec4, 8> frustrumCorners_preLoad{};
   std::array<glm::mat4, 4> lightSpaceMatrices {};
   int size_LSM{4};
+  float intensity_shadow{};
 
   glm::mat4 lightSpaceMat{};
  // glm::mat4 lightSpaceMatrix{};
@@ -72,6 +73,7 @@ namespace shadowsManager {
   void update_Lights();  ////THIS IS THE FIRST VERSION
   void update_CascadeShadowMapping(); ////THIS IS THE NEW VERSION
   void update_shadowDistances();
+  void update_intensity();
 
   void blind_FrameBuffer();
   void render_FrameBuffer();
@@ -132,6 +134,12 @@ namespace shadowsManager {
 
    return std::move(LightSpaceMatrix_Array);
   }
+
+  inline float& out_intensityShadow()
+  {
+   return intensity_shadow;
+  }
+
 
   void set_ShadowMap(shadow_render shadow_set);
 

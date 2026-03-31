@@ -151,7 +151,7 @@ namespace shadowsManager {
 
     }
 
-
+/*
     float unitTexelX {(maxX - minX) / static_cast<float>(dataBuffer->width_Shadow)};
     float unitTexelY {(maxY - minY) / static_cast<float>(dataBuffer->height_Shadow)};
 
@@ -159,13 +159,23 @@ namespace shadowsManager {
     maxX = std::floor(maxX / unitTexelX) * unitTexelX;
     minY = std::floor(minY / unitTexelY) * unitTexelY;
     maxY = std::floor(maxY / unitTexelY) * unitTexelY;
+*/
+    float pM {1.5f};
 
+    minX *= pM;
+    maxX *= pM;
+    minY *= pM;
+    maxY *= pM;
 
+    minZ -= 100.0f;
+    maxZ += 100.0f;
+
+/*
     const float zMulti {10.0f};
 
     minZ = (minZ < 0) ? minZ * zMulti : minZ / zMulti;
     maxZ = (maxZ < 0) ? maxZ / zMulti : maxZ * zMulti;
-
+*/
     glm::mat4 lightProjection {glm::ortho(minX, maxX, minY, maxY, minZ, maxZ)};
 
     return lightProjection * lightView;
@@ -196,7 +206,35 @@ namespace shadowsManager {
 
   void directional_shadowMap_dL::update_shadowDistances()
   {
+   // float& nearCutCam {cameras::cameras_D[cameras::name_CurrentCamera].nearCut};
+
+    float maxCutCam {cameras::cameras_D[cameras::name_CurrentCamera].maxCut * (1.0f / (static_cast<float>(distances_CSM.size()) * 3.0f))};
+
     distances_CSM[0] = cameras::cameras_D[cameras::name_CurrentCamera].nearCut;
+
+    float sum{};
+
+    for (uint8_t i = 1; i < distances_CSM.size()-1; ++i)
+    {
+      sum += maxCutCam;
+    //  SDL_Log(std::to_string(sum).c_str());
+      distances_CSM[i] = sum;
+
+    }
+
+    distances_CSM[distances_CSM.size()-1] = cameras::cameras_D[cameras::name_CurrentCamera].maxCut;
+
+  }
+
+  void directional_shadowMap_dL::update_intensity()
+  {
+    glm::vec3 view_dirCam { normalize(cameras::cameras_D[cameras::name_CurrentCamera].directionView)};
+    glm::vec3 angle_calc {view_dirCam.x, 0.0f, view_dirCam.z};
+
+    float dot_angle {glm::dot(view_dirCam, angle_calc)};
+
+    dot_angle = BGL::fit_map(dot_angle, 0.0f, 90.0f, 0.0f, 1.0f);
+    intensity_shadow = 1.0f + dot_angle;
   }
 
   void directional_shadowMap_dL::blind_FrameBuffer()
@@ -205,7 +243,7 @@ namespace shadowsManager {
   };
   void directional_shadowMap_dL::render_FrameBuffer()
   {
-    RenderData_Set::frameBuffers_D["screen"].useFrameBuffer_textureShadow(dataBuffer->TCB, 0);
+    RenderData_Set::frameBuffers_D["screen"].useFrameBuffer_textureShadow(dataBuffer->TCB, 0, intensity_shadow);
   };
 
   shading::shader* directional_shadowMap_dL::out_shader()
@@ -259,6 +297,7 @@ namespace shadowsManager {
     update_Lights();
     update_CascadeShadowMapping();
     update_shadowDistances();
+
 
     // shading::shader* shaderShadowDL {directional_shadowMap_dL::out_shader()};
      std::string* shader_shadowMap { &shaderID };

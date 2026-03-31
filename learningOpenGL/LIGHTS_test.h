@@ -57,6 +57,8 @@ namespace light
 
 		posicion Posicion{};
 		direction Direction{};
+		direction lastDirection{};
+
 		color Color{};
 		lightShader Mat{};
 

@@ -288,7 +288,25 @@ namespace UI
 		float& rot_skyBox{ RenderData_Set::skybox_D::skyBoxes_D["skyBox_day"].transform_SkyBox.rad };
 
 		ImGui::SliderFloat("Rotation_skybox", &rot_skyBox, -360.0, 360.0);
+
 		ImGui::End();
+
+		float& last_rot_skyBox {RenderData_Set::skybox_D::skyBoxes_D["skyBox_day"].transform_SkyBox.last_rad };
+		if (last_rot_skyBox != rot_skyBox)
+		{
+			light::DirectionalLight& dirLight { RenderData_Set::directionalLights_D[0] };
+			glm::mat4 rotation_light {glm::mat4(1.0f)};
+			rotation_light = glm::translate(rotation_light, dirLight.lastDirection);
+			rotation_light = glm::rotate(rotation_light, glm::radians(rot_skyBox), glm::vec3(0.0f, 1.0f, 0.0f));
+			glm::vec4 finalDir = glm::vec4(dirLight.lastDirection, 1.0f)  * rotation_light;
+
+			dirLight.Direction = glm::vec3(finalDir.x, finalDir.y, finalDir.z);
+
+			//SDL_Log(glm::to_string(dirLight.Direction).c_str());
+
+			last_rot_skyBox = rot_skyBox;
+		}
+//		SDL_Log(std::to_string(rot_skyBox).c_str());
 
 	}
 

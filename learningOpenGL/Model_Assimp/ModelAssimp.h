@@ -19,6 +19,7 @@ namespace sky
 	{
 		glm::vec3 pivot_rot{0.0f, 1.0f, 0.0f};
 		float rad{};
+		float last_rad{};
 
 		glm::mat3 rotationVec{};
 	};

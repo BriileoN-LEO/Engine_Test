@@ -133,9 +133,10 @@ namespace frameBuff
 		glBindVertexArray(0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
-	void frameBuffer::useFrameBuffer_textureShadow(unsigned int& TCB, uint8_t layer)
+	void frameBuffer::useFrameBuffer_textureShadow(unsigned int& TCB, uint8_t layer, const float& intensityShadow)
 	{
 		shading::shader& shader_textureShadow {RenderData_Set::shader_D["shaderFramebuffer_shadow"]};
+
 
 		shader_textureShadow.use();
 		glBindVertexArray(dataBuffer.VAO);
@@ -145,6 +146,7 @@ namespace frameBuff
 		glBindTexture(GL_TEXTURE_2D_ARRAY, TCB);
 
 		shader_textureShadow.setInt("layerTexture", layer);
+		shader_textureShadow.setFloat("intensity", (int)glm::floor(intensityShadow));
 
 		//lDrawElements(GL_TRIANGLES, sizeIndices, GL_UNSIGNED_INT, 0);
 		glDrawArrays(GL_TRIANGLES, 0, 6);

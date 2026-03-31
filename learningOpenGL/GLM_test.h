@@ -18,10 +18,9 @@ namespace randomN
 
 }
 
- namespace basic_Operations
+ namespace BGL
 {
-
-
+ float fit_map(float val, float minOld, float maxOld, float minNew, float maxNew);
 }
 
 namespace reflectionMatrixOP

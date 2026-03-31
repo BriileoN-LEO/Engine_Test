@@ -42,6 +42,15 @@ namespace randomN
 }
 
 
+namespace BGL
+{
+	float fit_map(float val, float minOld, float maxOld, float minNew, float maxNew)
+	{
+	  return minNew + (val - minOld) * (maxNew - minNew) / (maxOld - minOld);
+	}
+}
+
+
 namespace reflectionMatrixOP
 {
 	glm::mat4 calcReflectMatrix(glm::vec3 cameraPos, glm::vec3 pointPlane, glm::vec3 planeNormal, glm::vec3 cameraUp, glm::vec3 cameraViewTarget)

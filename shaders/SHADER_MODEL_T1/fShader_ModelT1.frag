@@ -92,6 +92,7 @@ float Shadow_calculation_dirLight(vec4 fragPosLightSpace, float bias)
   }
 
   bias *= (1.0 / cascadeDist) * 0.5f;
+ //bias *= cascadeDist * 0.01f;
  vec2 texSize = vec2(textureSize(shadowMap, 0).xy);
 
  if(texSize.x == 0.0 || texSize.y == 0.0)
@@ -704,6 +705,51 @@ vec4 renderCoordTextures = vec4(coordTexOut.x, coordTexOut.y, 0.0, 1.0);
 //FragColor = skyBox_reflection;
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

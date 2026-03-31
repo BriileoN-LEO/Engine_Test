@@ -37,6 +37,7 @@ namespace light
 		this->Posicion = Posicion;
 	//	this->Direction = glm::normalize(Direction);
 		this->Direction = Direction;
+		lastDirection = Direction;
 		this->Color = Color;
 	}
 
