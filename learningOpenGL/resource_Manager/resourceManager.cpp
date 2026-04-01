@@ -854,6 +854,10 @@ namespace utilities_pointLight
   {
    return current_size_M;
   }
+  const std::vector<entity_pL>& scene_pointLights::out_entities()
+  {
+    return pL_entities;
+  }
 
   void scene_pointLights::renderAll()
   {

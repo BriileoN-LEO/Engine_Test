@@ -48,7 +48,7 @@ namespace shadowsManager {
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
-      register_error_RM::register_error_withSentence("ERROR::FRAMEBUFFER::NOT COMPLETE!");
+      register_error_RM::register_error_withSentence("ERROR::FRAMEBUFFER DIRECTIONAL SHADOW MAP::NOT COMPLETE!");
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -210,14 +210,13 @@ namespace shadowsManager {
 
     float maxCutCam {cameras::cameras_D[cameras::name_CurrentCamera].maxCut * (1.0f / (static_cast<float>(distances_CSM.size()) * 3.0f))};
 
-    distances_CSM[0] = cameras::cameras_D[cameras::name_CurrentCamera].nearCut;
+    distances_CSM[0] = cameras::cameras_D[cameras::name_CurrentCamera].nearCut * 0.1;
 
     float sum{};
 
     for (uint8_t i = 1; i < distances_CSM.size()-1; ++i)
     {
       sum += maxCutCam;
-    //  SDL_Log(std::to_string(sum).c_str());
       distances_CSM[i] = sum;
 
     }
@@ -362,6 +361,118 @@ namespace shadowsManager {
       render_FrameBuffer();
     }
     ///delete shaderShadowDL;
+
+  }
+
+  void omnidirectional_ShadowMap_PL::load_ShadowMap(unsigned int resolution_width = 1024, unsigned int resolution_height = 1024) {
+    unsigned int FBO{};
+    glGenFramebuffers(1, &FBO);
+
+    unsigned int TCB{};
+    glGenTextures(1, &TCB);
+
+    glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, TCB);
+    for (uint8_t i = 0; i < 6; ++i)
+    {
+      glTexImage3D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+            0, GL_DEPTH_COMPONENT, resolution_width, resolution_height, (int)ID_pL.size(), 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+
+    }
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST); //GL_REPEAT  // GL_CLAMP_TO_BORDER
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_ARRAY, TCB, 0);
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, TCB, 0);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    {
+      register_error_RM::register_error_withSentence("ERROR::FRAMEBUFFER OMNIDIRECITONAL SHADOW MAP::NOT COMPLETE!");
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    std::unique_ptr<shadow_FB_data> omd_sM {std::make_unique<shadow_FB_data>(FBO, TCB, resolution_width, resolution_height)};
+
+    if (dataBuffer != nullptr)
+    {
+      dataBuffer.reset();
+      dataBuffer = nullptr;
+    }
+
+    dataBuffer = std::move(omd_sM);
+  }
+
+  omnidirectional_ShadowMap_PL::omnidirectional_ShadowMap_PL() = default;
+  omnidirectional_ShadowMap_PL::omnidirectional_ShadowMap_PL(unsigned int resolution_width, unsigned int resolution_height)
+  {
+    load_ShadowMap(resolution_width, resolution_height);
+  }
+
+
+  void omnidirectional_ShadowMap_PL::set_cubeMap()
+  {
+    cubeMap_pos[0] = glm::vec3(1.0f, 0.0f, 0.0f); cubeMap_pos[1] = glm::vec3(0.0f, -1.0f, 0.0f);
+    cubeMap_pos[2] = glm::vec3(-1.0f, 0.0f, 0.0f); cubeMap_pos[3] = glm::vec3(0.0f, -1.0f, 0.0f);
+    cubeMap_pos[4] = glm::vec3(0.0f, 1.0f, 0.0f); cubeMap_pos[5] = glm::vec3(0.0f, 0.0f, 1.0f);
+    cubeMap_pos[6] = glm::vec3(1.0f, -1.0f, 0.0f); cubeMap_pos[7] = glm::vec3(0.0f, 0.0f, -1.0f);
+    cubeMap_pos[8] = glm::vec3(0.0f, 0.0f, 1.0f); cubeMap_pos[9] = glm::vec3(0.0f, -1.0f, 0.0f);
+    cubeMap_pos[10] = glm::vec3(0.0f, 0.0f, -1.0f); cubeMap_pos[11] = glm::vec3(0.0f, -1.0f, 0.0f);
+  }
+
+  void omnidirectional_ShadowMap_PL::set_ShadowMap(unsigned int resolution_width = 1024, unsigned int resolution_height = 1024)
+  {
+    load_ShadowMap(resolution_width, resolution_height);
+    set_cubeMap();
+  }
+  void omnidirectional_ShadowMap_PL::insert_PL_ID(const uint32_t& pointLigth_ID)
+  {
+    ID_pL.emplace_back(pointLigth_ID);
+    for (uint8_t i = 0; i < 6; i++)
+    {
+      lightSpaceMatrices.emplace_back(glm::mat4(1.0f));
+    }
+
+    //lightSpaceMatrices.emplace_back(glm::mat4(1.0f));
+  }
+
+  void omnidirectional_ShadowMap_PL::update_LightSpaceMatrix()
+  {
+
+    float aspect {static_cast<float>(dataBuffer->width_Shadow) / static_cast<float>(dataBuffer->width_Shadow)};
+    glm::mat4 shadow_Proj{glm::perspective(glm::radians(90.0f), aspect, 0.1f, 25.0f)};
+
+    int pos_pL{};
+    for (auto& pL : ID_pL)
+    {
+      utilities_pointLight::entity_pL* entity_pL {RenderData_Set::pointLights_Scene_D->entity_by_ID(pL)};
+
+      if (entity_pL != nullptr)
+      {
+        glm::vec3 posicionLight {entity_pL->pL_entity->Posicion};
+
+        for (uint8_t i = 0; i < 10; i + 2)
+        {
+          lightSpaceMatrices[pos_pL] = shadow_Proj * glm::lookAt(posicionLight, posicionLight + cubeMap_pos[i], cubeMap_pos[i + 1]);
+          ++pos_pL;
+        }
+
+        entity_pL = nullptr;
+      }
+
+
+    }
+
+  }
+
+  void omnidirectional_ShadowMap_PL::draw_ShadowMap()
+  {
 
   }
 

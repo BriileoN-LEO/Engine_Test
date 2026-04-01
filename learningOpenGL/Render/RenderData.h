@@ -17,6 +17,7 @@
 namespace shadowsManager
 {
 	class directional_shadowMap_dL;
+	class omnidirectional_ShadowMap_PL;
 }
 
 
@@ -34,6 +35,8 @@ namespace RenderData_Set
 
 	extern std::optional<resourceManager::manager_PointLights> pointLights_D;
 	extern std::optional<utilities_pointLight::scene_pointLights> pointLights_Scene_D;
+	extern std::optional<shadowsManager::omnidirectional_ShadowMap_PL> omL_shadows_D;
+
     ///extern std::unordered_map<std::string, std::unique_ptr<Assimp_D::Model>> AssimpModel_D;
 
 	extern std::vector<ObjCreation::ModelCreation> MeshLights_MCD;
@@ -170,6 +173,7 @@ namespace RenderData_Set
 
 	 void setPointLights();
 	 void setPointLights_Scene();
+	 void setOmnidirectionalLight_Shadows();
 
 	 std::vector<light::DirectionalLight> setDirectionalLights();
      void setDirectionalLight_Shadows();  ////TO SET DIRECTIONAL SHADOWS

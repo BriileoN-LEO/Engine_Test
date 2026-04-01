@@ -240,6 +240,7 @@ namespace utilities_pointLight
    entity_pL* entity_by_ID(uint32_t ID);
    entity_pL* entity_by_Pos(uint32_t pos);
    const uint32_t& num_pointLights();
+   const std::vector<entity_pL>& out_entities();
 
    void renderAll();
    void clean_data();

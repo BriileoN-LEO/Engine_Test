@@ -151,22 +151,28 @@ namespace shadowsManager {
  private:
 
   std::unique_ptr<shadow_FB_data> dataBuffer{nullptr};
-  std::vector<uint32_t> ID_pL{}; ///ID OF THE POINT LIGHTS
 
-  void load_ShadowMap();
+  std::vector<uint32_t> ID_pL{}; ///ID OF THE POINT LIGHTS
+  std::vector<glm::mat4> lightSpaceMatrices{};
+
+  std::array<glm::vec3, 12> cubeMap_pos{};
+
+  uint32_t shaderID{};
+
+  void load_ShadowMap(unsigned int resolution_width, unsigned int resolution_height);
 
  public:
 
   omnidirectional_ShadowMap_PL();
+  omnidirectional_ShadowMap_PL(unsigned int resolution_width, unsigned int resolution_height);
 
+  void set_cubeMap();
+  void set_ShadowMap(unsigned int resolution_width, unsigned int resolution_height);
+  void insert_PL_ID(const uint32_t& pointLigth_ID);
 
- };
+  void update_LightSpaceMatrix();
 
- class shadowsMap
- {
- private:
-
-
+  void draw_ShadowMap();
  };
 
 }

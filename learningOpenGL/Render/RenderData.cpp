@@ -27,6 +27,8 @@ namespace RenderData_Set
 
 	std::optional<resourceManager::manager_PointLights> pointLights_D;
 	std::optional<utilities_pointLight::scene_pointLights> pointLights_Scene_D;
+    std::optional<shadowsManager::omnidirectional_ShadowMap_PL> omL_shadows_D;
+
 
 	std::vector<ObjCreation::ModelCreation> MeshLights_MCD{};
 
@@ -1147,6 +1149,22 @@ namespace RenderData_Set
 
 	}
 
+	void setOmnidirectionalLight_Shadows()
+	{
+		 //const uint32_t& num_pL {pointLights_Scene_D->num_pointLights()};
+
+		const std::vector<utilities_pointLight::entity_pL>& entities_pL { pointLights_Scene_D->out_entities()};
+
+		for (auto& e_pL : entities_pL)
+		{
+			omL_shadows_D->insert_PL_ID(e_pL.pL_entity->ID);
+		}
+		omL_shadows_D->set_ShadowMap(2048, 2048);
+
+
+
+	}
+
 
 	 std::vector<light::DirectionalLight> setDirectionalLights()
 	{
@@ -1360,6 +1378,7 @@ namespace RenderData_Set
 		pointLights_Scene_D.emplace();
 
 		dL_shadows_D.emplace();
+		omL_shadows_D.emplace();
 	}
 
 	void setModels_to_scene()
