@@ -1,0 +1,87 @@
+#version 460 core
+#define tileSize 16.0
+
+layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+
+uniform vec2 screenSize_D;
+uniform mat4 inverseProj_D;
+
+struct TilesB
+{
+ float minDepth;
+ float maxDepth;
+};
+
+layout (std430, binding = 3) buffer tilesBoundBuffer
+{
+ TilesB tiles[];
+};
+
+struct cluster_D
+{
+ vec4 minPoint;
+ vec4 maxPoint;
+};
+
+layout (std430, binding = 4) buffer clustersBuffer
+{
+ cluster_D clusters[];
+};
+
+vec3 screenToView(vec2 screenCoord, vec2 screenSize, float depthZ, mat4 inverseProj)
+{
+    vec2 NDC_xy = ((screenCoord / screenSize) * 2.0) - 1.0;
+    float NDC_z = (depthZ * 2.0) - 1;
+
+    vec4 clipSpace = vec4(NDC_xy, NDC_z, 1.0);
+
+    vec4 viewSpace = inverseProj * clipSpace;
+
+    return viewSpace.xyz / viewSpace.w;
+}
+
+
+void main()
+{
+  uint localThread_ID = gl_LocalInvocationIndex;
+  uint tileIndex = gl_WorkGroupID.y * gl_NumWorkGroups.x + gl_WorkGroupID.x;
+
+   if(localThread_ID == 0)
+  {
+  uint tileX = gl_WorkGroupID.x;
+  uint tileY = gl_WorkGroupID.y;
+
+  float depthMin_z = tiles[tileIndex].minDepth;
+  float depthMax_z = tiles[tileIndex].maxDepth;
+
+    //COORDINATES OF TILE IN SCREEN
+  vec2 top_left = vec2(tileX * tileSize, tileY * tileSize);
+  vec2 top_right = vec2((tileX + 1) * tileSize, tileY * tileSize);
+  vec2 buttom_left = vec2(tileX * tileSize, (tileY + 1) * tileSize);
+  vec2 buttom_right = vec2((tileX + 1) * tileSize, (tileY + 1) * tileSize);
+
+    //FACE FAR IN VIEW SPACE
+  vec3 FarTopLeft_AABB = screenToView(top_left, screenSize_D, depthMax_z, inverseProj_D);
+  vec3 FarTopRight_AABB = screenToView(top_Right, screenSize_D, depthMax_z, inverseProj_D);
+  vec3 FarButtomLeft_AABB = screenToView(buttom_left, screenSize_D, depthMax_z, inverseProj_D);
+  vec3 FarButtomRight_AABB = screenToView(buttom_right, screenSize_D, depthMax_z, inverseProj_D);
+
+    //FACE NEAR IN VIEW SPACE
+  vec3 NearTopLeft_AABB = screenToView(top_left, screenSize_D, depthMin_z, inverseProj_D);
+  vec3 NearTopRight_AABB = screenToView(top_Right, screenSize_D, depthMin_z, inverseProj_D);
+  vec3 NearButtomLeft_AABB = screenToView(buttom_left, screenSize_D, depthMin_z, inverseProj_D);
+  vec3 NearButtomRight_AABB = screenToView(buttom_right, screenSize_D, depthMin_z, inverseProj_D);
+
+  vec3 minPos_AABB =
+  min(FarTopLeft_AABB, min(minFarTopRight_AABB, min(FarButtomLeft_AABB, min(FarButtomRight_AABB,
+  min(miNearTopLeft_AABB, min(NearTopRight_AABB, min(NearButtomLeft_AABB, min(NearButtomRight_AABB))))))));
+
+  vec3 maxPos_AABB =
+  max(FarTopLeft_AABB, max(minFarTopRight_AABB, max(FarButtomLeft_AABB, max(FarButtomRight_AABB,
+  max(miNearTopLeft_AABB, max(NearTopRight_AABB, max(NearButtomLeft_AABB, max(NearButtomRight_AABB))))))));
+
+      clusters[tileIndex].minPoint = vec4(minPos_AABB, 1.0);
+      clusters[tileIndex].maxPoint = vec4(maxPos_AABB, 1.0);
+  }
+
+}
