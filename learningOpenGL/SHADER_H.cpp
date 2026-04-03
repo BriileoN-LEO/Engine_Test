@@ -7,6 +7,7 @@
 #include "Render/RenderData.h"
 #include "log_Errors/log_error_General.h"
 #include "libCust_openGL/lib_openGL.h"
+#include "files_manager/files_DataManager.h"
 
 namespace shading
 {
@@ -266,6 +267,11 @@ namespace shading
 		       	}
 		    }
 	}
+
+	shader::shader(const char* computeShader_Path)
+	{
+		computeShaderCreation(computeShader_Path);
+	}
 	/////
 	void shader::shaderCreation(const char* vertexPath, const char* fragmentPath, const char* geometryPath)
 	{
@@ -372,6 +378,44 @@ namespace shading
 			glDeleteShader(geometryShader);
 		}
 		glDeleteShader(fragmentShader);
+	}
+
+	void shader::computeShaderCreation(const char* computeShader_Path)
+	{
+		GLint shaderStatus{};
+
+		const GLchar* computeCode {filesData::read_FileData_str(computeShader_Path)};
+
+		if (computeCode == nullptr)
+	    {
+			log_ErrorG::register_w("ERROR_READ::COMPUTE_SHADER_FILE_PATH");
+			return;
+		}
+
+		GLuint computeShader = glCreateShader(GL_COMPUTE_SHADER);
+		glShaderSource(computeShader, 1, &computeCode, nullptr);
+		glCompileShader(computeShader);
+		//register_Errors::testCompileShader(computeShader, "COMPUTE", 0);
+		shaderStatus = log_Error_shader::CompileShader(computeShader, "COMPUTE", 0);
+
+		if (shaderStatus == GL_FALSE)
+		{
+		 return;
+		}
+
+		ID = glCreateProgram();
+		glAttachShader(ID, computeShader);
+		glLinkProgram(ID);
+		shaderStatus = log_Error_shader::CompileShader(ID, "PROGRAM", 1);
+
+		glDeleteShader(computeShader);
+
+	}
+
+	void shader::set_BufferSSBO(const char* nameLayout, GLuint index)
+	{
+		unsigned int setUniformBlockIndex{ glGetUniformBlockIndex(ID, nameLayout) };
+		glUniformBlockBinding(ID, setUniformBlockIndex, index);
 	}
 
 	void shader::use()
@@ -616,6 +660,10 @@ namespace shading
 		fragmentShader_name(std::move(fragmentShader_name)),
 		data_Layout(data_Layout),
 		geometryShader_name(std::move(geometryShader_name)){};
+
+		shaderData_loadCPU::shaderData_loadCPU(std::string nameShader, const char* computeShader_path) :
+		nameShader(nameShader),
+		computeShader_path(computeShader_path){};
 
 		shaderData_loadCPU::shaderData_loadCPU(const shaderData_loadCPU&& shader_LCPU) noexcept :
 		nameShader(shader_LCPU.nameShader),

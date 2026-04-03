@@ -146,9 +146,13 @@ namespace shading
 		shader(unsigned int ID);
 		shader(const char* vertexPath, const char* fragmentPath, std::vector<layoutType> data_Layout); /////
 		shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath, std::vector<layoutType> data_Layout); /////
+		shader(const char* computeShader_Path);
 
 		void shaderCreation(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr);
 
+		void computeShaderCreation(const char* computeShader_Path);
+		void set_BufferSSBO(const char* nameLayout, GLuint index);   ///TO SET MANUALLY THE SSBO
+;
 		void use();
 		
 		void setBool(const std::string& name, bool value) const;
@@ -188,10 +192,12 @@ namespace shading
 		    std::vector<layoutType> data_Layout{};
 
 			const char* geometryShader_name{nullptr};
+			const char* computeShader_path{nullptr};
 
 		    shaderData_loadCPU();
 			shaderData_loadCPU(std::string nameShader, const char* vertexShader_name, const char* fragmentShader_name, std::vector<layoutType> data_Layout);
 			shaderData_loadCPU(std::string nameShader, const char* vertexShader_name, const char* fragmentShader_name, std::vector<layoutType> data_Layout, const char* geometryShader_name);
+            shaderData_loadCPU(std::string nameShader, const char* computeShader_path);
             shaderData_loadCPU(const shaderData_loadCPU&& shader_LCPU) noexcept;
 			shaderData_loadCPU(const shaderData_loadCPU& shader_LCPU);
 

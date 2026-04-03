@@ -60,6 +60,9 @@ const std::string fShader_Skybox_V01 = "shaders/SHADER_SKYBOX/fShader_skybox_v1.
 const std::string vShader_briiUI_V01 = "shaders/SHADER_UI/vShader_briiUI_1.vert";
 const std::string fShader_briiUI_V01 = "shaders/SHADER_UI/fShader_briiUI_1.frag";
 
+///SHADER CLUSTERED_SHADER
+const std::string cShader_Clustered_shader_01 = "shaders/SHADER_CLUSTERED_SHADING/C_Clustered_shader_01.comp";
+
 ///IMAGES
 const std::string image_Wood = "Images/container.jpg";
 const std::string image_happyFace = "Images/awesomeface.png";

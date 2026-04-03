@@ -531,6 +531,7 @@ int main(int argc, char* argv[])
 	UI::destroyUI();
 	threadSystem::ControlPhysics_Events.destroy();
 	destroy::destroyModels();
+	destroy::destroyTextures();
 	destroy::destroyLights();
 	destroy::destroyFrameBuffers();
 

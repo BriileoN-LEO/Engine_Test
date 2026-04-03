@@ -62,7 +62,6 @@ namespace register_Errors
 
 			SDL_Log(messageError.c_str());
 			//SDL_Log(infoLog);
-			
 
 		}
 

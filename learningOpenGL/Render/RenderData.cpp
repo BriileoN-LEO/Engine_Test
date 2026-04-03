@@ -679,6 +679,7 @@ namespace RenderData_Set
 		shading::loadToCPU::shaderData_loadCPU shaderSkybox_01("shaderSkybox_01", vShader_Skybox_V01.c_str(), fShader_Skybox_V01.c_str(), LB_02);
 		shading::loadToCPU::shaderData_loadCPU shader_briiUI_01("brii_UI_01", vShader_briiUI_V01.c_str(), fShader_briiUI_V01.c_str(), LB_02);
 		shading::loadToCPU::shaderData_loadCPU shader_shadow_v01("shadow_shader_v1", vShader_Shadow_V1.c_str(), fShader_Shadow_V1.c_str(), LB_02, gShader_Shadow_V1.c_str());
+        shading::loadToCPU::shaderData_loadCPU shader_ClusteredShading_01("clustered_Shading_01", cShader_Clustered_shader_01.c_str());
 
 		std::vector<shading::loadToCPU::shaderData_loadCPU> shadersLoad
 		{
@@ -690,7 +691,8 @@ namespace RenderData_Set
 			shaderPoint,
 			shaderSkybox_01,
 			shader_briiUI_01,
-			shader_shadow_v01
+			shader_shadow_v01,
+			shader_ClusteredShading_01
 		};
 
 		shading::loadToCPU::atomic_sizeShader.fetch_add(static_cast<int>(shadersLoad.size()));
@@ -718,6 +720,8 @@ namespace RenderData_Set
 
 				--shading::loadToCPU::atomic_CounterShader;
 
+				std::cout << "LOADING::SHADER---->" << shaD.nameShader << '\n';
+
 			    if (shaD.geometryShader_name == nullptr) /// NOT HAVE GEOMETRY SHADER
 			    {
 				    shader_D.emplace(shaD.nameShader, shading::shader(shaD.vertexShader_name, shaD.fragmentShader_name, shaD.data_Layout));
@@ -728,7 +732,10 @@ namespace RenderData_Set
 					shader_D.emplace(shaD.nameShader, shading::shader(shaD.vertexShader_name, shaD.fragmentShader_name, shaD.geometryShader_name, shaD.data_Layout));
 				}
 
-				std::cout << "LOADING::SHADER---->" << shaD.nameShader << '\n';
+				else if (shaD.computeShader_path != nullptr)
+				{
+                    shader_D.emplace(shaD.nameShader, shading::shader(shaD.computeShader_path));
+				}
 			}
 
 			else

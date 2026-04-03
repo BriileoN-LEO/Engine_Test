@@ -90,6 +90,7 @@ namespace refresh_Models
 namespace destroy
 {
 	void destroyModels();
+	void destroyTextures();
 	void destroyLights();
     void destroyFrameBuffers();
 }

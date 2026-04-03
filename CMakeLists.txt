@@ -196,6 +196,8 @@ add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/lear
 "learningOpenGL/2D_geo/basic_geometry_D.cpp" "learningOpenGL/2D_geo/basic_geometry_D.h"
 "learningOpenGL/log_Errors/log_error_General.cpp" "learningOpenGL/log_Errors/log_error_General.h"
 "learningOpenGL/libCust_openGL/lib_openGL.cpp" "learningOpenGL/libCust_openGL/lib_openGL.h"
+"learningOpenGL/Render/Clustered_Shading_Render.cpp" "learningOpenGL/Render/Clustered_Shading_Render.h"
+"learningOpenGL/files_manager/files_DataManager.cpp" "learningOpenGL/files_manager/files_DataManager.h"
         #"libs/SDL/lib/arm64"
 
 )

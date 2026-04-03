@@ -1178,6 +1178,19 @@ namespace destroy
 		}
 
 	}
+	void destroyTextures()
+	{
+      for (auto& tex : textureCache::textures)
+      {
+      	glGenTextures(1, &tex.second.textureID);
+      }
+
+	  for (auto& tex_UI : textureCache::texturesUI)
+	  {
+	  	glGenTextures(1, &tex_UI.second.textureID);
+	  }
+
+	}
 	void destroyLights()
 	{
 		RenderData_Set::pointLights_Scene_D->clean_data();
