@@ -76,6 +76,34 @@ namespace light
 		this->Mat = Mat; 
 	}
 
+	pointLight_PBR::pointLight_PBR() = default;
+
+
+	SpotLight_PBR::SpotLight_PBR() = default;
+	SpotLight_PBR::SpotLight_PBR(glm::vec3 Position, glm::vec3 Direction, glm::vec3 Color, float Radio, float cutOff, float outerCutOff) :
+	data(Position, Direction, Color, Radio, cutOff, outerCutOff)
+	{};
+
+	void SpotLight_PBR::update_position(glm::vec3 Position)
+	{
+		data.Position = Position;
+	}
+	void SpotLight_PBR::update_direction(glm::vec3 Direction)
+	{
+		data.Direction = Direction;
+	}
+	void SpotLight_PBR::update_color(glm::vec3 Color)
+	{
+     data.Color = Color;
+	}
+
+	const data_SpotLightPBR& SpotLight_PBR::out_Data()
+	{
+       return data;
+	}
+
+
+
 	inline void duplicate_Lights(std::vector<posicion> posLights, auto& typeLight, auto& meshLight)
 	{
 

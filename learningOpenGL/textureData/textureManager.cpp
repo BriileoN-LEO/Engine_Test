@@ -1,5 +1,6 @@
 #include "textureManager.h"
 #include "stb_image.h"
+#include "log_Errors/log_error_General.h"
 
 namespace KTX_lib
 {
@@ -1200,4 +1201,69 @@ namespace textureCache
 
 }
 
+namespace texLoad_Data
+{
+	 std::unordered_map<GLenum, int> dataImage_map_pos{};
+	 std::array<GLenum, 2> dataImage_BitsSize{};
+
+	void set_dataImage_info()
+	{
+       dataImage_map_pos.emplace(GL_RGB, 0);
+	   dataImage_map_pos.emplace(GL_RGBA, 1);
+
+	   dataImage_BitsSize[0] = GL_RGB8;
+	   dataImage_BitsSize[1] = GL_RGBA8;
+
+	}
+
+	unsigned int load_Texture_zBuffer(unsigned int& res_width, unsigned int& res_height)
+	{
+		unsigned int TCB{};
+		glGenTextures(1, &TCB);
+		glBindTexture(GL_TEXTURE_2D, TCB);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, res_width, res_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); //GL_REPEAT  // GL_CLAMP_TO_BORDER
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+		float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, TCB, 0);
+
+		return TCB;
+	}
+
+	unsigned int* load_Texture_nBuffer(unsigned int& res_width, unsigned int& res_height, GLenum typeData_Tex, GLenum color_Attachment)
+	{
+		auto find_Type {dataImage_map_pos.find(typeData_Tex)};
+
+        if (find_Type != dataImage_map_pos.end())
+        {
+	        unsigned int* TCB{nullptr};
+        	glGenTextures(1, TCB);
+        	glBindTexture(GL_TEXTURE_2D, *TCB);
+
+        	glTexImage2D(GL_TEXTURE_2D, 0, dataImage_BitsSize[find_Type->second], res_width, res_height, 0, typeData_Tex, GL_UNSIGNED_BYTE, NULL);
+
+        	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); //GL_REPEAT  // GL_CLAMP_TO_BORDER
+
+        	glFramebufferTexture2D (GL_FRAMEBUFFER, color_Attachment, GL_TEXTURE_2D, *TCB, 0);
+
+        	return std::move(TCB);
+        }
+
+		else
+	    {
+			log_ErrorG::register_w("ERROR::LOAD_TEXTURE_NBUFFER");
+
+		}
+
+		return nullptr;
+	}
+}
 

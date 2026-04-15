@@ -432,8 +432,7 @@ vec3 CalcSpotLight(spot_Light spotLight, vec3 normal_Face, vec3 viewDir, bool di
   
   float theta = dot(lightDir, -spotLight.lightDir);
   
-  vec3 FinalResult; 
-
+  vec3 FinalResult;
 
   float diff = max(dot(lightDir, normal_Face), 0.0);
 
@@ -569,9 +568,7 @@ calc_layerShadowMap(); ///TO CALCULATE THE LAYER OF THE SHADOW MAP;
 
 vec4 texDiff = texture(Mat_1.texture_diffuse, coordTexOut);
 
-
 vec4 texSpec = texture(Mat_1.texture_specular, coordTexOut);
-
 
 vec3 normal_Face = normalize(Normal);
 vec3 viewDir = normalize(viewPos - FragPos);
@@ -705,6 +702,8 @@ vec4 renderCoordTextures = vec4(coordTexOut.x, coordTexOut.y, 0.0, 1.0);
 //FragColor = skyBox_reflection;
 
 }
+
+
 
 
 

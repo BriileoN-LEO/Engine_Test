@@ -1,0 +1,117 @@
+#version 460 core
+
+layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+
+struct cluster_D
+{
+ vec4 minPoint;
+ vec4 maxPoint;
+};
+
+layout (std430, binding = 4) buffer clustersBuffer
+{
+ cluster_D clusters[];
+};
+
+/////////////
+
+struct Light
+{
+ vec4 lightPos_radius; // 0-12  ---> .w == radius
+ vec4 Color_And_Intensity; // 76-80
+ int lightState; // state of the light
+ int light_Type; /// 0 == DIRECTIONAL LIGHT /// 1 == POINT LIGHT /// 2 == SPOT LIGHT
+ int pos_lightID_mananerLights; ///the posicion in the array of light inside of the manager of Lights
+ int pad;
+};
+
+layout (std430, binding = 5) buffer Lights_D
+{
+ Light Lights_Array[];
+
+};
+
+uniform int num_Lights;
+
+struct Cluster_LightsData
+{
+  uint offset;
+  uint count;
+};
+
+layout (std430, binding = 6) buffer light_GridBuffer
+{
+  Cluster_LightsData cluster_Lights[];
+};
+
+layout (std430, binding = 7) buffer global_ID_LightBuffer
+{
+  uint global_ID_lights[];
+};
+
+layout (std430, binding = 8) buffer globalCounter_Atomic
+{
+ uint nextSlot;
+};
+
+
+bool intersect_Light(vec4 lightPos_radius, vec3 minPt_AABB, vec3 maxPt_AABB)
+{
+   vec3 closest_Pt_AABB = clamp(lightPos_radius.xyz, minPt_AABB, maxPt_AABB);
+
+   vec3 dist_pt_Light = lightPos_radius.xyz - closest_Pt_AABB;
+
+   float dist_AABB_Light = dot(dist_pt_Light, dist_pt_light);
+   float dist_radiusLight = lightPos_radius.w * lightPos_radius.w;
+
+   return dist_AABB_Light <= dist_radiusLight;
+}
+
+
+void main()
+{
+  uint localThread_ID = gl_LocalInvocationIndex;
+  uint tileIndex = gl_WorkGroupID.y * gl_NumWorkGroups.x + gl_WorkGroupID.x;
+
+    if(localThread_ID == 0)
+    {
+      //float dist_pts = distance(clusters[tileIndex].minPoint, clusters[tileIndex].maxPoint);
+        vec3 minPos_AABB = clusters[tileIndex].minPoint.xyz;
+        vec3 maxPos_AABB = clusters[tileIndex].maxPoint.xyz;
+
+        uint lights_hit_AABB[100];
+        uint light_count = 0;
+
+        for(uint i = 0; i < num_Lights; i++)
+        {
+        bool light_intersect_AABB = intersect_Light(Lights_Array[i].lightPos_radius, minPos_AABB, maxPos_AABB);
+
+          if(light_intersect_AABB == true)
+          {
+              lights_hit_AABB[light_count] = i;
+              light_count++;
+          }
+
+        }
+
+        uint offset = atomicAdd(nextSlot, light_count);
+
+        for(uint i = 0; i < light_count; i++)
+        {
+           global_ID_lights[offset + i] = lights_hit_AABB[i];
+        }
+
+        cluster_Lights[tileIndex].offset = offset;
+        cluster_Lights[tileIndex].count = light_count;
+
+    }
+
+}
+
+
+
+
+
+
+
+

@@ -170,7 +170,6 @@ namespace texDataManager
 
 	};
 
-
 }
 
 namespace textureCache
@@ -226,6 +225,16 @@ namespace textureCache
 
 }
 
+namespace texLoad_Data
+{
+	extern std::unordered_map<GLenum, int> dataImage_map_pos;
+	extern std::array<GLenum, 2> dataImage_BitsSize;
+
+	void set_dataImage_info();
+
+	unsigned int load_Texture_zBuffer(unsigned int& res_width, unsigned int& res_height);
+	unsigned int* load_Texture_nBuffer(unsigned int& res_width, unsigned int& res_height, GLenum typeData_Tex, GLenum color_Attachment);
+}
 
 
 

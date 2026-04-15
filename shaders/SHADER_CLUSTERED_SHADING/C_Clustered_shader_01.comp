@@ -11,6 +11,7 @@ struct TilesB
 {
  float minDepth;
  float maxDepth;
+ vec2 pad;
 };
 
 layout (std430, binding = 3) buffer tilesBoundBuffer
@@ -42,6 +43,8 @@ void main()
 
  atomicMin(minDepthInt, depth_Uint);
  atomicMax(maxDepthInt, depth_Uint);
+
+
 
  barrier();
 

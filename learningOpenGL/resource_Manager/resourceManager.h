@@ -27,9 +27,11 @@ namespace light
 }
 
 using pointLight = std::unique_ptr<light::light1>;
+using pointLight_PBR= std::unique_ptr<light::pointLight_PBR>;
 using point_geo2D = std::unique_ptr<geo_2D::point_geo>;
 
 using pLight_raw = light::light1*;
+using pLight_PBR_raw = light::pointLight_PBR;
 //using pGeo2D_raw = geo_2D::point_geo*;
 
 namespace discard_objs  ///////////CONTINUE WITH DISCARD SCENARIOS
@@ -116,7 +118,9 @@ namespace resourceManager
 
       std::vector<uint32_t> pL_find_pos{};
       std::unordered_map<std::string, uint32_t> pL_find_str{};
+
       std::unordered_map<uint32_t, pointLight> pointLight_D{}; //pointLight is unique_ptr
+      std::unordered_map<uint32_t, pointLight_PBR> pointLight_PBR_D{}; //pointLight_PBR is unique_ptr, HERE IMPLEMENTE OTHER POINT LIGHT DATA TO PBR
 
       uint32_t sizeContainer_PL{};
 
@@ -133,6 +137,9 @@ namespace resourceManager
 
     void clean_data();
     };
+
+
+
 }
 
 namespace utilities

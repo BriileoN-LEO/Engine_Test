@@ -98,6 +98,58 @@ namespace light
 
 	};
 
+	struct data_pointLightPBR
+	{
+		glm::vec3 Position{};
+		glm::vec3 Color{};
+		float Radio{};
+		float intensity{};
+
+		bool stateLight{ true };
+	};
+
+	class pointLight_PBR  /////CONTINUE HERE
+	{
+	private:
+
+		data_pointLightPBR data;
+
+	public:
+		pointLight_PBR();
+
+	};
+
+
+	struct data_SpotLightPBR
+	{
+		glm::vec3 Position{};
+		glm::vec3 Direction{};
+		glm::vec3 Color{};
+
+		float Radio{};
+		float cutOff{};
+		float outerCutOff{};
+
+		bool stateLight{ true };
+	};
+
+	class SpotLight_PBR
+	{
+	private:
+
+        data_SpotLightPBR data;
+
+	public:
+		SpotLight_PBR();
+		SpotLight_PBR(glm::vec3 Position, glm::vec3 Direction, glm::vec3 Color, float Radio, float cutOff, float outerCutOff);
+
+		void update_position(glm::vec3 Position);
+		void update_direction(glm::vec3 Direction);
+		void update_color(glm::vec3 Color);
+
+	    const data_SpotLightPBR& out_Data();
+
+	};
 
 	
 	inline void duplicate_Lights(std::vector<posicion> posLights, auto& typeLight, auto& meshLight); /// hacer un testeo despues 

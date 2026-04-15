@@ -1217,6 +1217,7 @@ namespace RenderData_Set
 
 		return spotLights;
 	}
+
 	 std::vector<screenUI::pointerScreen> setPointUI_2D()
 	{
 

@@ -966,8 +966,6 @@ namespace Assimp_D {
 			texture::bind_texture(shader, RenderData_Set::dL_shadows_D->out_texture(), "shadowMap", textureUnit, texture::GL_typeTexture::TEXTURE_2D_ARRAY);
 		}
 
-
-
 		if (data_HitAABB::selectedObj.first.mesh_ID == ID)
 		{
 			shading::config::change_refractiveIndex(settingsShader.refractiveIndex);
