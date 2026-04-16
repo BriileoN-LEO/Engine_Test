@@ -122,7 +122,7 @@ namespace render
 	void render_MeshLights_D()
 	{
 		int posLight{ 0 };
-		utilities_pointLight::entity_pL* pL{ nullptr };
+		utilities_Lights::entity_pL* pL{ nullptr };
 
 		for (auto& renderMCD : RenderData_Set::MeshLights_MCD)
 		{

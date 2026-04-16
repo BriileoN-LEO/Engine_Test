@@ -19,10 +19,11 @@ struct Light
 {
  vec4 lightPos_radius; // 0-12  ---> .w == radius
  vec4 Color_And_Intensity; // 76-80
+ vec4 Direction;
  int lightState; // state of the light
  int light_Type; /// 0 == DIRECTIONAL LIGHT /// 1 == POINT LIGHT /// 2 == SPOT LIGHT
- int pos_lightID_mananerLights; ///the posicion in the array of light inside of the manager of Lights
- int pad;
+ float cutOff;
+ float outerCutOff;
 };
 
 layout (std430, binding = 5) buffer Lights_D

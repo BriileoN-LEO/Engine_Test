@@ -26,12 +26,17 @@ namespace light
   class light1;
 }
 
-using pointLight = std::unique_ptr<light::light1>;
-using pointLight_PBR= std::unique_ptr<light::pointLight_PBR>;
-using point_geo2D = std::unique_ptr<geo_2D::point_geo>;
+namespace lights_T
+{
+  using directionalLight = std::unique_ptr<light::directionalLight_PBR>;
+  using pointLight = std::unique_ptr<light::light1>;
+  using pointLight_PBR= std::unique_ptr<light::pointLight_PBR>;
 
-using pLight_raw = light::light1*;
-using pLight_PBR_raw = light::pointLight_PBR;
+  using point_geo2D = std::unique_ptr<geo_2D::point_geo>;
+
+  using pLight_raw = light::light1*;
+  using pLight_PBR_raw = light::pointLight_PBR*;
+}
 //using pGeo2D_raw = geo_2D::point_geo*;
 
 namespace discard_objs  ///////////CONTINUE WITH DISCARD SCENARIOS
@@ -112,6 +117,19 @@ namespace resourceManager
         void clean_data();
     };
 
+    class manager_DirectionalLights
+    {
+    private:
+
+      std::vector<uint32_t> dL_find_pos{};
+      std::unordered_map<std::string, uint32_t> dL_find_str{};
+      std::unordered_map<uint32_t, lights_T::directionalLight> directionalLight_PBR_D{};
+
+    public:
+             //////////CONTINUE HERE
+
+    };
+
     class manager_PointLights
     {
     private:
@@ -119,8 +137,8 @@ namespace resourceManager
       std::vector<uint32_t> pL_find_pos{};
       std::unordered_map<std::string, uint32_t> pL_find_str{};
 
-      std::unordered_map<uint32_t, pointLight> pointLight_D{}; //pointLight is unique_ptr
-      std::unordered_map<uint32_t, pointLight_PBR> pointLight_PBR_D{}; //pointLight_PBR is unique_ptr, HERE IMPLEMENTE OTHER POINT LIGHT DATA TO PBR
+      std::unordered_map<uint32_t, lights_T::pointLight> pointLight_D{}; //pointLight is unique_ptr
+      std::unordered_map<uint32_t, lights_T::pointLight_PBR> pointLight_PBR_D{}; //pointLight_PBR is unique_ptr, HERE IMPLEMENTE OTHER POINT LIGHT DATA TO PBR
 
       uint32_t sizeContainer_PL{};
 
@@ -128,17 +146,19 @@ namespace resourceManager
 
     manager_PointLights();
 
-    void insert_PL(std::string nameStr, pointLight pL_D);
-    pLight_raw pL_by_ID(uint32_t ID);
-    pLight_raw pL_by_str(std::string str_ID);
-    pLight_raw pL_by_num(uint32_t pos);
+    void insert_PL(std::string nameStr, lights_T::pointLight pL_D, lights_T::pointLight_PBR pL_PBR_D);
+    lights_T::pLight_raw pL_by_ID(uint32_t ID);
+    lights_T::pLight_raw pL_by_str(std::string str_ID);
+    lights_T::pLight_raw pL_by_num(uint32_t pos);
+
+    lights_T::pLight_PBR_raw pL_PBR_by_ID(uint32_t ID);
+    lights_T::pLight_PBR_raw pL_PBR_by_str(std::string str_ID);
+    lights_T::pLight_PBR_raw pL_PBR_by_num(uint32_t pos);
 
     const uint32_t& out_size();
 
     void clean_data();
     };
-
-
 
 }
 
@@ -215,14 +235,15 @@ namespace utilities
 
 }
 
-namespace utilities_pointLight
+namespace utilities_Lights
 {
   struct entity_pL
   {
-   pLight_raw pL_entity{nullptr};
+   lights_T::pLight_raw pL_entity{ nullptr };
+   lights_T::pLight_PBR_raw pL_PBR_entity{ nullptr };
 
     entity_pL();
-    entity_pL(pLight_raw pL_entity);
+    entity_pL(lights_T::pLight_raw pL_entity, lights_T::pLight_PBR_raw pL_PBR_entity);
     ~entity_pL();
   };
 
@@ -235,14 +256,14 @@ namespace utilities_pointLight
     std::vector<entity_pL> pL_entities{};
     uint32_t current_size_M{};
 
-    point_geo2D point_geo{ nullptr };
+    lights_T::point_geo2D point_geo{ nullptr };
 
   public:
 
    scene_pointLights();
 
-   void setPoint_geo(point_geo2D point_geo); //INSERTAR EL PUNTO
-   void insert(pLight_raw pL_entity);
+   void setPoint_geo(lights_T::point_geo2D point_geo); //INSERTAR EL PUNTO
+   void insert(lights_T::pLight_raw pL_entity, lights_T::pLight_PBR_raw pL_PBR_entity);
 
    entity_pL* entity_by_ID(uint32_t ID);
    entity_pL* entity_by_Pos(uint32_t pos);

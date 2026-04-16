@@ -26,7 +26,7 @@ namespace RenderData_Set
 	std::optional<discard_objs::discard_objs_scenario> discardObj_D;
 
 	std::optional<resourceManager::manager_PointLights> pointLights_D;
-	std::optional<utilities_pointLight::scene_pointLights> pointLights_Scene_D;
+	std::optional<utilities_Lights::scene_pointLights> pointLights_Scene_D;
     std::optional<shadowsManager::omnidirectional_ShadowMap_PL> omL_shadows_D;
 
 
@@ -1064,76 +1064,105 @@ namespace RenderData_Set
 		glm::vec3 randomColor7{ 0.2, 0.7, 0.5 };
 		glm::vec3 randomColor8{ 0.7, 0.8, 0.3 };	
 
+		float radioLights = 5.0f;
+		float intensityLights = 10.0f;
+
+		light::pointLight_PBR pointLight_PBR_01(glm::vec3(3.0f, 3.0f, 3.0f), witheLight, radioLights, intensityLights, true);
 		light::light1 pointLight_01(glm::vec3(3.0f, 3.0f, 3.0f), witheLight);
 		pointLight_01.setAttenuation(1.0f, 0.8f, 0.0035f);
 		pointLight_01.setMatProperties(witheLight, witheLight, witheLight);
 
+		light::pointLight_PBR pointLight_PBR_02(glm::vec3(9.0f, 4.0f, 9.0f), purpleLight, radioLights, intensityLights, true);
 		light::light1 pointLight_02(glm::vec3(9.0f, 4.0f, 9.0f), purpleLight);
 		pointLight_02.setAttenuation(1.0f, 0.8f, 0.0035f);
 		pointLight_02.setMatProperties(purpleLight, purpleLight, purpleLight);
-		
+
+		light::pointLight_PBR pointLight_PBR_03(glm::vec3(15.0f, 5.0f, 15.0f), randomColor1, radioLights, intensityLights, true);
 		light::light1 pointLight_03(glm::vec3(15.0f, 5.0f, 15.0f), randomColor1);
 		pointLight_03.setAttenuation(1.0f, 0.8f, 0.0035f);
 		pointLight_03.setMatProperties(randomColor1, randomColor1, randomColor1);
-		
+
+		light::pointLight_PBR pointLight_PBR_04(glm::vec3(21.0f, 6.0f, 21.0f), randomColor2, radioLights, intensityLights, true);
 		light::light1 pointLight_04(glm::vec3(21.0f, 6.0f, 21.0f), randomColor2);
 		pointLight_04.setAttenuation(1.0f, 0.8f, 0.0035f);
 		pointLight_04.setMatProperties(randomColor2, randomColor2, randomColor2);
 
+		light::pointLight_PBR pointLight_PBR_05(glm::vec3(27.0f, 7.0f, 27.0f), randomColor3, radioLights, intensityLights, true);
 		light::light1 pointLight_05(glm::vec3(27.0f, 7.0f, 27.0f), randomColor3);
 		pointLight_05.setAttenuation(1.0f, 0.8f, 0.0035f);
 		pointLight_05.setMatProperties(randomColor3, randomColor3, randomColor3);
 
+		light::pointLight_PBR pointLight_PBR_06(glm::vec3(27.0f, 8.0f, 27.0f), randomColor4, radioLights, intensityLights, true);
 		light::light1 pointLight_06(glm::vec3(27.0f, 8.0f, 27.0f), randomColor4);
 		pointLight_06.setAttenuation(1.0f, 0.8f, 0.0035f);
 		pointLight_06.setMatProperties(randomColor4, randomColor4, randomColor4);
 
+		light::pointLight_PBR pointLight_PBR_07(glm::vec3(27.0f, 9.0f, 27.0f), randomColor5, radioLights, intensityLights, true);
 		light::light1 pointLight_07(glm::vec3(27.0f, 9.0f, 27.0f), randomColor5);
 		pointLight_07.setAttenuation(1.0f, 0.8f, 0.0035f);
 		pointLight_07.setMatProperties(randomColor5, randomColor5, randomColor5);
-		
+
+		light::pointLight_PBR pointLight_PBR_08(glm::vec3(27.0f, 10.0f, 27.0f), randomColor6, radioLights, intensityLights, true);
 		light::light1 pointLight_08(glm::vec3(27.0f, 10.0f, 27.0f), randomColor6);
 		pointLight_08.setAttenuation(1.0f, 0.8f, 0.0035f);
 		pointLight_08.setMatProperties(randomColor6, randomColor6, randomColor6);
 
+		light::pointLight_PBR pointLight_PBR_09(glm::vec3(27.0f, 3.0f, 27.0f), randomColor7, radioLights, intensityLights, true);
 		light::light1 pointLight_09(glm::vec3(27.0f, 3.0f, 27.0f), randomColor7);
 		pointLight_09.setAttenuation(1.0f, 0.8f, 0.0035f);
 		pointLight_09.setMatProperties(randomColor7, randomColor7, randomColor7);
 
 		std::unique_ptr<light::light1> pt_light {std::make_unique<light::light1>(pointLight_01)};
-		pointLights_D->insert_PL("pointLight_01", std::move(pt_light));
+		std::unique_ptr<light::pointLight_PBR> pt_PBR_light{std::make_unique<light::pointLight_PBR>(pointLight_PBR_01)};
+		pointLights_D->insert_PL("pointLight_01", std::move(pt_light), std::move(pt_PBR_light));
 
 		pt_light = nullptr;
+		pt_PBR_light = nullptr;
 		pt_light = std::make_unique<light::light1>(pointLight_02);
-		pointLights_D->insert_PL("pointLight_02", std::move(pt_light));
+		pt_PBR_light = std::make_unique<light::pointLight_PBR>(pointLight_PBR_02);
+		pointLights_D->insert_PL("pointLight_02", std::move(pt_light), std::move(pt_PBR_light));
 
 		pt_light = nullptr;
+		pt_PBR_light = nullptr;
 		pt_light = std::make_unique<light::light1>(pointLight_03);
-		pointLights_D->insert_PL("pointLight_03", std::move(pt_light));
+		pt_PBR_light = std::make_unique<light::pointLight_PBR>(pointLight_PBR_03);
+		pointLights_D->insert_PL("pointLight_03", std::move(pt_light), std::move(pt_PBR_light));
 
 		pt_light = nullptr;
+		pt_PBR_light = nullptr;
 		pt_light = std::make_unique<light::light1>(pointLight_04);
-		pointLights_D->insert_PL("pointLight_04", std::move(pt_light));
+		pt_PBR_light = std::make_unique<light::pointLight_PBR>(pointLight_PBR_04);
+		pointLights_D->insert_PL("pointLight_04", std::move(pt_light), std::move(pt_PBR_light));
 
 		pt_light = nullptr;
+		pt_PBR_light = nullptr;
 		pt_light = std::make_unique<light::light1>(pointLight_05);
-		pointLights_D->insert_PL("pointLight_05", std::move(pt_light));
+		pt_PBR_light = std::make_unique<light::pointLight_PBR>(pointLight_PBR_05);
+		pointLights_D->insert_PL("pointLight_05", std::move(pt_light), std::move(pt_PBR_light));
 
 		pt_light = nullptr;
+		pt_PBR_light = nullptr;
 		pt_light = std::make_unique<light::light1>(pointLight_06);
-		pointLights_D->insert_PL("pointLight_06", std::move(pt_light));
+		pt_PBR_light = std::make_unique<light::pointLight_PBR>(pointLight_PBR_06);
+		pointLights_D->insert_PL("pointLight_06", std::move(pt_light), std::move(pt_PBR_light));
 
 		pt_light = nullptr;
+		pt_PBR_light = nullptr;
 		pt_light = std::make_unique<light::light1>(pointLight_07);
-		pointLights_D->insert_PL("pointLight_07", std::move(pt_light));
+		pt_PBR_light = std::make_unique<light::pointLight_PBR>(pointLight_PBR_07);
+		pointLights_D->insert_PL("pointLight_07", std::move(pt_light), std::move(pt_PBR_light));
 
 		pt_light = nullptr;
+		pt_PBR_light = nullptr;
 		pt_light = std::make_unique<light::light1>(pointLight_08);
-		pointLights_D->insert_PL("pointLight_08", std::move(pt_light));
+		pt_PBR_light = std::make_unique<light::pointLight_PBR>(pointLight_PBR_08);
+		pointLights_D->insert_PL("pointLight_08", std::move(pt_light), std::move(pt_PBR_light));
 
 		pt_light = nullptr;
+		pt_PBR_light = nullptr;
 		pt_light = std::make_unique<light::light1>(pointLight_09);
-		pointLights_D->insert_PL("pointLight_09", std::move(pt_light));
+		pt_PBR_light = std::make_unique<light::pointLight_PBR>(pointLight_PBR_09);
+		pointLights_D->insert_PL("pointLight_09", std::move(pt_light), std::move(pt_PBR_light));
 
 	}
 	 void setPointLights_Scene()
@@ -1141,7 +1170,7 @@ namespace RenderData_Set
 	  const uint32_t& size {pointLights_D->out_size() };
       for (uint32_t i = 0; i < size; i++)
       {
-      	pointLights_Scene_D->insert(pointLights_D->pL_by_num(i));
+      	pointLights_Scene_D->insert(pointLights_D->pL_by_num(i), pointLights_D->pL_PBR_by_num(i));
       }
 
 	  std::unique_ptr<geo_2D::point_geo> pointGEO{
@@ -1160,7 +1189,7 @@ namespace RenderData_Set
 	{
 		 //const uint32_t& num_pL {pointLights_Scene_D->num_pointLights()};
 
-		const std::vector<utilities_pointLight::entity_pL>& entities_pL { pointLights_Scene_D->out_entities()};
+		const std::vector<utilities_Lights::entity_pL>& entities_pL { pointLights_Scene_D->out_entities()};
 
 		for (auto& e_pL : entities_pL)
 		{
@@ -1720,7 +1749,7 @@ namespace Shader_Set
 			}
 
 		    const uint32_t& size_pL{ RenderData_Set::pointLights_Scene_D->num_pointLights() };
-			utilities_pointLight::entity_pL* entity_pL{ nullptr };
+			utilities_Lights::entity_pL* entity_pL{ nullptr };
 			for (uint32_t i = 0; i < size_pL; i++)
 			{
 				entity_pL = RenderData_Set::pointLights_Scene_D->entity_by_Pos(i);

@@ -98,12 +98,50 @@ namespace light
 
 	};
 
+
+	enum class typeLight : uint8_t
+	{
+      DIRECTIONAL_LIGHT = 0,
+	  POINT_LIGHT = 1,
+	  SPOT_LIGHT = 2
+	};
+
+
+	struct data_directionalLightPBR
+	{
+	  glm::vec3 Direction{};
+	  glm::vec3 Color{};
+	  float Intensity{};
+
+	  bool stateLight{ true };
+	};
+
+	class directionalLight_PBR
+	{
+	private :
+		data_directionalLightPBR data{};
+
+		void setData(glm::vec3 Direction, glm::vec3 Color, float Intensity, bool stateLight);
+
+	public :
+
+		directionalLight_PBR();
+		directionalLight_PBR(glm::vec3 Direction, glm::vec3 Color, float Intensity, bool stateLight);
+
+		void update_direction(glm::vec3 Direction);
+		void update_color(glm::vec3 Color);
+		void update_intensity(float Intensity);
+		void update_stateLight(bool stateLight);
+
+		const data_directionalLightPBR& out_Data();
+	};
+
 	struct data_pointLightPBR
 	{
 		glm::vec3 Position{};
 		glm::vec3 Color{};
 		float Radio{};
-		float intensity{};
+		float Intensity{};
 
 		bool stateLight{ true };
 	};
@@ -112,13 +150,22 @@ namespace light
 	{
 	private:
 
-		data_pointLightPBR data;
+		data_pointLightPBR data{};
+
+		void setData(glm::vec3 Position, glm::vec3 Color, float Radio, float Intensity, bool stateLight);
 
 	public:
 		pointLight_PBR();
+		pointLight_PBR(glm::vec3 Position, glm::vec3 Color, float Radio, float Intensity, bool stateLight);
 
+	    void update_position(glm::vec3 Position);
+		void update_color(glm::vec3 Color);
+		void update_radio(float Radio);
+		void update_intensity(float Intensity);
+		void update_stateLight(bool stateLight);
+
+		const data_pointLightPBR& out_Data();
 	};
-
 
 	struct data_SpotLightPBR
 	{
@@ -137,7 +184,7 @@ namespace light
 	{
 	private:
 
-        data_SpotLightPBR data;
+        data_SpotLightPBR data{};
 
 	public:
 		SpotLight_PBR();

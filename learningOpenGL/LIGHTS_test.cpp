@@ -76,8 +76,83 @@ namespace light
 		this->Mat = Mat; 
 	}
 
-	pointLight_PBR::pointLight_PBR() = default;
 
+	void directionalLight_PBR::setData(glm::vec3 Direction, glm::vec3 Color, float Intensity, bool stateLight)
+	{
+		data.Direction = Direction;
+		data.Color = Color;
+		data.Intensity = Intensity;
+		data.stateLight = stateLight;
+	}
+
+    directionalLight_PBR::directionalLight_PBR() = default;
+	directionalLight_PBR::directionalLight_PBR(glm::vec3 Direction, glm::vec3 Color, float Intensity, bool stateLight)
+	{
+		setData(Direction, Color, Intensity, stateLight);
+	}
+
+	void directionalLight_PBR::update_direction(glm::vec3 Direction)
+	{
+	  data.Direction = Direction;
+	}
+	void directionalLight_PBR::update_color(glm::vec3 Color)
+	{
+	  data.Color = Color;
+	}
+	void directionalLight_PBR::update_intensity(float Intensity)
+	{
+	  data.Intensity = Intensity;
+	}
+	void directionalLight_PBR::update_stateLight(bool stateLight)
+	{
+	  data.stateLight = stateLight;
+	}
+
+	const data_directionalLightPBR& directionalLight_PBR::out_Data()
+	{
+      return data;
+	}
+
+	void pointLight_PBR::setData(glm::vec3 Position, glm::vec3 Color, float Radio, float Intensity, bool stateLight)
+	{
+		data.Position = Position;
+		data.Color = Color;
+		data.Radio = Radio;
+		data.Intensity = Intensity;
+		data.stateLight = stateLight;
+	}
+
+	pointLight_PBR::pointLight_PBR() = default;
+	pointLight_PBR::pointLight_PBR(glm::vec3 Position, glm::vec3 Color, float Radio, float Intensity, bool stateLight)
+	{
+		setData(Position, Color, Radio, Intensity, stateLight);
+	}
+
+	void pointLight_PBR::update_position(glm::vec3 Position)
+	{
+		data.Position = Position;
+	}
+	void pointLight_PBR::update_color(glm::vec3 Color)
+	{
+		data.Color = Color;
+	}
+	void pointLight_PBR::update_radio(float Radio)
+	{
+		data.Radio = Radio;
+	}
+	void pointLight_PBR::update_intensity(float Intensity)
+	{
+        data.Intensity = Intensity;
+	}
+	void pointLight_PBR::update_stateLight(bool stateLight)
+	{
+        data.stateLight = stateLight;
+	}
+
+	const data_pointLightPBR& pointLight_PBR::out_Data()
+	{
+        return data;
+	}
 
 	SpotLight_PBR::SpotLight_PBR() = default;
 	SpotLight_PBR::SpotLight_PBR(glm::vec3 Position, glm::vec3 Direction, glm::vec3 Color, float Radio, float cutOff, float outerCutOff) :

@@ -451,7 +451,7 @@ namespace shadowsManager {
     int pos_pL{};
     for (auto& pL : ID_pL)
     {
-      utilities_pointLight::entity_pL* entity_pL {RenderData_Set::pointLights_Scene_D->entity_by_ID(pL)};
+      utilities_Lights::entity_pL* entity_pL {RenderData_Set::pointLights_Scene_D->entity_by_ID(pL)};
 
       if (entity_pL != nullptr)
       {

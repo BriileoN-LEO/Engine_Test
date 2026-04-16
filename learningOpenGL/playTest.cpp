@@ -209,7 +209,7 @@ namespace testPlay
 		}
 		*/
 
-		utilities_pointLight::entity_pL* e_pL { nullptr };
+		utilities_Lights::entity_pL* e_pL { nullptr };
 		for (int i = 0; i < static_cast<int>(lightTransSet.size()); i++)
 		{
 			//lightTransSet[i].transformMeshLight(&RenderData_Set::MeshLights_MCD[i], &RenderData_Set::pointLights_D[i]);

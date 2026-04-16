@@ -356,17 +356,19 @@ namespace resourceManager
 
   manager_PointLights::manager_PointLights(){};
 
-  void manager_PointLights::insert_PL(std::string nameStr, pointLight pL_D)
+  void manager_PointLights::insert_PL(std::string nameStr, lights_T::pointLight pL_D, lights_T::pointLight_PBR pL_PBR_D)
   {
     uint32_t hashID{FNV::str_to_hash(nameStr)};
 
     pL_find_pos.emplace_back(hashID);
     pL_find_str.emplace(nameStr, hashID);
+
     pointLight_D.emplace(hashID, std::move(pL_D));
+    pointLight_PBR_D.emplace(hashID, std::move(pL_PBR_D));
 
     ++sizeContainer_PL;
   };
-  pLight_raw manager_PointLights::pL_by_ID(uint32_t ID)
+  lights_T::pLight_raw manager_PointLights::pL_by_ID(uint32_t ID)
   {
     auto find_ID {pointLight_D.find(ID)};
 
@@ -380,7 +382,7 @@ namespace resourceManager
 
     return nullptr;
   };
-  pLight_raw manager_PointLights::pL_by_str(std::string str_ID)
+  lights_T::pLight_raw manager_PointLights::pL_by_str(std::string str_ID)
   {
     auto find_Str {pL_find_str.find(str_ID)};
 
@@ -394,7 +396,7 @@ namespace resourceManager
 
     return nullptr;
   };
-  pLight_raw manager_PointLights::pL_by_num(uint32_t pos)
+  lights_T::pLight_raw manager_PointLights::pL_by_num(uint32_t pos)
   {
     if (pos <= sizeContainer_PL - 1)
     {
@@ -406,6 +408,47 @@ namespace resourceManager
 
     return nullptr;
   };
+
+  lights_T::pLight_PBR_raw manager_PointLights::pL_PBR_by_ID(uint32_t ID)
+  {
+    auto find_pL_PBR = pointLight_PBR_D.find(ID);
+
+    if (find_pL_PBR != pointLight_PBR_D.end())
+    {
+     return find_pL_PBR->second.get();
+    }
+
+    std::string error_log {"NOT FIND POINT LIGHT PBR WITH ID:: ID = " + std::to_string(ID)};
+    register_error_RM::register_error_withSentence(error_log.c_str());
+
+    return nullptr;
+  }
+  lights_T::pLight_PBR_raw manager_PointLights::pL_PBR_by_str(std::string str_ID)
+  {
+    auto find_pL_PBR = pL_find_str.find(str_ID);
+
+    if (find_pL_PBR != pL_find_str.end())
+    {
+      return pointLight_PBR_D[find_pL_PBR->second].get();
+    }
+
+    std::string error_log {"NOT FIND POINT LIGHT PBR WITH NAME:: NAME = " + str_ID};
+    register_error_RM::register_error_withSentence(error_log.c_str());
+
+    return nullptr;
+  }
+  lights_T::pLight_PBR_raw manager_PointLights::pL_PBR_by_num(uint32_t pos)
+  {
+    if (pos <= sizeContainer_PL - 1)
+    {
+      return pointLight_PBR_D[pL_find_pos[pos]].get();
+    }
+
+    std::string error_log {"NOT FIND POINT LIGHT IN POSICION:: POSICION = " + std::to_string(pos)};
+    register_error_RM::register_error_withSentence(error_log.c_str());
+
+    nullptr;
+  }
 
   const uint32_t& manager_PointLights::out_size()
   {
@@ -784,16 +827,15 @@ namespace utilities {
 
 }
 
-namespace utilities_pointLight
+namespace utilities_Lights
 {
 
-
   entity_pL::entity_pL(){};
-  entity_pL::entity_pL(pLight_raw pL_entity) : pL_entity(std::move(pL_entity)){};
+  entity_pL::entity_pL(lights_T::pLight_raw pL_entity, lights_T::pLight_PBR_raw pL_PBR_entity) : pL_entity(std::move(pL_entity)), pL_PBR_entity(std::move(pL_PBR_entity)){};
 
   scene_pointLights::scene_pointLights()
   {
-    point_geo2D p2D {std::make_unique<geo_2D::point_geo>()};
+    lights_T::point_geo2D p2D {std::make_unique<geo_2D::point_geo>()};
     point_geo = std::move(p2D);
   }
   entity_pL::~entity_pL()
@@ -801,13 +843,13 @@ namespace utilities_pointLight
     pL_entity = nullptr;
     delete pL_entity;
   }
-  void scene_pointLights::setPoint_geo(point_geo2D point_geo)
+  void scene_pointLights::setPoint_geo(lights_T::point_geo2D point_geo)
   {
    this->point_geo = nullptr;
    this->point_geo = std::move(point_geo);
   }
 
-  void scene_pointLights::insert(pLight_raw pL_entity)
+  void scene_pointLights::insert(lights_T::pLight_raw pL_entity, lights_T::pLight_PBR_raw pL_PBR_entity)
   {
     if (pL_entity != nullptr)
     {
@@ -815,7 +857,7 @@ namespace utilities_pointLight
 
       pL_pos.emplace(ID, current_size_M);
       pos_pL_entity.emplace_back(current_size_M);
-      pL_entities.emplace_back(std::move(pL_entity));
+      pL_entities.emplace_back(std::move(pL_entity), std::move(pL_PBR_entity));
       ++current_size_M;
     }
   }

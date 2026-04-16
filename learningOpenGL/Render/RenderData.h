@@ -34,7 +34,7 @@ namespace RenderData_Set
 	extern std::optional<discard_objs::discard_objs_scenario> discardObj_D;
 
 	extern std::optional<resourceManager::manager_PointLights> pointLights_D;
-	extern std::optional<utilities_pointLight::scene_pointLights> pointLights_Scene_D;
+	extern std::optional<utilities_Lights::scene_pointLights> pointLights_Scene_D;
 	extern std::optional<shadowsManager::omnidirectional_ShadowMap_PL> omL_shadows_D;
 
     ///extern std::unordered_map<std::string, std::unique_ptr<Assimp_D::Model>> AssimpModel_D;

@@ -191,7 +191,7 @@ namespace Clustered_Shading
 
            glBindBuffer(GL_SHADER_STORAGE_BUFFER, lights);
 
-           size_t tilesContentSize { sizeof(glm::vec4) * 3 };
+           size_t tilesContentSize { sizeof(glm::vec4) * 4 };
            tilesContentSize *= max_Lights;
 
            glBufferData(GL_SHADER_STORAGE_BUFFER, tilesContentSize, nullptr, GL_DYNAMIC_DRAW);

@@ -99,7 +99,7 @@ namespace shading
 			}
 
 			const uint32_t& size_pL{ RenderData_Set::pointLights_Scene_D->num_pointLights() };
-			utilities_pointLight::entity_pL* entity_pL{ nullptr };
+			utilities_Lights::entity_pL* entity_pL{ nullptr };
 			for (uint32_t i = 0; i < size_pL; i++)
 			{
 				entity_pL = RenderData_Set::pointLights_Scene_D->entity_by_Pos(i);
