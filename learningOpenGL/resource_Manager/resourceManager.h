@@ -4,6 +4,12 @@
 //#include "Model_Assimp/ModelAssimp.h"
 #include "learningOpenGL.h"
 
+namespace data_Manager
+{
+  uint32_t find_and_remplace_str(const std::vector<uint32_t>& dataContainer, std::string& str_data); ////IT GETS A NEW HASHID IF REQUIERES AND MODIFIES THE STRING
+
+};
+
 namespace geo_2D
 {
    class point_geo;
@@ -28,14 +34,18 @@ namespace light
 
 namespace lights_T
 {
-  using directionalLight = std::unique_ptr<light::directionalLight_PBR>;
+  using directionalLight_PBR = std::unique_ptr<light::directionalLight_PBR>;
   using pointLight = std::unique_ptr<light::light1>;
   using pointLight_PBR= std::unique_ptr<light::pointLight_PBR>;
+  using spotLight_PBR = std::unique_ptr<light::SpotLight_PBR>;
 
   using point_geo2D = std::unique_ptr<geo_2D::point_geo>;
 
+  using dLight_PBR_raw = light::directionalLight_PBR*;
   using pLight_raw = light::light1*;
   using pLight_PBR_raw = light::pointLight_PBR*;
+  using sLight_PBR_raw = light::SpotLight_PBR*;
+
 }
 //using pGeo2D_raw = geo_2D::point_geo*;
 
@@ -123,11 +133,24 @@ namespace resourceManager
 
       std::vector<uint32_t> dL_find_pos{};
       std::unordered_map<std::string, uint32_t> dL_find_str{};
-      std::unordered_map<uint32_t, lights_T::directionalLight> directionalLight_PBR_D{};
+      std::unordered_map<uint32_t, lights_T::directionalLight_PBR> directionalLight_PBR_D{};
+
+      uint32_t sizeContainer_dL{};
 
     public:
-             //////////CONTINUE HERE
 
+       manager_DirectionalLights();
+
+       void insert_DL(std::string nameStr, lights_T::directionalLight_PBR dL_D);
+
+       lights_T::dLight_PBR_raw pL_by_ID(uint32_t ID);
+       lights_T::dLight_PBR_raw pL_by_str(std::string str_ID);
+       lights_T::dLight_PBR_raw pL_by_num(uint32_t pos);
+
+       const uint32_t& out_size();
+
+       void clean_data();
+      //////////CONTINUE HERE
     };
 
     class manager_PointLights
@@ -160,6 +183,29 @@ namespace resourceManager
     void clean_data();
     };
 
+    class manager_SpotLights
+    {
+    private:
+      std::vector<uint32_t> sL_find_pos{};     ////ITS SORTED THE ORDER
+      std::unordered_map<std::string, uint32_t> sL_find_str{};
+      std::unordered_map<uint32_t, lights_T::spotLight_PBR> spotLight_PBR_D{};
+
+      uint32_t sizeContainer_sL{};
+
+    public:
+
+     manager_SpotLights();
+
+     void insert_sL(std::string nameStr, lights_T::spotLight_PBR sL_D);
+
+     lights_T::sLight_PBR_raw pL_by_ID(uint32_t ID);  ////FIND BY BYNARY SEARCH
+     lights_T::sLight_PBR_raw pL_by_str(std::string str_ID);
+     lights_T::sLight_PBR_raw pL_by_num(uint32_t pos);
+
+      const uint32_t& out_size();
+
+      void clean_data();
+    };
 }
 
 namespace utilities
@@ -195,7 +241,7 @@ namespace utilities
     std::vector<entity> models_entities{};
     uint32_t current_size_M{};
 
-    std::vector<uint32_t> ordered_allMeshes{};  ////to find if i discard some meshes
+    std::vector<uint32_t> ordered_allMeshes{};  ////to find if I discard some meshes
 
     std::vector<render_data_D> render_meshes{}; ///TO SAVE ALL THE ID OF MESHES IN THE SCENE
     std::vector<render_entity> renderBlocking{}; //TO SAVE THE CORRECTO POSICION OF EACH MESH INSIDE OF THE MODEL ID
@@ -274,7 +320,10 @@ namespace utilities_Lights
    void clean_data();
   };
 
+  ////CONTINUE HERE TO MAKE THE SCENE SPOT AND DIRECTIONAL LIGHT CLASS
 
+
+  extern bool stateLights_data;  ////THIS CONTROLS THE STATE IF ONE OF ALL LIGHTS CHANGE ONE PARAMETER TO RESTORE THE PARAMETERS IN THE SSBO OF THE CLUSTER RENDERING.
 }
 
 namespace register_error_RM

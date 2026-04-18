@@ -5,6 +5,39 @@
 #include "2D_geo/basic_geometry_D.h"
 #include "LIGHTS_test.h"
 
+namespace data_Manager
+{
+  uint32_t find_and_remplace_str(const std::vector<uint32_t>& dataContainer, std::string& str_data) ////IT GETS A NEW HASHID IF REQUIERES AND MODIFIES THE STRING
+  {
+    uint32_t hashID {FNV::str_to_hash(str_data)};
+
+    if (std::binary_search(dataContainer.begin(), dataContainer.end(), hashID))
+    {
+      uint32_t num{ 1 };
+
+      while (true)
+      {
+        std::string str_data_n {str_data + "_" + std::to_string(num)};
+        hashID = FNV::str_to_hash(str_data_n);
+
+        if (std::binary_search(dataContainer.begin(), dataContainer.end(), hashID))
+        {
+          ++num;
+        }
+
+        else
+        {
+          str_data = str_data_n;
+          break;
+        }
+
+      }
+     }
+
+    return hashID;
+  }
+};
+
 namespace discard_objs
 {
   void objs_Discard::update_meshes()
@@ -354,13 +387,89 @@ namespace resourceManager
   }
 
 
+  manager_DirectionalLights::manager_DirectionalLights() {};
+
+  void manager_DirectionalLights::insert_DL(std::string nameStr, lights_T::directionalLight_PBR dL_D)
+  {
+//    uint32_t hashID{FNV::str_to_hash(nameStr)};
+
+    uint32_t hashID { data_Manager::find_and_remplace_str(dL_find_pos, nameStr) };
+
+    auto find_pos_in {std::lower_bound(dL_find_pos.begin(), dL_find_pos.end(), hashID)};
+
+    dL_find_pos.insert(find_pos_in, hashID);
+    dL_find_str.emplace(nameStr, hashID);
+
+    directionalLight_PBR_D.emplace(hashID, std::move(dL_D));
+
+    ++sizeContainer_dL;
+  }
+
+  lights_T::dLight_PBR_raw manager_DirectionalLights::pL_by_ID(uint32_t ID)
+  {
+    if (std::binary_search(dL_find_pos.begin(), dL_find_pos.end(), ID))
+    {
+      return directionalLight_PBR_D[ID].get();
+    }
+
+    std::string error_log {"NOT FIND DIRECTIONAL LIGHT WITH ID:: ID = " + std::to_string(ID)};
+    register_error_RM::register_error_withSentence(error_log.c_str());
+
+    return nullptr;
+  }
+  lights_T::dLight_PBR_raw manager_DirectionalLights::pL_by_str(std::string str_ID)
+  {
+    auto find_dL {dL_find_str.find(str_ID)};
+
+    if (find_dL != dL_find_str.end())
+    {
+      return directionalLight_PBR_D[find_dL->second].get();
+    }
+
+    std::string error_log {"NOT FIND DIRECTIONAL LIGHT WITH (NAME):: NAME = " + str_ID};
+    register_error_RM::register_error_withSentence(error_log.c_str());
+
+    return nullptr;
+  }
+
+  lights_T::dLight_PBR_raw manager_DirectionalLights::pL_by_num(uint32_t pos)
+  {
+     if (pos < sizeContainer_dL)
+     {
+        return directionalLight_PBR_D[dL_find_pos[pos]].get();
+     }
+
+    std::string error_log {"NOT FIND POINT LIGHT IN POSICION:: POSICION = " + std::to_string(pos)};
+    register_error_RM::register_error_withSentence(error_log.c_str());
+
+    return nullptr;
+  }
+
+  const uint32_t& manager_DirectionalLights::out_size()
+  {
+   return sizeContainer_dL;
+  }
+
+  void manager_DirectionalLights::clean_data()
+  {
+    dL_find_pos.clear();
+    dL_find_str.clear();
+    directionalLight_PBR_D.clear();
+
+    sizeContainer_dL = 0;
+  }
+
   manager_PointLights::manager_PointLights(){};
 
   void manager_PointLights::insert_PL(std::string nameStr, lights_T::pointLight pL_D, lights_T::pointLight_PBR pL_PBR_D)
   {
-    uint32_t hashID{FNV::str_to_hash(nameStr)};
+   // uint32_t hashID{FNV::str_to_hash(nameStr)};
 
-    pL_find_pos.emplace_back(hashID);
+    uint32_t hashID { data_Manager::find_and_remplace_str(pL_find_pos, nameStr) };
+
+    auto find_pos_in {std::lower_bound(pL_find_pos.begin(), pL_find_pos.end(), hashID)};
+
+    pL_find_pos.insert(find_pos_in, hashID);
     pL_find_str.emplace(nameStr, hashID);
 
     pointLight_D.emplace(hashID, std::move(pL_D));
@@ -411,11 +520,9 @@ namespace resourceManager
 
   lights_T::pLight_PBR_raw manager_PointLights::pL_PBR_by_ID(uint32_t ID)
   {
-    auto find_pL_PBR = pointLight_PBR_D.find(ID);
-
-    if (find_pL_PBR != pointLight_PBR_D.end())
+    if (std::binary_search(pL_find_pos.begin(), pL_find_pos.end(), ID))
     {
-     return find_pL_PBR->second.get();
+     return pointLight_PBR_D[ID].get();
     }
 
     std::string error_log {"NOT FIND POINT LIGHT PBR WITH ID:: ID = " + std::to_string(ID)};
@@ -460,6 +567,79 @@ namespace resourceManager
     pL_find_pos.clear();
     pL_find_str.clear();
     pointLight_D.clear();
+
+    sizeContainer_PL = 0;
+  }
+
+  manager_SpotLights::manager_SpotLights() = default;
+
+  void manager_SpotLights::insert_sL(std::string nameStr, lights_T::spotLight_PBR sL_D)
+  {
+    uint32_t hashID { data_Manager::find_and_remplace_str(sL_find_pos, nameStr) };
+
+    auto find_pos_in {std::lower_bound(sL_find_pos.begin(), sL_find_pos.end(), hashID)};
+
+    sL_find_pos.insert(find_pos_in, hashID);
+    sL_find_str.emplace(nameStr, hashID);
+    spotLight_PBR_D.emplace(hashID, std::move(sL_D));
+
+    ++sizeContainer_sL;
+
+  }
+
+  lights_T::sLight_PBR_raw manager_SpotLights::pL_by_ID(uint32_t ID)
+  {
+    if (std::binary_search(sL_find_pos.begin(), sL_find_pos.end(), ID))
+    {
+      return spotLight_PBR_D[ID].get();
+    }
+
+    std::string error_log {"NOT FIND SPOT LIGHT PBR WITH ID:: ID = " + std::to_string(ID)};
+    register_error_RM::register_error_withSentence(error_log.c_str());
+
+    return nullptr;
+  }
+
+  lights_T::sLight_PBR_raw manager_SpotLights::pL_by_str(std::string str_ID)
+  {
+    auto find_str {sL_find_str.find(str_ID)};
+
+    if (find_str != sL_find_str.end())
+    {
+     return  spotLight_PBR_D[sL_find_str[str_ID]].get();
+    }
+
+    std::string error_log {"NOT FIND POINT LIGHT PBR WITH NAME:: NAME = " + str_ID};
+    register_error_RM::register_error_withSentence(error_log.c_str());
+
+    return nullptr;
+  }
+
+  lights_T::sLight_PBR_raw manager_SpotLights::pL_by_num(uint32_t pos)
+  {
+      if (pos < sizeContainer_sL)
+      {
+        return  spotLight_PBR_D[sL_find_pos[pos]].get();
+      }
+
+    std::string error_log {"NOT FIND POINT LIGHT IN POSICION:: POSICION = " + std::to_string(pos)};
+    register_error_RM::register_error_withSentence(error_log.c_str());
+
+    nullptr;
+  }
+
+  const uint32_t& manager_SpotLights::out_size()
+  {
+    return sizeContainer_sL;
+  }
+
+  void manager_SpotLights::clean_data()
+  {
+    sL_find_pos.clear();
+    sL_find_str.clear();
+    spotLight_PBR_D.clear();
+
+    sizeContainer_sL = 0;
   }
 
 }
