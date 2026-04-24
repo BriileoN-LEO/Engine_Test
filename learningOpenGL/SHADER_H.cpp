@@ -98,27 +98,27 @@ namespace shading
 
 			}
 
-			const uint32_t& size_pL{ RenderData_Set::pointLights_Scene_D->num_pointLights() };
-			utilities_Lights::entity_pL* entity_pL{ nullptr };
+			const uint32_t& size_pL{ RenderData_Set::lightsScene_D->num_Lights(light::typeLight::POINT_LIGHT) };
+			//utilities_Lights::entity_pL* entity_pL{ nullptr };
 			for (uint32_t i = 0; i < size_pL; i++)
 			{
-				entity_pL = RenderData_Set::pointLights_Scene_D->entity_by_Pos(i);
+				utilities_Lights::entity_pL entity_pL = RenderData_Set::lightsScene_D->entity_pL_by_Pos(i);
 
-				if (entity_pL != nullptr) { /// see this
+				if (entity_pL.pL_entity != nullptr) { /// see this
 					SS_PL.emplace_back(
-						glm::vec3(entity_pL->pL_entity->Posicion),
+						glm::vec3(entity_pL.pL_entity->Posicion),
 						0.0f,
-						glm::vec3(entity_pL->pL_entity->Mat.ambient),
-						entity_pL->pL_entity->constant,
-						glm::vec3(entity_pL->pL_entity->Mat.diffuse),
-						entity_pL->pL_entity->linear,
-						glm::vec3(entity_pL->pL_entity->Mat.specular),
-						entity_pL->pL_entity->quadratic,
+						glm::vec3(entity_pL.pL_entity->Mat.ambient),
+						entity_pL.pL_entity->constant,
+						glm::vec3(entity_pL.pL_entity->Mat.diffuse),
+						entity_pL.pL_entity->linear,
+						glm::vec3(entity_pL.pL_entity->Mat.specular),
+						entity_pL.pL_entity->quadratic,
 						glm::vec3(0.0f),
-						static_cast<int>(entity_pL->pL_entity->stateLight)
+						static_cast<int>(entity_pL.pL_entity->stateLight)
 					);
 
-					entity_pL = nullptr;
+					//entity_pL = nullptr;
 				}
 			}
 

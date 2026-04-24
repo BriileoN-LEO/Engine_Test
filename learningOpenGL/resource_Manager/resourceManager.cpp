@@ -394,6 +394,13 @@ namespace resourceManager
 //    uint32_t hashID{FNV::str_to_hash(nameStr)};
 
     uint32_t hashID { data_Manager::find_and_remplace_str(dL_find_pos, nameStr) };
+    uint32_t currentID {dL_D->get_ID_ref()};
+
+    if (hashID != currentID)
+    {
+      dL_D->setID_by_int(hashID);
+    }
+
 
     auto find_pos_in {std::lower_bound(dL_find_pos.begin(), dL_find_pos.end(), hashID)};
 
@@ -466,6 +473,15 @@ namespace resourceManager
    // uint32_t hashID{FNV::str_to_hash(nameStr)};
 
     uint32_t hashID { data_Manager::find_and_remplace_str(pL_find_pos, nameStr) };
+    uint32_t currentID {pL_PBR_D->get_ID_ref()};
+
+    if (hashID != currentID)
+    {
+      pL_PBR_D->setID_by_int(hashID);
+    //  pL_D->ID = hashID;
+    }
+
+    pL_D->ID = hashID;
 
     auto find_pos_in {std::lower_bound(pL_find_pos.begin(), pL_find_pos.end(), hashID)};
 
@@ -507,7 +523,7 @@ namespace resourceManager
   };
   lights_T::pLight_raw manager_PointLights::pL_by_num(uint32_t pos)
   {
-    if (pos <= sizeContainer_PL - 1)
+    if (pos < sizeContainer_PL)
     {
      return pointLight_D[pL_find_pos[pos]].get();
     }
@@ -522,7 +538,7 @@ namespace resourceManager
   {
     if (std::binary_search(pL_find_pos.begin(), pL_find_pos.end(), ID))
     {
-     return pointLight_PBR_D[ID].get();
+     return pointLight_PBR_D[pL_find_pos[ID]].get();
     }
 
     std::string error_log {"NOT FIND POINT LIGHT PBR WITH ID:: ID = " + std::to_string(ID)};
@@ -546,7 +562,7 @@ namespace resourceManager
   }
   lights_T::pLight_PBR_raw manager_PointLights::pL_PBR_by_num(uint32_t pos)
   {
-    if (pos <= sizeContainer_PL - 1)
+    if (pos < sizeContainer_PL)
     {
       return pointLight_PBR_D[pL_find_pos[pos]].get();
     }
@@ -576,6 +592,12 @@ namespace resourceManager
   void manager_SpotLights::insert_sL(std::string nameStr, lights_T::spotLight_PBR sL_D)
   {
     uint32_t hashID { data_Manager::find_and_remplace_str(sL_find_pos, nameStr) };
+    uint32_t currentID {sL_D->get_ID_ref()};
+
+    if (hashID != currentID)
+    {
+      sL_D->setID_by_int(hashID);
+    }
 
     auto find_pos_in {std::lower_bound(sL_find_pos.begin(), sL_find_pos.end(), hashID)};
 
@@ -1009,24 +1031,389 @@ namespace utilities {
 
 namespace utilities_Lights
 {
+   uint32_t num_empty{};
 
-  entity_pL::entity_pL(){};
-  entity_pL::entity_pL(lights_T::pLight_raw pL_entity, lights_T::pLight_PBR_raw pL_PBR_entity) : pL_entity(std::move(pL_entity)), pL_PBR_entity(std::move(pL_PBR_entity)){};
-
-  scene_pointLights::scene_pointLights()
+  entity_dL::entity_dL(){}
+  entity_dL::entity_dL(lights_T::dLight_PBR_raw dL_PBR_entity)
   {
-    lights_T::point_geo2D p2D {std::make_unique<geo_2D::point_geo>()};
-    point_geo = std::move(p2D);
+    this->dL_PBR_entity = nullptr;
+    this->dL_PBR_entity = std::move(dL_PBR_entity);
+    dL_PBR_entity = nullptr;
   }
+  entity_dL::~entity_dL()
+  {
+    dL_PBR_entity = nullptr;
+    delete dL_PBR_entity;
+  }
+
+  entity_dL::entity_dL(const entity_dL&& pL_entity_d) noexcept
+  {
+    dL_PBR_entity = pL_entity_d.dL_PBR_entity;
+  }
+  entity_dL::entity_dL(const entity_dL& pL_entity_d)
+  {
+    dL_PBR_entity = pL_entity_d.dL_PBR_entity;
+  }
+
+  entity_pL::entity_pL(){}
+  entity_pL::entity_pL(lights_T::pLight_raw pL_entity, lights_T::pLight_PBR_raw pL_PBR_entity)
+  {
+    this->pL_entity = nullptr;
+    this->pL_PBR_entity = nullptr;
+
+    this->pL_entity = std::move(pL_entity);
+    this->pL_PBR_entity = std::move(pL_PBR_entity);
+
+    pL_entity = nullptr;
+    pL_PBR_entity = nullptr;
+
+  };
+  entity_pL::entity_pL(lights_T::pLight_PBR_raw pL_PBR_entity)
+  {
+    this->pL_PBR_entity = nullptr;
+    this->pL_PBR_entity = std::move(pL_PBR_entity);
+    pL_PBR_entity = nullptr;
+  }
+
   entity_pL::~entity_pL()
   {
     pL_entity = nullptr;
+    pL_PBR_entity = nullptr;
+    delete pL_PBR_entity;
     delete pL_entity;
+  }
+
+  entity_pL::entity_pL(const entity_pL&& pL_entity_d) noexcept
+  {
+    pL_entity = pL_entity_d.pL_entity;
+    pL_PBR_entity = pL_entity_d.pL_PBR_entity;
+  }
+  entity_pL::entity_pL(const entity_pL& pL_entity_d)
+  {
+    pL_entity = pL_entity_d.pL_entity;
+    pL_PBR_entity = pL_entity_d.pL_PBR_entity;
+  }
+
+  entity_sL::entity_sL(){};
+  entity_sL::entity_sL(lights_T::sLight_PBR_raw sL_PBR_entity)
+  {
+    this->sL_PBR_entity = nullptr;
+    this->sL_PBR_entity = std::move(sL_PBR_entity);
+    sL_PBR_entity = nullptr;
+  };
+  entity_sL::~entity_sL()
+  {
+    sL_PBR_entity = nullptr;
+    delete sL_PBR_entity;
+  }
+  entity_sL::entity_sL(const entity_sL&& pL_entity_d) noexcept
+  {
+    sL_PBR_entity = pL_entity_d.sL_PBR_entity;
+  }
+  entity_sL::entity_sL(const entity_sL& pL_entity_d)
+  {
+    sL_PBR_entity = pL_entity_d.sL_PBR_entity;
+  }
+
+  entity_dL empty_entity_dL{};
+  entity_pL empty_entity_pL{};
+  entity_sL empty_entity_sL{};
+
+
+  scene_LightsManager::scene_LightsManager(){}
+  scene_LightsManager::~scene_LightsManager()
+  {
+    clear_data_dL();
+    clear_data_pL();
+    clear_data_sL();
+  }
+
+  void scene_LightsManager::setPoint_geo(lights_T::point_geo2D point_geo)
+  {
+    this->point_geo = point_geo;
+  }
+  void scene_LightsManager::buildPoint_geo(std::string shaderID)
+  {
+   point_geo.build_pointGeo(shaderID);
+  }
+
+  void scene_LightsManager::insert_dL(lights_T::dLight_PBR_raw dL_PBR)
+  {
+     if (dL_PBR != nullptr)
+     {
+       directionalLights.L_pos.emplace(dL_PBR->get_ID_c(), directionalLights.current_size_L);
+       directionalLights.pos_L_entity.emplace_back(directionalLights.current_size_L);
+       directionalLights.L_entities.emplace_back(std::move(dL_PBR));
+
+       dL_PBR = nullptr;
+
+       ++directionalLights.current_size_L;
+       return;
+     }
+
+    std::string error_Log{"ERROR INSERT DIRECTIONAL LIGHT IN SCENE::NULLPTR"};
+    register_error_RM::register_error_withSentence(error_Log.c_str());
+  }
+  void scene_LightsManager::insert_pL(lights_T::pLight_PBR_raw pL_PBR)
+  {
+    if (pL_PBR != nullptr)
+    {
+      pointLights.L_pos.emplace(pL_PBR->get_ID_c(), pointLights.current_size_L);
+      pointLights.pos_L_entity.emplace_back(pointLights.current_size_L);
+      pointLights.L_entities.emplace_back(std::move(pL_PBR));
+
+      pL_PBR = nullptr;
+
+      ++pointLights.current_size_L;
+      return;
+    }
+    std::string error_Log{"ERROR INSERT POINT LIGHT IN SCENE::NULLPTR"};
+    register_error_RM::register_error_withSentence(error_Log.c_str());
+  }
+  void scene_LightsManager::insert_pLights_two(lights_T::pLight_raw pL, lights_T::pLight_PBR_raw pL_PBR)
+  {
+    if (pL_PBR != nullptr && pL != nullptr)
+      {
+      pointLights.L_pos.emplace(pL_PBR->get_ID_c(), pointLights.current_size_L);
+      pointLights.pos_L_entity.emplace_back(pointLights.current_size_L);
+      pointLights.L_entities.emplace_back(std::move(pL), std::move(pL_PBR));
+
+      pL = nullptr;
+      pL_PBR = nullptr;
+
+      ++pointLights.current_size_L;
+
+      return;
+    }
+
+    std::string error_Log{"ERROR INSERT POINT LIGHT DOUBLE IN SCENE::NULLPTR"};
+    register_error_RM::register_error_withSentence(error_Log.c_str());
+  }
+
+  void scene_LightsManager::insert_sL(lights_T::sLight_PBR_raw sL_PBR)
+  {
+    if (sL_PBR != nullptr)
+    {
+      spotLights.L_pos.emplace(sL_PBR->get_ID_c(), spotLights.current_size_L);
+      spotLights.pos_L_entity.emplace_back(spotLights.current_size_L);
+      spotLights.L_entities.emplace_back(std::move(sL_PBR));
+
+      sL_PBR = nullptr;
+
+      ++spotLights.current_size_L;
+      return;
+    }
+    std::string error_Log{"ERROR INSERT SPOT LIGHT IN SCENE::NULLPTR"};
+    register_error_RM::register_error_withSentence(error_Log.c_str());
+
+  }
+
+  entity_dL& scene_LightsManager::entity_dL_by_ID(uint32_t ID)
+  {
+    auto find_entity {directionalLights.L_pos.find(ID)};
+
+    if (find_entity != directionalLights.L_pos.end())
+    {
+      return directionalLights.L_entities[find_entity->second];
+    }
+
+    std::string error_Log{"ERROR::DIRECTIONAL LIGHT NOT FOUND WITH THE (ID)"};
+    register_error_RM::register_error_withSentence(error_Log.c_str());
+    return empty_entity_dL;
+  }
+  entity_pL& scene_LightsManager::entity_pL_by_ID(uint32_t ID)
+  {
+    auto find_entity {pointLights.L_pos.find(ID)};
+
+    if (find_entity != pointLights.L_pos.end())
+    {
+      return pointLights.L_entities[find_entity->second];
+    }
+
+    std::string error_Log{"ERROR::POINT LIGHT NOT FOUND WITH THE (ID)"};
+    register_error_RM::register_error_withSentence(error_Log.c_str());
+    return empty_entity_pL;
+  }
+
+  entity_sL& scene_LightsManager::entity_sL_by_ID(uint32_t ID)
+  {
+    auto find_entity {spotLights.L_pos.find(ID)};
+
+    if (find_entity != spotLights.L_pos.end())
+    {
+      return spotLights.L_entities[find_entity->second];
+    }
+
+    std::string error_Log{"ERROR::SPOT LIGHT NOT FOUND WITH THE (ID)"};
+    register_error_RM::register_error_withSentence(error_Log.c_str());
+    return empty_entity_sL;
+  }
+
+  entity_dL& scene_LightsManager::entity_dL_by_Pos(uint32_t pos)
+  {
+    if (pos < directionalLights.current_size_L)
+    {
+      return directionalLights.L_entities[pos];
+    }
+
+    std::string error_Log{ "ERROR::(POS) IS OUT OF SCOUPE TO FIND DIRECTIONAL LIGHT" };
+    register_error_RM::register_error_withSentence(error_Log.c_str());
+    return empty_entity_dL;
+  }
+  entity_pL& scene_LightsManager::entity_pL_by_Pos(uint32_t pos)
+  {
+    if (pos < pointLights.current_size_L)
+    {
+      return pointLights.L_entities[pos];
+    }
+
+    std::string error_Log{"ERROR::(POS) IS OUT OF SCOUPE TO FIND POINT LIGHT"};
+    register_error_RM::register_error_withSentence(error_Log.c_str());
+    return empty_entity_pL;
+  }
+  entity_sL& scene_LightsManager::entity_sL_by_Pos(uint32_t pos)
+  {
+    if (pos < spotLights.current_size_L)
+    {
+      return spotLights.L_entities[pos];
+    }
+
+    std::string error_Log{"ERROR::(POS) IS OUT OF SCOUPE TO FIND SPOT LIGHT"};
+    register_error_RM::register_error_withSentence(error_Log.c_str());
+    return empty_entity_sL;
+  }
+
+  uint32_t& scene_LightsManager::num_Lights(light::typeLight light_T)
+  {
+    switch (light_T)
+    {
+      case light::typeLight::DIRECTIONAL_LIGHT :
+      {
+        return directionalLights.current_size_L;
+        break;
+      }
+
+      case light::typeLight::POINT_LIGHT :
+      {
+        return pointLights.current_size_L;
+        break;
+      }
+
+      case light::typeLight::SPOT_LIGHT :
+      {
+        return spotLights.current_size_L;
+        break;
+      }
+    }
+
+    return num_empty;
+  }
+
+  const std::vector<entity_dL>& scene_LightsManager::out_entities_dL()
+  {
+    return directionalLights.L_entities;
+  }
+  const std::vector<entity_pL>& scene_LightsManager::out_entities_pL()
+  {
+    return pointLights.L_entities;
+  }
+  const std::vector<entity_sL>& scene_LightsManager::out_entities_sL()
+  {
+    return spotLights.L_entities;
+  }
+
+  void scene_LightsManager::render_point_dL()
+  {
+    if (point_geo.bufferBuild())
+    {
+      for (auto dL_e : directionalLights.L_entities)
+      {
+        const light::data_directionalLightPBR& data_dL {dL_e.dL_PBR_entity->out_Data()};
+
+        glm::vec3 pos_dL {glm::normalize(-data_dL.Direction) * 5.0f};
+
+        point_geo.setPosicion(pos_dL);
+        point_geo.setColor(data_dL.Color);
+        point_geo.draw();
+      }
+    }
+  }
+
+  void scene_LightsManager::render_point_pL()
+  {
+    for (auto& pL : pointLights.L_entities)
+    {
+      const light::data_pointLightPBR& data_pL {pL.pL_PBR_entity->out_Data()};
+
+      point_geo.setPosicion(data_pL.Position);
+      point_geo.setColor(data_pL.Color);
+      point_geo.draw();
+    }
+  }
+  void scene_LightsManager::render_point_sL()
+  {
+    for (auto& sL : spotLights.L_entities)
+    {
+      const light::data_SpotLightPBR& data_sL {sL.sL_PBR_entity->out_Data()};
+
+      point_geo.setPosicion(data_sL.Position);
+      point_geo.setColor(data_sL.Color);
+      point_geo.draw();
+    }
+
+  }
+
+  void scene_LightsManager::renderAll()
+  {
+     render_point_dL();
+     render_point_pL();
+     render_point_sL();
+  }
+
+  void scene_LightsManager::clear_data_dL()
+  {
+    directionalLights.L_pos.clear();
+    directionalLights.pos_L_entity.clear();
+    directionalLights.L_entities.clear();
+    directionalLights.current_size_L = 0;
+  }
+  void scene_LightsManager::clear_data_pL()
+  {
+    pointLights.L_pos.clear();
+    pointLights.pos_L_entity.clear();
+    pointLights.L_entities.clear();
+    pointLights.current_size_L = 0;
+  }
+  void scene_LightsManager::clear_data_sL()
+  {
+    spotLights.L_pos.clear();
+    spotLights.pos_L_entity.clear();
+    spotLights.L_entities.clear();
+    spotLights.current_size_L = 0;
+  }
+
+  void scene_LightsManager::clearAll_data()
+  {
+    clear_data_dL();
+    clear_data_pL();
+    clear_data_sL();
+
+    point_geo.clean_data();
+  }
+
+  scene_pointLights::scene_pointLights()
+  {
+    //lights_T::point_geo2D p2D {std::make_unique<geo_2D::point_geo>()};
+    //point_geo = std::move(p2D);
+  }
+  scene_pointLights::~scene_pointLights()
+  {
+    clean_data();
   }
   void scene_pointLights::setPoint_geo(lights_T::point_geo2D point_geo)
   {
-   this->point_geo = nullptr;
-   this->point_geo = std::move(point_geo);
+//   this->point_geo = nullptr;
+   this->point_geo = point_geo;
   }
 
   void scene_pointLights::insert(lights_T::pLight_raw pL_entity, lights_T::pLight_PBR_raw pL_PBR_entity)
@@ -1085,20 +1472,21 @@ namespace utilities_Lights
   {
     for (auto& pL : pL_entities)
     {
-      point_geo->setPosicion(pL.pL_entity->Posicion);
-      point_geo->setColor(pL.pL_entity->Color);
-      point_geo->draw();
+      point_geo.setPosicion(pL.pL_entity->Posicion);
+      point_geo.setColor(pL.pL_entity->Color);
+      point_geo.draw();
     }
 
   }
 
   void scene_pointLights::clean_data()
   {
-   for (uint32_t i = current_size_M; i >= 0; --i)
-     {
+   //for (uint32_t i = current_size_M; i >= 0; --i)
+    // {
        //uint32_t p {i};
       // p = p & ~(current_size_M >> 31);
 
+     /*
         if (i < current_size_M)
         {
           std::swap(pL_entities[0], pL_entities[i]);
@@ -1106,10 +1494,13 @@ namespace utilities_Lights
           pL_entities.pop_back();
         }
      }
-
+     */
+    pL_entities.clear();
     pL_pos.clear();
     pos_pL_entity.clear();
+    current_size_M = 0;
 
+    point_geo.clean_data();
   }
 
 }

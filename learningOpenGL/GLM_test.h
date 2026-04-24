@@ -129,6 +129,8 @@ namespace transformation_basics
 		void setNormalModelMatrix();
 		void setTransformsAll();
 		void setInverseTransformsAll();
+
+		void resetAll();
 	
 	};
 

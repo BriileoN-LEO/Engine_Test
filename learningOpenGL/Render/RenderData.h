@@ -34,7 +34,7 @@ namespace RenderData_Set
 	extern std::optional<discard_objs::discard_objs_scenario> discardObj_D;
 
 	extern std::optional<resourceManager::manager_PointLights> pointLights_D;
-	extern std::optional<utilities_Lights::scene_pointLights> pointLights_Scene_D;
+	//extern std::optional<utilities_Lights::scene_pointLights> pointLights_Scene_D;
 	extern std::optional<shadowsManager::omnidirectional_ShadowMap_PL> omL_shadows_D;
 
     ///extern std::unordered_map<std::string, std::unique_ptr<Assimp_D::Model>> AssimpModel_D;
@@ -42,13 +42,20 @@ namespace RenderData_Set
 	extern std::vector<ObjCreation::ModelCreation> MeshLights_MCD;
 	//extern std::vector<light::light1> pointLights_D;
 
+	extern std::optional<resourceManager::manager_DirectionalLights> directionalLights_PBR_D;
 	extern std::vector<light::DirectionalLight> directionalLights_D;
 	extern std::optional<shadowsManager::directional_shadowMap_dL> dL_shadows_D;
 
+	extern std::optional<resourceManager::manager_SpotLights> spotLights_PBR_D;
 	extern std::map<std::string, light::SpotLight> spotLights_D;
+
+	extern std::optional<utilities_Lights::scene_LightsManager> lightsScene_D;
+
 	extern std::vector<screenUI::pointerScreen> pointUI_D;
 	extern std::vector<individualComp::Multiple_AssimpMesh> multi_AssimpModel;
+
 	extern std::map<std::string, shading::shader> shader_D;
+
 	extern std::atomic<bool> finishLoadALL;
 	extern std::map<std::string, frameBuff::frameBuffer> frameBuffers_D;
 	extern frameBuff::frameBuffer testFrameBuffer;
@@ -86,7 +93,7 @@ namespace RenderData_Set
 	const void loadCPU_Model_Data();
 	const void insertData_toModel();
 
-	const void insertSetting_toModel();////Continuar aqui para ir insertando los modelos 3D 
+	const void insertSetting_toModel();////Continuar aqui para ir insertando los modelos 3D
 	template<typename modelSet>
 	void running_LoadingModels(std::function<modelSet> functionLoad)
 	{
@@ -110,7 +117,7 @@ namespace RenderData_Set
 
 		functionLoad();
 		loading_Vals();
-		//std::thread loading_Models(loading_Vals);	
+		//std::thread loading_Models(loading_Vals);
 		//loading_Models.detach();
 
 	}
@@ -175,10 +182,18 @@ namespace RenderData_Set
 	 void setPointLights_Scene();
 	 void setOmnidirectionalLight_Shadows();
 
+	 void setDirectionalLights_manager();
+	 void setDirectionalLights_scene();
 	 std::vector<light::DirectionalLight> setDirectionalLights();
      void setDirectionalLight_Shadows();  ////TO SET DIRECTIONAL SHADOWS
 
+	 void setSpotLights_manager();
+	 void setSpotLights_Scene();
 	 std::map<std::string, light::SpotLight> setSpotLights();
+
+	 void setAll_LightsManager();
+	 void setAll_LightsScene();
+
 	 std::vector<screenUI::pointerScreen> setPointUI_2D();
 	 std::vector<individualComp::Multiple_AssimpMesh> setMulti_AssimpModel();
 	 std::map<std::string, frameBuff::frameBuffer> setFrameBuffers();

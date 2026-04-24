@@ -455,7 +455,7 @@ namespace transformation_basics
 	/// ////////////////////////////////
 
 
-	basics_Model3D::basics_Model3D() {};
+	basics_Model3D::basics_Model3D(){};
 
 	basics_Model3D basics_Model3D::operator=(const basics_Model3D& coordModel) const
 	{
@@ -608,6 +608,29 @@ namespace transformation_basics
 		modelCurrent = model;
 
 		translateM = model * glm::vec4(1.0f);
+	}
+
+	void basics_Model3D::resetAll()
+	{
+		lastModel = glm::mat4(1.0f);
+
+		model = glm::mat4(1.0f);
+		modelCurrent = glm::mat4(1.0f);
+		normalModelMatrix = glm::mat3(1.0f);
+
+		translateM = glm::vec3(0.0f);
+		scaleS= glm::vec3(0.0f);
+
+		lastTranslateM = glm::vec3(0.0f);
+		lastScaleS = glm::vec3(0.0f);
+
+		pivotRotPos = glm::vec3(0.0f);
+		viewOrient = glm::vec3(0.0f);
+
+		posModel_Base = glm::vec3(0.0f);
+		posModel = glm::vec3(0.0f);;
+
+		ang = 0.0f;
 	}
 
 

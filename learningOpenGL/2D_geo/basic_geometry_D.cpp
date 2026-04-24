@@ -25,18 +25,19 @@ namespace geo_2D
 
     glBindVertexArray(0);
 
+    buffer_build = true;
   }
 
   point_geo::point_geo()
   {
     glm::vec3 pos{glm::vec3(0.0f)};
 
-    std::unique_ptr<transformation_basics::basics_Model3D> coords{std::make_unique<transformation_basics::basics_Model3D>()};
+    ////transformation_basics::basics_Model3D coords{std::make_unique<transformation_basics::basics_Model3D>()};
 
-    coords->posModel = pos;
-    coords->posModel_Base = pos;
+    pointCoord.posModel = pos;
+    pointCoord.posModel_Base = pos;
 
-    pointCoord = std::move(coords);
+    //pointCoord = coords;
     setup_point(pos);
 
   };
@@ -46,14 +47,24 @@ namespace geo_2D
   size(size),
   shaderID(shaderID)
   {
-    std::unique_ptr<transformation_basics::basics_Model3D> coords{std::make_unique<transformation_basics::basics_Model3D>()};
+   // std::unique_ptr<transformation_basics::basics_Model3D> coords{std::make_unique<transformation_basics::basics_Model3D>()};
 
-    coords->posModel = posicion;
-    coords->posModel_Base = posicion;
+    pointCoord.posModel = posicion;
+    pointCoord.posModel_Base = posicion;
 
-    pointCoord = std::move(coords);
+    //pointCoord = std::move(coords);
 
     setup_point(posicion);
+  }
+  point_geo::~point_geo()
+  {
+    clean_data();
+  }
+
+  void point_geo::build_pointGeo(std::string shaderID)
+  {
+    this->shaderID = shaderID;
+    setup_point(pointCoord.posModel);
   }
 
   void point_geo::draw()
@@ -61,7 +72,7 @@ namespace geo_2D
     shading::shader& shaderPt{ RenderData_Set::shader_D[shaderID] };
 
     shaderPt.use();
-    shaderPt.transformMat("model", pointCoord->model);
+    shaderPt.transformMat("model", pointCoord.model);
     shaderPt.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
     shaderPt.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
     shaderPt.setFloat("sizePointer", size);
@@ -74,17 +85,36 @@ namespace geo_2D
 
   void point_geo::setPosicion(glm::vec3 posicion)
   {
-    pointCoord->posModel = posicion;
-    glm::vec3 translate_pos { pointCoord->posModel_Base - posicion};
-    translate_pos = pointCoord->posModel_Base - translate_pos;
+    pointCoord.posModel = posicion;
+    glm::vec3 translate_pos { pointCoord.posModel_Base - posicion};
+    translate_pos = pointCoord.posModel_Base - translate_pos;
 
-    pointCoord->translateModel(translate_pos);
-    pointCoord->setTransformsAll();  ///change this if not works
+    pointCoord.translateModel(translate_pos);
+    pointCoord.setTransformsAll();  ///change this if not works
 
   }
   void point_geo::setColor(glm::vec3 color)
   {
     this->color = color;
+  }
+  void point_geo::setSize(float size)
+  {
+    this->size = size;
+  }
+  const bool& point_geo::bufferBuild()
+  {
+    return buffer_build;
+  }
+  void point_geo::clean_data()
+  {
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    color = glm::vec3(0.0f);
+    size = 0.0f;
+    shaderID = "";
+    pointCoord.resetAll();
+
+    buffer_build = false;
   }
 
 }

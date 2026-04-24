@@ -1,4 +1,5 @@
 #include "LIGHTS_test.h"
+#include "optimize_Algorithmics/optimizeAlgorithmics.h"
 
 namespace light
 {
@@ -91,6 +92,14 @@ namespace light
 		setData(Direction, Color, Intensity, stateLight);
 	}
 
+	void directionalLight_PBR::setID(std::string dL_ID)
+	{
+		ID = FNV::str_to_hash(dL_ID);
+	}
+	void directionalLight_PBR::setID_by_int(uint32_t dL_ID)
+	{
+      ID = dL_ID;
+	}
 	void directionalLight_PBR::update_direction(glm::vec3 Direction)
 	{
 	  data.Direction = Direction;
@@ -108,6 +117,14 @@ namespace light
 	  data.stateLight = stateLight;
 	}
 
+	uint32_t& directionalLight_PBR::get_ID_ref()
+	{
+		return ID;
+	}
+	const uint32_t& directionalLight_PBR::get_ID_c() const
+	{
+		return ID;
+	}
 	const data_directionalLightPBR& directionalLight_PBR::out_Data()
 	{
       return data;
@@ -128,6 +145,14 @@ namespace light
 		setData(Position, Color, Radio, Intensity, stateLight);
 	}
 
+	void pointLight_PBR::setID(std::string pL_ID)
+	{
+		ID = FNV::str_to_hash(pL_ID);
+	}
+	void pointLight_PBR::setID_by_int(uint32_t pL_ID)
+	{
+		ID = pL_ID;
+	}
 	void pointLight_PBR::update_position(glm::vec3 Position)
 	{
 		data.Position = Position;
@@ -149,7 +174,15 @@ namespace light
         data.stateLight = stateLight;
 	}
 
-	const data_pointLightPBR& pointLight_PBR::out_Data()
+	uint32_t& pointLight_PBR::get_ID_ref()
+	{
+		return ID;
+	}
+	const uint32_t& pointLight_PBR::get_ID_c() const
+	{
+		return ID;
+	}
+	const data_pointLightPBR& pointLight_PBR::out_Data() const
 	{
         return data;
 	}
@@ -159,6 +192,14 @@ namespace light
 	data(Position, Direction, Color, Radio, cutOff, outerCutOff)
 	{};
 
+	void SpotLight_PBR::setID(std::string sL_ID)
+	{
+		ID = FNV::str_to_hash(sL_ID);
+	}
+	void SpotLight_PBR::setID_by_int(uint32_t sL_ID)
+	{
+		ID = sL_ID;
+	}
 	void SpotLight_PBR::update_position(glm::vec3 Position)
 	{
 		data.Position = Position;
@@ -171,7 +212,19 @@ namespace light
 	{
      data.Color = Color;
 	}
+	void SpotLight_PBR::update_stateLight(bool stateLight)
+	{
+		data.stateLight = stateLight;
+	}
 
+	uint32_t& SpotLight_PBR::get_ID_ref()
+	{
+	 return ID;
+	}
+	const uint32_t& SpotLight_PBR::get_ID_c() const
+	{
+		return ID;
+	}
 	const data_SpotLightPBR& SpotLight_PBR::out_Data()
 	{
        return data;

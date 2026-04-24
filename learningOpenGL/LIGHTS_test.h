@@ -119,6 +119,9 @@ namespace light
 	class directionalLight_PBR
 	{
 	private :
+
+		uint32_t ID{};
+
 		data_directionalLightPBR data{};
 
 		void setData(glm::vec3 Direction, glm::vec3 Color, float Intensity, bool stateLight);
@@ -128,11 +131,15 @@ namespace light
 		directionalLight_PBR();
 		directionalLight_PBR(glm::vec3 Direction, glm::vec3 Color, float Intensity, bool stateLight);
 
+		void setID(std::string dL_ID);
+		void setID_by_int(uint32_t dL_ID);
 		void update_direction(glm::vec3 Direction);
 		void update_color(glm::vec3 Color);
 		void update_intensity(float Intensity);
 		void update_stateLight(bool stateLight);
 
+		uint32_t& get_ID_ref();
+		const uint32_t& get_ID_c() const;
 		const data_directionalLightPBR& out_Data();
 	};
 
@@ -150,6 +157,7 @@ namespace light
 	{
 	private:
 
+		uint32_t ID{};
 		data_pointLightPBR data{};
 
 		void setData(glm::vec3 Position, glm::vec3 Color, float Radio, float Intensity, bool stateLight);
@@ -158,13 +166,17 @@ namespace light
 		pointLight_PBR();
 		pointLight_PBR(glm::vec3 Position, glm::vec3 Color, float Radio, float Intensity, bool stateLight);
 
+		void setID(std::string pL_ID);
+		void setID_by_int(uint32_t pL_ID);
 	    void update_position(glm::vec3 Position);
 		void update_color(glm::vec3 Color);
 		void update_radio(float Radio);
 		void update_intensity(float Intensity);
 		void update_stateLight(bool stateLight);
 
-		const data_pointLightPBR& out_Data();
+		uint32_t& get_ID_ref();
+		const uint32_t& get_ID_c() const;
+		const data_pointLightPBR& out_Data() const;
 	};
 
 	struct data_SpotLightPBR
@@ -184,16 +196,23 @@ namespace light
 	{
 	private:
 
+		uint32_t ID{};
+
         data_SpotLightPBR data{};
 
 	public:
 		SpotLight_PBR();
 		SpotLight_PBR(glm::vec3 Position, glm::vec3 Direction, glm::vec3 Color, float Radio, float cutOff, float outerCutOff);
 
+		void setID(std::string sL_ID);
+		void setID_by_int(uint32_t sL_ID);
 		void update_position(glm::vec3 Position);
 		void update_direction(glm::vec3 Direction);
 		void update_color(glm::vec3 Color);
+		void update_stateLight(bool stateLight);
 
+		uint32_t& get_ID_ref();
+		const uint32_t& get_ID_c() const;
 	    const data_SpotLightPBR& out_Data();
 
 	};

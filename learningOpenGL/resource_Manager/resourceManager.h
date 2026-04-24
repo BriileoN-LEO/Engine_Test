@@ -3,6 +3,7 @@
 
 //#include "Model_Assimp/ModelAssimp.h"
 #include "learningOpenGL.h"
+#include "2D_geo/basic_geometry_D.h"
 
 namespace data_Manager
 {
@@ -39,7 +40,7 @@ namespace lights_T
   using pointLight_PBR= std::unique_ptr<light::pointLight_PBR>;
   using spotLight_PBR = std::unique_ptr<light::SpotLight_PBR>;
 
-  using point_geo2D = std::unique_ptr<geo_2D::point_geo>;
+  using point_geo2D = geo_2D::point_geo;
 
   using dLight_PBR_raw = light::directionalLight_PBR*;
   using pLight_raw = light::light1*;
@@ -283,14 +284,107 @@ namespace utilities
 
 namespace utilities_Lights
 {
+  extern uint32_t num_empty;
+
+  struct entity_dL
+  {
+    lights_T::dLight_PBR_raw dL_PBR_entity { nullptr };
+
+    entity_dL();
+    entity_dL(lights_T::dLight_PBR_raw dL_PBR_entity);
+    ~entity_dL();
+
+    entity_dL(const entity_dL&& pL_entity_d) noexcept;
+    entity_dL(const entity_dL& pL_entity_d);
+
+  };
+
   struct entity_pL
   {
-   lights_T::pLight_raw pL_entity{ nullptr };
-   lights_T::pLight_PBR_raw pL_PBR_entity{ nullptr };
+    lights_T::pLight_raw pL_entity{ nullptr };
+    lights_T::pLight_PBR_raw pL_PBR_entity{ nullptr };
 
     entity_pL();
     entity_pL(lights_T::pLight_raw pL_entity, lights_T::pLight_PBR_raw pL_PBR_entity);
+    entity_pL(lights_T::pLight_PBR_raw pL_PBR_entity);
     ~entity_pL();
+
+    entity_pL(const entity_pL&& pL_entity_d) noexcept;
+    entity_pL(const entity_pL& pL_entity_d);
+
+  };
+
+  struct entity_sL
+  {
+    lights_T::sLight_PBR_raw sL_PBR_entity { nullptr };
+
+    entity_sL();
+    entity_sL(lights_T::sLight_PBR_raw sL_PBR_entity);
+    ~entity_sL();
+
+    entity_sL(const entity_sL&& pL_entity_d) noexcept;
+    entity_sL(const entity_sL& pL_entity_d);
+  };
+
+  extern entity_dL empty_entity_dL;
+  extern entity_pL empty_entity_pL;
+  extern entity_sL empty_entity_sL;
+
+  template<typename entity_L>
+  struct lights_data
+  {
+    std::unordered_map<uint32_t, uint32_t> L_pos{};
+    std::vector<uint32_t> pos_L_entity{};
+    std::vector<entity_L> L_entities{};
+    uint32_t current_size_L{};
+  };
+
+  class scene_LightsManager {
+  private :
+
+    lights_data<entity_dL> directionalLights{};
+    lights_data<entity_pL> pointLights{};
+    lights_data<entity_sL> spotLights{};
+
+    lights_T::point_geo2D point_geo{};
+
+  public:
+
+    scene_LightsManager();
+    ~scene_LightsManager();
+
+    void setPoint_geo(lights_T::point_geo2D point_geo);   ////THIS COULD BE DISCARTED
+    void buildPoint_geo(std::string shaderID);
+
+    void insert_dL(lights_T::dLight_PBR_raw dL_PBR);
+    void insert_pL(lights_T::pLight_PBR_raw pL_PBR);
+    void insert_pLights_two(lights_T::pLight_raw pL, lights_T::pLight_PBR_raw pL_PBR);
+    void insert_sL(lights_T::sLight_PBR_raw sL_PBR);
+
+    entity_dL& entity_dL_by_ID(uint32_t ID);
+    entity_pL& entity_pL_by_ID(uint32_t ID);
+    entity_sL& entity_sL_by_ID(uint32_t ID);
+
+    entity_dL& entity_dL_by_Pos(uint32_t pos);
+    entity_pL& entity_pL_by_Pos(uint32_t pos);
+    entity_sL& entity_sL_by_Pos(uint32_t pos);
+
+    uint32_t& num_Lights(light::typeLight light_T);
+
+    const std::vector<entity_dL>& out_entities_dL();
+    const std::vector<entity_pL>& out_entities_pL();
+    const std::vector<entity_sL>& out_entities_sL();
+
+    void render_point_dL();
+    void render_point_pL();
+    void render_point_sL();
+    void renderAll();
+
+    void clear_data_dL();
+    void clear_data_pL();
+    void clear_data_sL();
+    void clearAll_data();
+
   };
 
   class scene_pointLights
@@ -302,11 +396,12 @@ namespace utilities_Lights
     std::vector<entity_pL> pL_entities{};
     uint32_t current_size_M{};
 
-    lights_T::point_geo2D point_geo{ nullptr };
+    lights_T::point_geo2D point_geo{};
 
   public:
 
    scene_pointLights();
+   ~scene_pointLights();
 
    void setPoint_geo(lights_T::point_geo2D point_geo); //INSERTAR EL PUNTO
    void insert(lights_T::pLight_raw pL_entity, lights_T::pLight_PBR_raw pL_PBR_entity);
@@ -319,8 +414,6 @@ namespace utilities_Lights
    void renderAll();
    void clean_data();
   };
-
-  ////CONTINUE HERE TO MAKE THE SCENE SPOT AND DIRECTIONAL LIGHT CLASS
 
 
   extern bool stateLights_data;  ////THIS CONTROLS THE STATE IF ONE OF ALL LIGHTS CHANGE ONE PARAMETER TO RESTORE THE PARAMETERS IN THE SSBO OF THE CLUSTER RENDERING.

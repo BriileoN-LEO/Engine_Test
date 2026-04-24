@@ -2,6 +2,7 @@
 #include "Render/RenderData.h"
 #include "threadSystem/thread_System.h"
 #include "optimize_Algorithmics/optimizeAlgorithmics.h"
+#include "log_Errors/log_error_General.h"
 
 namespace testPlay
 {
@@ -151,6 +152,9 @@ namespace testPlay
 
 		t = nullptr;
 		light = nullptr;
+
+		delete t;
+        delete light;
 	}
 
 
@@ -209,18 +213,40 @@ namespace testPlay
 		}
 		*/
 
-		utilities_Lights::entity_pL* e_pL { nullptr };
-		for (int i = 0; i < static_cast<int>(lightTransSet.size()); i++)
+	//	utilities_Lights::entity_pL* e_pL { nullptr };
+		//const uint32_t sizeL {RenderData_Set::lightsScene_D->num_Lights(light::typeLight::POINT_LIGHT)};
+        uint32_t sizeL_2 {static_cast<uint32_t>(lightTransSet.size())};
+
+		for (uint32_t i = 0; i < sizeL_2; ++i)
 		{
 			//lightTransSet[i].transformMeshLight(&RenderData_Set::MeshLights_MCD[i], &RenderData_Set::pointLights_D[i]);
-			e_pL = RenderData_Set::pointLights_Scene_D->entity_by_Pos(i);
+			//e_pL = RenderData_Set::pointLights_Scene_D->entity_by_Pos(i);
+			utilities_Lights::entity_pL e_pL { RenderData_Set::lightsScene_D->entity_pL_by_Pos(i) };
 
-			if (e_pL != nullptr)
+			if (e_pL.pL_entity != nullptr)
 			{
-				transform_light_rotate(&lightTransSet[i], e_pL->pL_entity);
+				transform_light_rotate(&lightTransSet[i], e_pL.pL_entity);
+
+				if (e_pL.pL_PBR_entity != nullptr)
+				{
+					e_pL.pL_PBR_entity->update_position(e_pL.pL_entity->Posicion);
+				}
+
+				else
+			    {
+					std::string log_error_dL_PBR { "ERROR::NOT FIND POINT LIGHT PBR TO TRANSFORM" };
+					log_ErrorG::register_w(log_error_dL_PBR.c_str());
+				}
+
 			}
+
+			else if (e_pL.pL_entity == nullptr)
+			{
+                std::string log_error_dL { "ERROR::NOT FIND POINT LIGHT TO TRANSFORM" };
+				log_ErrorG::register_w(log_error_dL.c_str());
+			}
+
 		}
-		
 
 		//Para transforma un unico cubo de minecraft 
 		//testTranforms.transformUniqueModel(&RenderData_Set::ModelCreation_D["MinecraftCube"], cameras::aerialCamera, RenderData_Set::pointLights_D[0]);
@@ -371,6 +397,20 @@ namespace light_Transforms
 		if (entity_model != nullptr)
 		{
 			spotLight_AttachLintern(RenderData_Set::spotLights_D["FlashLight_SpotLight"], entity_model->model_entity->ModelCoord); //NEW METHOD
+			utilities_Lights::entity_sL& sL_linternScene { RenderData_Set::lightsScene_D->entity_sL_by_Pos(0)};
+
+			if (sL_linternScene.sL_PBR_entity != nullptr)
+		    {
+				light::SpotLight& sL_last {RenderData_Set::spotLights_D["FlashLight_SpotLight"]};
+                sL_linternScene.sL_PBR_entity->update_position(sL_last.Posicion);
+				sL_linternScene.sL_PBR_entity->update_direction(sL_last.Direction);
+			}
+
+			else
+			{
+              std::string log_error_sL_PBR {"ERROR::NOT FIND SPOT LIGHT TO ATTACH THE FLASH LIGHT"};
+			  log_ErrorG::register_w(log_error_sL_PBR.c_str());
+			}
 		}
 
 		else if (entity_model == nullptr)

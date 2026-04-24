@@ -451,11 +451,12 @@ namespace shadowsManager {
     int pos_pL{};
     for (auto& pL : ID_pL)
     {
-      utilities_Lights::entity_pL* entity_pL {RenderData_Set::pointLights_Scene_D->entity_by_ID(pL)};
+      //utilities_Lights::entity_pL* entity_pL {RenderData_Set::pointLights_Scene_D->entity_by_ID(pL)};
+      utilities_Lights::entity_pL entity_pL {RenderData_Set::lightsScene_D->entity_pL_by_ID(pL)};
 
-      if (entity_pL != nullptr)
+      if (entity_pL.pL_PBR_entity != nullptr)
       {
-        glm::vec3 posicionLight {entity_pL->pL_entity->Posicion};
+        glm::vec3 posicionLight {entity_pL.pL_entity->Posicion};
 
         for (uint8_t i = 0; i < 10; i + 2)
         {
@@ -463,7 +464,7 @@ namespace shadowsManager {
           ++pos_pL;
         }
 
-        entity_pL = nullptr;
+      //  entity_pL = nullptr;
       }
 
 

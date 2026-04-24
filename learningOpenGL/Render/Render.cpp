@@ -122,13 +122,17 @@ namespace render
 	void render_MeshLights_D()
 	{
 		int posLight{ 0 };
-		utilities_Lights::entity_pL* pL{ nullptr };
+	//	utilities_Lights::entity_pL* pL{ nullptr };
 
 		for (auto& renderMCD : RenderData_Set::MeshLights_MCD)
 		{
-			pL = RenderData_Set::pointLights_Scene_D->entity_by_Pos(posLight);
-			renderMCD.renderMeshLight(cameras::cameras_D[cameras::name_CurrentCamera], pL->pL_entity->Color);
-			++posLight;
+			utilities_Lights::entity_pL& pL = RenderData_Set::lightsScene_D->entity_pL_by_Pos(posLight);
+
+			if (pL.pL_entity != nullptr)
+		    {
+				renderMCD.renderMeshLight(cameras::cameras_D[cameras::name_CurrentCamera], pL.pL_entity->Color);
+				++posLight;
+			}
 		}
 
 	}
@@ -173,7 +177,8 @@ namespace render
 	{
 		void render_PointLight_D()
 		{
-		  RenderData_Set::pointLights_Scene_D->renderAll();
+		//  RenderData_Set::pointLights_Scene_D->renderAll();
+		   RenderData_Set::lightsScene_D->renderAll();
 		}
 	}
 
@@ -1193,8 +1198,11 @@ namespace destroy
 	}
 	void destroyLights()
 	{
-		RenderData_Set::pointLights_Scene_D->clean_data();
+		//RenderData_Set::pointLights_Scene_D->clean_data();
+		RenderData_Set::lightsScene_D->clearAll_data();
 	    RenderData_Set::pointLights_D->clean_data();
+		RenderData_Set::directionalLights_PBR_D->clean_data();
+		RenderData_Set::spotLights_PBR_D->clean_data();
 	}
 	void destroyFrameBuffers()
 	{

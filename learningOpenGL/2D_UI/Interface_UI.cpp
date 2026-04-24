@@ -1,6 +1,7 @@
 #include "Interface_UI.h"
 #include "2D_UI/Interface_generalUI.h"
 #include "Edit_Modes/Edit_M.h"
+#include "log_Errors/log_error_General.h"
 
 namespace UI_EditMode
 {
@@ -301,6 +302,19 @@ namespace UI
 			glm::vec4 finalDir = glm::vec4(dirLight.lastDirection, 1.0f)  * rotation_light;
 
 			dirLight.Direction = glm::vec3(finalDir.x, finalDir.y, finalDir.z);
+
+			utilities_Lights::entity_dL& dir_lightScene_PBR {RenderData_Set::lightsScene_D->entity_dL_by_Pos(0)};
+
+			if (dir_lightScene_PBR.dL_PBR_entity == nullptr)
+			{
+				dir_lightScene_PBR.dL_PBR_entity->update_direction(dirLight.Direction);  ///Updates the position of the direction of the PBR directional Light
+			}
+
+			else
+		    {
+				std::string log_error_dL_PBR {"ERROR::NOT FIND DIRECTINAL LIGHT"};
+				log_ErrorG::register_w(log_error_dL_PBR.c_str());
+			}
 
 			//SDL_Log(glm::to_string(dirLight.Direction).c_str());
 
