@@ -230,7 +230,8 @@ namespace shading
 		this->ID = ID;
 
 	}
-	shader::shader(const char* vertexPath, const char* fragmentPath, std::vector<layoutType> data_Layout) :
+	shader::shader(std::string name, const char* vertexPath, const char* fragmentPath, std::vector<layoutType> data_Layout) :
+	    name(name),
 		data_Layout(data_Layout)
 	{
 		shaderCreation(vertexPath, fragmentPath);  ///HERE CREATES THE ID
@@ -249,7 +250,8 @@ namespace shading
 			}
 		}
 	}
-	shader::shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath, std::vector<layoutType> data_Layout)
+	shader::shader(std::string name, const char* vertexPath, const char* fragmentPath, const char* geometryPath, std::vector<layoutType> data_Layout) :
+	  name(name)
 	{
 		shaderCreation(vertexPath, fragmentPath, geometryPath);  ///HERE CREATES THE ID
 
@@ -268,7 +270,8 @@ namespace shading
 		    }
 	}
 
-	shader::shader(const char* computeShader_Path)
+	shader::shader(std::string name, const char* computeShader_Path) :
+    	name(name)
 	{
 		computeShaderCreation(computeShader_Path);
 	}
@@ -422,6 +425,24 @@ namespace shading
 	{
 		glUseProgram(ID);
 	}
+	void shader::use_computeShader_(uint32_t gridDim_X, uint32_t gridDim_Y, const char* file, int line)
+	{
+       if (computeShader == true)
+       {
+	     glUseProgram(ID);
+         glDispatchCompute(gridDim_X, gridDim_Y, 1);
+       	 glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+
+       }
+
+	   else
+	   {
+	   	std::string log_error {"ERROR::SHADER (" + name + ") IS NOT COMPUTE SHADER"};
+	   	log_ErrorG::register_w_(file, line, log_error.c_str());
+	   	use();
+	   }
+	}
+
 	void shader::setBool(const std::string& name, bool value) const
 	{
 		int location{ glGetUniformLocation(ID, name.c_str()) };

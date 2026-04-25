@@ -49,7 +49,7 @@ namespace light
 		Mat.specular = specular;
 	}
 
-	
+
 	SpotLight::SpotLight() {};
 	SpotLight::SpotLight(posicion Posicion, direction Direction, lightShader Mat, float cutOff, float outerCutOff)
 	{
@@ -74,7 +74,7 @@ namespace light
 	}
 	void SpotLight::setMatProperties(lightShader Mat)
 	{
-		this->Mat = Mat; 
+		this->Mat = Mat;
 	}
 
 
@@ -130,19 +130,20 @@ namespace light
       return data;
 	}
 
-	void pointLight_PBR::setData(glm::vec3 Position, glm::vec3 Color, float Radio, float Intensity, bool stateLight)
+	void pointLight_PBR::setData(glm::vec3 Position, glm::vec3 Color, float Radio, float Intensity, bool stateLight, float size)
 	{
 		data.Position = Position;
 		data.Color = Color;
 		data.Radio = Radio;
 		data.Intensity = Intensity;
 		data.stateLight = stateLight;
+		data.size = size;
 	}
 
 	pointLight_PBR::pointLight_PBR() = default;
-	pointLight_PBR::pointLight_PBR(glm::vec3 Position, glm::vec3 Color, float Radio, float Intensity, bool stateLight)
+	pointLight_PBR::pointLight_PBR(glm::vec3 Position, glm::vec3 Color, float Radio, float Intensity, bool stateLight, float size)
 	{
-		setData(Position, Color, Radio, Intensity, stateLight);
+		setData(Position, Color, Radio, Intensity, stateLight, size);
 	}
 
 	void pointLight_PBR::setID(std::string pL_ID)
@@ -188,8 +189,8 @@ namespace light
 	}
 
 	SpotLight_PBR::SpotLight_PBR() = default;
-	SpotLight_PBR::SpotLight_PBR(glm::vec3 Position, glm::vec3 Direction, glm::vec3 Color, float Radio, float cutOff, float outerCutOff) :
-	data(Position, Direction, Color, Radio, cutOff, outerCutOff)
+	SpotLight_PBR::SpotLight_PBR(glm::vec3 Position, glm::vec3 Direction, glm::vec3 Color, float Radio, float Intensity, float cutOff, float outerCutOff) :
+	data(Position, Direction, Color, Radio, Intensity, cutOff, outerCutOff)
 	{};
 
 	void SpotLight_PBR::setID(std::string sL_ID)
@@ -211,6 +212,14 @@ namespace light
 	void SpotLight_PBR::update_color(glm::vec3 Color)
 	{
      data.Color = Color;
+	}
+	void SpotLight_PBR::update_radio(float Radio)
+	{
+		data.Radio = Radio;
+	}
+	void SpotLight_PBR::update_Intensity(float Intensity)
+	{
+		data.Intensity = Intensity;
 	}
 	void SpotLight_PBR::update_stateLight(bool stateLight)
 	{

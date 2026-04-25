@@ -196,8 +196,14 @@ namespace camera
 		bool moveCameraTest{};
 
 		GLfloat fovCam{ 45.0f };
+		GLfloat fovCam_last{45.0f};
+
 		GLfloat nearCut{};
+		GLfloat nearCut_last{};
+
 		GLfloat maxCut{};
+		GLfloat maxCut_last{};
+
 		bool cameraFovTest{};
 
 		float aspectRatio{};
@@ -209,7 +215,6 @@ namespace camera
 
 		camera1();
 		camera1(typeCam type, glm::vec3 posCam, GLfloat fovCam, GLfloat nearCut, GLfloat maxCut);
-
 
 		camera1 operator=(const camera1& came)
 		{
@@ -263,6 +268,7 @@ namespace camera
 		void controlEventsCamera(); //CAMBIAR ESTA FUNCION PARA COMPATIBILIDAD DE EDIT MODE
 		void updateLastPosCam();
 		void updateSettingsCam(glm::mat4 camView, glm::mat4 camProjection);
+		void update_lastProyectionSettings();
 
 	};
 

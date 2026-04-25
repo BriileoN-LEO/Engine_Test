@@ -270,7 +270,7 @@ namespace utilities
     void order_nearPosMeshes(); ///TO ORDER THE POSICION ONCE TO DRAW AFTER
     void order_farPosMeshes();
 
-    void render_nearPos_depthMapShadow(std::string* shader_ID);
+    void render_nearPos_shaderSet(std::string* shader_ID);
     void render_nearPos();
     void render_farPos();
 
@@ -370,6 +370,7 @@ namespace utilities_Lights
     entity_sL& entity_sL_by_Pos(uint32_t pos);
 
     uint32_t& num_Lights(light::typeLight light_T);
+    uint32_t num_all_Lights();
 
     const std::vector<entity_dL>& out_entities_dL();
     const std::vector<entity_pL>& out_entities_pL();

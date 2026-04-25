@@ -502,6 +502,7 @@ int main(int argc, char* argv[])
 					//render::shadows::set_renderShadowMap_dL(shadowsManager::shadow_render::RENDER_SAVE_TEXTURE_SHADOW);
 
 					refresh_Models::refreshAll_LastModels();
+					refresh_Models::refreshAll_LastCameras();
 
 					UI::render_All_ImGui(gWindow);
 					//testPlay::renderTranformations_Objects();

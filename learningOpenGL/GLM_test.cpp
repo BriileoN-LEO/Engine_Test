@@ -979,4 +979,11 @@ namespace camera
 		this->camProjection = camProjection;
 	}
 
+	void camera1::update_lastProyectionSettings()
+	{
+		fovCam_last = fovCam;
+		nearCut_last = nearCut;
+		maxCut_last = maxCut;
+	}
+
 }

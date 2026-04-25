@@ -7,6 +7,21 @@
 
 #include "learningOpenGL.h"
 
+namespace data_SSBO_CS
+{
+   struct lights_SSBO
+   {
+       glm::vec4 lightPos_radius; // 0-12  ---> .w == radius
+       glm::vec4 Color_And_Intensity; // 76-80
+       glm::vec4 Direction;
+       int lightState; // state of the light
+       int light_Type; /// 0 == DIRECTIONAL LIGHT /// 1 == POINT LIGHT /// 2 == SPOT LIGHT
+       float cutOff;
+       float outerCutOff;
+   };
+
+}
+
 namespace Clustered_Shading
 {
     struct data_Prepass
@@ -27,7 +42,6 @@ namespace Clustered_Shading
     {
         unsigned int tilesBound_SSBO{}; //TILES SHADER STORAGE BUFFER  ///BINDING 3
         unsigned int clusterAABB_SSBO{}; //CLUSTER OF MINPOS AND MAX POS OF EACH CLUSTER PER TILE ON SCREEN  ///BINDING 4
-
         unsigned int Lights_SSBO{};   ///BINDING 5
         unsigned int Lights_Grid_SSBO{};  ///BINDING 6
         unsigned int global_ID_Lights_SSBO{};  ///BINDING 7
@@ -36,24 +50,26 @@ namespace Clustered_Shading
 
     struct data_BeautyPass
     {
-      std::string ID_camera{};
+      //std::string ID_camera{};
       float zNear{};
       float zFar{};
       float scaleZ{};  ///CALCULATE = Nz / log(zFar/zNear)
       float biasZ{};  ///CALCULATE = -(Nz * log(zNear) / log(zFar/zNear))
-      float gridDimension_X{}; // QUANTITY OF GRIDS IN X, 1920 / 16 ---- 16 = SIZE OF TILE IN X
-      float gridDimension_Y{}; // QUANTITY OF GRIDS IN Y, 1080 / 16 ---- 16 = SIZE OF TILE IN Y
+      uint32_t gridDimension_X{}; // QUANTITY OF GRIDS IN X, 1920 / 16 ---- 16 = SIZE OF TILE IN X
+      uint32_t gridDimension_Y{}; // QUANTITY OF GRIDS IN Y, 1080 / 16 ---- 16 = SIZE OF TILE IN Y
 
+      float Nz{};
     };
 
 
     enum class typeShader : uint8_t
     {
-      zPrepass = 0,
+      prepassCS_rendering = 0,
       computeS_zPassTiles_01 = 1,
       computeS_ClusterAABB_02 = 2,
       computeS_LightCulling_03 = 3,
-      beauty_Pass = 4
+      beauty_Pass = 4,
+      complete_shaders = 5
     };
 
     class renderManager_CS
@@ -64,8 +80,14 @@ namespace Clustered_Shading
         data_Prepass Prepass_D{};
         data_BeautyPass beautyPass_D{};
         std::unordered_map<typeShader, std::string> shaders_ID{};
+
         int max_tileSize_Y{16};
         int max_tileSize_X{16};
+
+        int num_tiles_Y{};
+        int num_tiles_X{};
+
+        int num_tiles_all{};
 
 
     void destroy_zPrepass();
@@ -73,24 +95,37 @@ namespace Clustered_Shading
     void load_data(unsigned int res_width, unsigned int res_height);
 
     void load_tilesBound_SSBO_03();
-    void update_tilesBound_SSBO_03(const int& numTiles);
+    void update_tilesBound_SSBO_03();
 
     void load_clusterAABB_SSBO_04();
-    void update_clusterAABB_SSBO_04(const int& numTiles);  ////////CONTINUE HEREEE
+    void update_clusterAABB_SSBO_04();
 
-    void load_Lights_SSBO_05(const int& max_Lights);
+    void load_Lights_SSBO_05(const int& max_Lights);  ///MAX OF LIGHTS TO SAVE SPACE IN MEMORY AND LOAD LIGHTS
     void update_Lights_SSBO_05();
 
+    void load_LightGridBuff_SSBO_06();
+    void update_LightGridBuff_SSBO_06();
+
+    void load_globalIDLights_SSBO_07();
+    void update_globalIDLights_SSBO_07();
+
+    void load_globalCounterAtomic_SSBO_08();
+    void update_globalCounterAtomic_SSBO_08();
 
     public:
 
     renderManager_CS();
-    void create_zPrepass(unsigned int res_width, unsigned int res_height);
+    void create_Data_CS(unsigned int res_width, unsigned int res_height);
+    void insert_Shader(typeShader shaderT, std::string shaderID);
     void create_dataSSBO(); ///TO CREATE THE DATA OF THE SSBO
     void update_allSSBO();
-    void insert_Shader(typeShader shaderT, std::string shaderID);
-
     void update_lightsSSBO();
+    void load_beautyPass();
+    void update_beautyPass();
+
+    void Render_passCS_rendering();
+    void Render_computeCS();
+    void Render_beautyPassCS();
 
     };
 }

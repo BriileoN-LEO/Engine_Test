@@ -187,7 +187,7 @@ namespace render
 
 		void render_AllShadowMap_dL(std::string* shader_shadowMap)
 		{
-			RenderData_Set::ModelsScene_D->render_nearPos_depthMapShadow(shader_shadowMap);
+			RenderData_Set::ModelsScene_D->render_nearPos_shaderSet(shader_shadowMap);
 			shader_shadowMap = nullptr;
 		}
 
@@ -1135,19 +1135,12 @@ namespace refresh_Models
 			}
 
 		}
-
-//		for (auto& renderMAD : RenderData_Set::AssimpModel_D)
-//		{
-//			renderMAD.second->ModelCoord.lastModel = renderMAD.second->ModelCoord.model; //LAST METHOD
-		//	renderMAD.second.ModelCoord.lastTranslateM = renderMAD.second.ModelCoord.translateM;
-		//	renderMAD.second.ModelCoord.lastScaleS = renderMAD.second.ModelCoord.scaleS;
-		//	renderMAD.second.ModelCoord.lastRotateR = renderMAD.second.ModelCoord.rotateR;
-
-//		}
 	}
 
-	///añadir aqui para refrescar las posiciones y los cambios de los modelos
-
+	void refreshAll_LastCameras()
+	{
+      cameras::cameras_D[cameras::name_CurrentCamera].update_lastProyectionSettings();
+	}
 }
 
 

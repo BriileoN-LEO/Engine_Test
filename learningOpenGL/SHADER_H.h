@@ -136,17 +136,19 @@ namespace shading
 	{
 	private:
 		std::vector<layoutType> data_Layout{};
+		bool computeShader{ false };
 
 	public:
 
+		std::string name{};
 		unsigned int ID{};
 		Uint64 rotAng{};
 
 		shader();
 		shader(unsigned int ID);
-		shader(const char* vertexPath, const char* fragmentPath, std::vector<layoutType> data_Layout); /////
-		shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath, std::vector<layoutType> data_Layout); /////
-		shader(const char* computeShader_Path);
+		shader(std::string name, const char* vertexPath, const char* fragmentPath, std::vector<layoutType> data_Layout); /////
+		shader(std::string name, const char* vertexPath, const char* fragmentPath, const char* geometryPath, std::vector<layoutType> data_Layout); /////
+		shader(std::string name, const char* computeShader_Path);
 
 		void shaderCreation(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr);
 
@@ -154,7 +156,10 @@ namespace shading
 		void set_BufferSSBO(const char* nameLayout, GLuint index);   ///TO SET MANUALLY THE SSBO
 ;
 		void use();
-		
+		void use_computeShader_(uint32_t gridDim_X, uint32_t gridDim_Y, const char* file, int line);
+#define use_computeShader(gridDim_X, gridDim_Y) use_computeShader_(gridDim_X, gridDim_Y, __FILE__, __LINE__)
+
+
 		void setBool(const std::string& name, bool value) const;
 		void setInt(const std::string& name, int value) const;
 		void setFloat(const std::string& name, float value) const;

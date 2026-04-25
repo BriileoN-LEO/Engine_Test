@@ -728,17 +728,17 @@ namespace RenderData_Set
 
 			    if (shaD.geometryShader_name == nullptr) /// NOT HAVE GEOMETRY SHADER
 			    {
-				    shader_D.emplace(shaD.nameShader, shading::shader(shaD.vertexShader_name, shaD.fragmentShader_name, shaD.data_Layout));
+				    shader_D.emplace(shaD.nameShader, shading::shader(shaD.nameShader, shaD.vertexShader_name, shaD.fragmentShader_name, shaD.data_Layout));
 			    }
 
 				else if (shaD.geometryShader_name != nullptr)  /// HAVE GEOMETRY SHADER
 				{
-					shader_D.emplace(shaD.nameShader, shading::shader(shaD.vertexShader_name, shaD.fragmentShader_name, shaD.geometryShader_name, shaD.data_Layout));
+					shader_D.emplace(shaD.nameShader, shading::shader(shaD.nameShader, shaD.vertexShader_name, shaD.fragmentShader_name, shaD.geometryShader_name, shaD.data_Layout));
 				}
 
 				else if (shaD.computeShader_path != nullptr)
 				{
-                    shader_D.emplace(shaD.nameShader, shading::shader(shaD.computeShader_path));
+                    shader_D.emplace(shaD.nameShader, shading::shader(shaD.nameShader, shaD.computeShader_path));
 				}
 			}
 
@@ -1069,56 +1069,56 @@ namespace RenderData_Set
 		float radioLights = 5.0f;
 		float intensityLights = 10.0f;
 
-		light::pointLight_PBR pointLight_PBR_01(glm::vec3(3.0f, 3.0f, 3.0f), witheLight, radioLights, intensityLights, true);
+		light::pointLight_PBR pointLight_PBR_01(glm::vec3(3.0f, 3.0f, 3.0f), witheLight, radioLights, intensityLights, true, 6.0f);
 		pointLight_PBR_01.setID("pointLight_01");
 		light::light1 pointLight_01(glm::vec3(3.0f, 3.0f, 3.0f), witheLight);
 		pointLight_01.setAttenuation(1.0f, 0.8f, 0.0035f);
 		pointLight_01.setMatProperties(witheLight, witheLight, witheLight);
 
 
-		light::pointLight_PBR pointLight_PBR_02(glm::vec3(9.0f, 4.0f, 9.0f), purpleLight, radioLights, intensityLights, true);
+		light::pointLight_PBR pointLight_PBR_02(glm::vec3(9.0f, 4.0f, 9.0f), purpleLight, radioLights, intensityLights, true, 6.0f);
 		pointLight_PBR_02.setID("pointLight_02");
 		light::light1 pointLight_02(glm::vec3(9.0f, 4.0f, 9.0f), purpleLight);
 		pointLight_02.setAttenuation(1.0f, 0.8f, 0.0035f);
 		pointLight_02.setMatProperties(purpleLight, purpleLight, purpleLight);
 
-		light::pointLight_PBR pointLight_PBR_03(glm::vec3(15.0f, 5.0f, 15.0f), randomColor1, radioLights, intensityLights, true);
+		light::pointLight_PBR pointLight_PBR_03(glm::vec3(15.0f, 5.0f, 15.0f), randomColor1, radioLights, intensityLights, true, 6.0f);
 		pointLight_PBR_03.setID("pointLight_03");
 		light::light1 pointLight_03(glm::vec3(15.0f, 5.0f, 15.0f), randomColor1);
 		pointLight_03.setAttenuation(1.0f, 0.8f, 0.0035f);
 		pointLight_03.setMatProperties(randomColor1, randomColor1, randomColor1);
 
-		light::pointLight_PBR pointLight_PBR_04(glm::vec3(21.0f, 6.0f, 21.0f), randomColor2, radioLights, intensityLights, true);
+		light::pointLight_PBR pointLight_PBR_04(glm::vec3(21.0f, 6.0f, 21.0f), randomColor2, radioLights, intensityLights, true, 6.0f);
 		pointLight_PBR_04.setID("pointLight_04");
 		light::light1 pointLight_04(glm::vec3(21.0f, 6.0f, 21.0f), randomColor2);
 		pointLight_04.setAttenuation(1.0f, 0.8f, 0.0035f);
 		pointLight_04.setMatProperties(randomColor2, randomColor2, randomColor2);
 
-		light::pointLight_PBR pointLight_PBR_05(glm::vec3(27.0f, 7.0f, 27.0f), randomColor3, radioLights, intensityLights, true);
+		light::pointLight_PBR pointLight_PBR_05(glm::vec3(27.0f, 7.0f, 27.0f), randomColor3, radioLights, intensityLights, true, 6.0f);
 		pointLight_PBR_05.setID("pointLight_05");
 		light::light1 pointLight_05(glm::vec3(27.0f, 7.0f, 27.0f), randomColor3);
 		pointLight_05.setAttenuation(1.0f, 0.8f, 0.0035f);
 		pointLight_05.setMatProperties(randomColor3, randomColor3, randomColor3);
 
-		light::pointLight_PBR pointLight_PBR_06(glm::vec3(27.0f, 8.0f, 27.0f), randomColor4, radioLights, intensityLights, true);
+		light::pointLight_PBR pointLight_PBR_06(glm::vec3(27.0f, 8.0f, 27.0f), randomColor4, radioLights, intensityLights, true, 6.0f);
 		pointLight_PBR_06.setID("pointLight_06");
 		light::light1 pointLight_06(glm::vec3(27.0f, 8.0f, 27.0f), randomColor4);
 		pointLight_06.setAttenuation(1.0f, 0.8f, 0.0035f);
 		pointLight_06.setMatProperties(randomColor4, randomColor4, randomColor4);
 
-		light::pointLight_PBR pointLight_PBR_07(glm::vec3(27.0f, 9.0f, 27.0f), randomColor5, radioLights, intensityLights, true);
+		light::pointLight_PBR pointLight_PBR_07(glm::vec3(27.0f, 9.0f, 27.0f), randomColor5, radioLights, intensityLights, true, 6.0f);
 		pointLight_PBR_07.setID("pointLight_07");
 		light::light1 pointLight_07(glm::vec3(27.0f, 9.0f, 27.0f), randomColor5);
 		pointLight_07.setAttenuation(1.0f, 0.8f, 0.0035f);
 		pointLight_07.setMatProperties(randomColor5, randomColor5, randomColor5);
 
-		light::pointLight_PBR pointLight_PBR_08(glm::vec3(27.0f, 10.0f, 27.0f), randomColor6, radioLights, intensityLights, true);
+		light::pointLight_PBR pointLight_PBR_08(glm::vec3(27.0f, 10.0f, 27.0f), randomColor6, radioLights, intensityLights, true, 6.0f);
 		pointLight_PBR_08.setID("pointLight_08");
 		light::light1 pointLight_08(glm::vec3(27.0f, 10.0f, 27.0f), randomColor6);
 		pointLight_08.setAttenuation(1.0f, 0.8f, 0.0035f);
 		pointLight_08.setMatProperties(randomColor6, randomColor6, randomColor6);
 
-		light::pointLight_PBR pointLight_PBR_09(glm::vec3(27.0f, 3.0f, 27.0f), randomColor7, radioLights, intensityLights, true);
+		light::pointLight_PBR pointLight_PBR_09(glm::vec3(27.0f, 3.0f, 27.0f), randomColor7, radioLights, intensityLights, true, 6.0f);
 		pointLight_PBR_09.setID("pointLight_09");
 		light::light1 pointLight_09(glm::vec3(27.0f, 3.0f, 27.0f), randomColor7);
 		pointLight_09.setAttenuation(1.0f, 0.8f, 0.0035f);
@@ -1277,6 +1277,7 @@ namespace RenderData_Set
       glm::vec3(0.0f, 0.0f, -0.1f), //Direction
       glm::vec3(0.92f, 0.83f, 0.38f), //Color
       1.2f, //Radio
+      2.0f, //Intensity
       17.5f, //cutOff
       21.5f // outerCutOff
       )};

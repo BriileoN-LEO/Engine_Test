@@ -324,7 +324,7 @@ namespace shadowsManager {
 
     shaderShadowDL = nullptr;
     glCullFace(GL_FRONT);
-    RenderData_Set::ModelsScene_D->render_nearPos_depthMapShadow(shader_shadowMap);
+    RenderData_Set::ModelsScene_D->render_nearPos_shaderSet(shader_shadowMap);
     glCullFace(GL_BACK);
     shader_shadowMap = nullptr;
 

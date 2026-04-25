@@ -473,7 +473,7 @@ namespace AABB
 		{
 			shading::layoutType::NONE
 		};
-		shading::shader shaderAll_AABB(vShader_AABB_All.c_str(), fShader_AABB_All.c_str(), vLT);
+		shading::shader shaderAll_AABB("SHADER_aabb", vShader_AABB_All.c_str(), fShader_AABB_All.c_str(), vLT);   ////CHANGE THE NAME
 
 		for (auto& AABB_box : meshBoundingBox)
 		{

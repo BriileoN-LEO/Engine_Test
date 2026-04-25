@@ -83,6 +83,7 @@ namespace refresh_Models
 	void refreshAll_Models();
 	void refreshUI_point();
 	void refreshAll_LastModels();
+	void refreshAll_LastCameras();
 	///a�adir aqui para refrescar las posiciones y los cambios de los modelos
 
 }

@@ -970,7 +970,7 @@ namespace utilities {
 
   }
 
-  void scene::render_nearPos_depthMapShadow(std::string* shader_ID)
+  void scene::render_nearPos_shaderSet(std::string* shader_ID)
   {
     for (auto& model_render : renderBlocking)
     {
@@ -1309,6 +1309,11 @@ namespace utilities_Lights
     return num_empty;
   }
 
+  uint32_t scene_LightsManager::num_all_Lights()
+  {
+    return directionalLights.current_size_L + pointLights.current_size_L + spotLights.current_size_L;
+  }
+
   const std::vector<entity_dL>& scene_LightsManager::out_entities_dL()
   {
     return directionalLights.L_entities;
@@ -1347,6 +1352,7 @@ namespace utilities_Lights
 
       point_geo.setPosicion(data_pL.Position);
       point_geo.setColor(data_pL.Color);
+      point_geo.setSize(data_pL.size);
       point_geo.draw();
     }
   }

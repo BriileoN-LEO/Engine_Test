@@ -151,6 +151,7 @@ namespace light
 		float Intensity{};
 
 		bool stateLight{ true };
+	    float size{};
 	};
 
 	class pointLight_PBR  /////CONTINUE HERE
@@ -160,11 +161,11 @@ namespace light
 		uint32_t ID{};
 		data_pointLightPBR data{};
 
-		void setData(glm::vec3 Position, glm::vec3 Color, float Radio, float Intensity, bool stateLight);
+		void setData(glm::vec3 Position, glm::vec3 Color, float Radio, float Intensity, bool stateLight, float size);
 
 	public:
 		pointLight_PBR();
-		pointLight_PBR(glm::vec3 Position, glm::vec3 Color, float Radio, float Intensity, bool stateLight);
+		pointLight_PBR(glm::vec3 Position, glm::vec3 Color, float Radio, float Intensity, bool stateLight, float size);
 
 		void setID(std::string pL_ID);
 		void setID_by_int(uint32_t pL_ID);
@@ -186,6 +187,7 @@ namespace light
 		glm::vec3 Color{};
 
 		float Radio{};
+		float Intensity{};
 		float cutOff{};
 		float outerCutOff{};
 
@@ -202,13 +204,15 @@ namespace light
 
 	public:
 		SpotLight_PBR();
-		SpotLight_PBR(glm::vec3 Position, glm::vec3 Direction, glm::vec3 Color, float Radio, float cutOff, float outerCutOff);
+		SpotLight_PBR(glm::vec3 Position, glm::vec3 Direction, glm::vec3 Color, float Radio, float Intensity, float cutOff, float outerCutOff);
 
 		void setID(std::string sL_ID);
 		void setID_by_int(uint32_t sL_ID);
 		void update_position(glm::vec3 Position);
 		void update_direction(glm::vec3 Direction);
 		void update_color(glm::vec3 Color);
+		void update_radio(float Radio);
+		void update_Intensity(float Intensity);
 		void update_stateLight(bool stateLight);
 
 		uint32_t& get_ID_ref();
