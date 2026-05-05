@@ -387,32 +387,51 @@ namespace shading
 	{
 		GLint shaderStatus{};
 
-		const GLchar* computeCode {filesData::read_FileData_str(computeShader_Path)};
+		SDL_Log("---READING AND TESTING COMPUTE SHADER---");
 
-		if (computeCode == nullptr)
+		if (computeShader_Path == nullptr)
 	    {
-			log_ErrorG::register_w("ERROR_READ::COMPUTE_SHADER_FILE_PATH");
+			log_ErrorG::register_w("ERROR::DIRECTION OF COMPUTE SHADER IS NULL");
 			return;
 		}
 
-		GLuint computeShader = glCreateShader(GL_COMPUTE_SHADER);
-		glShaderSource(computeShader, 1, &computeCode, nullptr);
-		glCompileShader(computeShader);
-		//register_Errors::testCompileShader(computeShader, "COMPUTE", 0);
-		shaderStatus = log_Error_shader::CompileShader(computeShader, "COMPUTE", 0);
+		    std::string computeCode {filesData::read_FileData_str(computeShader_Path)};
 
-		if (shaderStatus == GL_FALSE)
-		{
-		 return;
-		}
+			//const char* computeCode {filesData::read_FileData_str_(computeShader_Path, 1, "JIJI")};
+			if (computeCode.empty())
+			{
+				log_ErrorG::register_w("ERROR_READ::COMPUTE_SHADER_FILE_PATH");
+				return;
+			}
 
-		ID = glCreateProgram();
-		glAttachShader(ID, computeShader);
-		glLinkProgram(ID);
-		shaderStatus = log_Error_shader::CompileShader(ID, "PROGRAM", 1);
+		    const char* computeCode_ptr {computeCode.c_str()};
+		///HERE DETECT UTF-8
+	     	//std::string test_compute {computeCode};
+		  //  resolve_Errors::detect_BOM_UFT_8("COMPUTE SHADER HAVE BOM UFT-8", test_compute);
 
-		glDeleteShader(computeShader);
+			GLuint computeShader = glCreateShader(GL_COMPUTE_SHADER);
+			glShaderSource(computeShader, 1, &computeCode_ptr, nullptr);
+			glCompileShader(computeShader);
+			//register_Errors::testCompileShader(computeShader, "COMPUTE", 0);
+			shaderStatus = log_Error_shader::CompileShader(computeShader, "COMPUTE", 0);
 
+			if (shaderStatus == GL_FALSE)
+			{
+				return;
+			}
+
+			ID = glCreateProgram();
+			glAttachShader(ID, computeShader);
+			glLinkProgram(ID);
+			shaderStatus = log_Error_shader::CompileShader(ID, "PROGRAM", 1);
+		    glDeleteShader(computeShader);
+
+     		if (shaderStatus == GL_FALSE) {
+     			ID = 0;
+     			return;
+     		}
+
+		    computeShader_P = true;
 	}
 
 	void shader::set_BufferSSBO(const char* nameLayout, GLuint index)
@@ -427,7 +446,7 @@ namespace shading
 	}
 	void shader::use_computeShader_(uint32_t gridDim_X, uint32_t gridDim_Y, const char* file, int line)
 	{
-       if (computeShader == true)
+       if (computeShader_P == true)
        {
 	     glUseProgram(ID);
          glDispatchCompute(gridDim_X, gridDim_Y, 1);
@@ -506,6 +525,13 @@ namespace shading
 		std::string nameArray {name + "[0]"};
 		int location{ glGetUniformLocation(ID, nameArray.c_str()) };
 		lib_SHADER_openGL::set_glUniform1f_array_ptr(location, values);
+	}
+
+	void shader::setVec2(const std::string& name, glm::vec2 value) const
+	{
+		int location{ glGetUniformLocation(ID, name.c_str()) };
+
+		lib_SHADER_openGL::set_glUniform2fv(location, value);
 	}
 
 	void shader::setVec3(const std::string& name, glm::vec3 value) const
@@ -669,36 +695,43 @@ namespace shading
 
 		shaderData_loadCPU::shaderData_loadCPU(){};
 
-		shaderData_loadCPU::shaderData_loadCPU(std::string nameShader, const char* vertexShader_name, const char* fragmentShader_name, std::vector<layoutType> data_Layout) :
+		shaderData_loadCPU::shaderData_loadCPU(std::string nameShader, const char* vertexShader_name, const char* fragmentShader_name, std::vector<layoutType> data_Layout, typeShader TS) :
 		nameShader(nameShader),
+		TS(TS),
 		vertexShader_name(std::move(vertexShader_name)),
 		fragmentShader_name(std::move(fragmentShader_name)),
 		data_Layout(data_Layout){};
 
-		shaderData_loadCPU::shaderData_loadCPU(std::string nameShader, const char* vertexShader_name, const char* fragmentShader_name, std::vector<layoutType> data_Layout, const char* geometryShader_name) :
+		shaderData_loadCPU::shaderData_loadCPU(std::string nameShader, const char* vertexShader_name, const char* fragmentShader_name, std::vector<layoutType> data_Layout, const char* geometryShader_name, typeShader TS) :
 		nameShader(nameShader),
+		TS(TS),
 		vertexShader_name(std::move(vertexShader_name)),
 		fragmentShader_name(std::move(fragmentShader_name)),
 		data_Layout(data_Layout),
 		geometryShader_name(std::move(geometryShader_name)){};
 
-		shaderData_loadCPU::shaderData_loadCPU(std::string nameShader, const char* computeShader_path) :
+		shaderData_loadCPU::shaderData_loadCPU(std::string nameShader, const char* computeShader_path, typeShader TS) :
 		nameShader(nameShader),
+		TS(TS),
 		computeShader_path(computeShader_path){};
 
 		shaderData_loadCPU::shaderData_loadCPU(const shaderData_loadCPU&& shader_LCPU) noexcept :
 		nameShader(shader_LCPU.nameShader),
+		TS(shader_LCPU.TS),
         vertexShader_name(std::move(shader_LCPU.vertexShader_name)),
         fragmentShader_name(std::move(shader_LCPU.fragmentShader_name)),
         data_Layout(shader_LCPU.data_Layout),
-        geometryShader_name(std::move(shader_LCPU.geometryShader_name)){};
+        geometryShader_name(std::move(shader_LCPU.geometryShader_name)),
+		computeShader_path(std::move(shader_LCPU.computeShader_path)){};
 
 		shaderData_loadCPU::shaderData_loadCPU(const shaderData_loadCPU& shader_LCPU) :
 		nameShader(shader_LCPU.nameShader),
+		TS(shader_LCPU.TS),
 		vertexShader_name(std::move(shader_LCPU.vertexShader_name)),
 		fragmentShader_name(std::move(shader_LCPU.fragmentShader_name)),
 		data_Layout(shader_LCPU.data_Layout),
-		geometryShader_name(std::move(shader_LCPU.geometryShader_name)){};
+		geometryShader_name(std::move(shader_LCPU.geometryShader_name)),
+		computeShader_path(std::move(shader_LCPU.computeShader_path)){};
 
 		std::queue<shaderData_loadCPU> shaderData{};
 		std::atomic<int> atomic_CounterShader(0);

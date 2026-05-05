@@ -122,6 +122,7 @@ int main(int argc, char* argv[])
 	init();
 
 	RenderData_Set::init_managerResources();
+	Clustered_Shading_RenderData::init_ClusteredShading_Manager();
 
 	std::setvbuf(stdout, nullptr, _IONBF, 0);
 
@@ -147,6 +148,8 @@ int main(int argc, char* argv[])
 	//RenderData_Set::set_AllObjects(); DESACTIVADO TEMPORALMENTE
 	RenderData_Set::running_AllObjects();
 	testPlay::setTransformation_Objects();
+
+	Clustered_Shading_RenderData::createResources_ClusteredShading();
 
 	SDL_SetWindowRelativeMouseMode(gWindow, true);
 	SDL_WarpMouseInWindow(gWindow, static_cast<float>(screenSettings::screen_w) * 0.5f, static_cast<float>(screenSettings::screen_w) * 0.5f);
@@ -495,10 +498,14 @@ int main(int argc, char* argv[])
 					//testPlay::transformation_handCamara();
 					testPlay::transformation_handCamara();
 					refresh_Models::refreshAll_Models();
+
+
 					//AABB::updateCoordAABB_All();
 					//ScreenCalc_Hit::calc_IntersectALL();
 
-					render::renderPhase();
+					//render::renderPhase();  ///FOWARD RENDERING(LEGACY)
+					render_ClusteredShading::render_All_CS();   ///CLUSTERED SHADING RENDERING(NEW TECHNIQUE)  ////RESOLVE HERE
+
 					//render::shadows::set_renderShadowMap_dL(shadowsManager::shadow_render::RENDER_SAVE_TEXTURE_SHADOW);
 
 					refresh_Models::refreshAll_LastModels();

@@ -43,6 +43,7 @@ namespace texDataManager
 		{"texture_diffuse", typeTexture::diffuse},
 		{"texture_specular", typeTexture::specular}
 	};
+
 	 std::map<typeTexture, texToShader> typeTex_T
 	{
 		{typeTexture::diffuse, texToShader(
@@ -55,6 +56,12 @@ namespace texDataManager
 			"texture_specular",
 			"use_texture_specular"
 		)},
+	};
+
+	 std::map<typeTexture, std::string> typeTex_ClusteredShading_prePass
+	{
+	    {typeTexture::diffuse, "texture_diffuse"} ,
+		{typeTexture::specular, "texture_specular"}
 	};
 
 
@@ -1065,7 +1072,6 @@ namespace textureCache
 
 		}
 
-
 		////HERE ADD A SERCH OF HOW MUCH TEXTURE I HAVE
 
 		/*
@@ -1104,6 +1110,24 @@ namespace textureCache
 */
 
 	}
+
+	void texture_Data::use_Textures_PrePassCS(shading::shader& shader)
+	{
+		std::string prefixTexture {"Mat_tex."};
+
+		auto indices{ std::views::iota(0) };
+		for (auto [idx, texMat] : std::views::zip(indices, textures_LoadCache))
+	    {
+          std::string nameTexture { prefixTexture + texDataManager::typeTex_ClusteredShading_prePass[texMat.typeTex]};
+
+		  shader.setInt(nameTexture, idx);
+		  glActiveTexture(GL_TEXTURE0 + idx);
+	      glBindTexture(GL_TEXTURE_2D, textures[texMat.nameTexture].textureID);
+		}
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
 	void texture_Data::insertNewTexture(const char* pathTexture, texDataManager::typeTexture tex)
 	{
 		std::string nameTex{ pathTexture };
@@ -1216,6 +1240,11 @@ namespace texLoad_Data
 
 	}
 
+	void set_all()
+	{
+		set_dataImage_info();
+	}
+
 	unsigned int load_Texture_zBuffer(unsigned int& res_width, unsigned int& res_height)
 	{
 		unsigned int TCB{};
@@ -1243,18 +1272,18 @@ namespace texLoad_Data
 
         if (find_Type != dataImage_map_pos.end())
         {
-	        unsigned int* TCB{nullptr};
-        	glGenTextures(1, TCB);
-        	glBindTexture(GL_TEXTURE_2D, *TCB);
+	        unsigned int TCB{};
+        	glGenTextures(1, &TCB);
+        	glBindTexture(GL_TEXTURE_2D, TCB);
 
         	glTexImage2D(GL_TEXTURE_2D, 0, dataImage_BitsSize[find_Type->second], res_width, res_height, 0, typeData_Tex, GL_UNSIGNED_BYTE, NULL);
 
         	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); //GL_REPEAT  // GL_CLAMP_TO_BORDER
 
-        	glFramebufferTexture2D (GL_FRAMEBUFFER, color_Attachment, GL_TEXTURE_2D, *TCB, 0);
+        	glFramebufferTexture(GL_FRAMEBUFFER, color_Attachment, TCB, 0);
 
-        	return std::move(TCB);
+        	return new unsigned int(TCB);
         }
 
 		else

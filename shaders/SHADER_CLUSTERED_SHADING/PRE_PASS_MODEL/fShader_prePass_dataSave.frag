@@ -10,15 +10,17 @@ in vec3 FragPos;
 in vec3 Normal;
 in vec3 FragPosViewSpace;
 
+out vec4 FragColor;
+
 struct material_maps
 {
 sampler2D texture_diffuse;
 sampler2D texture_specular;
 //sampler2D back_Texture;
 
-bool blendTextureDiffuse; /////ESTE VALOR SE DEJA AL AIRE
-bool use_texture_diffuse;
-bool use_texture_specular;
+//bool blendTextureDiffuse; /////ESTE VALOR SE DEJA AL AIRE
+//bool use_texture_diffuse;
+//bool use_texture_specular;
 
 };
 
@@ -26,7 +28,7 @@ uniform material_maps Mat_tex;
 
 struct material_standard
 {
-vec3 ambient;
+//vec3 ambient;
 vec3 difusse;
 float specular;
 float shiness;
@@ -40,27 +42,33 @@ void main()
 {
   gPosition = FragPos;
   gNormal = normalize(Normal);
-  gFragPosViewSpace = vec4(FragPosViewSpace.xyz, Mat_SS.shiness);
+  gFragPosViewSpace_and_shiness = vec4(FragPosViewSpace.xyz, Mat_SS.shiness);
 
-  if(Mat_tex.use_texture_diffuse == true)
+  vec3 diffuse = texture(Mat_tex.texture_diffuse, texCoords).rgb;
+  float specular = texture(Mat_tex.texture_specular, texCoords).r;
+
+  if(diffuse.r != 0.0)
   {
-      gDiffuse_and_specular.rgb = texture(Mat_tex.texture_diffuse, texCoords).rgb;
+     //vec3 diffuse = texture(Mat_tex.texture_diffuse, texCoords).rgb;
+      gDiffuse_and_specular.rgb = texture(Mat_tex.texture_diffuse, texCoords).rgb;  /////////////////////////
   }
 
-  else if(Mat_tex.use_texture_diffuse == false)
+  else
   {
-      gDiffuse_and_specular.rgb = Mat_SS.difusse;
+     gDiffuse_and_specular.rgb = Mat_SS.difusse;
   }
 
-  if(Mat_tex.use_texture_specular == true)
+  if(specular != 0.0)
   {
-      gDiffuse_and_specular.a = texture(Mat_tex.texture_specular, texCoords).r;
+     gDiffuse_and_specular.a = specular; /////////////////////////
   }
 
-  else if(Mat_tex.use_texture_specular == false)
+  else
   {
-    gDiffuse_and_specular.a = Mat_SS.specular;
+     gDiffuse_and_specular.a = Mat_SS.specular;
   }
 
+
+//FragColor = vec4(diffuse, 1.0);
 
 }

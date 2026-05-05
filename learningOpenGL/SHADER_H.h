@@ -136,7 +136,7 @@ namespace shading
 	{
 	private:
 		std::vector<layoutType> data_Layout{};
-		bool computeShader{ false };
+		bool computeShader_P{ false };
 
 	public:
 
@@ -151,8 +151,8 @@ namespace shading
 		shader(std::string name, const char* computeShader_Path);
 
 		void shaderCreation(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr);
-
 		void computeShaderCreation(const char* computeShader_Path);
+
 		void set_BufferSSBO(const char* nameLayout, GLuint index);   ///TO SET MANUALLY THE SSBO
 ;
 		void use();
@@ -165,6 +165,7 @@ namespace shading
 		void setFloat(const std::string& name, float value) const;
 		void setFLoat_array(const std::string& name, std::vector<float>& values) const;
 		void setFLoat_array_ptr(const std::string& name, std::vector<float*>& values) const;
+		void setVec2(const std::string& name, glm::vec2 value) const;
 		void setVec3(const std::string& name, glm::vec3 value) const;
 
 		void sumRotAng();
@@ -189,9 +190,18 @@ namespace shading
 
 	namespace loadToCPU
 	{
+		enum class typeShader : uint8_t
+		{
+		  	NORMAL = 0,
+			GEOMETRY = 1,
+			COMPUTE = 2
+		};
+
 		struct shaderData_loadCPU
 		{
 			std::string nameShader{};
+			typeShader TS{};
+
 			const char* vertexShader_name{nullptr};
 			const char* fragmentShader_name{nullptr};
 		    std::vector<layoutType> data_Layout{};
@@ -200,9 +210,9 @@ namespace shading
 			const char* computeShader_path{nullptr};
 
 		    shaderData_loadCPU();
-			shaderData_loadCPU(std::string nameShader, const char* vertexShader_name, const char* fragmentShader_name, std::vector<layoutType> data_Layout);
-			shaderData_loadCPU(std::string nameShader, const char* vertexShader_name, const char* fragmentShader_name, std::vector<layoutType> data_Layout, const char* geometryShader_name);
-            shaderData_loadCPU(std::string nameShader, const char* computeShader_path);
+			shaderData_loadCPU(std::string nameShader, const char* vertexShader_name, const char* fragmentShader_name, std::vector<layoutType> data_Layout, typeShader TS);
+			shaderData_loadCPU(std::string nameShader, const char* vertexShader_name, const char* fragmentShader_name, std::vector<layoutType> data_Layout, const char* geometryShader_name, typeShader TS);
+            shaderData_loadCPU(std::string nameShader, const char* computeShader_path, typeShader TS);
             shaderData_loadCPU(const shaderData_loadCPU&& shader_LCPU) noexcept;
 			shaderData_loadCPU(const shaderData_loadCPU& shader_LCPU);
 

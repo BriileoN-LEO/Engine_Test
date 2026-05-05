@@ -17,7 +17,6 @@ namespace RenderData_Set
 
 	//std::vector<Assimp_D::Model> models_D{};
 
-
 	std::map<std::string, ObjCreation::ModelCreation> ModelCreation_D{};
 
 	//std::map<std::string, Assimp_D::Model> AssimpModel_D{};  ////OFF FOR ONE MOMENT
@@ -674,16 +673,23 @@ namespace RenderData_Set
 		    shading::layoutType::NONE
 		};
 
-		shading::loadToCPU::shaderData_loadCPU shaderT1("shaderT1", vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), LB_01, gShader_ModelT1.c_str());  //TEST
-		shading::loadToCPU::shaderData_loadCPU shaderT1_normals("normals_shaderT1", vShader_ModelT1_Normals.c_str(), fShader_ModelT1_Normals.c_str(), LB_MAT, gShader_ModelT1_Normals.c_str());
-		shading::loadToCPU::shaderData_loadCPU shaderStandard("shaderStandard", vShader_Standard_v1.c_str(), fShader_Standard_v1.c_str(), LB_02);
-		shading::loadToCPU::shaderData_loadCPU shaderFramebuffer("shaderFramebuffer", vShader_Framebuffer_V01.c_str(), fShader_Framebuffer_V01.c_str(), LB_02);
-		shading::loadToCPU::shaderData_loadCPU shaderFramebuffer_shadow("shaderFramebuffer_shadow", vShader_FrameBuffer_shadow.c_str(), fShader_FrameBuffer_shadow.c_str(), LB_02);
-		shading::loadToCPU::shaderData_loadCPU shaderPoint("shaderPoint", vShader_Pointer.c_str(), fShader_Pointer.c_str(), LB_02);
-		shading::loadToCPU::shaderData_loadCPU shaderSkybox_01("shaderSkybox_01", vShader_Skybox_V01.c_str(), fShader_Skybox_V01.c_str(), LB_02);
-		shading::loadToCPU::shaderData_loadCPU shader_briiUI_01("brii_UI_01", vShader_briiUI_V01.c_str(), fShader_briiUI_V01.c_str(), LB_02);
-		shading::loadToCPU::shaderData_loadCPU shader_shadow_v01("shadow_shader_v1", vShader_Shadow_V1.c_str(), fShader_Shadow_V1.c_str(), LB_02, gShader_Shadow_V1.c_str());
-        shading::loadToCPU::shaderData_loadCPU shader_ClusteredShading_01("clustered_Shading_01", cShader_Clustered_shader_01.c_str());
+		shading::loadToCPU::shaderData_loadCPU shaderT1("shaderT1", vShader_ModelT1.c_str(), fShader_ModelT1.c_str(), LB_01, gShader_ModelT1.c_str(), shading::loadToCPU::typeShader::GEOMETRY);  //TEST
+		shading::loadToCPU::shaderData_loadCPU shaderT1_normals("normals_shaderT1", vShader_ModelT1_Normals.c_str(), fShader_ModelT1_Normals.c_str(), LB_MAT, gShader_ModelT1_Normals.c_str(), shading::loadToCPU::typeShader::GEOMETRY);
+		shading::loadToCPU::shaderData_loadCPU shaderStandard("shaderStandard", vShader_Standard_v1.c_str(), fShader_Standard_v1.c_str(), LB_02, shading::loadToCPU::typeShader::NORMAL);
+		shading::loadToCPU::shaderData_loadCPU shaderFramebuffer("shaderFramebuffer", vShader_Framebuffer_V01.c_str(), fShader_Framebuffer_V01.c_str(), LB_02, shading::loadToCPU::typeShader::NORMAL);
+		shading::loadToCPU::shaderData_loadCPU shaderFramebuffer_shadow("shaderFramebuffer_shadow", vShader_FrameBuffer_shadow.c_str(), fShader_FrameBuffer_shadow.c_str(), LB_02, shading::loadToCPU::typeShader::NORMAL);
+		shading::loadToCPU::shaderData_loadCPU shaderPoint("shaderPoint", vShader_Pointer.c_str(), fShader_Pointer.c_str(), LB_02, shading::loadToCPU::typeShader::NORMAL);
+		shading::loadToCPU::shaderData_loadCPU shaderSkybox_01("shaderSkybox_01", vShader_Skybox_V01.c_str(), fShader_Skybox_V01.c_str(), LB_02, shading::loadToCPU::typeShader::NORMAL);
+		shading::loadToCPU::shaderData_loadCPU shader_briiUI_01("brii_UI_01", vShader_briiUI_V01.c_str(), fShader_briiUI_V01.c_str(), LB_02, shading::loadToCPU::typeShader::NORMAL);
+		shading::loadToCPU::shaderData_loadCPU shader_shadow_v01("shadow_shader_v1", vShader_Shadow_V1.c_str(), fShader_Shadow_V1.c_str(), LB_02, gShader_Shadow_V1.c_str(), shading::loadToCPU::typeShader::GEOMETRY);
+
+
+		shading::loadToCPU::shaderData_loadCPU Shader_prePass_CS("Shader_prePass_CS", vShader_prePass_CS.c_str(), fShader_prePass_CS.c_str(), LB_MAT, shading::loadToCPU::typeShader::NORMAL);
+        shading::loadToCPU::shaderData_loadCPU shader_ClusteredShading_01("clustered_Shading_01", cShader_Clustered_01.c_str(), shading::loadToCPU::typeShader::COMPUTE);
+		shading::loadToCPU::shaderData_loadCPU Shader_Clustered_AABB_02("Shader_Clustered_AABB_02", cShader_Clustered_AABB_02.c_str(), shading::loadToCPU::typeShader::COMPUTE);
+		shading::loadToCPU::shaderData_loadCPU Shader_Clustered_LightCuling_03("Shader_Clustered_LightCuling_03", cShader_Clustered_LightCuling_03.c_str(), shading::loadToCPU::typeShader::COMPUTE);
+		shading::loadToCPU::shaderData_loadCPU Shader_beautyPass_CS("Shader_beautyPass_CS", vShader_beautyPass_CS.c_str(), fShader_beautyPass_CS.c_str(), LB_02, shading::loadToCPU::typeShader::NORMAL);
+
 
 		std::vector<shading::loadToCPU::shaderData_loadCPU> shadersLoad
 		{
@@ -696,7 +702,11 @@ namespace RenderData_Set
 			shaderSkybox_01,
 			shader_briiUI_01,
 			shader_shadow_v01,
-			shader_ClusteredShading_01
+			Shader_prePass_CS,
+			shader_ClusteredShading_01,
+			Shader_Clustered_AABB_02,
+			Shader_Clustered_LightCuling_03,
+			Shader_beautyPass_CS
 		};
 
 		shading::loadToCPU::atomic_sizeShader.fetch_add(static_cast<int>(shadersLoad.size()));
@@ -726,18 +736,21 @@ namespace RenderData_Set
 
 				std::cout << "LOADING::SHADER---->" << shaD.nameShader << '\n';
 
-			    if (shaD.geometryShader_name == nullptr) /// NOT HAVE GEOMETRY SHADER
+			    if (shaD.TS == shading::loadToCPU::typeShader::NORMAL) /// NOT HAVE GEOMETRY SHADER
 			    {
+			    	SDL_Log("SHADER::NORMAL");
 				    shader_D.emplace(shaD.nameShader, shading::shader(shaD.nameShader, shaD.vertexShader_name, shaD.fragmentShader_name, shaD.data_Layout));
 			    }
 
-				else if (shaD.geometryShader_name != nullptr)  /// HAVE GEOMETRY SHADER
+				else if (shaD.TS == shading::loadToCPU::typeShader::GEOMETRY)  /// HAVE GEOMETRY SHADER
 				{
+					SDL_Log("SHADER::GEOMETRY");
 					shader_D.emplace(shaD.nameShader, shading::shader(shaD.nameShader, shaD.vertexShader_name, shaD.fragmentShader_name, shaD.geometryShader_name, shaD.data_Layout));
 				}
 
-				else if (shaD.computeShader_path != nullptr)
+				else if (shaD.TS == shading::loadToCPU::typeShader::COMPUTE)  ///HAVE COMPUTE SHADER
 				{
+					SDL_Log("SHADER::COMPUTE");
                     shader_D.emplace(shaD.nameShader, shading::shader(shaD.nameShader, shaD.computeShader_path));
 				}
 			}
@@ -1629,6 +1642,7 @@ namespace RenderData_Set
 
 		setAll_LightsManager();
 		setAll_LightsScene();
+		texLoad_Data::set_all();
 
 		loadAll_DataCPU();  ///CRITICAL FASE TO LOAD ALL THE DATA, MODELS, SHADERS, ETC
 
@@ -1719,7 +1733,6 @@ namespace control_models
 
 	}
 }
-
 
 namespace cameras
 {
@@ -1982,6 +1995,34 @@ namespace Shader_Set
 			setShader_settings(usageExistence_LT[shading::layoutType::SHADER_SETTINGS]);
 		}
 
+	}
+
+}
+
+namespace Clustered_Shading_RenderData
+{
+	std::optional<Clustered_Shading::renderManager_CS> CS_Rendering_Manager;
+
+	void init_ClusteredShading_Manager()
+	{
+		CS_Rendering_Manager.emplace();
+	}
+	void createResources_ClusteredShading()
+	{
+		CS_Rendering_Manager->create_Data_CS(screenSettings::screen_w, screenSettings::screen_h);
+
+		///INSERTING SHADERS
+		CS_Rendering_Manager->insert_Shader(Clustered_Shading::typeShader::prepassCS_rendering, "Shader_prePass_CS");
+		CS_Rendering_Manager->insert_Shader(Clustered_Shading::typeShader::computeS_zPassTiles_01, "clustered_Shading_01");
+		CS_Rendering_Manager->insert_Shader(Clustered_Shading::typeShader::computeS_ClusterAABB_02, "Shader_Clustered_AABB_02");
+		CS_Rendering_Manager->insert_Shader(Clustered_Shading::typeShader::computeS_LightCulling_03, "Shader_Clustered_LightCuling_03");
+		CS_Rendering_Manager->insert_Shader(Clustered_Shading::typeShader::beauty_Pass, "Shader_beautyPass_CS");
+
+		CS_Rendering_Manager->create_dataSSBO();
+		CS_Rendering_Manager->update_allSSBO();
+		CS_Rendering_Manager->update_lightsSSBO();
+
+		CS_Rendering_Manager->load_beautyPass();
 	}
 
 }

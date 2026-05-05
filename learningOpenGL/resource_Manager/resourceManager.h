@@ -271,6 +271,8 @@ namespace utilities
     void order_farPosMeshes();
 
     void render_nearPos_shaderSet(std::string* shader_ID);
+    void render_nearPos_prePass_CS(std::string* shader_ID);
+
     void render_nearPos();
     void render_farPos();
 

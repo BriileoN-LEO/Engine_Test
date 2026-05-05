@@ -61,7 +61,13 @@ const std::string vShader_briiUI_V01 = "shaders/SHADER_UI/vShader_briiUI_1.vert"
 const std::string fShader_briiUI_V01 = "shaders/SHADER_UI/fShader_briiUI_1.frag";
 
 ///SHADER CLUSTERED_SHADER
-const std::string cShader_Clustered_shader_01 = "shaders/SHADER_CLUSTERED_SHADING/C_Clustered_shader_01.comp";
+const std::string vShader_prePass_CS = "shaders/SHADER_CLUSTERED_SHADING/PRE_PASS_MODEL/vShader_prePass_dataSave.vert";
+const std::string fShader_prePass_CS = "shaders/SHADER_CLUSTERED_SHADING/PRE_PASS_MODEL/fShader_prePass_dataSave.frag";
+const std::string cShader_Clustered_01 = "shaders/SHADER_CLUSTERED_SHADING/C_Clustered_shader_01.comp";
+const std::string cShader_Clustered_AABB_02 = "shaders/SHADER_CLUSTERED_SHADING/C_Clustered_shader_AABB_02.comp";
+const std::string cShader_Clustered_LightCuling_03 = "shaders/SHADER_CLUSTERED_SHADING/C_Clustered_shader_LightCulling_03.comp";
+const std::string vShader_beautyPass_CS = "shaders/SHADER_CLUSTERED_SHADING/BEAUTY_PASS/vShader_beautyPass.vert";
+const std::string fShader_beautyPass_CS = "shaders/SHADER_CLUSTERED_SHADING/BEAUTY_PASS/fShader_beautyPass.frag";
 
 ///IMAGES
 const std::string image_Wood = "Images/container.jpg";

@@ -23,13 +23,13 @@ namespace Clustered_Shading {
 
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
-
         unsigned int TCB_zBuffer{texLoad_Data::load_Texture_zBuffer(res_width, res_height)};
 
         unsigned int TCB_position{};
         unsigned int TCB_normal{};
         unsigned int TCB_FragPosViewSpace_and_shiness{};
         unsigned int TCB_diffuse_and_specular{};
+
         unsigned int* texture_ptr{nullptr};
 
         texture_ptr = texLoad_Data::load_Texture_nBuffer(res_width, res_height, GL_RGB, GL_COLOR_ATTACHMENT0);
@@ -37,8 +37,9 @@ namespace Clustered_Shading {
         if (texture_ptr != nullptr)
         {
             TCB_position = *texture_ptr;
-            delete texture_ptr;
+           // delete texture_ptr;
             texture_ptr = nullptr;
+            SDL_Log("COMPLETE::LOAD TCB_POSITION::CLUSTERED RENDERING");
         }
 
         else
@@ -51,8 +52,9 @@ namespace Clustered_Shading {
         if (texture_ptr != nullptr)
         {
             TCB_normal = *texture_ptr;
-            delete texture_ptr;
+          //  delete texture_ptr;
             texture_ptr = nullptr;
+            SDL_Log("COMPLETE::LOAD TCB_NORMAL::CLUSTERED RENDERING");
         }
 
         else
@@ -65,8 +67,9 @@ namespace Clustered_Shading {
         if (texture_ptr != nullptr)
         {
             TCB_FragPosViewSpace_and_shiness = *texture_ptr;
-            delete texture_ptr;
+            //delete texture_ptr;
             texture_ptr = nullptr;
+            SDL_Log("COMPLETE::LOAD TCB_FragPosViewSpace_and_shiness::CLUSTERED RENDERING");
         }
 
         else
@@ -79,8 +82,9 @@ namespace Clustered_Shading {
         if (texture_ptr != nullptr)
         {
             TCB_diffuse_and_specular = *texture_ptr;
-            delete texture_ptr;
+            //delete texture_ptr;
             texture_ptr = nullptr;
+            SDL_Log("COMPLETE::LOAD TCB_diffuse_and_specular::CLUSTERED RENDERING");
         }
 
         else
@@ -89,6 +93,7 @@ namespace Clustered_Shading {
         }
 
         //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_ARRAY, TCB, 0);
+
         unsigned int attachment_color[4] {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
         glDrawBuffers(4, attachment_color);
         glReadBuffer(GL_NONE);
@@ -400,16 +405,25 @@ namespace Clustered_Shading {
     void renderManager_CS::insert_Shader(typeShader shaderT, std::string shaderID)
     {
         auto find_s {shaders_ID.find(shaderT)};
+        auto find_RenderDataS {RenderData_Set::shader_D.find(shaderID)};
 
-        if (find_s != shaders_ID.end())
+        ///RESOLVE THIS WHEN I CHANGE THE METHOD OF SAVE THE DATA OF SHADERS TO A MANAGER SHADERS
+        if (find_RenderDataS == RenderData_Set::shader_D.end())
         {
-            find_s->second = shaderID;
+            std::string log_error {shaderID};
+            log_error = "ERROR INSERT SHADER IN CLUSTERED RENDERING::SHADER (" + shaderID + ") NOT EXIST";
+            log_ErrorG::register_w(log_error.c_str());
+            return;
         }
 
-        else
+        if (find_s == shaders_ID.end())
         {
             shaders_ID.emplace(shaderT, shaderID);
+            return;
         }
+
+           find_s->second = shaderID;
+
 
     }
 
@@ -475,26 +489,43 @@ namespace Clustered_Shading {
 
         if (find_shaderPass != shaders_ID.end())
         {
-            glBindFramebuffer(GL_FRAMEBUFFER, Prepass_D.FBO);
-            glEnable(GL_DEPTH_TEST);
-            glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, Prepass_D.TCB_zBuffer, 0);
-            glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, Prepass_D.TCB_Position, 0);
-            glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, Prepass_D.TCB_Normal, 0);
-            glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, Prepass_D.TCB_FragPosViewSpace_and_shiness, 0);
-            glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, Prepass_D.TCB_Diffuse_and_specular, 0);
+            auto find_shaderIn_RenderDataSet {RenderData_Set::shader_D.find(find_shaderPass->second)};
 
-            glCullFace(GL_FRONT);
-            RenderData_Set::ModelsScene_D->render_nearPos_shaderSet(&find_shaderPass->second);
-            glCullFace(GL_BACK);
+            if (find_shaderIn_RenderDataSet == RenderData_Set::shader_D.end())
+            {
+                log_ErrorG::register_w("ERROR::CLUSTERED SHADING RENDERING::NOT FIND SHADER (PRE_PASS) IN -> RenderData_Set::shader_D ");
+                return;
+            }
 
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            std::string* shaderName_CS{  &find_shaderPass->second };
+
+            shading::shader& shader_CS{ RenderData_Set::shader_D[find_shaderPass->second] };
+
+                glBindFramebuffer(GL_FRAMEBUFFER, Prepass_D.FBO);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+                glEnable(GL_DEPTH_TEST);
+                glCullFace(GL_BACK);
+
+
+                shader_CS.use();
+                /*
+                glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, Prepass_D.TCB_zBuffer, 0);
+                glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, Prepass_D.TCB_Position, 0);
+                glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, Prepass_D.TCB_Normal, 0);
+                glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, Prepass_D.TCB_FragPosViewSpace_and_shiness, 0);
+                glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, Prepass_D.TCB_Diffuse_and_specular, 0);
+    */
+                // glCullFace(GL_FRONT);
+                RenderData_Set::ModelsScene_D->render_nearPos_prePass_CS(shaderName_CS);   //////IMPLEMENT AND LINK THE TEXTURES TO RENDER THE MODEL AND SAVE THE DATA
+                shaderName_CS = nullptr;
+
+                glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
 
         else
         {
-            std::string error_Log {"ERROR::CLUSTERED SHADING RENDERING::NOT FIND SHADER FOR PRE_PASS"};
-            log_ErrorG::register_w(error_Log.c_str());
-
+            log_ErrorG::register_w("ERROR::CLUSTERED SHADING RENDERING::NOT FIND SHADER FOR (PRE_PASS)");
         }
 
     }
@@ -506,6 +537,7 @@ namespace Clustered_Shading {
         if (find_shaderTiles != shaders_ID.end())
         {
             RenderData_Set::shader_D[find_shaderTiles->second].use_computeShader(beautyPass_D.gridDimension_X, beautyPass_D.gridDimension_Y);
+            glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
         }
         else
         {
@@ -517,6 +549,7 @@ namespace Clustered_Shading {
         if (find_shaderClusterAABB != shaders_ID.end())
         {
             RenderData_Set::shader_D[find_shaderClusterAABB->second].use_computeShader(beautyPass_D.gridDimension_X, beautyPass_D.gridDimension_Y);
+            glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
         }
 
         else
@@ -529,6 +562,7 @@ namespace Clustered_Shading {
         if (find_shaderLightCulling != shaders_ID.end())
         {
             RenderData_Set::shader_D[find_shaderLightCulling->second].use_computeShader(beautyPass_D.gridDimension_X, beautyPass_D.gridDimension_Y);
+            glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
         }
 
         else
@@ -541,12 +575,53 @@ namespace Clustered_Shading {
 
     void renderManager_CS::Render_beautyPassCS()  /////CONTINUE HERE
     {
-        auto find_shaderBeautyPass {shaders_ID.find(typeShader::computeS_LightCulling_03)};
+        auto find_shaderBeautyPass {shaders_ID.find(typeShader::beauty_Pass)};
 
-       // if (find_shaderLightCulling != shaders_ID.end())
-        //{
-         //   RenderData_Set::shader_D[find_shaderLightCulling->second].use_computeShader(beautyPass_D.gridDimension_X, beautyPass_D.gridDimension_Y);
-        //}
+        if (find_shaderBeautyPass != shaders_ID.end())
+        {
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+
+           shading::shader& shader_beautyPass { RenderData_Set::shader_D[find_shaderBeautyPass->second]};
+           shader_beautyPass.use();
+
+           shader_beautyPass.setInt("texPosition", 0);
+           glActiveTexture(GL_TEXTURE0);
+           glBindTexture(GL_TEXTURE_2D, Prepass_D.TCB_Position);
+
+           shader_beautyPass.setInt("texNormal", 1);
+           glActiveTexture(GL_TEXTURE1);
+           glBindTexture(GL_TEXTURE_2D, Prepass_D.TCB_Normal);
+
+           shader_beautyPass.setInt("texFragPosViewSpace_and_shiness", 2);
+           glActiveTexture(GL_TEXTURE2);
+           glBindTexture(GL_TEXTURE_2D, Prepass_D.TCB_FragPosViewSpace_and_shiness);
+
+           shader_beautyPass.setInt("texDiffuse_And_Spec", 3);
+           glActiveTexture(GL_TEXTURE3);
+           glBindTexture(GL_TEXTURE_2D, Prepass_D.TCB_Diffuse_and_specular);
+
+           shader_beautyPass.setVec3("viewPos", cameras::cameras_D[cameras::name_CurrentCamera].posCam);
+           shader_beautyPass.setVec2("screenSize", glm::vec2(screenSettings::screen_w, screenSettings::screen_h));
+           shader_beautyPass.setFloat("zNear", beautyPass_D.zNear);
+           shader_beautyPass.setFloat("zFar", beautyPass_D.zFar);
+           shader_beautyPass.setFloat("scaleZ", beautyPass_D.scaleZ);
+           shader_beautyPass.setFloat("biasZ", beautyPass_D.biasZ);
+           shader_beautyPass.setFloat("gridDimX", beautyPass_D.gridDimension_X);
+           shader_beautyPass.setFloat("gridDimY", beautyPass_D.gridDimension_Y);
+
+           shader_beautyPass.setVec3("indirect_light", glm::vec3(0.3, 0.4, 0.5));
+
+          glBindVertexArray(empty_VAO);
+          glDrawArrays(GL_TRIANGLES, 0, 3);
+          glBindVertexArray(0);
+
+        }
+
+        else
+        {
+            log_ErrorG::register_w("ERROR::CLUSTERED SHADING RENDERING::NOT FIND SHADER FOR (BEAUTY PASS)");
+        }
 
     }
 }

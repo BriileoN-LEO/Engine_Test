@@ -1,5 +1,5 @@
 #include "data_save.h" 
-
+#include "log_Errors/log_error_General.h"
 
 namespace vectors
 {
@@ -103,6 +103,21 @@ namespace register_Errors
 
 namespace resolve_Errors
 {
+
+	void detect_BOM_UFT_8(const char* sen_error, const std::string& dataCode)
+	{
+		if (dataCode.size() >= 3 &&
+		static_cast<unsigned char>(dataCode[0]) == 0xEF &&
+		static_cast<unsigned char>(dataCode[1]) == 0xBB &&
+		static_cast<unsigned char>(dataCode[2]) == 0xBF
+			)
+	    {
+			std::string log_error_BOM{sen_error};
+			log_error_BOM = "ERROR::" + log_error_BOM;
+
+			log_ErrorG::register_w(log_error_BOM.c_str());
+		}
+	}
 	void quit_BOM_UFT_8(std::string& dataCode)
 	{
 		if (dataCode.size() >= 3 &&

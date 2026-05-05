@@ -62,23 +62,23 @@ void main()
 
     //FACE FAR IN VIEW SPACE
   vec3 FarTopLeft_AABB = screenToView(top_left, screenSize_D, depthMax_z, inverseProj_D);
-  vec3 FarTopRight_AABB = screenToView(top_Right, screenSize_D, depthMax_z, inverseProj_D);
+  vec3 FarTopRight_AABB = screenToView(top_right, screenSize_D, depthMax_z, inverseProj_D);
   vec3 FarButtomLeft_AABB = screenToView(buttom_left, screenSize_D, depthMax_z, inverseProj_D);
   vec3 FarButtomRight_AABB = screenToView(buttom_right, screenSize_D, depthMax_z, inverseProj_D);
 
     //FACE NEAR IN VIEW SPACE
   vec3 NearTopLeft_AABB = screenToView(top_left, screenSize_D, depthMin_z, inverseProj_D);
-  vec3 NearTopRight_AABB = screenToView(top_Right, screenSize_D, depthMin_z, inverseProj_D);
+  vec3 NearTopRight_AABB = screenToView(top_right, screenSize_D, depthMin_z, inverseProj_D);
   vec3 NearButtomLeft_AABB = screenToView(buttom_left, screenSize_D, depthMin_z, inverseProj_D);
   vec3 NearButtomRight_AABB = screenToView(buttom_right, screenSize_D, depthMin_z, inverseProj_D);
 
   vec3 minPos_AABB =
-  min(FarTopLeft_AABB, min(minFarTopRight_AABB, min(FarButtomLeft_AABB, min(FarButtomRight_AABB,
-  min(miNearTopLeft_AABB, min(NearTopRight_AABB, min(NearButtomLeft_AABB, min(NearButtomRight_AABB))))))));
+  min(FarTopLeft_AABB, min(FarTopRight_AABB, min(FarButtomLeft_AABB, min(FarButtomRight_AABB,
+  min(NearTopLeft_AABB, min(NearTopRight_AABB, min(NearButtomLeft_AABB, NearButtomRight_AABB)))))));
 
   vec3 maxPos_AABB =
-  max(FarTopLeft_AABB, max(minFarTopRight_AABB, max(FarButtomLeft_AABB, max(FarButtomRight_AABB,
-  max(miNearTopLeft_AABB, max(NearTopRight_AABB, max(NearButtomLeft_AABB, max(NearButtomRight_AABB))))))));
+  max(FarTopLeft_AABB, max(FarTopRight_AABB, max(FarButtomLeft_AABB, max(FarButtomRight_AABB,
+  max(NearTopLeft_AABB, max(NearTopRight_AABB, max(NearButtomLeft_AABB, NearButtomRight_AABB)))))));
 
       clusters[tileIndex].minPoint = vec4(minPos_AABB, 1.0);
       clusters[tileIndex].maxPoint = vec4(maxPos_AABB, 1.0);

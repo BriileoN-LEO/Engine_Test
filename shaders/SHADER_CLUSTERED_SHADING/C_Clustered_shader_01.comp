@@ -36,15 +36,17 @@ void main()
  barrier();
 
  ivec2 pixelCoord = ivec2(gl_GlobalInvocationID.xy);
+ ivec2 texSize = textureSize(depthMap, 0);
 
- float depth = texelFetch(depthMap, pixelCoord, 0).r;
+ if(pixelCoord.x < texSize.x && pixelCoord.y < texSize.y)
+ {
+  float depth = texelFetch(depthMap, pixelCoord, 0).r;
 
- uint depth_Uint = floatBitsToUnit(depth);
+  uint depth_Uint = floatBitsToUint(depth);
 
- atomicMin(minDepthInt, depth_Uint);
- atomicMax(maxDepthInt, depth_Uint);
-
-
+  atomicMin(minDepthInt, depth_Uint);
+  atomicMax(maxDepthInt, depth_Uint);
+ }
 
  barrier();
 
@@ -52,6 +54,7 @@ void main()
  {
   tiles[tileIndex].minDepth = uintBitsToFloat(minDepthInt);
   tiles[tileIndex].maxDepth = uintBitsToFloat(maxDepthInt);
+
  }
 
 }

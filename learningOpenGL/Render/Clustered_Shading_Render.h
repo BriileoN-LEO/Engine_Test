@@ -76,6 +76,8 @@ namespace Clustered_Shading
     {
     private:
 
+        unsigned int empty_VAO{};
+
         dataSSBO_ClusteredShading dataSSBO_CS{};
         data_Prepass Prepass_D{};
         data_BeautyPass beautyPass_D{};

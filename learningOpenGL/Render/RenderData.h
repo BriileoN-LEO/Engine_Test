@@ -12,7 +12,7 @@
 #include "frameBuffers.h"
 #include "2D_UI/Interface_generalUI.h"
 #include "resource_Manager/resourceManager.h"
-
+#include "Render/Clustered_Shading_Render.h"
 
 namespace shadowsManager
 {
@@ -20,13 +20,11 @@ namespace shadowsManager
 	class omnidirectional_ShadowMap_PL;
 }
 
-
 namespace RenderData_Set
 {
 //	extern std::vector<Assimp_D::Model> models_D;
 
 	extern std::map<std::string, ObjCreation::ModelCreation> ModelCreation_D;
-
 
     //extern std::map<std::string, Assimp_D::Model> AssimpModel_D; ///CHANGE THIS TO EDIT THEM LIKE A STD::MAP
     extern std::optional<resourceManager::manager_Model> AssimpModel_D;
@@ -242,6 +240,15 @@ namespace Shader_Set
 	void setShader_settings(bool& check_Exist);
 
 	void set_All_UB();
+}
+
+namespace Clustered_Shading_RenderData
+{
+	extern std::optional<Clustered_Shading::renderManager_CS> CS_Rendering_Manager;
+
+	void init_ClusteredShading_Manager();
+	void createResources_ClusteredShading();
+
 }
 
 #endif //RenderData

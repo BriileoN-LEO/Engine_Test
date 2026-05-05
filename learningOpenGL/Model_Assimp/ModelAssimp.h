@@ -281,6 +281,7 @@ namespace Assimp_D
 		void Draw_WithLights(shading::shader& shader, std::string& shaderNormals_ID);
 		void Draw_WithLights02(shading::shader& shader);
 		void Draw_DepthMap(shading::shader& shader);
+		void Draw_PrePassCS(shading::shader& shader);
 		void Draw_Alone();
 		void Draw_WithoutModel(shading::shader& shader, std::string shaderNormals_ID);
 		void build_PreDraw(shading::shader& shader);  ///SEARCH THIS IF I NEED IT
@@ -334,6 +335,7 @@ namespace Assimp_D
 		void DrawSingleMesh(std::string nameMesh, int shaderOp);
 		void DrawExcludeMesh(std::string nameMesh);
 		void Draw_DepthMapShadow(uint32_t mesh_ID, std::string* shader_ID);
+		void Draw_PrePassCS(uint32_t mesh_ID, std::string* shader_ID);
 		void destroyModel();
 
 		void calculate_centerBoundingBox();

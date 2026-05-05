@@ -62,7 +62,7 @@ bool intersect_Light(vec4 lightPos_radius, vec3 minPt_AABB, vec3 maxPt_AABB)
 
    vec3 dist_pt_Light = lightPos_radius.xyz - closest_Pt_AABB;
 
-   float dist_AABB_Light = dot(dist_pt_Light, dist_pt_light);
+   float dist_AABB_Light = dot(dist_pt_Light, dist_pt_Light);
    float dist_radiusLight = lightPos_radius.w * lightPos_radius.w;
 
    return dist_AABB_Light <= dist_radiusLight;

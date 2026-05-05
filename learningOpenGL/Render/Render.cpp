@@ -4,6 +4,7 @@
 #include "Edit_Modes/Edit_M.h"
 #include "optimize_Algorithmics/optimizeAlgorithmics.h"
 #include "shadows_manager/shadows_D.h"
+#include "Render/Clustered_Shading_Render.h"
 //#include "playTest.h"
 //#include "Collision/ScreenHit.h"
 
@@ -455,6 +456,26 @@ namespace render
 	}
 
 }
+
+namespace render_ClusteredShading
+{
+	void update_CS()
+	{
+		Clustered_Shading_RenderData::CS_Rendering_Manager->update_lightsSSBO();
+		Clustered_Shading_RenderData::CS_Rendering_Manager->update_beautyPass();
+	}
+	void render_All_CS()
+	{
+		update_CS();
+		Shader_Set::set_All_UB();
+
+		Clustered_Shading_RenderData::CS_Rendering_Manager->Render_passCS_rendering();
+		Clustered_Shading_RenderData::CS_Rendering_Manager->Render_computeCS();
+		Clustered_Shading_RenderData::CS_Rendering_Manager->Render_beautyPassCS();
+	}
+
+}
+
 
 namespace openGL_render
 {

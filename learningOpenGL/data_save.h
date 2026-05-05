@@ -33,6 +33,7 @@ namespace register_Errors
 
 namespace resolve_Errors
 {
+  void detect_BOM_UFT_8(const char* sen_error,const std::string& dataCode);
   void quit_BOM_UFT_8(std::string& dataCode);
 
 }

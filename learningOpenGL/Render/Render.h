@@ -50,6 +50,12 @@ namespace render
 
 }
 
+namespace render_ClusteredShading
+{
+   void update_CS();
+   void render_All_CS();
+
+}
 
 namespace openGL_render
 {

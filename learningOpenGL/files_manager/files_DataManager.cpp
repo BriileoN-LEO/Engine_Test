@@ -8,7 +8,7 @@
 
 namespace filesData
 {
-    const char* read_FileData_str_(const char* file_path, int line, const char* file)
+    std::string read_FileData_str_(const char* file_path, int line, const char* file)
     {
 
         std::ifstream StreamFile;
@@ -23,23 +23,22 @@ namespace filesData
             file_Str_Stream << StreamFile.rdbuf();
             StreamFile.close();
         }
-        catch (std::ifstream::failure e)
+        catch (const std::ifstream::failure& e)
         {
-            std::string log_error {"ERROR::FILE_NOT_SUCCESFULLY_READ ---->" +  static_cast<std::string>(file_path) + '\n'};
-            log_ErrorG::register_w_(file, line, log_error.c_str());
-            return nullptr;
-            //std::cout << e.what();
+           // std::string log_error {"ERROR::FILE_NOT_SUCCESFULLY_READ ---->" +  static_cast<std::string>(file_path) + '\n'};
+           // log_ErrorG::register_w_(file, line, log_error.c_str());
+            std::cout << e.what();
+            //SDL_Log(e.what());
         }
 
+        std::string file_str { file_Str_Stream.str() };
 
-        std::string file_str = file_Str_Stream.str();
-
-        resolve_Errors::quit_BOM_UFT_8(file_str);
+        resolve_Errors::quit_BOM_UFT_8(file_str);  ///RESOLVE DE BOM UTF 8 OR OTHER PROBLEMS
 
         std::string log_success {file_path};
         log_success = "READ_FILE::COMPLETED---->" + log_success;
+        SDL_Log(log_success.c_str());
 
-
-        return file_str.c_str();
+        return file_str;
     }
 }

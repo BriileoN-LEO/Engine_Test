@@ -1218,7 +1218,23 @@ namespace Assimp_D {
 	void Mesh::Draw_DepthMap(shading::shader& shader)
 	{
 		shader.transformMat("model", MeshCoord.model);
+
 	    glBindVertexArray(VAO);
+		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
+		glBindVertexArray(0);
+	}
+
+	void Mesh::Draw_PrePassCS(shading::shader& shader)
+	{
+		shader.transformMat("model", MeshCoord.model);
+
+		textures.use_Textures_PrePassCS(shader);
+
+		shader.setVec3("Mat_SS.difusse", glm::vec3(0.5));
+		shader.setFloat("Mat_SS.specular", 0.5);
+		shader.setFloat("Mat_SS.shiness", 0.5);
+
+		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
 		glBindVertexArray(0);
 	}
@@ -1993,6 +2009,26 @@ namespace Assimp_D {
 	  {
 	  	register_error_RM::register_error_withSentence("ERROR::SHADER_ID == NULLPTR");
 	  }
+	}
+	void Model::Draw_PrePassCS(uint32_t mesh_ID, std::string* shader_ID)
+	{
+		if (shader_ID != nullptr)
+		{
+			auto find_mesh {pos_find_secuencial.find(mesh_ID)};
+
+			if (find_mesh != pos_find_secuencial.end())
+			{
+				uint32_t& pos {pos_find_secuencial[mesh_ID]};
+				meshes[pos].Draw_PrePassCS(RenderData_Set::shader_D[*shader_ID]);
+			}
+
+			shader_ID = nullptr;
+		}
+
+		else
+		{
+			register_error_RM::register_error_withSentence("ERROR::SHADER_ID == NULLPTR");
+		}
 	}
 
 	void Model::destroyModel()

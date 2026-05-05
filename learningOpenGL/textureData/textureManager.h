@@ -30,6 +30,7 @@ namespace texDataManager
 
 	extern  std::map<std::string, typeTexture> typeTex_String;
 	extern  std::map<typeTexture, texToShader> typeTex_T;
+	extern  std::map<typeTexture, std::string> typeTex_ClusteredShading_prePass;
 
 	enum class formatImage
 	{
@@ -207,7 +208,6 @@ namespace textureCache
 	{
 	public:
 		std::vector<texDataManager::TextureData_File> textures_LoadCache{};
-
 		uint32_t size_diffuse_texture{};
 		uint32_t size_specular_texture{};
 
@@ -218,6 +218,7 @@ namespace textureCache
 
 		void insert_TexturesData(std::vector<texDataManager::TextureData_File>& tex_data);  ////THIS INSERT THE TEXTURE OF ALL THE LOADED ASSIMP
 		void use_MaterialTextures(shading::shader& shader, int textureMax);
+		void use_Textures_PrePassCS(shading::shader& shader);
 		void insertNewTexture(const char* pathTexture, texDataManager::typeTexture tex);
 
 	};
@@ -231,6 +232,7 @@ namespace texLoad_Data
 	extern std::array<GLenum, 2> dataImage_BitsSize;
 
 	void set_dataImage_info();
+	void set_all();
 
 	unsigned int load_Texture_zBuffer(unsigned int& res_width, unsigned int& res_height);
 	unsigned int* load_Texture_nBuffer(unsigned int& res_width, unsigned int& res_height, GLenum typeData_Tex, GLenum color_Attachment);

@@ -29,6 +29,10 @@ namespace lib_SHADER_openGL
   {
     glUniform2f(location, value.x, value.y);
   }
+  inline void set_glUniform2fv(const int& location, const glm::vec2& value)
+  {
+    glUniform2fv(location, GL_TRUE, glm::value_ptr(value));
+  }
   inline void set_glUniform3fv(const int& location, const glm::vec3& value)
   {
     glUniform3fv(location, GL_TRUE, glm::value_ptr(value));
