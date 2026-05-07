@@ -58,10 +58,16 @@ namespace texDataManager
 		)},
 	};
 
-	 std::map<typeTexture, std::string> typeTex_ClusteredShading_prePass
+	 std::map<typeTexture, texToShader> typeTex_ClusteredShading_prePass
 	{
-	    {typeTexture::diffuse, "texture_diffuse"} ,
-		{typeTexture::specular, "texture_specular"}
+		    {typeTexture::diffuse, texToShader(
+				"texture_diffuse",
+				"use_texture_diffuse"
+			)},
+            {typeTexture::specular,texToShader(
+                "texture_specular",
+		        "use_texture_specular"
+            )},
 	};
 
 
@@ -1114,15 +1120,45 @@ namespace textureCache
 	void texture_Data::use_Textures_PrePassCS(shading::shader& shader)
 	{
 		std::string prefixTexture {"Mat_tex."};
+		std::string nameTexture{};
+
+		std::vector<texDataManager::typeTexture> textures_find{};
+
+		uint8_t size_texSaved{};
 
 		auto indices{ std::views::iota(0) };
 		for (auto [idx, texMat] : std::views::zip(indices, textures_LoadCache))
 	    {
-          std::string nameTexture { prefixTexture + texDataManager::typeTex_ClusteredShading_prePass[texMat.typeTex]};
+		  textures_find.emplace_back(texMat.typeTex);
+
+          nameTexture = prefixTexture + texDataManager::typeTex_ClusteredShading_prePass[texMat.typeTex].textureInsert;
 
 		  shader.setInt(nameTexture, idx);
 		  glActiveTexture(GL_TEXTURE0 + idx);
 	      glBindTexture(GL_TEXTURE_2D, textures[texMat.nameTexture].textureID);
+
+	      nameTexture = prefixTexture + texDataManager::typeTex_ClusteredShading_prePass[texMat.typeTex].textureBool;
+	      shader.setBool(nameTexture, true);
+
+		  ++size_texSaved;
+		}
+
+		for (uint8_t i = 0; i < static_cast<uint8_t>(texDataManager::typeTexture::back_Texture); ++i)
+		{
+		   texDataManager::typeTexture tex_typeD {static_cast<texDataManager::typeTexture>(i)};
+
+          if (!std::binary_search(textures_find.begin(), textures_find.end(), tex_typeD))
+          {
+          	nameTexture = prefixTexture + texDataManager::typeTex_ClusteredShading_prePass[tex_typeD].textureInsert;
+          	shader.setInt(nameTexture, size_texSaved);
+          	glActiveTexture(GL_TEXTURE0 + size_texSaved);
+          	glBindTexture(GL_TEXTURE_2D, 0);
+
+          	nameTexture = prefixTexture + texDataManager::typeTex_ClusteredShading_prePass[tex_typeD].textureBool;
+          	shader.setBool(nameTexture, false);
+
+          	++size_texSaved;
+          }
 		}
 
 		glBindTexture(GL_TEXTURE_2D, 0);

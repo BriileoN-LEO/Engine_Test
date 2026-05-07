@@ -85,7 +85,10 @@ void main()
 
         for(uint i = 0; i < num_Lights; i++)
         {
-        bool light_intersect_AABB = intersect_Light(Lights_Array[i].lightPos_radius, minPos_AABB, maxPos_AABB);
+          vec4 right_light = Lights_Array[i].lightPos_radius;
+          right_light.w += 0.05;
+
+          bool light_intersect_AABB = intersect_Light(right_light, minPos_AABB, maxPos_AABB);
 
           if(light_intersect_AABB == true)
           {

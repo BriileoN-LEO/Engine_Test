@@ -658,6 +658,7 @@ namespace camera
 		//to rot cam
 	//	cam = glm::rotate(cam, 180.0f, directionView);
 		camProjection = glm::perspective(glm::radians(this->fovCam), aspectRatio, this->nearCut, this->maxCut);
+		camInvProjection = glm::inverse(camProjection);
 	};
 
 	void camera1::rotateCam()
@@ -787,7 +788,7 @@ namespace camera
 
 		//SDL_Log(std::to_string(fovCam).c_str());
 		camProjection = glm::perspective(glm::radians(fovCam), static_cast<float>(screenSettings::screen_w) / static_cast<float>(screenSettings::screen_h), nearCut, maxCut);
-
+		camInvProjection = glm::inverse(camInvProjection);
 	};
 
 	//SETTINGS TO CAMERA EDIT MODE 

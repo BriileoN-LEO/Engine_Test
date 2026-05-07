@@ -19,8 +19,8 @@ sampler2D texture_specular;
 //sampler2D back_Texture;
 
 //bool blendTextureDiffuse; /////ESTE VALOR SE DEJA AL AIRE
-//bool use_texture_diffuse;
-//bool use_texture_specular;
+bool use_texture_diffuse;
+bool use_texture_specular;
 
 };
 
@@ -44,12 +44,13 @@ void main()
   gNormal = normalize(Normal);
   gFragPosViewSpace_and_shiness = vec4(FragPosViewSpace.xyz, Mat_SS.shiness);
 
-  vec3 diffuse = texture(Mat_tex.texture_diffuse, texCoords).rgb;
-  float specular = texture(Mat_tex.texture_specular, texCoords).r;
+ // vec3 diffuse = texture(Mat_tex.texture_diffuse, texCoords).rgb;
+  //float specular = texture(Mat_tex.texture_specular, texCoords).r;
 
-  if(diffuse.r != 0.0)
+  if(Mat_tex.use_texture_diffuse == true)
   {
      //vec3 diffuse = texture(Mat_tex.texture_diffuse, texCoords).rgb;
+      vec3 diffuse = texture(Mat_tex.texture_diffuse, texCoords).rgb;
       gDiffuse_and_specular.rgb = texture(Mat_tex.texture_diffuse, texCoords).rgb;  /////////////////////////
   }
 
@@ -58,8 +59,9 @@ void main()
      gDiffuse_and_specular.rgb = Mat_SS.difusse;
   }
 
-  if(specular != 0.0)
+  if(Mat_tex.use_texture_specular == true)
   {
+     float specular = texture(Mat_tex.texture_specular, texCoords).r;
      gDiffuse_and_specular.a = specular; /////////////////////////
   }
 

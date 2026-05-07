@@ -14,7 +14,7 @@ namespace KTX_lib
 
 namespace texDataManager
 {
-	enum class typeTexture
+	enum class typeTexture : uint8_t
 	{
 		diffuse = 0,
 		specular = 1,
@@ -30,7 +30,7 @@ namespace texDataManager
 
 	extern  std::map<std::string, typeTexture> typeTex_String;
 	extern  std::map<typeTexture, texToShader> typeTex_T;
-	extern  std::map<typeTexture, std::string> typeTex_ClusteredShading_prePass;
+	extern  std::map<typeTexture, texToShader> typeTex_ClusteredShading_prePass;
 
 	enum class formatImage
 	{

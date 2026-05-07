@@ -17,6 +17,8 @@ namespace Clustered_Shading {
 
     void renderManager_CS::load_data(unsigned int res_width, unsigned int res_height)
     {
+        glGenVertexArrays(1, &empty_VAO);
+
         unsigned int FBO{};
         glGenFramebuffers(1, &FBO);
         // glBindFramebuffer(GL_FRAMEBUFFER, FBO);
@@ -149,11 +151,15 @@ namespace Clustered_Shading {
     void renderManager_CS::update_tilesBound_SSBO_03()
     {
 
+
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, dataSSBO_CS.tilesBound_SSBO);
 
+        unsigned int resetZero{};
+        glClearBufferData(GL_SHADER_STORAGE_BUFFER, GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT, &resetZero);
+        /*
         size_t numTiles_t {sizeof(glm::vec4) * num_tiles_all};
         glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, numTiles_t, nullptr);
-
+*/
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
     }
@@ -185,8 +191,12 @@ namespace Clustered_Shading {
     {
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, dataSSBO_CS.tilesBound_SSBO);
 
+        unsigned int resetZero{};
+        glClearBufferData(GL_SHADER_STORAGE_BUFFER, GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT, &resetZero);
+        /*
         size_t numTiles_t {(sizeof(glm::vec4) * 2) * num_tiles_all};
         glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, numTiles_t, nullptr);
+          */
 
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
     }
@@ -302,7 +312,11 @@ namespace Clustered_Shading {
 
         size_t size_vec { static_cast<size_t>(sizeof(data_SSBO_CS::lights_SSBO) * lights_Data.size())};
 
+
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, dataSSBO_CS.Lights_SSBO);
+
+        unsigned int resetZero{};
+        glClearBufferData(GL_SHADER_STORAGE_BUFFER, GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT, &resetZero);
 
         glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, size_vec, lights_Data.data());
 
@@ -334,8 +348,12 @@ namespace Clustered_Shading {
     {
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, dataSSBO_CS.Lights_Grid_SSBO);
 
+        unsigned int resetZero{};
+        glClearBufferData(GL_SHADER_STORAGE_BUFFER, GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT, &resetZero);
+        /*
         size_t tilesContentSize { sizeof(glm::vec4) * num_tiles_all };
         glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, tilesContentSize, nullptr);
+       */
 
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
@@ -362,8 +380,12 @@ namespace Clustered_Shading {
     {
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, dataSSBO_CS.global_ID_Lights_SSBO);
 
+        unsigned int resetZero{};
+        glClearBufferData(GL_SHADER_STORAGE_BUFFER, GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT, &resetZero);
+        /*
         size_t tilesContentSize { static_cast<size_t>( sizeof(uint32_t) * (num_tiles_all * RenderData_Set::lightsScene_D->num_all_Lights())) };
         glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, tilesContentSize, nullptr);
+         */
 
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
@@ -388,10 +410,16 @@ namespace Clustered_Shading {
     }
     void renderManager_CS::update_globalCounterAtomic_SSBO_08()
     {
+     //   unsigned int zeroAtomic {0};
+
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, dataSSBO_CS.globalCounter_Atomic_SSBO);
 
+        unsigned int resetZero{};
+        glClearBufferData(GL_SHADER_STORAGE_BUFFER, GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT, &resetZero);
+        /*
         size_t tilesContentSize { sizeof(uint32_t) };
-        glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, tilesContentSize, nullptr);
+        glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, tilesContentSize, &zeroAtomic);
+        */
 
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
     }
@@ -441,6 +469,7 @@ namespace Clustered_Shading {
     {
         update_tilesBound_SSBO_03();
         update_clusterAABB_SSBO_04();
+      //  update_Lights_SSBO_05();
         update_LightGridBuff_SSBO_06();
         update_globalIDLights_SSBO_07();
         update_globalCounterAtomic_SSBO_08();
@@ -502,7 +531,7 @@ namespace Clustered_Shading {
             shading::shader& shader_CS{ RenderData_Set::shader_D[find_shaderPass->second] };
 
                 glBindFramebuffer(GL_FRAMEBUFFER, Prepass_D.FBO);
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+               glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
                 glEnable(GL_DEPTH_TEST);
                 glCullFace(GL_BACK);
@@ -536,7 +565,18 @@ namespace Clustered_Shading {
 
         if (find_shaderTiles != shaders_ID.end())
         {
-            RenderData_Set::shader_D[find_shaderTiles->second].use_computeShader(beautyPass_D.gridDimension_X, beautyPass_D.gridDimension_Y);
+           // RenderData_Set::shader_D[find_shaderTiles->second].use_computeShader(beautyPass_D.gridDimension_X, beautyPass_D.gridDimension_Y);
+            shading::shader& shader_Tiles {RenderData_Set::shader_D[find_shaderTiles->second]};
+
+            shader_Tiles.use();
+
+            shader_Tiles.setInt("depthMap", 0);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, Prepass_D.TCB_zBuffer);
+
+            glDispatchCompute(beautyPass_D.gridDimension_X, beautyPass_D.gridDimension_Y, 1);
+            glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+
             glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
         }
         else
@@ -548,7 +588,16 @@ namespace Clustered_Shading {
 
         if (find_shaderClusterAABB != shaders_ID.end())
         {
-            RenderData_Set::shader_D[find_shaderClusterAABB->second].use_computeShader(beautyPass_D.gridDimension_X, beautyPass_D.gridDimension_Y);
+            //RenderData_Set::shader_D[find_shaderClusterAABB->second].use_computeShader(beautyPass_D.gridDimension_X, beautyPass_D.gridDimension_Y);
+            shading::shader& shader_ClusterAABB {RenderData_Set::shader_D[find_shaderClusterAABB->second]};
+
+            shader_ClusterAABB.use();
+            shader_ClusterAABB.setVec2("screenSize_D", glm::vec2(screenSettings::screen_w, screenSettings::screen_h));
+            shader_ClusterAABB.transformMat("inverseProj_D", cameras::cameras_D[cameras::name_CurrentCamera].camInvProjection);
+
+            glDispatchCompute(beautyPass_D.gridDimension_X, beautyPass_D.gridDimension_Y, 1);
+            glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+
             glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
         }
 
@@ -561,7 +610,16 @@ namespace Clustered_Shading {
 
         if (find_shaderLightCulling != shaders_ID.end())
         {
-            RenderData_Set::shader_D[find_shaderLightCulling->second].use_computeShader(beautyPass_D.gridDimension_X, beautyPass_D.gridDimension_Y);
+          //  RenderData_Set::shader_D[find_shaderLightCulling->second].use_computeShader(beautyPass_D.gridDimension_X, beautyPass_D.gridDimension_Y);
+            shading::shader& shader_CullingLights {RenderData_Set::shader_D[find_shaderLightCulling->second]};
+
+            shader_CullingLights.use();
+
+            shader_CullingLights.setInt("num_Lights", RenderData_Set::lightsScene_D->num_all_Lights());
+
+            glDispatchCompute(beautyPass_D.gridDimension_X, beautyPass_D.gridDimension_Y, 1);
+            glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+
             glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
         }
 
@@ -580,7 +638,7 @@ namespace Clustered_Shading {
         if (find_shaderBeautyPass != shaders_ID.end())
         {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
            shading::shader& shader_beautyPass { RenderData_Set::shader_D[find_shaderBeautyPass->second]};
            shader_beautyPass.use();
@@ -607,8 +665,9 @@ namespace Clustered_Shading {
            shader_beautyPass.setFloat("zFar", beautyPass_D.zFar);
            shader_beautyPass.setFloat("scaleZ", beautyPass_D.scaleZ);
            shader_beautyPass.setFloat("biasZ", beautyPass_D.biasZ);
-           shader_beautyPass.setFloat("gridDimX", beautyPass_D.gridDimension_X);
-           shader_beautyPass.setFloat("gridDimY", beautyPass_D.gridDimension_Y);
+           shader_beautyPass.setInt("gridDimX", beautyPass_D.gridDimension_X);
+           shader_beautyPass.setInt("gridDimY", beautyPass_D.gridDimension_Y);
+           shader_beautyPass.setInt("gridDimZ", 24);
 
            shader_beautyPass.setVec3("indirect_light", glm::vec3(0.3, 0.4, 0.5));
 

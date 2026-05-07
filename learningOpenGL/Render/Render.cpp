@@ -461,6 +461,7 @@ namespace render_ClusteredShading
 {
 	void update_CS()
 	{
+		Clustered_Shading_RenderData::CS_Rendering_Manager->update_allSSBO();
 		Clustered_Shading_RenderData::CS_Rendering_Manager->update_lightsSSBO();
 		Clustered_Shading_RenderData::CS_Rendering_Manager->update_beautyPass();
 	}

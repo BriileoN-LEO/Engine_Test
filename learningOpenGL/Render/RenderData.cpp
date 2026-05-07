@@ -1068,7 +1068,7 @@ namespace RenderData_Set
 	{
 
 		glm::vec3 purpleLight{ 0.7f, 0.5f, 1.0f };
-		glm::vec3 witheLight{ 1.0f, 1.0f, 1.0f };
+		glm::vec3 whiteLight{ 1.0f, 1.0f, 1.0f };
 		glm::vec3 green_blue{ 1.02f, 1.18f, 1.44f };
 		glm::vec3 randomColor1{ 0.5, 0.6, 0.8 };
 		glm::vec3 randomColor2{ 0.8, 0.4, 0.2 };
@@ -1080,14 +1080,13 @@ namespace RenderData_Set
 		glm::vec3 randomColor8{ 0.7, 0.8, 0.3 };	
 
 		float radioLights = 5.0f;
-		float intensityLights = 10.0f;
+		float intensityLights = 2.0f;
 
-		light::pointLight_PBR pointLight_PBR_01(glm::vec3(3.0f, 3.0f, 3.0f), witheLight, radioLights, intensityLights, true, 6.0f);
+		light::pointLight_PBR pointLight_PBR_01(glm::vec3(3.0f, 3.0f, 3.0f), whiteLight, radioLights, intensityLights, true, 6.0f);
 		pointLight_PBR_01.setID("pointLight_01");
-		light::light1 pointLight_01(glm::vec3(3.0f, 3.0f, 3.0f), witheLight);
+		light::light1 pointLight_01(glm::vec3(3.0f, 3.0f, 3.0f), whiteLight);
 		pointLight_01.setAttenuation(1.0f, 0.8f, 0.0035f);
-		pointLight_01.setMatProperties(witheLight, witheLight, witheLight);
-
+		pointLight_01.setMatProperties(whiteLight, whiteLight, whiteLight);
 
 		light::pointLight_PBR pointLight_PBR_02(glm::vec3(9.0f, 4.0f, 9.0f), purpleLight, radioLights, intensityLights, true, 6.0f);
 		pointLight_PBR_02.setID("pointLight_02");

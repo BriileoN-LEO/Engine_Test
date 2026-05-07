@@ -181,6 +181,7 @@ namespace camera
 
 		glm::mat4 cam{ glm::mat4(1.0f) };///transformaciones de la camera
 		glm::mat4 camProjection{ glm::mat4(1.0f) };
+		glm::mat4 camInvProjection {glm::mat4(1.0f) };
 
 		glm::mat4 camRotate{ glm::mat4(1.0f) };
 		glm::mat4 camTranslate{ glm::mat4(1.0f) };
@@ -224,6 +225,7 @@ namespace camera
 
 			cam = came.cam;///transformaciones de la camera
 			camProjection = came.camProjection;
+			camInvProjection = came.camInvProjection;
 
 			camRotate = came.camRotate;
 			camTranslate = came.camTranslate;
