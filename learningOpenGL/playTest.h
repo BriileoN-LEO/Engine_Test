@@ -49,6 +49,10 @@ namespace camera_Transforms
 
 namespace light_Transforms
 {
+    extern float radio_pL_All;
+	extern float intensity_pL_All;
+
+	void change_PointLightsRadio_test();
 	void spotLight_AttachLintern(light::SpotLight& spotToAttach, transformation_basics::basics_Model3D& posicionModel);	
 	void setAllTranforms_light();
 }

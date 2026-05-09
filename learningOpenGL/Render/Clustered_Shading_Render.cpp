@@ -224,6 +224,8 @@ namespace Clustered_Shading {
 
     void renderManager_CS::update_Lights_SSBO_05()
     {
+        //glm::mat4& viewMat_cam {cameras::cameras_D[cameras::name_CurrentCamera].cam};
+
         std::vector<data_SSBO_CS::lights_SSBO> lights_Data{};
 
         const uint32_t& num_dL {RenderData_Set::lightsScene_D->num_Lights(light::typeLight::DIRECTIONAL_LIGHT) };
@@ -260,6 +262,8 @@ namespace Clustered_Shading {
             if (pL_entity_D.pL_PBR_entity != nullptr)
             {
                 const light::data_pointLightPBR& pL_PBR { pL_entity_D.pL_PBR_entity->out_Data() };
+
+              //  glm::vec3 posLight_ViewSpace {viewMat_cam * glm::vec4(pL_PBR.Position, 1.0)};
 
                 lights_Data.emplace_back
                 (

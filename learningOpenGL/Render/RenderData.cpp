@@ -685,9 +685,9 @@ namespace RenderData_Set
 
 
 		shading::loadToCPU::shaderData_loadCPU Shader_prePass_CS("Shader_prePass_CS", vShader_prePass_CS.c_str(), fShader_prePass_CS.c_str(), LB_MAT, shading::loadToCPU::typeShader::NORMAL);
-        shading::loadToCPU::shaderData_loadCPU shader_ClusteredShading_01("clustered_Shading_01", cShader_Clustered_01.c_str(), shading::loadToCPU::typeShader::COMPUTE);
-		shading::loadToCPU::shaderData_loadCPU Shader_Clustered_AABB_02("Shader_Clustered_AABB_02", cShader_Clustered_AABB_02.c_str(), shading::loadToCPU::typeShader::COMPUTE);
-		shading::loadToCPU::shaderData_loadCPU Shader_Clustered_LightCuling_03("Shader_Clustered_LightCuling_03", cShader_Clustered_LightCuling_03.c_str(), shading::loadToCPU::typeShader::COMPUTE);
+        shading::loadToCPU::shaderData_loadCPU shader_ClusteredShading_01("clustered_Shading_01", cShader_Clustered_01.c_str(), shading::loadToCPU::typeShader::COMPUTE, LB_02);
+		shading::loadToCPU::shaderData_loadCPU Shader_Clustered_AABB_02("Shader_Clustered_AABB_02", cShader_Clustered_AABB_02.c_str(), shading::loadToCPU::typeShader::COMPUTE, LB_02);
+		shading::loadToCPU::shaderData_loadCPU Shader_Clustered_LightCuling_03("Shader_Clustered_LightCuling_03", cShader_Clustered_LightCuling_03.c_str(), shading::loadToCPU::typeShader::COMPUTE, LB_MAT);
 		shading::loadToCPU::shaderData_loadCPU Shader_beautyPass_CS("Shader_beautyPass_CS", vShader_beautyPass_CS.c_str(), fShader_beautyPass_CS.c_str(), LB_02, shading::loadToCPU::typeShader::NORMAL);
 
 
@@ -751,7 +751,7 @@ namespace RenderData_Set
 				else if (shaD.TS == shading::loadToCPU::typeShader::COMPUTE)  ///HAVE COMPUTE SHADER
 				{
 					SDL_Log("SHADER::COMPUTE");
-                    shader_D.emplace(shaD.nameShader, shading::shader(shaD.nameShader, shaD.computeShader_path));
+                    shader_D.emplace(shaD.nameShader, shading::shader(shaD.nameShader, shaD.computeShader_path, shaD.data_Layout));
 				}
 			}
 

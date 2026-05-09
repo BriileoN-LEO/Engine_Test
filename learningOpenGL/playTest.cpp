@@ -384,7 +384,24 @@ namespace camera_Transforms
 }
 
 namespace light_Transforms
-{ 
+{
+	float radio_pL_All{5.0f};
+	float intensity_pL_All {2.0f};
+
+	void change_PointLightsRadio_test()
+	{
+      uint32_t& num_pL {RenderData_Set::lightsScene_D->num_Lights(light::typeLight::POINT_LIGHT)};
+
+	  for (int i = 0; i < num_pL; ++i)
+	  {
+          utilities_Lights::entity_pL& pL_ref {RenderData_Set::lightsScene_D->entity_pL_by_Pos(i)};
+	  	  pL_ref.pL_PBR_entity->update_radio(radio_pL_All);
+	  	  pL_ref.pL_PBR_entity->update_intensity(intensity_pL_All);
+
+	  };
+
+	}
+
 	void spotLight_AttachLintern(light::SpotLight& spotToAttach, transformation_basics::basics_Model3D& posicionModel)
 	{
 		spotToAttach.updateLight(posicionModel.translateM, posicionModel.viewOrient);

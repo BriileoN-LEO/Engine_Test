@@ -148,7 +148,7 @@ namespace shading
 		shader(unsigned int ID);
 		shader(std::string name, const char* vertexPath, const char* fragmentPath, std::vector<layoutType> data_Layout); /////
 		shader(std::string name, const char* vertexPath, const char* fragmentPath, const char* geometryPath, std::vector<layoutType> data_Layout); /////
-		shader(std::string name, const char* computeShader_Path);
+		shader(std::string name, const char* computeShader_Path, std::vector<layoutType> data_Layout);
 
 		void shaderCreation(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr);
 		void computeShaderCreation(const char* computeShader_Path);
@@ -212,7 +212,7 @@ namespace shading
 		    shaderData_loadCPU();
 			shaderData_loadCPU(std::string nameShader, const char* vertexShader_name, const char* fragmentShader_name, std::vector<layoutType> data_Layout, typeShader TS);
 			shaderData_loadCPU(std::string nameShader, const char* vertexShader_name, const char* fragmentShader_name, std::vector<layoutType> data_Layout, const char* geometryShader_name, typeShader TS);
-            shaderData_loadCPU(std::string nameShader, const char* computeShader_path, typeShader TS);
+            shaderData_loadCPU(std::string nameShader, const char* computeShader_path, typeShader TS, std::vector<layoutType> data_Layout);
             shaderData_loadCPU(const shaderData_loadCPU&& shader_LCPU) noexcept;
 			shaderData_loadCPU(const shaderData_loadCPU& shader_LCPU);
 

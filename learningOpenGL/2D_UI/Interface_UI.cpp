@@ -2,6 +2,7 @@
 #include "2D_UI/Interface_generalUI.h"
 #include "Edit_Modes/Edit_M.h"
 #include "log_Errors/log_error_General.h"
+#include "playTest.h"
 
 namespace UI_EditMode
 {
@@ -238,6 +239,17 @@ namespace UI_EditMode
 		ImGui::End();
 	}
 
+	void render_pLRadio_Slider()
+	{
+		float& rad {light_Transforms::radio_pL_All};
+        float& intensity {light_Transforms::intensity_pL_All};
+
+		ImGui::Begin("point_Lights_Radio");
+		ImGui::SliderFloat("RADIO", &rad, 0.0, 20.0);
+		ImGui::SliderFloat("INTENSITY", &intensity, 0.0, 20.0);
+
+		ImGui::End();
+	}
 
 }
 
@@ -374,6 +386,8 @@ namespace UI
           UI_EditMode::render_SelectionObj();
 		  UI_EditMode::render_shading_selection();
 		}
+
+		UI_EditMode::render_pLRadio_Slider();
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

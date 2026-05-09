@@ -25,6 +25,7 @@ const float kShininess = 16.0;
 
 uniform vec3 indirect_light;
 
+
 struct Light
 {
  vec4 lightPos_radius; // 0-12  ---> .w == radius
@@ -133,6 +134,8 @@ void main()
    {
       Light light_D = Lights_Array[global_ID_lights[lightStartPoint + i]];
 
+       if(light_D.light_Type == 1)
+       {
            vec3 halfwayDir_lightAndFrag = light_D.lightPos_radius.xyz - gPosition;
 
            vec3 L = normalize(halfwayDir_lightAndFrag);
@@ -145,13 +148,12 @@ void main()
            float rad_sqr = radius * radius;
            float attenuation = clamp(1.0 - (dist_sqr / rad_sqr), 0.0, 1.0);
            attenuation * attenuation;
-         //  float attenuation = 1.0 / (distance * distance);
+           //  float attenuation = 1.0 / (distance * distance);
 
            vec3 radiance = light_D.Color_And_Intensity.xyz * light_D.Color_And_Intensity.w * attenuation;
 
            //float roughness = 1.0 - gSpecular;
            float roughness = 0.2;
-
 
            float NDF = calc_DistributionGGX(N, H, roughness);
            float G = calc_GeometrySmith(N, V, L, roughness);
@@ -168,7 +170,7 @@ void main()
 
            float NdotL = max(dot(N, L), 0.0);
            Lo += (kD * gDiffuse / pi + specular) * radiance * NdotL;
-
+       }
       // Lo += vec3(0.1);
    }
 

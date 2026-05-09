@@ -41,6 +41,8 @@ extern std::array<bool*, 4> buttom_detect;
  void render_SelectionObj();
  void render_shading_selection();
 
+ void render_pLRadio_Slider();
+
 }
 
 namespace UI

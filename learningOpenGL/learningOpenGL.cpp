@@ -499,6 +499,7 @@ int main(int argc, char* argv[])
 					testPlay::transformation_handCamara();
 					refresh_Models::refreshAll_Models();
 
+					light_Transforms::change_PointLightsRadio_test();
 
 					//AABB::updateCoordAABB_All();
 					//ScreenCalc_Hit::calc_IntersectALL();

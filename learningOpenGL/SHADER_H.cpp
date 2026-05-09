@@ -270,10 +270,24 @@ namespace shading
 		    }
 	}
 
-	shader::shader(std::string name, const char* computeShader_Path) :
+	shader::shader(std::string name, const char* computeShader_Path, std::vector<layoutType> data_Layout) :
     	name(name)
 	{
 		computeShaderCreation(computeShader_Path);
+
+		for (auto& dL : data_Layout)
+		{
+			if (dL == layoutType::MATRIX_OBJ ||
+			   dL == layoutType::SHADER_SETTINGS)
+			{
+				//	unsigned int setUniformBlockIndex{ glGetUniformBlockIndex(ID, shaders_LayoutB[dL].outNameBlockD().c_str()) };
+				//	glUniformBlockBinding(ID, setUniformBlockIndex, shaders_LayoutB[dL].outIndexP());
+
+				unsigned int setUniformBlockIndex{ glGetUniformBlockIndex(ID, settings_LayoutUni[dL].first.c_str()) };
+				glUniformBlockBinding(ID, setUniformBlockIndex, settings_LayoutUni[dL].second);
+
+			}
+		}
 	}
 	/////
 	void shader::shaderCreation(const char* vertexPath, const char* fragmentPath, const char* geometryPath)
@@ -710,10 +724,11 @@ namespace shading
 		data_Layout(data_Layout),
 		geometryShader_name(std::move(geometryShader_name)){};
 
-		shaderData_loadCPU::shaderData_loadCPU(std::string nameShader, const char* computeShader_path, typeShader TS) :
+		shaderData_loadCPU::shaderData_loadCPU(std::string nameShader, const char* computeShader_path, typeShader TS, std::vector<layoutType> data_Layout) :
 		nameShader(nameShader),
 		TS(TS),
-		computeShader_path(computeShader_path){};
+		computeShader_path(computeShader_path),
+		data_Layout(data_Layout){};
 
 		shaderData_loadCPU::shaderData_loadCPU(const shaderData_loadCPU&& shader_LCPU) noexcept :
 		nameShader(shader_LCPU.nameShader),
