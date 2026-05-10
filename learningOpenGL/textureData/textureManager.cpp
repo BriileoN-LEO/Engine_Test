@@ -1271,8 +1271,8 @@ namespace texLoad_Data
        dataImage_map_pos.emplace(GL_RGB, 0);
 	   dataImage_map_pos.emplace(GL_RGBA, 1);
 
-	   dataImage_BitsSize[0] = GL_RGB8;
-	   dataImage_BitsSize[1] = GL_RGBA8;
+	   dataImage_BitsSize[0] = GL_RGB32F;
+	   dataImage_BitsSize[1] = GL_RGBA32F;
 
 	}
 
@@ -1287,7 +1287,7 @@ namespace texLoad_Data
 		glGenTextures(1, &TCB);
 		glBindTexture(GL_TEXTURE_2D, TCB);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, res_width, res_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, res_width, res_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); //GL_REPEAT  // GL_CLAMP_TO_BORDER
@@ -1312,7 +1312,7 @@ namespace texLoad_Data
         	glGenTextures(1, &TCB);
         	glBindTexture(GL_TEXTURE_2D, TCB);
 
-        	glTexImage2D(GL_TEXTURE_2D, 0, dataImage_BitsSize[find_Type->second], res_width, res_height, 0, typeData_Tex, GL_UNSIGNED_BYTE, NULL);
+        	glTexImage2D(GL_TEXTURE_2D, 0, dataImage_BitsSize[find_Type->second], res_width, res_height, 0, typeData_Tex, GL_FLOAT, NULL);
 
         	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); //GL_REPEAT  // GL_CLAMP_TO_BORDER

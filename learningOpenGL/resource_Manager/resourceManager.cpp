@@ -1389,6 +1389,52 @@ namespace utilities_Lights
      render_point_sL();
   }
 
+  void scene_LightsManager::renderPrepassCS_point_dL(shading::shader& shader)
+  {
+    if (point_geo.bufferBuild())
+    {
+      for (auto dL_e : directionalLights.L_entities)
+      {
+        const light::data_directionalLightPBR& data_dL {dL_e.dL_PBR_entity->out_Data()};
+
+        glm::vec3 pos_dL {glm::normalize(-data_dL.Direction) * 5.0f};
+
+        point_geo.setPosicion(pos_dL);
+        point_geo.setColor(data_dL.Color);
+        point_geo.draw_PrePass_editMode(shader);
+      }
+    }
+  }
+  void scene_LightsManager::renderPrepassCS_point_pL(shading::shader& shader)
+  {
+    for (auto& pL : pointLights.L_entities)
+    {
+      const light::data_pointLightPBR& data_pL {pL.pL_PBR_entity->out_Data()};
+
+      point_geo.setPosicion(data_pL.Position);
+      point_geo.setColor(data_pL.Color);
+      point_geo.setSize(data_pL.size);
+      point_geo.draw_PrePass_editMode(shader);
+    }
+  }
+  void scene_LightsManager::renderPrepassCS_point_sL(shading::shader& shader)
+  {
+    for (auto& sL : spotLights.L_entities)
+    {
+      const light::data_SpotLightPBR& data_sL {sL.sL_PBR_entity->out_Data()};
+
+      point_geo.setPosicion(data_sL.Position);
+      point_geo.setColor(data_sL.Color);
+      point_geo.draw_PrePass_editMode(shader);
+    }
+  }
+  void scene_LightsManager::renderPrepassCS_All(shading::shader& shader)
+  {
+    renderPrepassCS_point_dL(shader);
+    renderPrepassCS_point_pL(shader);
+    renderPrepassCS_point_sL(shader);
+  }
+
   void scene_LightsManager::clear_data_dL()
   {
     directionalLights.L_pos.clear();

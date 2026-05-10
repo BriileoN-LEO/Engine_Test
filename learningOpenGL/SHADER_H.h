@@ -162,6 +162,7 @@ namespace shading
 
 		void setBool(const std::string& name, bool value) const;
 		void setInt(const std::string& name, int value) const;
+		void set_Uint(const std::string& name, const uint32_t& value) const;
 		void setFloat(const std::string& name, float value) const;
 		void setFLoat_array(const std::string& name, std::vector<float>& values) const;
 		void setFLoat_array_ptr(const std::string& name, std::vector<float*>& values) const;

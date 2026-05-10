@@ -1,5 +1,5 @@
-#ifndef Render
-#define Render
+#ifndef Render_H
+#define Render_H
 #include "RenderData.h"
 
 namespace shadowsManager
@@ -24,6 +24,7 @@ namespace render
 	namespace lights
 	{
 	  void render_PointLight_D();
+	  void renderPrepassCS_PointLights_D(shading::shader& shader);
 	}
 
 	namespace shadows
@@ -54,15 +55,18 @@ namespace render_ClusteredShading
 {
    void update_CS();
    void render_All_CS();
-
 }
 
 namespace openGL_render
 {
+	extern bool RENDER_CS_OR_FS;  ////RENDER CLUSTERED SHADING(CS) == TRUE / RENDER FOWARD SHADING(FS) == FALSE
+
 	void setGlobalRender_OpenGL();
 	void clearOpenGL();
 	void secondClearOpenGL();
 	void viewportSet(int origenX, int origenY, int width, int height);
+
+    void DRAW_RENDER();
 
 }
 

@@ -7,6 +7,10 @@ uniform sampler2D texPosition;
 uniform sampler2D texNormal;
 uniform sampler2D texFragPosViewSpace_and_shiness;
 uniform sampler2D texDiffuse_And_Spec;
+uniform sampler2D texEditMode;  ///NEW
+
+uniform sampler2D tex_zDepth_Models; ///NEW
+uniform sampler2D tex_zDepth_EditMode; ///NEW
 
 uniform vec3 viewPos;
 
@@ -18,13 +22,18 @@ uniform float biasZ;
 uniform uint gridDimX;
 uniform uint gridDimY;
 uniform uint gridDimZ;
-#define tileSize 16.0
+//#define tileSize 16.0
 
 const float pi = 3.14159265359;
 const float kShininess = 16.0;
 
 uniform vec3 indirect_light;
 
+layout (std140, binding = 0) uniform matrices_cam
+{
+ mat4 view_c;
+ mat4 projection_c;
+};
 
 struct Light
 {
@@ -108,13 +117,23 @@ void main()
    vec3 gDiffuse = texture(texDiffuse_And_Spec, texCoords_quadScreen).rgb;
    float gSpecular = texture(texDiffuse_And_Spec, texCoords_quadScreen).a;
    float gShiness = texture(texFragPosViewSpace_and_shiness, texCoords_quadScreen).a;
+   vec3 gEditMode = texture(texEditMode, texCoords_quadScreen).rgb;
+
+   float gZDEPTH_MODELS = texture(tex_zDepth_Models, texCoords_quadScreen).r; ///NEW
+   float gZDEPTH_EDITMODE = texture(tex_zDepth_EditMode, texCoords_quadScreen).r; ///NEW
 
    ///CALCULATE WHERE CLUSTER MATCH WITH THE PIXEL
-   uint tileX = uint(gl_FragCoord.x / tileSize);
-   uint tileY = uint(gl_FragCoord.y / tileSize);
 
-   tileX = clamp(tileX, 0u, gridDimX - 1u);
-   tileY = clamp(tileY, 0u, gridDimY - 1u);
+    vec2 tileSize = screenSize / vec2(gridDimX, gridDimY);
+   //uint tileS_X = uint(screenSize.x / gridDimX);
+   //uint tileS_Y = uint(screenSize.y / gridDimY);
+
+   uint tileX = uint(gl_FragCoord.x / tileSize.x);
+   uint tileY = uint(gl_FragCoord.y / tileSize.y);
+   //vec2 tileSize = screenSize / vec2(gridDimX, gridDimY);
+
+   tileX = uint(clamp(tileX, 0u, gridDimX - 1u));
+   tileY = uint(clamp(tileY, 0u, gridDimY - 1u));
 
    float view_Z = -gFragPosViewsSpace.z;
    uint sliceZ = uint(max(0.0, log2(view_Z) * scaleZ + biasZ));
@@ -127,30 +146,42 @@ void main()
 
    vec3 N = normalize(gNormal);
    vec3 V = normalize(viewPos - gPosition);
-   vec3 F0 = mix(vec3(0.04f), gDiffuse, gSpecular);
+
+   float metallic = 0.0;
+   vec3 F0 = mix(vec3(0.04f), gDiffuse, metallic); ///Here comes the metallic texture
 
    vec3 Lo = vec3(0.0);
-   for(int i = 0; i < lightCounter_size; i++)
-   {
-      Light light_D = Lights_Array[global_ID_lights[lightStartPoint + i]];
 
-       if(light_D.light_Type == 1)
-       {
-           vec3 halfwayDir_lightAndFrag = light_D.lightPos_radius.xyz - gPosition;
+   mat4 inv_view_c = inverse(view_c);
+   for(uint i = 0; i < lightCounter_size; i++)
+   {
+      Light light_current = Lights_Array[global_ID_lights[lightStartPoint + i]];
+
+       vec3 light_pos = vec4(inv_view_c * vec4(light_current.lightPos_radius.xyz, 1.0)).xyz;
+     //  vec3 light_pos = light_current.lightPos_radius.xyz;
+
+           vec3 halfwayDir_lightAndFrag = light_pos - gPosition;
 
            vec3 L = normalize(halfwayDir_lightAndFrag);
            vec3 H = normalize(V + L);
 
-           float radius = light_D.lightPos_radius.w;
+           float radius = light_current.lightPos_radius.w;
            float distance = length(halfwayDir_lightAndFrag);
 
            float dist_sqr = distance * distance;
+           float inv_Square = 1.0 / max(dist_sqr, 0.0001);
            float rad_sqr = radius * radius;
-           float attenuation = clamp(1.0 - (dist_sqr / rad_sqr), 0.0, 1.0);
-           attenuation * attenuation;
+           float factor = dist_sqr / rad_sqr;
+           float factor2 = factor * factor;
+           float windowing = clamp(1.0 - factor2, 0.0, 1.0);
+           windowing *= windowing;
+
+           float attenuation = inv_Square * windowing;
+           //float attenuation = clamp(1.0 - (dist_sqr / rad_sqr), 0.0, 1.0);
+           //attenuation *= attenuation;
            //  float attenuation = 1.0 / (distance * distance);
 
-           vec3 radiance = light_D.Color_And_Intensity.xyz * light_D.Color_And_Intensity.w * attenuation;
+           vec3 radiance = light_current.Color_And_Intensity.xyz * light_current.Color_And_Intensity.w * attenuation;
 
            //float roughness = 1.0 - gSpecular;
            float roughness = 0.2;
@@ -165,12 +196,10 @@ void main()
 
            vec3 kS = F;
            vec3 kD = vec3(1.0) - kS;
-
-           //kD *= 1.0 - metallic   -----------FOR METALLIC TEXTURE
+           kD *= 1.0 - metallic;  // -----------FOR METALLIC TEXTURE
 
            float NdotL = max(dot(N, L), 0.0);
            Lo += (kD * gDiffuse / pi + specular) * radiance * NdotL;
-       }
       // Lo += vec3(0.1);
    }
 
@@ -180,5 +209,17 @@ void main()
     color = color / (color + vec3(1.0));
     color = pow(color, vec3(1.0 / 2.2));
 
-    FragColor = vec4(color, 1.0);  ///RESOLVE THE PBR/////////////////////////
+
+    bool test_1 = gEditMode.rgb == vec3(0.0, 0.0, 0.0) || gZDEPTH_EDITMODE == 0.0;
+    bool test_2 = test_1 ? true : gZDEPTH_EDITMODE >= gZDEPTH_MODELS ;
+
+    if(test_2 == true)
+    {
+      FragColor = vec4(color, 1.0);///RESOLVE THE PBR/////////////////////////
+    }
+
+    else
+    {
+      FragColor = vec4(gEditMode, 1.0);
+    }
 }

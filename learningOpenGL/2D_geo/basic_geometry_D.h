@@ -7,6 +7,8 @@
 
 #include "learningOpenGL.h"
 #include "GLM_test.h"
+#include "SHADER_H.h"
+
 
 namespace transformation_basics
 {
@@ -40,6 +42,7 @@ namespace geo_2D
 
       void build_pointGeo(std::string shaderID);
       void draw();
+      void draw_PrePass_editMode(shading::shader& shader);
       void setPosicion(glm::vec3 posicion);
       void setColor(glm::vec3 color);
       void setSize(float size);

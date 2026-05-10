@@ -13,6 +13,10 @@ namespace lib_SHADER_openGL
   {
     glUniform1i(location, value);
   }
+  inline void set_glUniform1ui(const int& location, const uint32_t& value)
+  {
+    glUniform1ui(location, value);
+  }
   inline void set_glUniform1f(const int& location, const float& value)
   {
     glUniform1f(location, value);

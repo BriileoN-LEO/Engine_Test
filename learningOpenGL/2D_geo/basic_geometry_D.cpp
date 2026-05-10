@@ -7,9 +7,7 @@
 #include "Render/RenderData.h"
 #include "GLM_test.h"
 
-namespace geo_2D
-{
-
+namespace geo_2D {
   void point_geo::setup_point(glm::vec3& posicion)
   {
     glGenVertexArrays(1, &VAO);
@@ -47,7 +45,7 @@ namespace geo_2D
   size(size),
   shaderID(shaderID)
   {
-   // std::unique_ptr<transformation_basics::basics_Model3D> coords{std::make_unique<transformation_basics::basics_Model3D>()};
+    // std::unique_ptr<transformation_basics::basics_Model3D> coords{std::make_unique<transformation_basics::basics_Model3D>()};
 
     pointCoord.posModel = posicion;
     pointCoord.posModel_Base = posicion;
@@ -78,6 +76,18 @@ namespace geo_2D
     shaderPt.setFloat("sizePointer", size);
     shaderPt.setVec3("PointColor", color);
 
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_POINTS, 0, 1);
+    glBindVertexArray(0);
+  }
+
+  void point_geo::draw_PrePass_editMode(shading::shader& shader)
+  {
+    shader.transformMat("model", pointCoord.model);
+    shader.transformMat("view", cameras::cameras_D[cameras::name_CurrentCamera].cam);
+    shader.transformMat("projection", cameras::cameras_D[cameras::name_CurrentCamera].camProjection);
+    shader.setFloat("sizePointer", size);
+    shader.setVec3("PointColor", color);
     glBindVertexArray(VAO);
     glDrawArrays(GL_POINTS, 0, 1);
     glBindVertexArray(0);

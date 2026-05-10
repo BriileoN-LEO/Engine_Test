@@ -34,6 +34,10 @@ namespace Clustered_Shading
       unsigned int TCB_FragPosViewSpace_and_shiness{};
       unsigned int TCB_Diffuse_and_specular{};
 
+      unsigned int FBO_editMode{};
+      unsigned int TCB_zBufferEditMode{};
+      unsigned int TCB_colors_EditMode{};
+
       unsigned int res_width{};
       unsigned int res_height{};
     };
@@ -65,11 +69,12 @@ namespace Clustered_Shading
     enum class typeShader : uint8_t
     {
       prepassCS_rendering = 0,
-      computeS_zPassTiles_01 = 1,
-      computeS_ClusterAABB_02 = 2,
-      computeS_LightCulling_03 = 3,
-      beauty_Pass = 4,
-      complete_shaders = 5
+      prepassCS_editMode = 1,
+      computeS_zPassTiles_01 = 2,
+      computeS_ClusterAABB_02 = 3,
+      computeS_LightCulling_03 = 4,
+      beauty_Pass = 5,
+      complete_shaders = 6
     };
 
     class renderManager_CS
@@ -84,7 +89,8 @@ namespace Clustered_Shading
         std::unordered_map<typeShader, std::string> shaders_ID{};
 
         int max_tileSize_Y{16};
-        int max_tileSize_X{16};
+        int max_tileSize_X{9};
+        int max_tileSize_Z{24};
 
         int num_tiles_Y{};
         int num_tiles_X{};
@@ -95,6 +101,7 @@ namespace Clustered_Shading
     void destroy_zPrepass();
 
     void load_data(unsigned int res_width, unsigned int res_height);
+    void load_data_editMode(unsigned int res_width, unsigned int res_height);
 
     void load_tilesBound_SSBO_03();
     void update_tilesBound_SSBO_03();
@@ -125,9 +132,13 @@ namespace Clustered_Shading
     void load_beautyPass();
     void update_beautyPass();
 
-    void Render_passCS_rendering();
+    void Render_passCS_rendering_F01();
+    void Render_passCS_editMode_F01();
+
     void Render_computeCS();
-    void Render_beautyPassCS();
+    void Render_compute_ClusteredAABB_F02();
+    void Render_compute_LightCulling_F03();
+    void Render_beautyPassCS_F04();
 
     };
 }

@@ -181,6 +181,11 @@ namespace render
 		//  RenderData_Set::pointLights_Scene_D->renderAll();
 		   RenderData_Set::lightsScene_D->renderAll();
 		}
+
+		void renderPrepassCS_PointLights_D(shading::shader& shader)
+		{
+			 RenderData_Set::lightsScene_D->renderPrepassCS_All(shader);
+		}
 	}
 
 	namespace shadows
@@ -470,16 +475,20 @@ namespace render_ClusteredShading
 		update_CS();
 		Shader_Set::set_All_UB();
 
-		Clustered_Shading_RenderData::CS_Rendering_Manager->Render_passCS_rendering();
-		Clustered_Shading_RenderData::CS_Rendering_Manager->Render_computeCS();
-		Clustered_Shading_RenderData::CS_Rendering_Manager->Render_beautyPassCS();
+		Clustered_Shading_RenderData::CS_Rendering_Manager->Render_passCS_rendering_F01();
+		Clustered_Shading_RenderData::CS_Rendering_Manager->Render_passCS_editMode_F01();
+		Clustered_Shading_RenderData::CS_Rendering_Manager->Render_compute_ClusteredAABB_F02();
+		Clustered_Shading_RenderData::CS_Rendering_Manager->Render_compute_LightCulling_F03();
+		//Clustered_Shading_RenderData::CS_Rendering_Manager->Render_computeCS();
+		Clustered_Shading_RenderData::CS_Rendering_Manager->Render_beautyPassCS_F04();
 	}
-
 }
 
 
 namespace openGL_render
 {
+	bool RENDER_CS_OR_FS {false};
+
 	void setGlobalRender_OpenGL()
 	{
 		/*
@@ -563,7 +572,18 @@ namespace openGL_render
 
 	}
      
+	void DRAW_RENDER()
+	{
+      if (RENDER_CS_OR_FS == false)
+      {
+      	render::renderPhase();  ///FOWARD RENDERING(LEGACY)
+      }
 
+	  else if(RENDER_CS_OR_FS == true)
+	  {
+	  	render_ClusteredShading::render_All_CS();   ///CLUSTERED SHADING RENDERING(NEW TECHNIQUE)
+	  }
+	}
 
 }
 

@@ -1,13 +1,23 @@
 #version 460 core
 
-layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
+#define MAX_LIGHTS_PER_CLUSTER 200
 
+uniform uint gridDimX;
+uniform uint gridDimY;
+uniform uint gridDimZ;
+uniform uint num_Lights;
+
+//uniform mat4 view_c;
+
+/*
 layout (std140, binding = 0) uniform matrices_cam
 {
  mat4 view_c;
  mat4 projection_c;
 };
+*/
 
 struct cluster_D
 {
@@ -15,7 +25,7 @@ struct cluster_D
  vec4 maxPoint;
 };
 
-layout (std430, binding = 4) buffer clustersBuffer
+layout (std430, binding = 4) readonly buffer clustersBuffer
 {
  cluster_D clusters[];
 };
@@ -33,13 +43,11 @@ struct Light
  float outerCutOff;
 };
 
-layout (std430, binding = 5) buffer Lights_D
+layout (std430, binding = 5) readonly buffer Lights_D
 {
  Light Lights_Array[];
 
 };
-
-uniform int num_Lights;
 
 struct Cluster_LightsData
 {
@@ -47,12 +55,12 @@ struct Cluster_LightsData
   uint count;
 };
 
-layout (std430, binding = 6) buffer light_GridBuffer
+layout (std430, binding = 6) writeonly buffer light_GridBuffer
 {
   Cluster_LightsData cluster_Lights[];
 };
 
-layout (std430, binding = 7) buffer global_ID_LightBuffer
+layout (std430, binding = 7) writeonly buffer global_ID_LightBuffer
 {
   uint global_ID_lights[];
 };
@@ -65,11 +73,11 @@ layout (std430, binding = 8) buffer globalCounter_Atomic
 
 bool intersect_Light(vec4 lightPos_radius, vec3 minPt_AABB, vec3 maxPt_AABB)
 {
-   vec3 lightPos_viewSpace = vec3(view_c * vec4(lightPos_radius.xyz, 1.0));
+   //vec4 lightPos_viewSpace = view_c * vec4(lightPos_radius.xyz, 1.0);
 
-   vec3 closest_Pt_AABB = clamp(lightPos_viewSpace, minPt_AABB, maxPt_AABB);
+   vec3 closest_Pt_AABB = clamp(lightPos_radius.xyz, minPt_AABB, maxPt_AABB);
 
-   vec3 dist_pt_Light = lightPos_viewSpace - closest_Pt_AABB;
+   vec3 dist_pt_Light = lightPos_radius.xyz - closest_Pt_AABB;
 
    float dist_AABB_Light = dot(dist_pt_Light, dist_pt_Light);
    float dist_radiusLight = lightPos_radius.w * lightPos_radius.w;
@@ -80,43 +88,49 @@ bool intersect_Light(vec4 lightPos_radius, vec3 minPt_AABB, vec3 maxPt_AABB)
 
 void main()
 {
-  uint localThread_ID = gl_LocalInvocationIndex;
-  uint tileIndex = gl_WorkGroupID.y * gl_NumWorkGroups.x + gl_WorkGroupID.x;
+  uint tileX = gl_GlobalInvocationID.x;
+  uint tileY = gl_GlobalInvocationID.y;
+  uint sliceZ = gl_GlobalInvocationID.z;
 
-    if(localThread_ID == 0)
-    {
+  uint clusterIndex = tileX + (tileY * gridDimX) + (sliceZ * gridDimX * gridDimY);
+
       //float dist_pts = distance(clusters[tileIndex].minPoint, clusters[tileIndex].maxPoint);
-        vec3 minPos_AABB = clusters[tileIndex].minPoint.xyz;
-        vec3 maxPos_AABB = clusters[tileIndex].maxPoint.xyz;
+        vec3 minPos_AABB = clusters[clusterIndex].minPoint.xyz;
+        vec3 maxPos_AABB = clusters[clusterIndex].maxPoint.xyz;
 
-        uint lights_hit_AABB[100];
+        uint lights_MaxVisible[MAX_LIGHTS_PER_CLUSTER];
         uint light_count = 0;
 
         for(uint i = 0; i < num_Lights; i++)
         {
-          vec4 right_light = Lights_Array[i].lightPos_radius;
-          right_light.w += 0.05;
+          Light light_current = Lights_Array[i];
 
-          bool light_intersect_AABB = intersect_Light(right_light, minPos_AABB, maxPos_AABB);
+            if(light_current.light_Type == 1)
+            {
+                vec4 right_light = light_current.lightPos_radius;
+                //right_light.w += 0.05;
 
-          if(light_intersect_AABB == true)
-          {
-              lights_hit_AABB[light_count] = i;
-              light_count++;
-          }
+                bool light_intersect_AABB = intersect_Light(right_light, minPos_AABB, maxPos_AABB);
 
+                if (light_intersect_AABB == true)
+                {
+                    if (light_count < MAX_LIGHTS_PER_CLUSTER)
+                    {
+                        lights_MaxVisible[light_count] = i;
+                        light_count++;
+                    }
+                }
+            }
         }
 
         uint offset = atomicAdd(nextSlot, light_count);
 
-        for(uint i = 0; i < light_count; i++)
-        {
-           global_ID_lights[offset + i] = lights_hit_AABB[i];
-        }
+        cluster_Lights[clusterIndex].offset = offset;
+        cluster_Lights[clusterIndex].count = light_count;
 
-        cluster_Lights[tileIndex].offset = offset;
-        cluster_Lights[tileIndex].count = light_count;
-
+    for(uint i = 0; i < light_count; i++)
+    {
+        global_ID_lights[offset + i] = lights_MaxVisible[i];
     }
 
 }

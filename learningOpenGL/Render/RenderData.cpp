@@ -685,10 +685,11 @@ namespace RenderData_Set
 
 
 		shading::loadToCPU::shaderData_loadCPU Shader_prePass_CS("Shader_prePass_CS", vShader_prePass_CS.c_str(), fShader_prePass_CS.c_str(), LB_MAT, shading::loadToCPU::typeShader::NORMAL);
+		shading::loadToCPU::shaderData_loadCPU Shader_prePassEditMode_CS("Shader_prePassEditMode_CS", vShader_prePassEditMode_CS.c_str(), fShader_prePassEditMode_CS.c_str(), LB_MAT, shading::loadToCPU::typeShader::NORMAL);
         shading::loadToCPU::shaderData_loadCPU shader_ClusteredShading_01("clustered_Shading_01", cShader_Clustered_01.c_str(), shading::loadToCPU::typeShader::COMPUTE, LB_02);
 		shading::loadToCPU::shaderData_loadCPU Shader_Clustered_AABB_02("Shader_Clustered_AABB_02", cShader_Clustered_AABB_02.c_str(), shading::loadToCPU::typeShader::COMPUTE, LB_02);
-		shading::loadToCPU::shaderData_loadCPU Shader_Clustered_LightCuling_03("Shader_Clustered_LightCuling_03", cShader_Clustered_LightCuling_03.c_str(), shading::loadToCPU::typeShader::COMPUTE, LB_MAT);
-		shading::loadToCPU::shaderData_loadCPU Shader_beautyPass_CS("Shader_beautyPass_CS", vShader_beautyPass_CS.c_str(), fShader_beautyPass_CS.c_str(), LB_02, shading::loadToCPU::typeShader::NORMAL);
+		shading::loadToCPU::shaderData_loadCPU Shader_Clustered_LightCuling_03("Shader_Clustered_LightCuling_03", cShader_Clustered_LightCuling_03.c_str(), shading::loadToCPU::typeShader::COMPUTE, LB_02);
+		shading::loadToCPU::shaderData_loadCPU Shader_beautyPass_CS("Shader_beautyPass_CS", vShader_beautyPass_CS.c_str(), fShader_beautyPass_CS.c_str(), LB_MAT, shading::loadToCPU::typeShader::NORMAL);
 
 
 		std::vector<shading::loadToCPU::shaderData_loadCPU> shadersLoad
@@ -703,6 +704,7 @@ namespace RenderData_Set
 			shader_briiUI_01,
 			shader_shadow_v01,
 			Shader_prePass_CS,
+			Shader_prePassEditMode_CS,
 			shader_ClusteredShading_01,
 			Shader_Clustered_AABB_02,
 			Shader_Clustered_LightCuling_03,
@@ -2012,6 +2014,7 @@ namespace Clustered_Shading_RenderData
 
 		///INSERTING SHADERS
 		CS_Rendering_Manager->insert_Shader(Clustered_Shading::typeShader::prepassCS_rendering, "Shader_prePass_CS");
+		CS_Rendering_Manager->insert_Shader(Clustered_Shading::typeShader::prepassCS_editMode, "Shader_prePassEditMode_CS");
 		CS_Rendering_Manager->insert_Shader(Clustered_Shading::typeShader::computeS_zPassTiles_01, "clustered_Shading_01");
 		CS_Rendering_Manager->insert_Shader(Clustered_Shading::typeShader::computeS_ClusterAABB_02, "Shader_Clustered_AABB_02");
 		CS_Rendering_Manager->insert_Shader(Clustered_Shading::typeShader::computeS_LightCulling_03, "Shader_Clustered_LightCuling_03");
@@ -2022,6 +2025,8 @@ namespace Clustered_Shading_RenderData
 		CS_Rendering_Manager->update_lightsSSBO();
 
 		CS_Rendering_Manager->load_beautyPass();
+
+		Clustered_Shading_RenderData::CS_Rendering_Manager->Render_compute_ClusteredAABB_F02();
 	}
 
 }

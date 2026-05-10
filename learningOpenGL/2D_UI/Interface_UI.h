@@ -16,7 +16,8 @@ namespace UI_EditMode
  	  SELECTION_SHOW_NORMALS = 2,
 
  	  SHADING_BLINN_PHONG_ON_OFF = 3,
- 	  NOT_BUTTOM = 4,
+ 	  PBR_CLUSTERED_SHADING = 4,
+ 	  NOT_BUTTOM = 5,
     };
 
 	struct exit_Buttom_EM
@@ -26,8 +27,8 @@ namespace UI_EditMode
 	};
 
 extern bool buttom_active;
-extern std::array<exit_Buttom_EM, 4> lastButtom;
-extern std::array<bool*, 4> buttom_detect;
+extern std::array<exit_Buttom_EM, 5> lastButtom;
+extern std::array<bool*, 5> buttom_detect;
 
 //extern bool* selection_on_off;
 //extern bool* selection_explode;

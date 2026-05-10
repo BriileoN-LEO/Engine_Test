@@ -3,25 +3,28 @@
 #include "Edit_Modes/Edit_M.h"
 #include "log_Errors/log_error_General.h"
 #include "playTest.h"
+#include "Render/Render.h"
 
 namespace UI_EditMode
 {
 	bool buttom_active{};
-	std::array<exit_Buttom_EM, 4> lastButtom
+	std::array<exit_Buttom_EM, 5> lastButtom
 	{
 		exit_Buttom_EM(editMode_S::SELECTION_ON_OFF, false),
 		exit_Buttom_EM(editMode_S::SELECTION_EXPLODE, false),
 		exit_Buttom_EM(editMode_S::SELECTION_SHOW_NORMALS, false),
 
-		exit_Buttom_EM(editMode_S::SHADING_BLINN_PHONG_ON_OFF, false)
+		exit_Buttom_EM(editMode_S::SHADING_BLINN_PHONG_ON_OFF, false),
+		exit_Buttom_EM(editMode_S::PBR_CLUSTERED_SHADING, false)
 
 	};
 
 
-	 std::array<bool*, 4> buttom_detect
+	 std::array<bool*, 5> buttom_detect
 	{
 	  new bool(false),
       new bool(false),
+	  new bool(false),
 	  new bool(false),
 	  new bool(false)
 	};
@@ -46,23 +49,30 @@ namespace UI_EditMode
 
 	void render_Buttom(const editMode_S& buttom)
 	{
-		uint32_t pos_buttom{static_cast<uint32_t>(buttom)};
+		uint8_t pos_buttom{static_cast<uint8_t>(buttom)};
 
 		switch (buttom)
 		{
 			case (editMode_S::SELECTION_ON_OFF)	:
+		    {
 				buttom_detect[pos_buttom] = nullptr;
 				buttom_detect[pos_buttom] = new bool(ImGui::Button("selection : ON/OFF"));
 				break;
+			}
 			case (editMode_S::SELECTION_EXPLODE) :
+		    {
 				buttom_detect[pos_buttom]  = nullptr;
 				buttom_detect[pos_buttom]  = new bool(ImGui::Button("selection explode"));
 				break;
+			}
 			case (editMode_S::SELECTION_SHOW_NORMALS) :
+			{
 				buttom_detect[pos_buttom]  = nullptr;
 				buttom_detect[pos_buttom]  = new bool(ImGui::Button("selection show normals"));
 				break;
+			}
 			case(editMode_S::SHADING_BLINN_PHONG_ON_OFF) :
+			{
 				const char* str_blinn {nullptr};
 
 				if (lastButtom[pos_buttom].press == false)
@@ -77,7 +87,26 @@ namespace UI_EditMode
 
 				buttom_detect[pos_buttom]  = nullptr;
 				buttom_detect[pos_buttom]  = new bool(ImGui::Button(str_blinn));  ///TEST THIS
+				break;
+			}
+			case (editMode_S::PBR_CLUSTERED_SHADING) :
+			{
+				const char* str_PBR_CS{nullptr};
 
+				if (lastButtom[pos_buttom].press == false)
+				{
+					str_PBR_CS = "PBR_CLUSTERED_SHADING : ON";
+				}
+
+				else if (lastButtom[pos_buttom].press == true)
+				{
+					str_PBR_CS = "PBR_CLUSTERED_SHADING : OFF";
+				}
+
+				buttom_detect[pos_buttom]  = nullptr;
+				buttom_detect[pos_buttom]  = new bool(ImGui::Button(str_PBR_CS));
+				break;
+			}
 		}
 	}
 
@@ -87,9 +116,9 @@ namespace UI_EditMode
 		ImGui::Begin("EditMode");
 
 
-		uint32_t pos {static_cast<uint32_t>(editMode_S::SHADING_BLINN_PHONG_ON_OFF)};
+		uint8_t pos {static_cast<uint8_t>(editMode_S::SHADING_BLINN_PHONG_ON_OFF)};
 
-		for (uint32_t i = 0; i < pos; i++)
+		for (uint8_t i = 0; i < pos; i++)
 		{
 			render_colorButtom(lastButtom[i].press);
 			render_Buttom(lastButtom[i].buttom);
@@ -97,9 +126,9 @@ namespace UI_EditMode
 
 		std::array<bool*, 3> selections
 		{
-			buttom_detect[static_cast<uint32_t>(editMode_S::SELECTION_ON_OFF)],
-			buttom_detect[static_cast<uint32_t>(editMode_S::SELECTION_EXPLODE)],
-			buttom_detect[static_cast<uint32_t>(editMode_S::SELECTION_SHOW_NORMALS)],
+			buttom_detect[static_cast<uint8_t>(editMode_S::SELECTION_ON_OFF)],
+			buttom_detect[static_cast<uint8_t>(editMode_S::SELECTION_EXPLODE)],
+			buttom_detect[static_cast<uint8_t>(editMode_S::SELECTION_SHOW_NORMALS)],
 		};
 
 		int fS{};
@@ -163,7 +192,7 @@ namespace UI_EditMode
 
 		}
 
-		for (uint32_t i = 0; i < static_cast<uint32_t>(selections.size()); i++)
+		for (uint8_t i = 0; i < static_cast<uint8_t>(selections.size()); i++)
 		{
 			selections[i] = nullptr;
 		}
@@ -178,17 +207,18 @@ namespace UI_EditMode
 	{
 		ImGui::Begin("shading_settings");
 
-		uint32_t pos {static_cast<uint32_t>(editMode_S::SHADING_BLINN_PHONG_ON_OFF)};
+		uint8_t pos {static_cast<uint8_t>(editMode_S::SHADING_BLINN_PHONG_ON_OFF)};
 
-		for (uint32_t i = pos; i < pos + 1; i++)
+		for (uint8_t i = pos; i < pos + 2; i++)
 		{
 			render_colorButtom(lastButtom[i].press);
 			render_Buttom(lastButtom[i].buttom);
 		}
 
-		std::array<bool*, 1> selections
+		std::array<bool*, 2> selections
 		{
-			buttom_detect[static_cast<uint32_t>(editMode_S::SHADING_BLINN_PHONG_ON_OFF)],
+			buttom_detect[static_cast<uint8_t>(editMode_S::SHADING_BLINN_PHONG_ON_OFF)],
+			buttom_detect[static_cast<uint8_t>(editMode_S::PBR_CLUSTERED_SHADING)]
 		};
 
 		int fS{dataConvert::cast_int<editMode_S>(editMode_S::SHADING_BLINN_PHONG_ON_OFF)};
@@ -206,7 +236,7 @@ namespace UI_EditMode
 			switch (typeEditSelection)
 			{
 				case (editMode_S::SHADING_BLINN_PHONG_ON_OFF) :
-
+				{
 					if (lastButtom[fS].press == false)
 					{
 						edit_visualize::shading_Blinn_Phong_Active = true;
@@ -218,16 +248,30 @@ namespace UI_EditMode
 					{
 						edit_visualize::shading_Blinn_Phong_Active = false;
 						lastButtom[fS].press = false;
-                        SDL_Log("PRESS::BUTTOM");
 					}
 
-				break;
+					break;
+				}
 
+				case (editMode_S::PBR_CLUSTERED_SHADING) :
+				{
+                   if (lastButtom[fS].press == false)
+                   {
+                    openGL_render::RENDER_CS_OR_FS = true;
+                   	lastButtom[fS].press = true;
+                   }
+
+                   else if (lastButtom[fS].press == true)
+                   {
+                   	openGL_render::RENDER_CS_OR_FS = false;
+                   	lastButtom[fS].press = false;
+                   }
+				}
 			}
 
 		}
 
-		for (uint32_t i = 0; i < static_cast<uint32_t>(selections.size()); i++)
+		for (uint8_t i = 0; i < static_cast<uint8_t>(selections.size()); i++)
 		{
 			*selections[i] = false;
 			selections[i] = nullptr;
@@ -245,8 +289,8 @@ namespace UI_EditMode
         float& intensity {light_Transforms::intensity_pL_All};
 
 		ImGui::Begin("point_Lights_Radio");
-		ImGui::SliderFloat("RADIO", &rad, 0.0, 20.0);
-		ImGui::SliderFloat("INTENSITY", &intensity, 0.0, 20.0);
+		ImGui::SliderFloat("RADIO", &rad, 0.0, 1000.0);
+		ImGui::SliderFloat("INTENSITY", &intensity, 0.0, 1000.0);
 
 		ImGui::End();
 	}
@@ -385,9 +429,8 @@ namespace UI
 		{
           UI_EditMode::render_SelectionObj();
 		  UI_EditMode::render_shading_selection();
+		  UI_EditMode::render_pLRadio_Slider();   /////////PL FOR PBR CLUSTERED SHADING
 		}
-
-		UI_EditMode::render_pLRadio_Slider();
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

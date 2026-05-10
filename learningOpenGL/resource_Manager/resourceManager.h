@@ -383,6 +383,11 @@ namespace utilities_Lights
     void render_point_sL();
     void renderAll();
 
+    void renderPrepassCS_point_dL(shading::shader& shader);
+    void renderPrepassCS_point_pL(shading::shader& shader);
+    void renderPrepassCS_point_sL(shading::shader& shader);
+    void renderPrepassCS_All(shading::shader& shader);
+
     void clear_data_dL();
     void clear_data_pL();
     void clear_data_sL();

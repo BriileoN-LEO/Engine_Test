@@ -509,6 +509,12 @@ namespace shading
 
 		//glUniform1i(location, static_cast<int>(value));
 	}
+	void shader::set_Uint(const std::string& name, const uint32_t& value) const
+	{
+       int location {glGetUniformLocation(ID, name.c_str())};
+		lib_SHADER_openGL::set_glUniform1ui(location, value);
+	}
+
 	void shader::setFloat(const std::string& name, float value) const
 	{
 		int location{ glGetUniformLocation(ID, name.c_str()) };

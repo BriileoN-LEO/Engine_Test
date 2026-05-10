@@ -505,7 +505,8 @@ int main(int argc, char* argv[])
 					//ScreenCalc_Hit::calc_IntersectALL();
 
 					//render::renderPhase();  ///FOWARD RENDERING(LEGACY)
-					render_ClusteredShading::render_All_CS();   ///CLUSTERED SHADING RENDERING(NEW TECHNIQUE)  ////RESOLVE HERE
+					//render_ClusteredShading::render_All_CS();   ///CLUSTERED SHADING RENDERING(NEW TECHNIQUE)  ////RESOLVE HERE
+					openGL_render::DRAW_RENDER();
 
 					//render::shadows::set_renderShadowMap_dL(shadowsManager::shadow_render::RENDER_SAVE_TEXTURE_SHADOW);
 
