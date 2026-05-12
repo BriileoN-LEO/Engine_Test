@@ -118,7 +118,6 @@ FetchContent_Declare(
 ktx_software
 GIT_REPOSITORY https://github.com/KhronosGroup/KTX-Software.git
 GIT_TAG v4.3.2
-
 )
 
 set(KTX_FEATURE_TOOLS OFF CACHE BOOL "" FORCE)
@@ -156,131 +155,20 @@ GIT_REPOSITORY https://github.com/ocornut/imgui
 GIT_TAG docking # Use the 'docking' branch or any desired tag
 )
 
+FetchContent_Declare(
+stb
+GIT_REPOSITORY https://github.com/nothings/stb
+GIT_TAG master
+)
+
 FetchContent_MakeAvailable(
 SDL3
 ktx_software
 glm
 assimp
 imgui
+stb
 )
 
-#target_ling_libraries(imgui PUBLIC SDL3::SDL3 OpenGL::GL )
-
-add_executable(Learning "learningOpenGL/learningOpenGL.cpp" "learningOpenGL/learningOpenGL.h"
-"learningOpenGL/libFile.h"
-"learningOpenGL/config_window.h" "learningOpenGL/config_window.cpp" "learningOpenGL/data_save.h" "learningOpenGL/data_save.cpp"
-"learningOpenGL/control.cpp" "learningOpenGL/control.h" 
-"learningOpenGL/SHADER_H.cpp" "learningOpenGL/SHADER_H.h" 
-"learningOpenGL/GLM_test.h" "learningOpenGL/GLM_test.cpp"
-"learningOpenGL/LIGHTS_test.h" "learningOpenGL/LIGHTS_test.cpp"
-"learningOpenGL/playTest.h" "learningOpenGL/playTest.cpp"
-"learningOpenGL/Model_Assimp/ModelAssimp.cpp" "learningOpenGL/Model_Assimp/ModelAssimp.h"
-"learningOpenGL/Render/Render.cpp" "learningOpenGL/Render/Render.h"
-"learningOpenGL/Render/RenderData.cpp" "learningOpenGL/Render/RenderData.h"
-"learningOpenGL/Collision/ScreenHit.cpp" "learningOpenGL/Collision/ScreenHit.h"
-"learningOpenGL/Collision/CollisionAABB.cpp" "learningOpenGL/Collision/CollisionAABB.h"
-"learningOpenGL/2D_UI/2D_screenPlayer.cpp" "learningOpenGL/2D_UI/2D_screenPlayer.h"
-"learningOpenGL/Render/frameBuffers.cpp" "learningOpenGL/Render/frameBuffers.h"
-"learningOpenGL/threadSystem/thread_System.h" "learningOpenGL/threadSystem/thread_System.cpp"
-"learningOpenGL/2D_UI/Interface_UI.cpp" "learningOpenGL/2D_UI/Interface_UI.h"
-"learningOpenGL/2D_UI/Interface_generalUI.cpp" "learningOpenGL/2D_UI/Interface_generalUI.h"
-"learningOpenGL/Edit_Modes/Edit_M.cpp" "learningOpenGL/Edit_Modes/Edit_M.h"
-"learningOpenGL/textureData/textureManager.cpp" "learningOpenGL/textureData/textureManager.h"
-"learningOpenGL/2D_UI/system_UI/system_UI_B.cpp" "learningOpenGL/2D_UI/system_UI/system_UI_B.h"
-"learningOpenGL/resource_Manager/resourceManager.h" "learningOpenGL/resource_Manager/resourceManager.cpp"
-"learningOpenGL/optimize_Algorithmics/optimizeAlgorithmics.h" "learningOpenGL/optimize_Algorithmics/optimizeAlgorithmics.cpp"
-"learningOpenGL/Model_Assimp/Assimp_lib.h"  "learningOpenGL/Model_Assimp/Assimp_lib.cpp"
-"learningOpenGL/shadows_manager/shadows_D.h"  "learningOpenGL/shadows_manager/shadows_D.cpp"
-"learningOpenGL/STB_IMAGE_IMPLEMENT.cpp"
-"learningOpenGL/Model_Assimp/Assimp_lib.h" "learningOpenGL/Model_Assimp/Assimp_lib.cpp"
-"learningOpenGL/2D_geo/basic_geometry_D.cpp" "learningOpenGL/2D_geo/basic_geometry_D.h"
-"learningOpenGL/log_Errors/log_error_General.cpp" "learningOpenGL/log_Errors/log_error_General.h"
-"learningOpenGL/libCust_openGL/lib_openGL.cpp" "learningOpenGL/libCust_openGL/lib_openGL.h"
-"learningOpenGL/Render/Clustered_Shading_Render.cpp" "learningOpenGL/Render/Clustered_Shading_Render.h"
-"learningOpenGL/files_manager/files_DataManager.cpp" "learningOpenGL/files_manager/files_DataManager.h"
-        #"libs/SDL/lib/arm64"
-
-)
-
-
-target_sources(Learning PRIVATE
-${imgui_SOURCE_DIR}/imgui.cpp
-${imgui_SOURCE_DIR}/imgui_draw.cpp
-${imgui_SOURCE_DIR}/imgui_tables.cpp
-${imgui_SOURCE_DIR}/imgui_demo.cpp
-${imgui_SOURCE_DIR}/imgui_widgets.cpp
-
-${imgui_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp
-${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
-)
-
-
-target_include_directories(Learning PRIVATE
-${imgui_SOURCE_DIR}
-${imgui_SOURCE_DIR}/backends
-)
-target_include_directories(Learning PUBLIC "${PROJECT_BINARY_DIR}")
-target_include_directories(Learning PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/ThirdPartyLibs")
-target_include_directories(Learning PUBLIC ${glm_SOURCE_DIR})
-target_include_directories(Learning PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/learningOpenGL/Model_Assimp")
-target_include_directories(Learning PUBLIC
-        "${CMAKE_CURRENT_SOURCE_DIR}"
-        "${CMAKE_CURRENT_SOURCE_DIR}/learningOpenGL"}
-        "${CMAKE_CURRENT_SOURCE_DIR}/learningOpenGL/Edit_Modes"
-        "${CMAKE_CURRENT_SOURCE_DIR}/learningOpenGL/resource_Manager"
-        "${CMAKE_CURRENT_SOURCE_DIR}/learningOpenGL/optimize_Algorithmics"
-        "${CMAKE_CURRENT_SOURCE_DIR}/learningOpenGL/Model_Assimp"
-)
-
-target_link_libraries(Learning PRIVATE
-SDL3::SDL3-shared
-glad_source
-OpenGL::GL
-assimp::assimp
-glm::glm
-ktx
-)
-
-target_include_directories(Learning PUBLIC ${glm_SOURCE_DIR})
-
-if(TARGET assimp)
-    target_compile_options(assimp PRIVATE -Wno-error)
-    target_compile_options(assimp PRIVATE -w)
-endif()
-
-if(UNIX AND NOT APPLE)
-    target_link_libraries(Learning PRIVATE
-            m
-            pthread
-            dl
-    )
-
-
-    target_compile_options(Learning PRIVATE
-            -Wall
-            -Wextra
-            -Werror
-    )
-
-
-endif()
-
-#add_custom_command(
- #   TARGET Learning POST_BUILD
- #   COMMAND ${CMAKE_COMMAND} -E copy
-  #          $<TARGET_RUNTIME_DLLS:Learning>
-  #          $<TARGET_FILE_DIR:Learning>
-  #  COMMENT "Copiando los DLLs necesarios..."
-#)
-
-message(STATUS "SDL3 encontrado en: ${SDL3_DIR}")
-message(STATUS "OpenGl encontrado en: ${OpenGL_DIR}")
-
-if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    add_compile_options(-Wno-error)
-    target_compile_options(Learning PRIVATE -Wno-error)
-endif()
-
-#if(WIN32)
-#    target_link_options(Learning PRIVATE "/SUBSYSTEM:WINDOWS")
-#endif()
+#add_subdirectory(brii_CORE)
+add_subdirectory(learningOpenGL)

@@ -1,7 +1,7 @@
 #ifndef screenPlayer
 #define screenPlayer
 
-#include "ModelAssimp.h"
+#include "Model_Assimp/ModelAssimp.h"
 #include "learningOpenGL.h"
 
 namespace screenUI

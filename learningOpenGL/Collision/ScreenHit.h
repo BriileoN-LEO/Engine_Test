@@ -1,6 +1,6 @@
 #ifndef ScreenHit
 #define ScreenHit
-#include "ModelAssimp.h"
+#include "Model_Assimp/ModelAssimp.h"
 #include "CollisionAABB.h" 
 #include "learningOpenGL.h"
 

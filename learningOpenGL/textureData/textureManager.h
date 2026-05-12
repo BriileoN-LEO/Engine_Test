@@ -1,5 +1,5 @@
-#ifndef textureManager
-#define textureManager
+#ifndef textureManager_H
+#define textureManager_H
 
 #include "learningOpenGL.h"
 #include "SHADER_H.h"
@@ -18,7 +18,16 @@ namespace texDataManager
 	{
 		diffuse = 0,
 		specular = 1,
-		back_Texture = 2
+        ALBEDO = 2,
+		ROUGHNESS = 3,
+		METALNESS = 4,
+        NORMAL = 5,
+		HEIGHT = 6,
+		AMBIENT_OCCLUSION = 7,
+		CAVITY = 8,
+		OPACITY = 9,
+		EMISSIVE = 10,
+		back_Texture = 11
 	};
 
 	struct texToShader
@@ -168,7 +177,6 @@ namespace texDataManager
 	{
 		std::string nameTexture_UI{};
 		std::map<std::string, TextureData_File> texture_saved{};
-
 	};
 
 }
@@ -224,6 +232,32 @@ namespace textureCache
 	};
 
 
+}
+
+namespace textureManager
+{
+	struct entity_tex
+	{
+		GLuint textureID{};
+		std::string nameTexture{};
+		texDataManager::typeTexture type{};
+		std::string completePath{};
+		texDataManager::formatImage format{};
+	};
+
+	class manager_Textures
+	{
+	private:
+
+		std::vector<uint32_t> tex_find_pos{};
+		std::unordered_map<std::string, uint32_t> tex_find_str{};
+		std::unordered_map<uint32_t, entity_tex> textures_D{};
+
+	public:
+
+		manager_Textures();
+
+	};
 }
 
 namespace texLoad_Data

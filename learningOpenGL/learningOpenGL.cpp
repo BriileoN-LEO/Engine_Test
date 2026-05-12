@@ -11,7 +11,7 @@
 #include "SHADER_H.h"
 #include "playTest.h"
 #include "LIGHTS_test.h"
-#include "ModelAssimp.h"
+#include "Model_Assimp/ModelAssimp.h"
 #include "stb_image.h"
 #include "Render/configFilesTXT.h"
 #include "Render/RenderData.h"

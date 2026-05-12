@@ -5,7 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include "learningOpenGL.h"
-#include "ModelAssimp.h"
+#include "Model_Assimp/ModelAssimp.h"
 #include "configFilesTXT.h"
 #include "Collision/CollisionAABB.h"
 #include "2D_UI/2D_screenPlayer.h"

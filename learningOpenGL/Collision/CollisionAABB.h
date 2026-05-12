@@ -1,7 +1,7 @@
 #ifndef collisionAABB
 #define collisionAABB
 #include "learningOpenGL.h"
-#include "ModelAssimp.h"
+#include "Model_Assimp/ModelAssimp.h"
 #include "Render/RenderData.h"
 
 

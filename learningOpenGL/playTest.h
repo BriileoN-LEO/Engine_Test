@@ -2,7 +2,7 @@
 #define playTest
 
 #include "SHADER_H.h"
-#include "ModelAssimp.h"
+#include "Model_Assimp/ModelAssimp.h"
 
 namespace testPlay
 {
