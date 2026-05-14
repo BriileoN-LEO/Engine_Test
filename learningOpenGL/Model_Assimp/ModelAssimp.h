@@ -188,7 +188,7 @@ namespace Assimp_D
 		{
 			std::vector<vertexD> vertices{};
 			std::vector<unsigned int> indices{};
-			std::vector<texDataManager::TextureData_File> textures{};
+			std::vector<texDataManager::TextureData_File> textures{};   ///CHANGE FOR MATERIAL ID
 		    glm::mat4 model_matrix{};
 		};
 

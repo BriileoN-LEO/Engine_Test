@@ -633,7 +633,7 @@ namespace Assimp_D {
 
 		}
 
-		MeshCoord.posModel_Base = transformation_basics::calcCenterGeo(verticesPos);
+		MeshCoord.posModel_Base = transformation_basics::calcCenterGeo(verticesPos);   ////PROBABLY ONE OF THE PROBLEMS OF BOUNDING BOX TO CALCULATE WHAT TRIANGLE IS INSERTING
 		MeshCoord.posModel = MeshCoord.posModel_Base;
 		MeshCoord.model = loadData.model_matrix * MeshCoord.model;
 		MeshCoord.modelCurrent = MeshCoord.model;

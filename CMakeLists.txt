@@ -170,5 +170,6 @@ imgui
 stb
 )
 
-#add_subdirectory(brii_CORE)
+add_subdirectory(brii_CORE)
+add_subdirectory(brii_COOKER)
 add_subdirectory(learningOpenGL)

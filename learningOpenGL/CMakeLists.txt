@@ -43,6 +43,11 @@ add_executable(Learning "learningOpenGL.cpp" "learningOpenGL.h"
 
 )
 
+add_library(Learning_lib INTERFACE
+"optimize_Algorithmics/optimizeAlgorithmics.h"
+)
+
+target_include_directories(Learning_lib INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_sources(Learning PRIVATE
 ${imgui_SOURCE_DIR}/imgui.cpp
@@ -74,6 +79,7 @@ target_include_directories(Learning PUBLIC
 target_include_directories(Learning PUBLIC ${stb_SOURCE_DIR})
 
 target_link_libraries(Learning PRIVATE
+briiCore
 SDL3::SDL3-shared
 glad_source
 OpenGL::GL
