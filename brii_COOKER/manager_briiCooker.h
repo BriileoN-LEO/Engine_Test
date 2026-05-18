@@ -18,6 +18,7 @@
 #include <cmath>
 #include <filesystem>
 #include <queue>
+#include <unordered_map>
 
 namespace manager_GD
 {
@@ -75,17 +76,27 @@ namespace manager_AssimpData
     void destroy();
   };
 
+  struct textures_MaterialManager
+  {
+    std::string str_AlbedoPath{};
+    std::string str_NormalsPath{};
+    std::string str_RMAPath{};
+    std::string str_HeightPath{};
+    std::string str_EmissionPath{};
+  };
+
   class entity_MateriaManager
   {
   private:
     material_LeoHeader dataMaterial{};
+    textures_MaterialManager str_pathTextures{};
     std::string nameMaterial{};
 
   public:
     entity_MateriaManager();
-    entity_MateriaManager(material_LeoHeader& dataMaterial);
+    entity_MateriaManager(material_LeoHeader& dataMaterial, textures_MaterialManager& str_pathTextures);
 
-    void insert_nameMaterial(std::string& nameMaterial);
+
   };
 
   class entity_ModelManager
@@ -113,16 +124,36 @@ namespace manager_AssimpData
 
 }
 
+namespace manage_texturesCooker
+{
+   extern std::unordered_map<aiTextureType, std::string> nameTextures;
+   extern std::unordered_map<uint32_t, std::string> textures_saved; ///THIS IS A CONTAINER THAT SAVES ALL THE TEXTURES THAT ARE UPLOADED ----> [NAME TEXTURE ID FNV], [PATH OF TEXTURE KTX CONVERTER
+
+   unsigned char* convert_to_PBR(aiTextureType matType,
+   unsigned char* process_EmbeddedTexture(const aiTexture* texture, int& width, int& height, int& channels, const std::string& nameModel_Path, aiTextureType& matType);
+   unsigned char* processTexture_pixels(aiMaterial* material, aiTextureType matType, const aiScene* scene, const std::string& nameModel_Path, const std::string& directory, int& width, int& height, int& nrChannels, std::string& nameTexture);
+
+   void loadTextures(aiMaterial* material, manager_AssimpData::textures_MaterialManager& str_textures, const std::string& nameModel_Path, const std::string& directory, const aiScene* scene);
+
+}
+
 namespace data_leoBinary
 {
+
   extern std::vector<manager_AssimpData::entity_MateriaManager> materials_D;
   extern std::vector<manager_AssimpData::entity_ModelManager> models_D;
   extern Assimp::Importer assimpImporter;
+  extern uint32_t ID_defaultMaterial;
+
+ void load_Settings_Cooker();
+
+ uint32_t proccess_nameMaterial(std::string& nameMat, const std::string& nameModel_path, const unsigned int& index);
 
  void loadModel(std::string nameModel, std::string path, unsigned int aiProcessFlags, uint32_t version);
  void processNode(manager_AssimpData::entity_ModelManager& model, aiNode* node, const aiScene* scene, int& meshesCounter, uint32_t& version);
  void processMesh_data(manager_AssimpData::entity_MeshManager& meshManager, aiMesh* mesh, std::array<float, 16>& meshTransMatrix, uint32_t& version);
- //void processMaterial(manager_AssimpData::entity_MeshManager& meshManager);
+
+ void processMaterials(const aiScene* scene, const std::string& nameModel_path, const std::string& directory);
 
 }
 

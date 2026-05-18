@@ -14,6 +14,8 @@ Learning_lib
 briiCore
 assimp::assimp
 glm::glm
+ktx
+thirdParty_Libs
 )
 
 if(TARGET assimp)

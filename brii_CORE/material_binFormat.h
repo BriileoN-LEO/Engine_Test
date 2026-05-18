@@ -14,16 +14,19 @@ struct material_LeoHeader
 
   uint32_t materialID{};
   uint32_t material_nameLenght{};
+
+  float albedo_base[4]{};
+  float normals_base[3]{};
+  float RMA_base[3]{};
+  float height_base{};
+  float emission[3]{};
   //nameMaterial  ---STRING
 
   uint32_t albedo_PathLength{};
-  uint32_t roughness_PathLength{};
-  uint32_t metalness_PathLength{};
+  uint32_t normals_PathLength{};
+  uint32_t RMA_PathLength{}; ///[ROUGHNESS] [METALLIC] [AMBIENT OCLUSSION]
   uint32_t height_PathLength{};
-  uint32_t ambientOclussion_PathLength{};
-  uint32_t cavity_PathLength{};
-  uint32_t opacity_PathLength{};
-  uint32_t emissive_PathLength{};
+  uint32_t emission_PathLength{};
 };
 
 #pragma pack(pop)

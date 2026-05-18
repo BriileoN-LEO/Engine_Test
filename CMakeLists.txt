@@ -170,6 +170,14 @@ imgui
 stb
 )
 
+project (thirdParty_Libs)
+
+add_library(thirdParty_Libs INTERFACE
+"${CMAKE_CURRENT_SOURCE_DIR}/ThirdPartyLibs/stb_image.h"
+)
+
+target_include_directories(thirdParty_Libs INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+
 add_subdirectory(brii_CORE)
 add_subdirectory(brii_COOKER)
 add_subdirectory(learningOpenGL)
