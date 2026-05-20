@@ -6,8 +6,10 @@
 #include "optimize_Algorithmics/optimizeAlgorithmics.h"
 #include "dataManager/convertion_DataManager.h"
 #include "optimize_Algorithmics/optimizeAlgorithmics.h"
-#include "ThirdPartyLibs/stb_image.h"
 #include <stdlib.h>
+#include "stb_image.h"
+#include "stb_image_resize2.h"
+
 
 namespace manager_GD
 {
@@ -174,6 +176,66 @@ namespace manage_texturesCooker
 
    std::unordered_map<uint32_t, std::string> textures_saved;
 
+   unsigned char* resizeTexture(unsigned char* texture, const int& width_old, const int& height_old, const int& width_new, const int& height_new, const int& numChannels)
+   {
+
+      int total_pixel {width_new * height_new * numChannels};
+
+      std::vector<unsigned char> resize_Texture{};
+      resize_Texture.resize(total_pixel);
+
+      stbir_resize_uint8()  /////////CONTINUE HERE
+
+
+
+
+   }
+
+   bool testMaterial_PBR(aiMaterial* material)
+   {
+     int shadingM {};
+
+      if (material->Get(AI_MATKEY_SHADING_MODEL, shadingM) == AI_SUCCESS)
+      {
+        if (shadingM == aiShadingMode_PBR_BRDF)
+        {
+           return true;
+        }
+      }
+
+      if (material->GetTextureCount(aiTextureType_DIFFUSE_ROUGHNESS) > 0)
+      {
+        return true;
+      }
+
+      if (material->GetTextureCount(aiTextureType_BASE_COLOR) > 0)
+      {
+         return true;
+      }
+
+      if (material->GetTextureCount(aiTextureType_NORMAL_CAMERA) > 0)
+      {
+         return true;
+      }
+
+      if (material->GetTextureCount(aiTextureType_EMISSION_COLOR) > 0)
+      {
+         return true;
+      }
+
+      if (material->GetTextureCount(aiTextureType_METALNESS) > 0)
+      {
+         return true;
+      }
+
+      if (material->GetTextureCount(aiTextureType_AMBIENT_OCCLUSION) > 0)
+      {
+         return true;
+      }
+
+      return false;
+   }
+
    unsigned char* process_EmbeddedTexture(const aiTexture* texture, int& width, int& height, int& channels, const std::string& nameModel_Path, aiTextureType& matType)
    {
      if (texture->mHeight == 0) ///THE TEXTURE IS COMPRESS
@@ -235,7 +297,7 @@ namespace manage_texturesCooker
       return nullptr;
    }
 
-   unsigned char* processTexture_pixels(aiMaterial* material, aiTextureType matType, const aiScene* scene, const std::string& nameModel_Path, const std::string& directory, int& width, int& height, int& nrChannels, std::string& nameTexture)
+   unsigned char* processTexture_pixels(aiMaterial* material, aiTextureType matType, const aiScene* scene, const std::string& nameModel_Path, const std::string& directory, data_image& data_Tex)
    {
       if (material->GetTextureCount(matType) > 0)
      {
@@ -253,11 +315,11 @@ namespace manage_texturesCooker
        {
           std::cout << "PROCESS::DIRECTORY_TEXTURE:: NAME_MODEL(" << nameModel_Path << ")" << " :: MATERIAL_TYPE(" << nameTextures[matType] << ")" <<std::endl;
 
-          nameTexture = std::filesystem::path(pathTex).stem().string(); ////ONLY NAME
+          data_Tex.nameTex = std::filesystem::path(pathTex).stem().string(); ////ONLY NAME
           size_t pos_BC{};
-          if (convert_str::find_badCharacters_filePath(nameTexture, pos_BC))
+          if (convert_str::find_badCharacters_filePath(data_Tex.nameTex, pos_BC))
           {
-            nameTexture = nameTexture.substr(0, pos_BC);
+            data_Tex.nameTex = data_Tex.nameTex.substr(0, pos_BC);
           }
 
         //  nameTexture = nameModel_Path + "_" + nameTexture + "_" + nameTextures[matType];
@@ -274,7 +336,7 @@ namespace manage_texturesCooker
 
          std::string pathTexture{directory + pathTex};
 
-         pixelTex = stbi_load(pathTexture.c_str(), &width, &height, &nrChannels, 0);
+         pixelTex = stbi_load(pathTexture.c_str(), &data_Tex.width, &data_Tex.height, &data_Tex.nrChannels, 0);
 
        }
 
@@ -285,15 +347,15 @@ namespace manage_texturesCooker
          pathTex = pathTex.substr(1);
          const aiTexture* embeddedTex { scene->mTextures[std::stoi(pathTex)]};
 
-         nameTexture = embeddedTex->mFilename.C_Str();
+         data_Tex.nameTex = embeddedTex->mFilename.C_Str();
 
-         if (!nameTexture.empty())
+         if (!data_Tex.nameTex.empty())
          {
-            nameTexture = std::filesystem::path(nameTexture).stem().string();
+            data_Tex.nameTex = std::filesystem::path(data_Tex.nameTex).stem().string();
             size_t pos_BC{};
-            if (convert_str::find_badCharacters_filePath(nameTexture, pos_BC))
+            if (convert_str::find_badCharacters_filePath(data_Tex.nameTex, pos_BC))
             {
-               nameTexture = nameTexture.substr(0, pos_BC);
+               data_Tex.nameTex = data_Tex.nameTex.substr(0, pos_BC);
             }
 
            // nameTexture = nameModel_Path + "_" + nameTexture + "_" + nameTextures[matType];
@@ -301,40 +363,81 @@ namespace manage_texturesCooker
 
          else
          {
-            nameTexture = nameModel_Path + "_" + nameTextures[matType];
+            data_Tex.nameTex = nameModel_Path + "_" + nameTextures[matType];
          }
 
-         pixelTex = process_EmbeddedTexture(embeddedTex, width, height, nrChannels, nameModel_Path, matType);
+         pixelTex = process_EmbeddedTexture(embeddedTex, data_Tex.width, data_Tex.height, data_Tex.nrChannels, nameModel_Path, matType);
        }
 
 
       return std::move(pixelTex);
      }
 
+      return nullptr;
    }
 
    void loadTextures(aiMaterial* material, manager_AssimpData::textures_MaterialManager& str_textures, const std::string& nameModel_Path, const std::string& directory, const aiScene* scene)
    {
       std::string textures_binDirectory{"assets_engine/texturesModels/" + nameModel_Path + "_textures"};
-      ////CONTINUE HERE TO LOAD ALL TEXTURES
 
-      int width_albedo{};
-      int height_albedo{};
-      int nrChannels_albedo{};
-      std::string nameTex_albedo{};
+      data_image dataOpacity{};
+      unsigned char* opacity_tex{processTexture_pixels(material, aiTextureType_OPACITY, scene, nameModel_Path, directory, dataOpacity)};
 
-      unsigned char* albedo_tex {processTexture_pixels(material, aiTextureType_BASE_COLOR, scene, nameModel_Path, directory, width_albedo, height_albedo, nrChannels_albedo, nameTex_albedo)};
-      if (albedo_tex == nullptr)
+      if (testMaterial_PBR(material))
       {
-        albedo_tex = processTexture_pixels(material, aiTextureType_DIFFUSE, scene, nameModel_Path, directory, width_albedo, height_albedo, nrChannels_albedo, nameTex_albedo);
+         data_image dataAlbedo{};
+         unsigned char* albedo_tex {processTexture_pixels(material, aiTextureType_BASE_COLOR, scene, nameModel_Path, directory, dataAlbedo)};
+
+
       }
 
-      int width_opacity{};
-      int height_opacity{};
-      int nrChannels_opacity{};
-      std::string nameTex_opacity{};
+      ////IF THE MATERIAL ARE NOT PBR
 
-      unsigned char* opacity_tex{processTexture_pixels(material, aiTextureType_OPACITY, scene, nameModel_Path, directory, width_opacity, height_opacity, nrChannels_opacity, nameTex_opacity)};
+      data_image dataDiffuse{};
+      unsigned char* diffuse_tex = processTexture_pixels(material, aiTextureType_DIFFUSE, scene, nameModel_Path, directory, dataDiffuse);
+
+      data_image dataSpecular{};
+      unsigned char* specular_tex = processTexture_pixels(material, aiTextureType_SPECULAR, scene, nameModel_Path, directory, dataSpecular);
+
+      data_image dataShininess{};
+      unsigned char* shininess_tex = processTexture_pixels(material, aiTextureType_SHININESS, scene, nameModel_Path, directory, dataShininess);
+
+      int maxWidth {dataDiffuse.width >= dataSpecular.width ? dataDiffuse.width : dataSpecular.width};
+      maxWidth = maxWidth >= dataSpecular.width ? maxWidth: dataSpecular.width;
+
+      int maxHeight {dataDiffuse.height >= dataSpecular.height ? dataDiffuse.height : dataSpecular.height};
+      maxHeight = maxHeight >= dataSpecular.height ? maxHeight: dataSpecular.height;
+
+      if (diffuse_tex != nullptr)
+      {
+         if (dataDiffuse.width != maxWidth && dataDiffuse.height != maxHeight)
+         {
+           diffuse_tex = resizeTexture(diffuse_tex, maxWidth, maxHeight, 4);
+         }
+      }
+
+      if (specular_tex != nullptr)
+      {
+         if (dataSpecular.width != maxWidth && dataSpecular.height != maxHeight)
+         {
+            specular_tex = resizeTexture(specular_tex, maxWidth, maxHeight, 4);
+         }
+      }
+
+      if (shininess_tex != nullptr)
+      {
+         if (dataShininess.width != maxWidth && dataShininess.height != maxHeight)
+         {
+            shininess_tex = resizeTexture(shininess_tex, maxWidth, maxHeight, 4);
+         }
+      }
+
+
+      //////CONTINUE HERE TO MAKE THE CONVERTION TO PBR
+
+      /////////MAKE A COMPARATION OF EACH SIZE OF THE TEXTURE, THEN CALCULATE WHAT IS THE MAX SIZE OF EACH TEXTURE
+
+      if (dataSpecular)
 
       ///THINGS TO DO
       ///

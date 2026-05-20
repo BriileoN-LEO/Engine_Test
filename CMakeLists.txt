@@ -177,6 +177,9 @@ add_library(thirdParty_Libs INTERFACE
 )
 
 target_include_directories(thirdParty_Libs INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(thirdParty_Libs INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/ThirdPartyLibs/stb-master")
+
+
 
 add_subdirectory(brii_CORE)
 add_subdirectory(brii_COOKER)

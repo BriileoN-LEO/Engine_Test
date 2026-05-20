@@ -126,12 +126,25 @@ namespace manager_AssimpData
 
 namespace manage_texturesCooker
 {
+  struct data_image
+  {
+    int width{};
+    int height{};
+    int nrChannels{};
+    std::string nameTex{};
+
+  };
+
    extern std::unordered_map<aiTextureType, std::string> nameTextures;
    extern std::unordered_map<uint32_t, std::string> textures_saved; ///THIS IS A CONTAINER THAT SAVES ALL THE TEXTURES THAT ARE UPLOADED ----> [NAME TEXTURE ID FNV], [PATH OF TEXTURE KTX CONVERTER
 
-   unsigned char* convert_to_PBR(aiTextureType matType,
+   unsigned char* resizeTexture(unsigned char* texture, const int& width_old, const int& height_old, const int& width_new, const int& height_new, const int& numChannels);
+
+   bool testMaterial_PBR(aiMaterial* material);
+   unsigned char* convertTex_to_PBR(const unsigned char* diffusePixels, const unsigned char* specularPixels, const unsigned char* glossinesPixels);
+
    unsigned char* process_EmbeddedTexture(const aiTexture* texture, int& width, int& height, int& channels, const std::string& nameModel_Path, aiTextureType& matType);
-   unsigned char* processTexture_pixels(aiMaterial* material, aiTextureType matType, const aiScene* scene, const std::string& nameModel_Path, const std::string& directory, int& width, int& height, int& nrChannels, std::string& nameTexture);
+   unsigned char* processTexture_pixels(aiMaterial* material, aiTextureType matType, const aiScene* scene, const std::string& nameModel_Path, const std::string& directory, data_image& data_Tex);
 
    void loadTextures(aiMaterial* material, manager_AssimpData::textures_MaterialManager& str_textures, const std::string& nameModel_Path, const std::string& directory, const aiScene* scene);
 
