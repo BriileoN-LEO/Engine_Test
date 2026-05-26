@@ -76,7 +76,7 @@ namespace manager_AssimpData
     void destroy();
   };
 
-  struct textures_MaterialManager
+  struct textures_MaterialManager  ////PATHS OF KTX2 CONVERTED TEXTURES
   {
     std::string str_AlbedoPath{};
     std::string str_NormalsPath{};
@@ -126,6 +126,12 @@ namespace manager_AssimpData
 
 namespace manage_texturesCooker
 {
+  enum class resizeType: uint8_t
+  {
+    LINEAR = 0,
+    SRGB = 1,
+  };
+
   struct data_image
   {
     int width{};
@@ -138,13 +144,16 @@ namespace manage_texturesCooker
    extern std::unordered_map<aiTextureType, std::string> nameTextures;
    extern std::unordered_map<uint32_t, std::string> textures_saved; ///THIS IS A CONTAINER THAT SAVES ALL THE TEXTURES THAT ARE UPLOADED ----> [NAME TEXTURE ID FNV], [PATH OF TEXTURE KTX CONVERTER
 
-   unsigned char* resizeTexture(unsigned char* texture, const int& width_old, const int& height_old, const int& width_new, const int& height_new, const int& numChannels);
+   void combine_Albedo_Opacity(std::vector<unsigned char> outAlbedoOpa, unsigned char* albedoPixels, unsigned char* opacityPixels, const int& totalPixels_notChannels);
+   void convert_RMA(std::vector<unsigned char>& RMA, unsigned char* roughnessPixels, unsigned char* metallicPixels, unsigned char* ambientOclussionPixels, const int& totalPixels);
+   void resizeTexture_stb(std::vector<unsigned char>& resize_Texture, unsigned char* texture, const int& width_old, const int& height_old, const int& width_new, const int& height_new, const int& numChannels, resizeType resT);
 
    bool testMaterial_PBR(aiMaterial* material);
-   unsigned char* convertTex_to_PBR(const unsigned char* diffusePixels, const unsigned char* specularPixels, const unsigned char* glossinesPixels);
+   void convertTex_to_PBR(const unsigned char* diffusePixels, const unsigned char* specularPixels, const unsigned char* shininessPixels,
+                  const int& totalPixels, std::vector<unsigned char>& outAlbedo, std::vector<unsigned char>& outRMA);
 
-   unsigned char* process_EmbeddedTexture(const aiTexture* texture, int& width, int& height, int& channels, const std::string& nameModel_Path, aiTextureType& matType);
-   unsigned char* processTexture_pixels(aiMaterial* material, aiTextureType matType, const aiScene* scene, const std::string& nameModel_Path, const std::string& directory, data_image& data_Tex);
+   unsigned char* process_EmbeddedTexture(const aiTexture* texture, int& width, int& height, int& channels, const std::string& nameModel_Path, aiTextureType& matType,  int numChannels_obj);
+   unsigned char* processTexture_pixels(aiMaterial* material, aiTextureType matType, const aiScene* scene, const std::string& nameModel_Path, const std::string& directory, data_image& data_Tex, int numChannels_obj);
 
    void loadTextures(aiMaterial* material, manager_AssimpData::textures_MaterialManager& str_textures, const std::string& nameModel_Path, const std::string& directory, const aiScene* scene);
 

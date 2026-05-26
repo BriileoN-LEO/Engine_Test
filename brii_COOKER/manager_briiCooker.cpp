@@ -176,19 +176,117 @@ namespace manage_texturesCooker
 
    std::unordered_map<uint32_t, std::string> textures_saved;
 
-   unsigned char* resizeTexture(unsigned char* texture, const int& width_old, const int& height_old, const int& width_new, const int& height_new, const int& numChannels)
+   void combine_Albedo_Opacity(std::vector<unsigned char> outAlbedoOpa, unsigned char* albedoPixels, unsigned char* opacityPixels, const int& totalPixels_notChannels)
+   {
+      outAlbedoOpa.resize(totalPixels_notChannels * 4);
+
+     for (int i = 0; i < totalPixels_notChannels; ++i)
+     {
+       int index = i * 4;
+
+       outAlbedoOpa[index] = albedoPixels[index];
+       outAlbedoOpa[index + 1] = albedoPixels[index + 1];
+       outAlbedoOpa[index + 2] = albedoPixels[index + 2];
+       outAlbedoOpa[index + 3] = opacityPixels[i];
+
+        /////CONTINUE HERE
+        ////REVIEW THIS FUNCTION
+     }
+   }
+
+   void convert_RMA(std::vector<unsigned char>& RMA, unsigned char* roughnessPixels, unsigned char* metallicPixels, unsigned char* ambientOclussionPixels, const int& totalPixels)
+   {
+      RMA.resize(totalPixels * 4);
+
+      int index{};
+
+      unsigned char roughness_pixel{};
+      unsigned char metallic_pixel{};
+      unsigned char ambientOclussion_pixel{};
+
+     for (int i = 0; i < totalPixels; ++i)
+     {
+        index = i * 4;
+
+        if (roughnessPixels != nullptr)
+        {
+           roughness_pixel = roughnessPixels[i];
+        }
+        else
+        {
+           roughness_pixel = static_cast<unsigned char>(255.0f);
+        }
+
+        if (metallicPixels != nullptr)
+        {
+           metallic_pixel = metallicPixels[i];
+        }
+        else
+        {
+           metallic_pixel = static_cast<unsigned char>(255.0f);
+        }
+
+        if (ambientOclussionPixels != nullptr)
+        {
+           ambientOclussion_pixel = ambientOclussionPixels[i];
+        }
+        else
+        {
+           ambientOclussion_pixel = static_cast<unsigned char>(255.0f);
+        }
+
+        RMA[index] = roughness_pixel;
+        RMA[index + 1] = metallic_pixel;
+        RMA[index + 2] = ambientOclussion_pixel;
+        RMA[index + 4] = static_cast<unsigned char>(255.0f);
+     }
+   }
+   void resizeTexture_stb(std::vector<unsigned char>& resize_Texture, unsigned char* texture, const int& width_old, const int& height_old, const int& width_new, const int& height_new, const int& numChannels, resizeType resT)
    {
 
       int total_pixel {width_new * height_new * numChannels};
 
-      std::vector<unsigned char> resize_Texture{};
       resize_Texture.resize(total_pixel);
 
-      stbir_resize_uint8()  /////////CONTINUE HERE
+      stbir_pixel_layout layout = STBIR_RGBA;
 
+      switch (numChannels)
+      {
+         case 1 :
+            layout = STBIR_1CHANNEL;
+            break;
+         case 2 :
+            layout = STBIR_2CHANNEL;
+            break;
+         case 3 :
+            layout = STBIR_RGB;
+            break;
+      }
 
+      switch (resT)
+      {
+         case resizeType::LINEAR :
+         {
+           stbir_resize_uint8_linear
+           (
+            texture, width_old, height_old, 0,
+            resize_Texture.data(), width_new, height_new, 0,
+            layout
+           );
+           break;
+         }
 
-
+         case resizeType::SRGB :
+            {
+            stbir_resize_uint8_srgb
+            (
+             texture, width_old, height_old, 0,
+             resize_Texture.data(), width_new, height_new, 0,
+             layout
+            );
+            break;
+            }
+      }
    }
 
    bool testMaterial_PBR(aiMaterial* material)
@@ -236,7 +334,58 @@ namespace manage_texturesCooker
       return false;
    }
 
-   unsigned char* process_EmbeddedTexture(const aiTexture* texture, int& width, int& height, int& channels, const std::string& nameModel_Path, aiTextureType& matType)
+   void convertTex_to_PBR(const unsigned char* diffusePixels, const unsigned char* specularPixels, const unsigned char* shininessPixels,
+               const int& totalPixels, std::vector<unsigned char>& outAlbedo, std::vector<unsigned char>& outRMA)
+   {
+      outAlbedo.resize(totalPixels);
+      outRMA.resize(totalPixels);
+
+      for (int i = 0; i < totalPixels; ++i)
+      {
+         int index = i * 4;
+
+         float diff_R { diffusePixels ? (diffusePixels[index] / 255.0f) : 1.0f };
+         float diff_G { diffusePixels ? (diffusePixels[index + 1] / 255.0f) : 1.0f };
+         float diff_B { diffusePixels ? (diffusePixels[index + 2] / 255.0f) : 1.0f };
+
+         float spec_R { specularPixels ? (specularPixels[index] / 255.0f) : 0.5f };
+         float spec_G { specularPixels ? (specularPixels[index + 1] / 255.0f) : 0.5f };
+         float spec_B { specularPixels ? (specularPixels[index + 2] / 255.0f) : 0.5f };
+
+         float shine_R { shininessPixels ? (shininessPixels[index] / 255.0f) : 0.5f };
+
+
+         float roughness_v { std::max(0.0f, std::min(1.0f, 1.0f - shine_R))};
+
+         float specLuma { (0.2126f * spec_R) + (0.7152f * spec_G) + (0.0722f * spec_B) };
+
+         float metallic_v {};
+
+         if (specLuma > 0.2f)
+         {
+          metallic_v = (specLuma - 0.2f) / 0.8f;
+          metallic_v = std::max(0.0f, std::min(1.0f, metallic_v));
+         }
+
+         float albedo_R = diff_R * (1.0f - metallic_v) + spec_R * metallic_v;
+         float albedo_G = diff_G * (1.0f - metallic_v) + spec_G * metallic_v;
+         float albedo_B = diff_B * (1.0f - metallic_v) + spec_B * metallic_v;
+
+
+         outAlbedo[index] = static_cast<unsigned char>(albedo_R * 255.0f);
+         outAlbedo[index + 1] = static_cast<unsigned char>(albedo_G * 255.0f);
+         outAlbedo[index + 2] = static_cast<unsigned char>(albedo_B * 255.0f);
+         outAlbedo[index + 3] = diffusePixels[index + 3];
+
+         outRMA[index] = static_cast<unsigned char>(roughness_v * 255.0f);
+         outRMA[index + 1] = static_cast<unsigned char>(metallic_v * 255.0f);
+         outRMA[index + 2] = static_cast<unsigned char>(255.0f);
+         outRMA[index + 3] = static_cast<unsigned char>(255.0f);
+      }
+
+   }
+
+   unsigned char* process_EmbeddedTexture(const aiTexture* texture, int& width, int& height, int& channels, const std::string& nameModel_Path, aiTextureType& matType, int numChannels_obj)
    {
      if (texture->mHeight == 0) ///THE TEXTURE IS COMPRESS
      {
@@ -249,7 +398,7 @@ namespace manage_texturesCooker
         &width,
         &height,
         &channels,
-        4
+        numChannels_obj
        )};
 
         if (texPixels)
@@ -273,7 +422,7 @@ namespace manage_texturesCooker
         width = texture->mWidth;
         height = texture->mHeight;
 
-        size_t sizeBytes = width * height * 4;
+        size_t sizeBytes = width * height * numChannels_obj;
 
         unsigned char* texPixels {(unsigned char*)malloc(sizeBytes)};
 
@@ -297,7 +446,7 @@ namespace manage_texturesCooker
       return nullptr;
    }
 
-   unsigned char* processTexture_pixels(aiMaterial* material, aiTextureType matType, const aiScene* scene, const std::string& nameModel_Path, const std::string& directory, data_image& data_Tex)
+   unsigned char* processTexture_pixels(aiMaterial* material, aiTextureType matType, const aiScene* scene, const std::string& nameModel_Path, const std::string& directory, data_image& data_Tex,  int numChannels_obj)
    {
       if (material->GetTextureCount(matType) > 0)
      {
@@ -336,7 +485,7 @@ namespace manage_texturesCooker
 
          std::string pathTexture{directory + pathTex};
 
-         pixelTex = stbi_load(pathTexture.c_str(), &data_Tex.width, &data_Tex.height, &data_Tex.nrChannels, 0);
+         pixelTex = stbi_load(pathTexture.c_str(), &data_Tex.width, &data_Tex.height, &data_Tex.nrChannels, numChannels_obj);
 
        }
 
@@ -366,7 +515,7 @@ namespace manage_texturesCooker
             data_Tex.nameTex = nameModel_Path + "_" + nameTextures[matType];
          }
 
-         pixelTex = process_EmbeddedTexture(embeddedTex, data_Tex.width, data_Tex.height, data_Tex.nrChannels, nameModel_Path, matType);
+         pixelTex = process_EmbeddedTexture(embeddedTex, data_Tex.width, data_Tex.height, data_Tex.nrChannels, nameModel_Path, matType, numChannels_obj);
        }
 
 
@@ -381,63 +530,206 @@ namespace manage_texturesCooker
       std::string textures_binDirectory{"assets_engine/texturesModels/" + nameModel_Path + "_textures"};
 
       data_image dataOpacity{};
-      unsigned char* opacity_tex{processTexture_pixels(material, aiTextureType_OPACITY, scene, nameModel_Path, directory, dataOpacity)};
+      unsigned char* opacity_tex{processTexture_pixels(material, aiTextureType_OPACITY, scene, nameModel_Path, directory, dataOpacity, 4)};
+
+      //////HEIGHT MAP SECTION
+      data_image dataHeight{};
+      unsigned char* height_tex {processTexture_pixels(material, aiTextureType_HEIGHT, scene, nameModel_Path, directory, dataHeight, 4)};
+
+      if (height_tex == nullptr)
+      {
+       height_tex = processTexture_pixels(material, aiTextureType_DISPLACEMENT, scene, nameModel_Path, directory, dataHeight, 4);
+      }
 
       if (testMaterial_PBR(material))
       {
          data_image dataAlbedo{};
-         unsigned char* albedo_tex {processTexture_pixels(material, aiTextureType_BASE_COLOR, scene, nameModel_Path, directory, dataAlbedo)};
+         unsigned char* albedo_tex {processTexture_pixels(material, aiTextureType_BASE_COLOR, scene, nameModel_Path, directory, dataAlbedo, 4)};
+
+         data_image dataNormalCamera{};
+         unsigned char* normalCamera_tex {processTexture_pixels(material, aiTextureType_NORMAL_CAMERA, scene, nameModel_Path, directory, dataNormalCamera, 4)};
+
+         data_image dataEmission{};
+         unsigned char* emission_tex {processTexture_pixels(material, aiTextureType_EMISSION_COLOR, scene, nameModel_Path, directory, dataEmission, 4)};
+
+         data_image dataMetalness{};
+         unsigned char* metalness_tex {processTexture_pixels(material, aiTextureType_METALNESS, scene, nameModel_Path, directory, dataMetalness, 4)};
+
+         data_image dataDiffuseRoughness{};
+         unsigned char* diffuseRoughness_tex {processTexture_pixels(material, aiTextureType_DIFFUSE_ROUGHNESS, scene, nameModel_Path, directory, dataDiffuseRoughness, 4)};
+
+         data_image dataAO{};
+         unsigned char* ao_tex {processTexture_pixels(material, aiTextureType_AMBIENT_OCCLUSION, scene, nameModel_Path, directory, dataAO, 4)};
 
 
+         int maxHeight_RMA {dataDiffuseRoughness.height > dataMetalness.height ? dataDiffuseRoughness.height : dataMetalness.height};
+         maxHeight_RMA = maxHeight_RMA > dataAO.height ? maxHeight_RMA : dataAO.height;
+
+         int maxWidth_RMA {dataDiffuseRoughness.width > dataMetalness.width ? dataDiffuseRoughness.width : dataMetalness.width};
+         maxWidth_RMA = maxWidth_RMA > dataAO.width ? maxWidth_RMA : dataAO.width;
+
+         unsigned char* metalness_tex_F { metalness_tex };
+         unsigned char* roughness_tex_F { diffuseRoughness_tex };
+         unsigned char* ao_tex_F { ao_tex };
+
+         if (metalness_tex != nullptr)
+         {
+            if (dataMetalness.height != maxHeight_RMA || dataMetalness.width != maxWidth_RMA)
+            {
+               std::vector<unsigned char> newMetalnessData {};
+               resizeTexture_stb(newMetalnessData, metalness_tex, dataMetalness.width, dataMetalness.height, maxWidth_RMA, maxHeight_RMA, dataMetalness.nrChannels, resizeType::LINEAR);
+               metalness_tex_F = nullptr;
+               metalness_tex_F = std::move(newMetalnessData.data());
+            }
+         }
+
+         if (diffuseRoughness_tex != nullptr)
+         {
+            if (dataDiffuseRoughness.height != maxHeight_RMA || dataDiffuseRoughness.width != maxWidth_RMA)
+            {
+               std::vector<unsigned char> newRoughnessData {};
+               resizeTexture_stb(newRoughnessData, diffuseRoughness_tex, dataDiffuseRoughness.width, dataDiffuseRoughness.height, maxWidth_RMA, maxHeight_RMA, dataDiffuseRoughness.nrChannels, resizeType::LINEAR);
+               roughness_tex_F = nullptr;
+               roughness_tex_F = std::move(newRoughnessData.data());
+            }
+         }
+
+
+         if (ao_tex != nullptr)
+         {
+            if (dataAO.height != maxHeight_RMA || dataAO.width != maxWidth_RMA)
+            {
+               std::vector<unsigned char> newAOData {};
+               resizeTexture_stb(newAOData, ao_tex, dataAO.width, dataAO.height, maxWidth_RMA, maxHeight_RMA, dataAO.nrChannels, resizeType::LINEAR);
+               ao_tex_F = nullptr;
+               ao_tex_F = std::move(newAOData.data());
+            }
+         }
+
+         int totalPixels {maxHeight_RMA * maxWidth_RMA};
+
+         std::vector<unsigned char> RMA_pbr{};
+         convert_RMA(RMA_pbr, roughness_tex_F, metalness_tex_F, ao_tex_F, totalPixels);
+
+         unsigned char* RMA_tex { RMA_pbr.data() };       ///////////////////////RMA TEXTURE
+
+         unsigned char* opa_tex_F {opacity_tex};
+         if (opacity_tex != nullptr)
+         {
+            if (dataOpacity.height != dataAlbedo.height || dataOpacity.width != dataAlbedo.width)
+            {
+               std::vector<unsigned char> newOpaData {};
+               resizeTexture_stb(newOpaData, opacity_tex, dataOpacity.width, dataOpacity.height, dataAlbedo.width, dataAlbedo.height, dataOpacity.nrChannels, resizeType::LINEAR);
+               opa_tex_F = nullptr;
+               opa_tex_F = std::move(newOpaData.data());
+            }
+         }
+
+         int totalPixels_AlbedoOpa{dataAlbedo.height * dataAlbedo.width};
+
+         std::vector<unsigned char> AlbedoOpa_pbr{};
+         combine_Albedo_Opacity(AlbedoOpa_pbr, albedo_tex, opa_tex_F, totalPixels_AlbedoOpa);
+         unsigned char* AlbedoOpa_tex { AlbedoOpa_pbr.data() };
+
+
+         /////CONTINUE HERE
+         //- REVIEW ALL THE CODE TO SEE ISSUES
+         //- MAKE ALL THE TEXTURES TO KTX2
+
+       return;
       }
 
       ////IF THE MATERIAL ARE NOT PBR
 
       data_image dataDiffuse{};
-      unsigned char* diffuse_tex = processTexture_pixels(material, aiTextureType_DIFFUSE, scene, nameModel_Path, directory, dataDiffuse);
+      unsigned char* diffuse_tex = processTexture_pixels(material, aiTextureType_DIFFUSE, scene, nameModel_Path, directory, dataDiffuse, 4);
 
       data_image dataSpecular{};
-      unsigned char* specular_tex = processTexture_pixels(material, aiTextureType_SPECULAR, scene, nameModel_Path, directory, dataSpecular);
+      unsigned char* specular_tex = processTexture_pixels(material, aiTextureType_SPECULAR, scene, nameModel_Path, directory, dataSpecular, 4);
 
       data_image dataShininess{};
-      unsigned char* shininess_tex = processTexture_pixels(material, aiTextureType_SHININESS, scene, nameModel_Path, directory, dataShininess);
+      unsigned char* shininess_tex = processTexture_pixels(material, aiTextureType_SHININESS, scene, nameModel_Path, directory, dataShininess, 4);
 
+      data_image dataNormals{};
+      unsigned char* normals_tex = processTexture_pixels(material, aiTextureType_NORMALS, scene, nameModel_Path, directory, dataNormals, 4);
+
+      data_image dataEmissive{};
+      unsigned char* emissive_tex = processTexture_pixels(material, aiTextureType_EMISSIVE, scene, nameModel_Path, directory, dataEmissive, 4);
+
+      ///COMPARATION OF SIZE OF TEXTURES
       int maxWidth {dataDiffuse.width >= dataSpecular.width ? dataDiffuse.width : dataSpecular.width};
-      maxWidth = maxWidth >= dataSpecular.width ? maxWidth: dataSpecular.width;
+      maxWidth = maxWidth >= dataShininess.width ? maxWidth : dataShininess.width;
 
       int maxHeight {dataDiffuse.height >= dataSpecular.height ? dataDiffuse.height : dataSpecular.height};
-      maxHeight = maxHeight >= dataSpecular.height ? maxHeight: dataSpecular.height;
+      maxHeight = maxHeight >= dataShininess.height ? maxHeight : dataShininess.height;
 
-      if (diffuse_tex != nullptr)
+      int totalPixels {maxWidth * maxHeight};
+
+      ///////////TEXTURES TO REMPLACE IF CHANGE THE SIZE
+      unsigned char* diff_tex_F{diffuse_tex};
+      unsigned char* spec_tex_F{specular_tex};
+      unsigned char* shini_tex_F{shininess_tex};
+      unsigned char* opa_tex_F{opacity_tex};
+
+      if (diffuse_tex != nullptr) //////////TO ALBEDO
       {
-         if (dataDiffuse.width != maxWidth && dataDiffuse.height != maxHeight)
+         if (dataDiffuse.width != maxWidth || dataDiffuse.height != maxHeight)
          {
-           diffuse_tex = resizeTexture(diffuse_tex, maxWidth, maxHeight, 4);
+           std::vector<unsigned char> texRS_Diff{};
+           resizeTexture_stb(texRS_Diff, diffuse_tex, dataDiffuse.width, dataDiffuse.height, maxWidth, maxHeight, dataDiffuse.nrChannels, resizeType::SRGB);
+           diff_tex_F = nullptr;
+           diff_tex_F = texRS_Diff.data();
          }
       }
 
-      if (specular_tex != nullptr)
+      if (specular_tex != nullptr) //////////TO METALLIC
       {
-         if (dataSpecular.width != maxWidth && dataSpecular.height != maxHeight)
+         if (dataSpecular.width != maxWidth || dataSpecular.height != maxHeight)
          {
-            specular_tex = resizeTexture(specular_tex, maxWidth, maxHeight, 4);
+           std::vector<unsigned char> texRS_Spec{};
+           resizeTexture_stb(texRS_Spec, specular_tex, dataSpecular.width, dataSpecular.height, maxWidth, maxHeight, dataSpecular.nrChannels, resizeType::LINEAR);
+           spec_tex_F = nullptr;
+           spec_tex_F = texRS_Spec.data();
          }
       }
 
-      if (shininess_tex != nullptr)
+      if (shininess_tex != nullptr)   //////////TO ROUGHNESS
       {
-         if (dataShininess.width != maxWidth && dataShininess.height != maxHeight)
+         if (dataShininess.width != maxWidth || dataShininess.height != maxHeight)
          {
-            shininess_tex = resizeTexture(shininess_tex, maxWidth, maxHeight, 4);
+            std::vector<unsigned char> texRS_Shini{};
+            resizeTexture_stb(texRS_Shini, shininess_tex, dataShininess.width, dataShininess.height, maxWidth, maxHeight, dataSpecular.nrChannels, resizeType::LINEAR);
+            shini_tex_F = nullptr;
+            shini_tex_F = texRS_Shini.data();
          }
       }
+
+      if (opacity_tex != nullptr)
+      {
+         if (dataOpacity.width != maxWidth || dataOpacity.height != maxHeight)
+         {
+            std::vector<unsigned char> texRS_Opa{};
+            resizeTexture_stb(texRS_Opa, opacity_tex, dataOpacity.width, dataOpacity.height, maxWidth, maxHeight, dataOpacity.nrChannels, resizeType::LINEAR);
+            opa_tex_F = nullptr;
+            opa_tex_F = texRS_Opa.data();
+         }
+      }
+
+      std::vector<unsigned char> texRS_albedoOpa{};
+      combine_Albedo_Opacity(texRS_albedoOpa, diff_tex_F, opa_tex_F, totalPixels);
+      unsigned char* albedoOpa_tex {texRS_albedoOpa.data()};
+
+      std::vector<unsigned char> dataAlbedo{};
+      std::vector<unsigned char> dataRMA{};
+      convertTex_to_PBR(albedoOpa_tex, spec_tex_F, shini_tex_F, totalPixels, dataAlbedo, dataRMA);
+
+      unsigned char* albedo{dataAlbedo.data()};
+      unsigned char* RMA {dataRMA.data()};
 
 
       //////CONTINUE HERE TO MAKE THE CONVERTION TO PBR
 
       /////////MAKE A COMPARATION OF EACH SIZE OF THE TEXTURE, THEN CALCULATE WHAT IS THE MAX SIZE OF EACH TEXTURE
-
-      if (dataSpecular)
 
       ///THINGS TO DO
       ///
