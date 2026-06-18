@@ -11,6 +11,7 @@
 #include "model_binFormat.h"
 #include "mesh_binFormat.h"
 #include "material_binFormat.h"
+#include "dataManager/dataTypes_brii.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -20,8 +21,16 @@
 #include <queue>
 #include <unordered_map>
 
+
 namespace manager_GD
 {
+  enum class memType : uint8_t
+  {
+   STBI_MEM = 0,
+   HEAP_ENGINE = 1,
+   STACK_HEAP_ENGINE = 2
+  };
+
   enum class signBin : uint8_t
   {
     MODEL = 0,
@@ -126,35 +135,69 @@ namespace manager_AssimpData
 
 namespace manage_texturesCooker
 {
-  enum class resizeType: uint8_t
+  enum class resizeType : uint8_t
   {
     LINEAR = 0,
     SRGB = 1,
   };
 
+  enum class texStatus : uint32_t
+  {
+    NOT_LOADED = 0, ////IF TEXTURE NOT LOADED IN THE UNORDERED_MAP textures_saved
+    LOADED = 1,  ////IF TEXTURE NOT LOADED IN THE UNORDERED_MAP textures_saved
+
+    NOT_EXISTS = 2, ////TO INDICATE IF THE TEXTURE EXISTS
+    EXISTS = 3 /////TO INDICATE IF THE TEXTURE EXISTS
+  };
+
   struct data_image
   {
+    unsigned char* texturePixels{nullptr};
     int width{};
     int height{};
     int nrChannels{};
-    std::string nameTex{};
 
+    std::string nameTex{};
+    uint32_t hash_nameTex{};
+
+    manager_GD::memType type_mem_image{ manager_GD::memType::STBI_MEM };
+
+    void clear();
   };
 
    extern std::unordered_map<aiTextureType, std::string> nameTextures;
    extern std::unordered_map<uint32_t, std::string> textures_saved; ///THIS IS A CONTAINER THAT SAVES ALL THE TEXTURES THAT ARE UPLOADED ----> [NAME TEXTURE ID FNV], [PATH OF TEXTURE KTX CONVERTER
 
-   void combine_Albedo_Opacity(std::vector<unsigned char> outAlbedoOpa, unsigned char* albedoPixels, unsigned char* opacityPixels, const int& totalPixels_notChannels);
-   void convert_RMA(std::vector<unsigned char>& RMA, unsigned char* roughnessPixels, unsigned char* metallicPixels, unsigned char* ambientOclussionPixels, const int& totalPixels);
+   void ktx2_convert(data_image& texture, std::string pathDirectory_save);
+
+   using pixel_color_state = void(*)(std::vector<unsigned char>&, int, unsigned char*, int);
+   void statePixelColor(std::vector<unsigned char>& texData, int idxData, unsigned char* value, int idxValue);
+   void statePixelColor_NULL(std::vector<unsigned char>& texData, int idxData, unsigned char* value, int idxValue);
+
+   void combine_to_rgba(std::vector<unsigned char> outAlbedoOpa, unsigned char* albedoPixels, unsigned char* opacityPixels, const int& totalPixels_notChannels);
+   void convert_RMA(std::vector<unsigned char>& RMA, unsigned char* roughnessData, unsigned char* metallicData, unsigned char* ambientOclussionData, const int& totalPixels);
    void resizeTexture_stb(std::vector<unsigned char>& resize_Texture, unsigned char* texture, const int& width_old, const int& height_old, const int& width_new, const int& height_new, const int& numChannels, resizeType resT);
 
-   bool testMaterial_PBR(aiMaterial* material);
-   void convertTex_to_PBR(const unsigned char* diffusePixels, const unsigned char* specularPixels, const unsigned char* shininessPixels,
-                  const int& totalPixels, std::vector<unsigned char>& outAlbedo, std::vector<unsigned char>& outRMA);
+  using pixel_colorArray = void(*)(const unsigned char*, float[4], int);
 
-   unsigned char* process_EmbeddedTexture(const aiTexture* texture, int& width, int& height, int& channels, const std::string& nameModel_Path, aiTextureType& matType,  int numChannels_obj);
-   unsigned char* processTexture_pixels(aiMaterial* material, aiTextureType matType, const aiScene* scene, const std::string& nameModel_Path, const std::string& directory, data_image& data_Tex, int numChannels_obj);
+  bool testMaterial_PBR(aiMaterial* material);
 
+  namespace convert_to_PBR
+  {
+    using conv_func = void(*)(std::vector<unsigned char>&, std::vector<unsigned char>&, briT::br_4&, float&, int&);
+    void conv_to_RMA(std::vector<unsigned char>& outRMA, std::vector<unsigned char>& specShininess, briT::br_4& spec, float& metallic_v, int& idx);
+    void convDiff_to_albedo(std::vector<unsigned char>& outAlbedo, std::vector<unsigned char>& diffOpa, briT::br_4& spec, float& metallic_v, int& idx);
+    void conv_NULL(std::vector<unsigned char>& outNULL, std::vector<unsigned char>& inNUll, briT::br_4& spec, float& metallic_v, int& idx);
+
+    void convertTextures(std::vector<unsigned char>& pixelsDiffuseOpa, std::vector<unsigned char>& pixelsSpecShinness,
+                    const int& totalPixels, std::vector<unsigned char>& outAlbedo, std::vector<unsigned char>& outRMA);
+  }
+
+   texStatus process_EmbeddedTexture(const aiTexture* texture, data_image& data_Tex, const std::string& nameModel_Path, aiTextureType& matType,  int numChannels_obj);
+   texStatus processTexture_pixels(aiMaterial* material, aiTextureType matType, const aiScene* scene, std::string prefix_nameModel, const std::string& directory, data_image& data_Tex, int numChannels_obj);
+
+   void freeMemoryImage(const manager_GD::memType& memTexture, unsigned char* dataMem);
+   void saveTexture_ktx2(data_image& texture, texStatus status, std::string& pathDirectory_tex);  ///SAVED THE TEXTURE IN KTX2 FORMAT AND IN TEXTURES_SAVED
    void loadTextures(aiMaterial* material, manager_AssimpData::textures_MaterialManager& str_textures, const std::string& nameModel_Path, const std::string& directory, const aiScene* scene);
 
 }

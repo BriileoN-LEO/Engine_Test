@@ -37,7 +37,7 @@ namespace convert_str
         constexpr std::string_view badCharacters{ "./"};
         size_t find_BC {str.find_first_of(badCharacters)};
 
-        if (str.empty() || find_BC != std::string::npos)
+        if (!str.empty() || find_BC != std::string::npos)
         {
             pos_BC = find_BC;
 

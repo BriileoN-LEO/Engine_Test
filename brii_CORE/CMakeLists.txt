@@ -9,6 +9,10 @@ add_library(briiCore INTERFACE
  "dataManager/convertion_DataManager.cpp"
  "dataManager/convertion_DataManager.h"
  "glm_lib.h"
+ "files_CoreManager/files_Core.cpp"
+ "files_CoreManager/files_Core.h"
+ "dataManager/dataTypes_brii.cpp"
+ "dataManager/dataTypes_brii.h"
 )
 target_link_libraries(briiCore INTERFACE
 assimp::assimp
