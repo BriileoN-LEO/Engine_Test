@@ -1,17 +1,17 @@
 cmake_minimum_required (VERSION 3.21)
 
-project(briiCooker)
+project(brii_COOKER)
 
-add_executable(briiCooker "main_Cooker.cpp"
+add_executable(brii_COOKER "main_Cooker.cpp"
         "manager_briiCooker.cpp"
         "manager_briiCooker.h"
 )
 
-target_include_directories(briiCooker PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(brii_COOKER PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(briiCooker PRIVATE
+target_link_libraries(brii_COOKER PRIVATE
 Learning_lib
-briiCore
+brii_CORE
 assimp::assimp
 glm::glm
 ktx
@@ -24,14 +24,14 @@ if(TARGET assimp)
 endif()
 
 if(UNIX AND NOT APPLE)
-    target_link_libraries(briiCooker PRIVATE
+    target_link_libraries(brii_COOKER PRIVATE
             m
             pthread
             dl
     )
 
 
-    target_compile_options(briiCooker PRIVATE
+    target_compile_options(brii_COOKER PRIVATE
             -Wall
             -Wextra
             -Werror

@@ -10,12 +10,13 @@
 
 namespace filesystem_manager
 {
-  void create_DirectoryFile(std::string& filePath, bool& directoryExist);
+  void create_DirectoryFile(const std::string& filePath, bool& directoryExist);
 
 }
 
 namespace customFiles
 {
+ void clear_spaceKey(std::string& str);
  void standard_textureNameKTX(std::string& nameTexture);
 
 }

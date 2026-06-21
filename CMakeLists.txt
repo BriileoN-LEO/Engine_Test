@@ -115,9 +115,9 @@ set(SDL_TESTS OFF CACHE BOOL "" FORCE)
 set(SDL_EXAMPLES OFF CACHE BOOL "" FORCE)
 
 FetchContent_Declare(
-ktx_software
+ktx
 GIT_REPOSITORY https://github.com/KhronosGroup/KTX-Software.git
-GIT_TAG v4.3.2
+GIT_TAG main
 )
 
 set(KTX_FEATURE_TOOLS OFF CACHE BOOL "" FORCE)
@@ -130,7 +130,6 @@ FetchContent_Declare(
  glm
  GIT_REPOSITORY https://github.com/g-truc/glm.git
  GIT_TAG 1.0.1
-
 )
 
 FetchContent_Declare(
@@ -163,7 +162,7 @@ GIT_TAG master
 
 FetchContent_MakeAvailable(
 SDL3
-ktx_software
+ktx
 glm
 assimp
 imgui
@@ -174,6 +173,7 @@ project (thirdParty_Libs)
 
 add_library(thirdParty_Libs INTERFACE
 "${CMAKE_CURRENT_SOURCE_DIR}/ThirdPartyLibs/stb_image.h"
+#"${CMAKE_CURRENT_SOURCE_DIR}/ktx.h"
 )
 
 target_include_directories(thirdParty_Libs INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})

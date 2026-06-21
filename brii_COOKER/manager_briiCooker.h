@@ -12,6 +12,9 @@
 #include "mesh_binFormat.h"
 #include "material_binFormat.h"
 #include "dataManager/dataTypes_brii.h"
+#include <ktx.h> ///NUEVA LIBRERIA PARA CARGAR IMAGENES
+#include <KHR/khr_df.h>
+#include "cmake-build-debug/_deps/ktx_software-src/lib/vkformat_enum.h" /////CHANGE THIS FOR A WAY TO REMPLACE THIS
 #include <iostream>
 #include <string>
 #include <vector>
@@ -85,13 +88,14 @@ namespace manager_AssimpData
     void destroy();
   };
 
-  struct textures_MaterialManager  ////PATHS OF KTX2 CONVERTED TEXTURES
+  struct textures_MaterialManager
   {
-    std::string str_AlbedoPath{};
-    std::string str_NormalsPath{};
-    std::string str_RMAPath{};
-    std::string str_HeightPath{};
-    std::string str_EmissionPath{};
+    uint64_t Albedo_hash{};
+    uint64_t Normals_hash{};
+    uint64_t RMA_hash{};
+    uint64_t Height_hash{};
+    uint64_t Emission_hash{};
+
   };
 
   class entity_MateriaManager
@@ -141,7 +145,7 @@ namespace manage_texturesCooker
     SRGB = 1,
   };
 
-  enum class texStatus : uint32_t
+  enum class texStatus : uint8_t
   {
     NOT_LOADED = 0, ////IF TEXTURE NOT LOADED IN THE UNORDERED_MAP textures_saved
     LOADED = 1,  ////IF TEXTURE NOT LOADED IN THE UNORDERED_MAP textures_saved
@@ -150,25 +154,62 @@ namespace manage_texturesCooker
     EXISTS = 3 /////TO INDICATE IF THE TEXTURE EXISTS
   };
 
+  enum class material_Status : uint8_t
+  {
+    MATERIAL_PBR = 0,
+    MATERIAL_LEGACY = 1,
+    NOT_TEXTURES_MATERIAL = 2
+  };
+
   struct data_image
   {
-    unsigned char* texturePixels{nullptr};
+    ktxTexture2* texture_KTX2{ nullptr };
+
+    unsigned char* texturePixels{ nullptr };  ////not loaded != nullptr  ||||  loaded == nullptr
     int width{};
     int height{};
     int nrChannels{};
 
     std::string nameTex{};
-    uint32_t hash_nameTex{};
+    uint64_t key_texture{};
+    //uint32_t hash_nameTex{};
+
+   // std::string directoryTex_ktx2{};
+    //uint64_t key_texture{};
 
     manager_GD::memType type_mem_image{ manager_GD::memType::STBI_MEM };
+
+    texStatus status_tex{ texStatus::NOT_EXISTS };
+
+    data_image();
+    data_image operator<<(data_image& iR);
 
     void clear();
   };
 
-   extern std::unordered_map<aiTextureType, std::string> nameTextures;
-   extern std::unordered_map<uint32_t, std::string> textures_saved; ///THIS IS A CONTAINER THAT SAVES ALL THE TEXTURES THAT ARE UPLOADED ----> [NAME TEXTURE ID FNV], [PATH OF TEXTURE KTX CONVERTER
+  struct packPBR_texData
+  {
+   data_image albedo_data{};
+   data_image normal_data{};
+   data_image RMA_data{};
+   data_image emissive_data{};
+   data_image height_data{};
 
-   void ktx2_convert(data_image& texture, std::string pathDirectory_save);
+   packPBR_texData();
+   packPBR_texData(data_image& albedo_D, data_image& normal_D, data_image& RMA_D, data_image& emissive_D, data_image& height_D);
+
+   packPBR_texData operator<<(packPBR_texData& dataP);
+  };
+
+  struct combine_textures_D
+  {
+    std::vector<unsigned char> dataAlbedo{};
+    std::vector<unsigned char> dataRMA{};
+  };
+
+   extern std::unordered_map<aiTextureType, std::string> nameTextures;
+   //extern std::unordered_map<uint64_t, uint64_t> textures_saved; ///THIS IS A CONTAINER THAT SAVES ALL THE TEXTURES THAT ARE UPLOADED ----> [NAME TEXTURE ID FNV], [PATH OF TEXTURE KTX CONVERTER
+   extern std::vector<uint64_t> textures_saved;
 
    using pixel_color_state = void(*)(std::vector<unsigned char>&, int, unsigned char*, int);
    void statePixelColor(std::vector<unsigned char>& texData, int idxData, unsigned char* value, int idxValue);
@@ -180,14 +221,24 @@ namespace manage_texturesCooker
 
   using pixel_colorArray = void(*)(const unsigned char*, float[4], int);
 
-  bool testMaterial_PBR(aiMaterial* material);
+  material_Status testMaterial_PBR(aiMaterial* material);
+
+  namespace KTX2_manager
+  {
+    bool compressPixels_UASTC(data_image& texture, ktx_bool_t normalMap);
+    bool inyectPixels(data_image& texture);
+    void ktx2_convert(data_image& texture, ktx_bool_t normalMap);
+
+  }
 
   namespace convert_to_PBR
   {
     using conv_func = void(*)(std::vector<unsigned char>&, std::vector<unsigned char>&, briT::br_4&, float&, int&);
     void conv_to_RMA(std::vector<unsigned char>& outRMA, std::vector<unsigned char>& specShininess, briT::br_4& spec, float& metallic_v, int& idx);
     void convDiff_to_albedo(std::vector<unsigned char>& outAlbedo, std::vector<unsigned char>& diffOpa, briT::br_4& spec, float& metallic_v, int& idx);
-    void conv_NULL(std::vector<unsigned char>& outNULL, std::vector<unsigned char>& inNUll, briT::br_4& spec, float& metallic_v, int& idx);
+
+    void conv_NULL_RMA(std::vector<unsigned char>& outNULL, std::vector<unsigned char>& inNULL, briT::br_4& spec, float& metallic_v, int& idx);
+    void conv_NULL_Albedo(std::vector<unsigned char>& outNULL, std::vector<unsigned char>& inNUll, briT::br_4& spec, float& metallic_v, int& idx);
 
     void convertTextures(std::vector<unsigned char>& pixelsDiffuseOpa, std::vector<unsigned char>& pixelsSpecShinness,
                     const int& totalPixels, std::vector<unsigned char>& outAlbedo, std::vector<unsigned char>& outRMA);
@@ -197,8 +248,15 @@ namespace manage_texturesCooker
    texStatus processTexture_pixels(aiMaterial* material, aiTextureType matType, const aiScene* scene, std::string prefix_nameModel, const std::string& directory, data_image& data_Tex, int numChannels_obj);
 
    void freeMemoryImage(const manager_GD::memType& memTexture, unsigned char* dataMem);
-   void saveTexture_ktx2(data_image& texture, texStatus status, std::string& pathDirectory_tex);  ///SAVED THE TEXTURE IN KTX2 FORMAT AND IN TEXTURES_SAVED
-   void loadTextures(aiMaterial* material, manager_AssimpData::textures_MaterialManager& str_textures, const std::string& nameModel_Path, const std::string& directory, const aiScene* scene);
+
+   void convertTextures_KTX2(packPBR_texData& textures_Data);
+   void packTextures_KTX2_bin();
+
+   void resizeTex(std::vector<unsigned char>& newDataImage, data_image& texData, texStatus& status, const int& maxHeight, const int& maxWidth, resizeType rT);
+
+   packPBR_texData loadTextures_PBR(aiMaterial* material, const std::string& nameModel_Path, const std::string& directory, const aiScene* scene, std::string& prefixName, combine_textures_D& texturesComb);
+   packPBR_texData loadTextures_notPBR(aiMaterial* material, const std::string& nameModel_Path, const std::string& directory, const aiScene* scene, std::string& prefixName, combine_textures_D& texturesComb);
+   void loadTextures(aiMaterial* material, manager_AssimpData::textures_MaterialManager& hash_textures, const std::string& nameModel_Path, const std::string& directory, const aiScene* scene);
 
 }
 

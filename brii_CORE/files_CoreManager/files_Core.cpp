@@ -7,7 +7,7 @@
 namespace filesystem_manager
 {
     namespace fs = std::filesystem;
-    void create_DirectoryFile(std::string& filePath, bool& directoryExist)
+    void create_DirectoryFile(const std::string& filePath, bool& directoryExist)
     {
      fs::path finalPath {filePath};
      fs::path directoryFather {finalPath.parent_path()};
@@ -30,7 +30,28 @@ namespace filesystem_manager
 
 namespace customFiles
 {
-    void standard_textureNameKTX(std::string& nameTexture)
+   void clear_spaceKey(std::string& str)
+  {
+    bool success{};
+
+    while (!success)
+    {
+     size_t find_pos {str.find_first_of(" ")};
+
+     if (find_pos != std::string::npos)
+     {
+       str.erase(find_pos, 1);
+     }
+
+     else if (find_pos == std::string::npos)
+     {
+       success = true;
+     }
+    }
+
+  }
+
+      void standard_textureNameKTX(std::string& nameTexture)
     {
       std::string f_name {nameTexture};
       std::string new_name {};

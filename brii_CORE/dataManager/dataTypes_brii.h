@@ -32,6 +32,9 @@ namespace briT
 
     br_4();
     br_4(float x, float y, float z, float w);
+    br_4(float all);
+
+    br_4 operator=(const br_4& op);
  };
 }
 

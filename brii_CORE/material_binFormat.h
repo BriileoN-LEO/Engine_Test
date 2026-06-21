@@ -12,21 +12,21 @@ struct material_LeoHeader
 {
   char verifiedNumber[4]{};  ///LEOA
 
-  uint32_t materialID{};
-  uint32_t material_nameLenght{};
+  uint64_t materialID{};
+  uint64_t material_nameLenght{};
+  //nameMaterial  ---STRING
 
   float albedo_base[4]{};
   float normals_base[3]{};
   float RMA_base[3]{};
   float height_base{};
   float emission[3]{};
-  //nameMaterial  ---STRING
 
-  uint32_t albedo_PathLength{};
-  uint32_t normals_PathLength{};
-  uint32_t RMA_PathLength{}; ///[ROUGHNESS] [METALLIC] [AMBIENT OCLUSSION]
-  uint32_t height_PathLength{};
-  uint32_t emission_PathLength{};
+  uint64_t albedo_hash{};
+  uint64_t normals_hash{};
+  uint64_t RMA_hash{}; ///[ROUGHNESS] [METALLIC] [AMBIENT OCLUSSION]
+  uint64_t height_hash{};
+  uint64_t emission_hash{};
 };
 
 #pragma pack(pop)
