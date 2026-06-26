@@ -6,6 +6,7 @@
 #include "optimize_Algorithmics/optimizeAlgorithmics.h"
 #include "dataManager/convertion_DataManager.h"
 #include "optimize_Algorithmics/optimizeAlgorithmics.h"
+
 #include <stdlib.h>
 #include "stb_image.h"
 #include "stb_image_resize2.h"
@@ -24,8 +25,10 @@ namespace manager_GD
    };
 
    const std::string pathMaterials {"assets_engine/binMaterials"};
-   const std::string pathTextures {"assets_engine/KTX_Textures"};
+   const std::string pathTextures {"assets_engine/KTX_binTextures"};
    const std::string pathModels {"assets_engine/bin_Models_Meshes"};
+
+   const std::string texture_binSign {".leotex"};
 }
 
 namespace manager_AssimpData
@@ -170,10 +173,11 @@ namespace manage_texturesCooker
 {
 
    data_image::data_image(){};
-   data_image data_image::operator<<(data_image& iR)
+   data_image::data_image(data_image&& iR) noexcept
    {
       if (texture_KTX2 != nullptr)
       {
+         texture_KTX2.reset();
          texture_KTX2 = nullptr;
       }
 
@@ -182,7 +186,77 @@ namespace manage_texturesCooker
 
       if (texturePixels != nullptr)
       {
-         texturePixels = nullptr;
+         freeMemoryImage(type_mem_image, texturePixels);
+      }
+
+      texturePixels = std::move(iR.texturePixels);
+      iR.texturePixels = nullptr;
+
+      width = iR.width;
+      height = iR.height;
+      nrChannels = iR.nrChannels;
+
+      nameTex = iR.nameTex;
+      // hash_nameTex = iR.hash_nameTex;
+
+      key_texture = iR.key_texture;
+      // directoryTex_ktx2 = iR.directoryTex_ktx2;
+
+      type_mem_image = iR.type_mem_image;
+
+      status_tex = iR.status_tex;
+
+      iR.clear();
+   }
+   data_image::data_image(data_image& iR)
+   {
+      if (texture_KTX2 != nullptr)
+      {
+         texture_KTX2.reset();
+         texture_KTX2 = nullptr;
+      }
+
+      texture_KTX2 = std::move(iR.texture_KTX2);
+      iR.texture_KTX2 = nullptr;
+
+      if (texturePixels != nullptr)
+      {
+         freeMemoryImage(type_mem_image, texturePixels);
+      }
+
+      texturePixels = std::move(iR.texturePixels);
+      iR.texturePixels = nullptr;
+
+      width = iR.width;
+      height = iR.height;
+      nrChannels = iR.nrChannels;
+
+      nameTex = iR.nameTex;
+      // hash_nameTex = iR.hash_nameTex;
+
+      key_texture = iR.key_texture;
+      // directoryTex_ktx2 = iR.directoryTex_ktx2;
+
+      type_mem_image = iR.type_mem_image;
+
+      status_tex = iR.status_tex;
+
+      iR.clear();
+   }
+   data_image data_image::operator<<(data_image& iR)
+   {
+      if (texture_KTX2 != nullptr)
+      {
+         texture_KTX2.reset();
+         texture_KTX2 = nullptr;
+      }
+
+      texture_KTX2 = std::move(iR.texture_KTX2);
+      iR.texture_KTX2 = nullptr;
+
+      if (texturePixels != nullptr)
+      {
+         freeMemoryImage(type_mem_image, texturePixels);
       }
 
       texturePixels = std::move(iR.texturePixels);
@@ -206,10 +280,16 @@ namespace manage_texturesCooker
 
       return *this;
    }
+   data_image::~data_image()
+   {
+      clear();
+   }
+
 
    void data_image::clear()
    {
-      ktxTexture2_Destroy(texture_KTX2);
+      //ktxTexture2_Destroy(texture_KTX2);
+      texture_KTX2.reset();
       texture_KTX2 = nullptr;
       freeMemoryImage(type_mem_image, texturePixels);
       width = 0;
@@ -225,6 +305,22 @@ namespace manage_texturesCooker
 
 
    packPBR_texData::packPBR_texData(){};
+   packPBR_texData::packPBR_texData(packPBR_texData&& pack_T) noexcept
+   {
+      albedo_data << pack_T.albedo_data;
+      normal_data << pack_T.normal_data;
+      RMA_data << pack_T.RMA_data;
+      emissive_data << pack_T.emissive_data;
+      height_data << pack_T.height_data;
+   }
+   packPBR_texData::packPBR_texData(packPBR_texData& pack_T)
+   {
+      albedo_data << pack_T.albedo_data;
+      normal_data << pack_T.normal_data;
+      RMA_data << pack_T.RMA_data;
+      emissive_data << pack_T.emissive_data;
+      height_data << pack_T.height_data;
+   }
    packPBR_texData::packPBR_texData(data_image& albedo_D, data_image& normal_D, data_image& RMA_D, data_image& emissive_D, data_image& height_D)
    {
       ///transfer the data of each texture
@@ -454,7 +550,7 @@ namespace manage_texturesCooker
    namespace KTX2_manager
    {
 
-      bool compressPixels_UASTC(data_image& texture, ktx_bool_t normalMap)
+      bool compressPixels_UASTC(data_image& texture, ktxTexture2* texKTX2, ktx_bool_t normalMap)
       {
         ktxBasisParams params{};
         params.structSize = sizeof(params);
@@ -466,7 +562,7 @@ namespace manage_texturesCooker
 
         params.normalMap = normalMap;
 
-        KTX_error_code result {ktxTexture2_CompressBasisEx(texture.texture_KTX2, &params)};
+        KTX_error_code result {ktxTexture2_CompressBasisEx(texKTX2, &params)};
 
         if (result == KTX_SUCCESS)
         {
@@ -478,11 +574,11 @@ namespace manage_texturesCooker
         return false;
       }
 
-      bool inyectPixels(data_image& texture)
+      bool inyectPixels(data_image& texture, ktxTexture2* texKTX2)
       {
         size_t image_size = texture.width * texture.height * texture.nrChannels;
 
-        KTX_error_code result {ktxTexture_SetImageFromMemory(ktxTexture(texture.texture_KTX2), 0, 0, 0, texture.texturePixels, image_size)};
+        KTX_error_code result {ktxTexture_SetImageFromMemory(ktxTexture(texKTX2), 0, 0, 0, texture.texturePixels, image_size)};
 
         if (result == KTX_SUCCESS)
          {
@@ -510,7 +606,9 @@ namespace manage_texturesCooker
         createInfo_KTX2.isArray = KTX_FALSE;
         createInfo_KTX2.generateMipmaps = KTX_FALSE;
 
-        KTX_error_code result {ktxTexture2_Create(&createInfo_KTX2, KTX_TEXTURE_CREATE_ALLOC_STORAGE, &texture.texture_KTX2)};
+        ktxTexture2* tex{ nullptr };
+
+        KTX_error_code result {ktxTexture2_Create(&createInfo_KTX2, KTX_TEXTURE_CREATE_ALLOC_STORAGE, &tex)};
 
         if (result == KTX_SUCCESS)
         {
@@ -529,7 +627,7 @@ namespace manage_texturesCooker
          bool success_tex{};
 
          //FASE 1 --- INYECT PIXELS
-         success_tex = inyectPixels(texture);
+         success_tex = inyectPixels(texture, tex);
          if (success_tex == false)
          {
            texture.clear();
@@ -539,12 +637,16 @@ namespace manage_texturesCooker
          }
 
          //FASE 3 --- COMPRESS TO UASTC PIXELS
-         success_tex = compressPixels_UASTC(texture, normalMap);
+         success_tex = compressPixels_UASTC(texture, tex, normalMap);
          if (success_tex == false)
          {
             texture.clear();
             return;
          }
+
+         ///TRANSFERE THE POINTER
+         texture.texture_KTX2.reset(tex);
+         tex = nullptr;
 
          std::cout << "SUCCESS CONVERT KTX2 :: TEXTURE--->" + texture.nameTex << "\n";
       }
@@ -722,6 +824,7 @@ namespace manage_texturesCooker
           std::cout << "SUCCESS::LOAD_EMBEDDED_TEXTURE(" << nameTextures[matType] << ") :: MODEL( " << nameModel_Path << "):: COMPRESS::" << data_Tex.nameTex << std::endl;
           data_Tex.texturePixels = std::move(texPixels);
           texPixels = nullptr;  ////SEE IF I GETS ERROR HERE
+          data_Tex.type_mem_image = manager_GD::memType::STBI_MEM;
 
           return texStatus::EXISTS;
         }
@@ -796,12 +899,14 @@ namespace manage_texturesCooker
           data_Tex.key_texture = FNV::hash_1a(str_keyTexture);
           //auto find_TexStatus {textures_saved.find(data_Tex.key_texture)};
 
-          if (std::binary_search(textures_saved.begin(), textures_saved.end(), data_Tex.key_texture))
+          if (!std::binary_search(textures_saved.begin(), textures_saved.end(), data_Tex.key_texture))
           {
              std::cout << "PROCESS::DIRECTORY_TEXTURE:: NAME_MODEL(" << prefix_nameModel << ")" << " :: MATERIAL_TYPE(" << nameTextures[matType] << ")::" << std::filesystem::path(pathTex).stem().string() << std::endl;
 
              std::string pathTexture{directory + pathTex};
              data_Tex.texturePixels = stbi_load(pathTexture.c_str(), &data_Tex.width, &data_Tex.height, &data_Tex.nrChannels, numChannels_obj);
+
+             data_Tex.type_mem_image = manager_GD::memType::STBI_MEM;
 
              return texStatus::NOT_LOADED;  ///THE TEXTURE EXISTS BUT IS NOT LOADED IN THE SYSTEM
           }
@@ -840,7 +945,7 @@ namespace manage_texturesCooker
           data_Tex.key_texture = FNV::hash_1a(str_keyTexture);
          // auto find_TexStatus {textures_saved.find(data_Tex.key_texture)};
 
-          if (std::binary_search(textures_saved.begin(), textures_saved.end(), data_Tex.key_texture))
+          if (!std::binary_search(textures_saved.begin(), textures_saved.end(), data_Tex.key_texture))
           {
              std::cout << "PROCESS::EMBEDDED_TEXTURE:: NAME_MODEL(" << prefix_nameModel << ")" << " :: MATERIAL_TYPE(" << nameTextures[matType] << ")::" << std::filesystem::path(data_Tex.nameTex).stem().string() <<std::endl;
              texStatus status_emTex { process_EmbeddedTexture(embeddedTex, data_Tex, prefix_nameModel, matType, numChannels_obj) };
@@ -866,11 +971,16 @@ namespace manage_texturesCooker
          {
             case manager_GD::memType::STBI_MEM :
                stbi_image_free(dataMem);
+               dataMem = nullptr;
                break;
             case manager_GD::memType::HEAP_ENGINE :
                free(dataMem);
+               dataMem = nullptr;
                break;
             case manager_GD::memType::STACK_HEAP_ENGINE :
+               dataMem = nullptr;
+               break;
+            case manager_GD::memType::NOT_MEM :
                dataMem = nullptr;
                break;
          }
@@ -883,7 +993,6 @@ namespace manage_texturesCooker
        //  {
        //     free(dataMem);
       //   }
-         dataMem = nullptr;
       }
 
    }
@@ -917,6 +1026,91 @@ namespace manage_texturesCooker
       }
       ////////CONTINUE HERE
       ///implement the other functions to create directories and the other functions to save texture to ktx2 texture
+   }
+
+   loadTexture_Memory packTexKTX2_memory(data_image& tex_data)
+   {
+
+      loadTexture_Memory packT{};
+
+      packT.name = tex_data.nameTex;
+      packT.texData = std::move(tex_data.texture_KTX2);
+      tex_data.texture_KTX2 = nullptr;
+      std::strncpy(packT.dataTex.textureName, tex_data.nameTex.c_str(), MAX_SIZE_STR_BIN_TEXTURE - 1);
+      packT.dataTex.textureName[MAX_SIZE_STR_BIN_TEXTURE - 1] = '\0';
+      packT.dataTex.textureID = tex_data.key_texture;
+      packT.dataTex.width = tex_data.width;
+      packT.dataTex.height = tex_data.height;
+      packT.dataTex.nrChannels = tex_data.nrChannels;
+         /////////CONTINUE HERE TO PACK ALL THE TEXTURES AND THE DATA FROM DATA_IMAGE TO LOADTEXTURE_MEMORY
+         ///SEE IF I HAVE AN ERROR WHEN I LOAD A TEXTURES, I COULD FIND A WAY THAT MARK THE texStatus::NOT_EXIST or make texStatus::ERROR to not upload
+         ///the texture in the material
+     return packT;
+   }
+
+   void packTextures_KTX2_bin(packPBR_texData& textures_Data, const std::string& directory)
+   {
+      //////
+      std::vector<loadTexture_Memory> textures_pack{};
+      std::vector<data_image*> textures_D_ptr{};
+      textures_D_ptr.resize(5);
+
+      /////pack all the textures
+      if (textures_Data.albedo_data.status_tex == texStatus::NOT_LOADED)
+      {
+        textures_pack.emplace_back(packTexKTX2_memory(textures_Data.albedo_data));  ////REVIEW
+        textures_D_ptr.emplace_back(&textures_Data.albedo_data);
+      }
+
+      if (textures_Data.normal_data.status_tex == texStatus::NOT_LOADED)
+      {
+         textures_pack.emplace_back(packTexKTX2_memory(textures_Data.normal_data));  ////REVIEW
+         textures_D_ptr.emplace_back(&textures_Data.normal_data);
+      }
+
+      if (textures_Data.RMA_data.status_tex == texStatus::NOT_LOADED)
+      {
+         textures_pack.emplace_back(packTexKTX2_memory(textures_Data.RMA_data));  ////REVIEW
+         textures_D_ptr.emplace_back(&textures_Data.RMA_data);
+      }
+
+      if (textures_Data.emissive_data.status_tex == texStatus::NOT_LOADED)
+      {
+         textures_pack.emplace_back(packTexKTX2_memory(textures_Data.emissive_data));  ////REVIEW
+         textures_D_ptr.emplace_back(&textures_Data.emissive_data);
+      }
+
+      if (textures_Data.height_data.status_tex == texStatus::NOT_LOADED)
+      {
+         textures_pack.emplace_back(packTexKTX2_memory(textures_Data.height_data));  ////REVIEW
+         textures_D_ptr.emplace_back(&textures_Data.height_data);
+      }
+
+      std::vector<int> p_texNotLoaded{};
+
+      uint32_t packB {pack_binTextures_KTX2(textures_pack, directory, 1, p_texNotLoaded)};
+
+      if (packB == 1)
+      {
+         for (auto& tex_P : p_texNotLoaded)
+         {
+            textures_D_ptr[tex_P]->status_tex = texStatus::LOADED;
+
+            //////INSERT THE TEXTURE THAT WAS SAVED IN THE BINARY
+            auto posI = std::lower_bound(textures_saved.begin(), textures_saved.end(), textures_D_ptr[tex_P]->key_texture);
+            textures_saved.insert(posI, textures_D_ptr[tex_P]->key_texture);
+         }
+      }
+
+      for (int i = 0; i < static_cast<int>(textures_D_ptr.size()); i++)
+      {
+         textures_D_ptr[i] = nullptr;
+         delete textures_D_ptr[i];
+      }
+
+      textures_D_ptr.clear();
+
+      ////the result of texStatus needs to reflected after save textures in binary, if its loaded or not
 
    }
 
@@ -937,6 +1131,41 @@ namespace manage_texturesCooker
       }
 
       if (!newDataImage.empty()) { newDataImage.clear(); };
+   }
+
+   void assign_texturesID(manager_AssimpData::textures_MaterialManager& hash_textures, packPBR_texData& textures_Data)
+   {
+      auto func_TextTex = [](uint64_t& id_take, uint64_t& id_share)
+      {
+       id_take = id_share;
+      };
+      auto empty_T = [](uint64_t& id_take, uint64_t& id_share){id_take = 0; uint64_t& is = id_share;};
+
+      std::vector<funcPtr::funcDouble_uint64_t> func_ID{};
+      func_ID.resize(2);
+      func_ID[0] = empty_T;
+      func_ID[1] = func_TextTex;
+
+      /// 0 == NOT SAME  -------- 1 == SAME
+      int exist_albedo {!(static_cast<uint8_t>(textures_Data.albedo_data.status_tex) ^ static_cast<uint8_t>(texStatus::LOADED))};
+      func_ID[exist_albedo](hash_textures.Albedo_hash, textures_Data.albedo_data.key_texture);
+      textures_Data.albedo_data.clear();
+
+      int exist_normal {!(static_cast<uint8_t>(textures_Data.normal_data.status_tex) ^ static_cast<uint8_t>(texStatus::LOADED))};
+      func_ID[exist_normal](hash_textures.Normals_hash, textures_Data.normal_data.key_texture);
+      textures_Data.albedo_data.clear();
+
+      int exist_RMA {!(static_cast<uint8_t>(textures_Data.RMA_data.status_tex) ^ static_cast<uint8_t>(texStatus::LOADED))};
+      func_ID[exist_RMA](hash_textures.RMA_hash, textures_Data.RMA_data.key_texture);
+      textures_Data.albedo_data.clear();
+
+      int exist_height {!(static_cast<uint8_t>(textures_Data.height_data.status_tex) ^ static_cast<uint8_t>(texStatus::LOADED))};
+      func_ID[exist_height](hash_textures.Height_hash, textures_Data.height_data.key_texture);
+      textures_Data.albedo_data.clear();
+
+      int exist_emission {!(static_cast<uint8_t>(textures_Data.emissive_data.status_tex) ^ static_cast<uint8_t>(texStatus::LOADED))};
+      func_ID[exist_emission](hash_textures.Emission_hash, textures_Data.emissive_data.key_texture);
+      textures_Data.albedo_data.clear();
    }
 
    packPBR_texData loadTextures_PBR(aiMaterial* material, const std::string& nameModel_Path, const std::string& directory, const aiScene* scene, std::string& prefixName, combine_textures_D& texturesComb)
@@ -1244,12 +1473,14 @@ namespace manage_texturesCooker
       {
          case material_Status::MATERIAL_PBR :
          {
-           textures_Data = loadTextures_PBR(material, nameModel_Path, directory, scene, prefix_name, texturesComb);
+            packPBR_texData pT {loadTextures_PBR(material, nameModel_Path, directory, scene, prefix_name, texturesComb)};
+           textures_Data << pT;
          }
 
          case material_Status::MATERIAL_LEGACY :
          {
-           textures_Data = loadTextures_notPBR(material, nameModel_Path, directory, scene, prefix_name, texturesComb);
+           packPBR_texData pT_L {loadTextures_notPBR(material, nameModel_Path, directory, scene, prefix_name, texturesComb)};
+           textures_Data << pT_L;
          }
 
          case material_Status::NOT_TEXTURES_MATERIAL :
@@ -1262,7 +1493,7 @@ namespace manage_texturesCooker
       }
 
       /////CREATE THE FILE OF BIN DIRECTORY OUT OF THE FUNCTION
-      std::string textures_binDirectory{directory + "assets_engine/texturesModels/" + nameModel_Path + "_textures"}; ///CREATE A BINARY DIRECTORY FROM THIS
+      std::string textures_binDirectory{ manager_GD::pathTextures + "/" + nameModel_Path + "_textures" + manager_GD::texture_binSign }; ///CREATE A BINARY DIRECTORY FROM THIS
 
       ////directory for KTX2 textures  ---------- hash of the texture
       //const std::string directory_TexturesKTX2{directory + nameModel_Path + "_textures"};
@@ -1273,6 +1504,11 @@ namespace manage_texturesCooker
 
       convertTextures_KTX2(textures_Data);
 
+      packTextures_KTX2_bin(textures_Data, textures_binDirectory);
+
+      assign_texturesID(hash_textures, textures_Data);
+
+      ////CONTINUE HERE, MAKE A FUNCTION TO SAVE ALL THE ID TEXTURES FROM textures_Data to hash_textures
 
 
       ////IF THE MATERIAL ARE NOT PBR

@@ -11,6 +11,7 @@
 #include "model_binFormat.h"
 #include "mesh_binFormat.h"
 #include "material_binFormat.h"
+#include "texturesPack_binFormat.h"
 #include "dataManager/dataTypes_brii.h"
 #include <ktx.h> ///NUEVA LIBRERIA PARA CARGAR IMAGENES
 #include <KHR/khr_df.h>
@@ -31,7 +32,8 @@ namespace manager_GD
   {
    STBI_MEM = 0,
    HEAP_ENGINE = 1,
-   STACK_HEAP_ENGINE = 2
+   STACK_HEAP_ENGINE = 2,
+   NOT_MEM = 3
   };
 
   enum class signBin : uint8_t
@@ -46,6 +48,8 @@ namespace manager_GD
   extern const std::string pathMaterials;
   extern const std::string pathTextures;
   extern const std::string pathModels;
+
+  extern const std::string texture_binSign;
 }
 
 namespace manager_AssimpData
@@ -161,9 +165,11 @@ namespace manage_texturesCooker
     NOT_TEXTURES_MATERIAL = 2
   };
 
+
+
   struct data_image
   {
-    ktxTexture2* texture_KTX2{ nullptr };
+    texKTX2_ptr texture_KTX2{ nullptr };
 
     unsigned char* texturePixels{ nullptr };  ////not loaded != nullptr  ||||  loaded == nullptr
     int width{};
@@ -177,12 +183,15 @@ namespace manage_texturesCooker
    // std::string directoryTex_ktx2{};
     //uint64_t key_texture{};
 
-    manager_GD::memType type_mem_image{ manager_GD::memType::STBI_MEM };
+    manager_GD::memType type_mem_image{ manager_GD::memType::NOT_MEM };
 
     texStatus status_tex{ texStatus::NOT_EXISTS };
 
     data_image();
+    data_image(data_image&& iR) noexcept;
+    data_image(data_image& iR);
     data_image operator<<(data_image& iR);
+    ~data_image();
 
     void clear();
   };
@@ -196,9 +205,12 @@ namespace manage_texturesCooker
    data_image height_data{};
 
    packPBR_texData();
+   packPBR_texData(packPBR_texData&& pack_T) noexcept;
+   packPBR_texData(packPBR_texData& pack_T);
    packPBR_texData(data_image& albedo_D, data_image& normal_D, data_image& RMA_D, data_image& emissive_D, data_image& height_D);
 
    packPBR_texData operator<<(packPBR_texData& dataP);
+   //packPBR_texData operator=(packPBR_texData& dataP);
   };
 
   struct combine_textures_D
@@ -225,8 +237,8 @@ namespace manage_texturesCooker
 
   namespace KTX2_manager
   {
-    bool compressPixels_UASTC(data_image& texture, ktx_bool_t normalMap);
-    bool inyectPixels(data_image& texture);
+    bool compressPixels_UASTC(data_image& texture, ktxTexture2* texKTX2, ktx_bool_t normalMap);
+    bool inyectPixels(data_image& texture, ktxTexture2* texKTX2);
     void ktx2_convert(data_image& texture, ktx_bool_t normalMap);
 
   }
@@ -250,9 +262,11 @@ namespace manage_texturesCooker
    void freeMemoryImage(const manager_GD::memType& memTexture, unsigned char* dataMem);
 
    void convertTextures_KTX2(packPBR_texData& textures_Data);
-   void packTextures_KTX2_bin();
+   loadTexture_Memory packTexKTX2_memory(data_image& tex_data);
+   void packTextures_KTX2_bin(packPBR_texData& textures_Data, const std::string& directory);
 
    void resizeTex(std::vector<unsigned char>& newDataImage, data_image& texData, texStatus& status, const int& maxHeight, const int& maxWidth, resizeType rT);
+   void assign_texturesID(manager_AssimpData::textures_MaterialManager& hash_textures, packPBR_texData& textures_Data);
 
    packPBR_texData loadTextures_PBR(aiMaterial* material, const std::string& nameModel_Path, const std::string& directory, const aiScene* scene, std::string& prefixName, combine_textures_D& texturesComb);
    packPBR_texData loadTextures_notPBR(aiMaterial* material, const std::string& nameModel_Path, const std::string& directory, const aiScene* scene, std::string& prefixName, combine_textures_D& texturesComb);

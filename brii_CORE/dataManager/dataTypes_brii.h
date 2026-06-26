@@ -4,6 +4,7 @@
 
 #ifndef LIBS_DATATYPES_BRII_H
 #define LIBS_DATATYPES_BRII_H
+#include <iostream>
 
 namespace briT
 {
@@ -36,6 +37,11 @@ namespace briT
 
     br_4 operator=(const br_4& op);
  };
+}
+
+namespace funcPtr
+{
+    using funcDouble_uint64_t = void(*)(uint64_t&, uint64_t&);
 }
 
 
