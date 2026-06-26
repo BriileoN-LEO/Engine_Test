@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/learningOpenGL/2D_UI/Interface_generalUI.cpp" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/learningOpenGL/2D_UI/system_UI/system_UI_B.cpp" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/learningOpenGL/2D_UI/system_UI/system_UI_B.h" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/learningOpenGL/Render/Render.cpp" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/learningOpenGL/learningOpenGL.cpp" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/shaders/SHADER_MODEL_T1/fShader_ModelT1.frag" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/shaders/SHADER_MODEL_T1/gShader_ModelT1.geom" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/shaders/SHADER_MODEL_T1/vShader_ModelT1.vert" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/shaders/SHADER_SKYBOX/fShader_skybox_v1.frag" charset="UTF-8" />
+  </component>
+</project>
