@@ -79,7 +79,7 @@ target_include_directories(Learning PUBLIC
 target_include_directories(Learning PUBLIC ${stb_SOURCE_DIR})
 
 target_link_libraries(Learning PRIVATE
-briiCore
+brii_CORE
 SDL3::SDL3-shared
 glad_source
 OpenGL::GL

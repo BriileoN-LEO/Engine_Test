@@ -7,6 +7,7 @@ cmake_minimum_required (VERSION 3.21)
 
 project (Learning)
 #add_compile_definitions(WIN32_LEAN_AND_MEAN)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -178,8 +179,6 @@ add_library(thirdParty_Libs INTERFACE
 
 target_include_directories(thirdParty_Libs INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(thirdParty_Libs INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/ThirdPartyLibs/stb-master")
-
-
 
 add_subdirectory(brii_CORE)
 add_subdirectory(brii_COOKER)
