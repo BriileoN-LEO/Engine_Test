@@ -8,18 +8,17 @@
 
 #pragma pack(push, 1)
 
+constexpr size_t MAX_SIZE_STR_BIN_MODEL = 512;
+
 struct model_LeoHeader
 {
     char verifiedNumber[4]{};  ///LEOR [HEADER]
     uint32_t version{};
 
-    uint32_t modelID{};
-    uint32_t model_nameLenght{};
-    //modelName  ---STRING
-    uint32_t directory_pathLenght{}; ///ORIGINAL DIRECTORY OF THE MODEL .fbx, .obj, etc...
-    //directory string
-
-    uint32_t meshesCount{};
+    uint64_t modelID{};
+    char modelName[MAX_SIZE_STR_BIN_MODEL]{};
+    
+    uint64_t meshesCount{};
 
 };
 
@@ -28,8 +27,6 @@ struct model_LeoHeader
 struct meshAsset_register
 {
     uint32_t meshID{};
-    uint32_t leomesh_pathLength{};  ///path for the .leomesh of the mesh
-    ///.leomesh path string
 };
 
 

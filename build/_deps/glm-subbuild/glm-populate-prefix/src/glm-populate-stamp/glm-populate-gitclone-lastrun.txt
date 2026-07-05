@@ -3,9 +3,9 @@
 # No other meaning or use of this file is supported.
 
 method=git
-command=C:/Program Files/Microsoft Visual Studio/18/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe;-DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE;-P;C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/glm-subbuild/glm-populate-prefix/tmp/glm-populate-gitclone.cmake
-source_dir=C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/glm-src
-work_dir=C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps
+command=/usr/bin/cmake;-DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE;-P;/home/brii/CPP_proyects/Engine_Test/build/_deps/glm-subbuild/glm-populate-prefix/tmp/glm-populate-gitclone.cmake
+source_dir=/home/brii/CPP_proyects/Engine_Test/build/_deps/glm-src
+work_dir=/home/brii/CPP_proyects/Engine_Test/build/_deps
 repository=https://github.com/g-truc/glm.git
 remote=origin
 init_submodules=TRUE

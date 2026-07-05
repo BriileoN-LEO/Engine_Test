@@ -1,11 +1,10 @@
-#version 330 core
+#version 460 core
 
 out vec4 FragColor;
 
 in vec2 texCoords;
 
 uniform sampler2D screenTexture;
-
 
 
 void grayScale_Filter()
@@ -65,18 +64,40 @@ void firstKernelShader()
 
 }
 
+void gamma_correction(vec3 color_scene)
+{
+  float gamma = 1.2;
+
+  vec3 s_gamma = pow(color_scene, vec3(1.0/gamma));
+
+  FragColor = vec4(s_gamma, 1.0);
+ //FragColor.rgb = color_scene;
+  ///FragColor.a = 1.0;
+}
+
 void normalFilter()
 {
  vec3 normalFilt = texture(screenTexture, texCoords).rgb;
- FragColor = vec4(normalFilt, 1.0);
+ gamma_correction(normalFilt);
+ //FragColor = vec4(normalFilt, 1.0);
 }
 
+void depthBufferTest()
+{
+ float depthValue = texture(screenTexture, texCoords).r;
+ FragColor = vec4(vec3(depthValue), 1.0);
+
+}
 
 void main()
 {
 
 
- // FragColor = vec4(vec3(1.0 - texture(screenTexture, texCoords)), 1.0);
+ //FragColor = vec4(vec3(1.0 - texture(screenTexture, texCoords)), 1.0);
+ //FragColor = vec4(1.0f, 0.3f, 0.6f, 1.0f);
+// firstKernelShader();
+
  normalFilter();
+// depthBufferTest();
 
 }

@@ -14,6 +14,7 @@
 
 namespace manager_GD
 {
+ 
    std::array<std::array<char, 4>, 4> verifiedNumbers_D
    {
     {
@@ -52,7 +53,7 @@ namespace manager_AssimpData
 
    void entity_MeshManager::insert_nameMesh(std::string& nameMesh_D)
    {
-      headerMesh.mesh_nameLenght = sizeof(nameMesh);
+   //   headerMesh.mesh_nameLenght = sizeof(nameMesh);
       nameMesh = nameMesh_D;
    }
 
@@ -132,10 +133,7 @@ namespace manager_AssimpData
       return *this;
    }
 */
-   entity_MateriaManager::entity_MateriaManager() = default;
-   entity_MateriaManager::entity_MateriaManager(material_LeoHeader& dataMaterial, textures_MaterialManager& str_pathTextures) :  dataMaterial(dataMaterial), str_pathTextures(str_pathTextures) {};
-
-
+ 
 
    entity_ModelManager::entity_ModelManager() = default;
 
@@ -168,6 +166,8 @@ namespace manager_AssimpData
       meshes_D.clear();
    }
 }
+
+
 
 namespace manage_texturesCooker
 {
@@ -357,7 +357,7 @@ namespace manage_texturesCooker
    }
    void statePixelColor_NULL(std::vector<unsigned char>& texData, int idxData, unsigned char* value, int idxValue) {
       texData[idxData] = static_cast<unsigned char>(255.0f);
-      unsigned char* val { value };
+      unsigned char* val = value;
       int idxVal { idxValue };
    }
 
@@ -412,22 +412,42 @@ namespace manage_texturesCooker
       RMA.resize(totalPixels * 4);
 
       int index{};
-
-      unsigned char roughness_pixel{};
-      unsigned char metallic_pixel{};
-      unsigned char ambientOclussion_pixel{};
+    
+     pixel_color_state func_roughness{statePixelColor_NULL};
+     pixel_color_state func_metallic{statePixelColor_NULL};
+     pixel_color_state func_AO{statePixelColor_NULL};
+   
+     if(roughnessData != nullptr)
+     {
+       func_roughness = statePixelColor;
+     }
+     
+     if(metallicData != nullptr)
+     { 
+       func_metallic = statePixelColor;
+     }
+    
+     if(ambientOclussionData != nullptr)
+     { 
+       func_AO = statePixelColor;
+     }
 
      for (int i = 0; i < totalPixels; ++i)
      {
         index = i * 4;
 
-        RMA[index] = roughnessData ? roughnessData[i] : static_cast<unsigned char>(255.0f);
-        RMA[index + 1] = metallicData ? metallicData[i] : static_cast<unsigned char>(255.0f);
-        RMA[index + 2] = ambientOclussionData ? ambientOclussionData[i] : static_cast<unsigned char>(255.0f);
-        RMA[index + 4] = static_cast<unsigned char>(255.0f);
+        func_roughness(RMA, index, roughnessData, i);
+        func_metallic(RMA, index + 1, metallicData, i);
+        func_AO(RMA, index + 2, ambientOclussionData, i);
+        RMA[index + 3] = static_cast<unsigned char>(255.0f);
+
+        //RMA[index] = roughnessData ? roughnessData[i] : static_cast<unsigned char>(255.0f);
+        //RMA[index + 1] = metallicData ? metallicData[i] : static_cast<unsigned char>(255.0f);
+        //RMA[index + 2] = ambientOclussionData ? ambientOclussionData[i] : static_cast<unsigned char>(255.0f);
      }
 
    }
+
    void resizeTexture_stb(std::vector<unsigned char>& resize_Texture, unsigned char* texture, const int& width_old, const int& height_old, const int& width_new, const int& height_new, const int& numChannels, resizeType resT) {
       int total_pixel {width_new * height_new * numChannels};
 
@@ -1114,11 +1134,14 @@ namespace manage_texturesCooker
 
    }
 
-   void resizeTex(std::vector<unsigned char>& newDataImage, data_image& texData, texStatus& status, const int& maxHeight, const int& maxWidth, resizeType rT)
+   void resizeTex(std::vector<unsigned char>& newDataImage, data_image& texData, const int& maxHeight, const int& maxWidth, resizeType rT)
    {
-      if (status == texStatus::NOT_LOADED)
+      if (texData.status_tex == texStatus::NOT_LOADED)
       {
-         if (texData.height != maxHeight || texData.width != maxWidth)
+        int pass_tex { (maxHeight != 0) && (maxWidth != 0) ? 1 : 0 }; //// 0 == ANY EQUAL TO ZERO
+        pass_tex = (pass_tex ^ (!(texData.height ^ maxHeight) & !(texData.width ^ maxWidth))); /// 0 == NOT EQUAL || 1 == EQUALS
+        
+         if (pass_tex == 0)
          {
             std::cout << "RESIZING_TEXTURE::" + texData.nameTex + ":: new_Height = " + std::to_string(maxHeight) + " | new_Width = " + std::to_string(maxWidth) << std::endl;
             resizeTexture_stb(newDataImage, texData.texturePixels, texData.width, texData.height, maxWidth, maxHeight, texData.nrChannels, rT);
@@ -1139,7 +1162,7 @@ namespace manage_texturesCooker
       {
        id_take = id_share;
       };
-      auto empty_T = [](uint64_t& id_take, uint64_t& id_share){id_take = 0; uint64_t& is = id_share;};
+      auto empty_T = [](uint64_t& id_take, uint64_t& id_share){id_take = 0; uint64_t& var = id_share; var = id_share;};
 
       std::vector<funcPtr::funcDouble_uint64_t> func_ID{};
       func_ID.resize(2);
@@ -1147,23 +1170,23 @@ namespace manage_texturesCooker
       func_ID[1] = func_TextTex;
 
       /// 0 == NOT SAME  -------- 1 == SAME
-      int exist_albedo {!(static_cast<uint8_t>(textures_Data.albedo_data.status_tex) ^ static_cast<uint8_t>(texStatus::LOADED))};
+      int exist_albedo {!(static_cast<uint32_t>(textures_Data.albedo_data.status_tex) ^ static_cast<uint32_t>(texStatus::LOADED))};
       func_ID[exist_albedo](hash_textures.Albedo_hash, textures_Data.albedo_data.key_texture);
       textures_Data.albedo_data.clear();
 
-      int exist_normal {!(static_cast<uint8_t>(textures_Data.normal_data.status_tex) ^ static_cast<uint8_t>(texStatus::LOADED))};
+      int exist_normal {!(static_cast<uint32_t>(textures_Data.normal_data.status_tex) ^ static_cast<uint32_t>(texStatus::LOADED))};
       func_ID[exist_normal](hash_textures.Normals_hash, textures_Data.normal_data.key_texture);
       textures_Data.albedo_data.clear();
 
-      int exist_RMA {!(static_cast<uint8_t>(textures_Data.RMA_data.status_tex) ^ static_cast<uint8_t>(texStatus::LOADED))};
+      int exist_RMA {!(static_cast<uint32_t>(textures_Data.RMA_data.status_tex) ^ static_cast<uint32_t>(texStatus::LOADED))};
       func_ID[exist_RMA](hash_textures.RMA_hash, textures_Data.RMA_data.key_texture);
       textures_Data.albedo_data.clear();
 
-      int exist_height {!(static_cast<uint8_t>(textures_Data.height_data.status_tex) ^ static_cast<uint8_t>(texStatus::LOADED))};
+      int exist_height {!(static_cast<uint32_t>(textures_Data.height_data.status_tex) ^ static_cast<uint32_t>(texStatus::LOADED))};
       func_ID[exist_height](hash_textures.Height_hash, textures_Data.height_data.key_texture);
       textures_Data.albedo_data.clear();
 
-      int exist_emission {!(static_cast<uint8_t>(textures_Data.emissive_data.status_tex) ^ static_cast<uint8_t>(texStatus::LOADED))};
+      int exist_emission {!(static_cast<uint32_t>(textures_Data.emissive_data.status_tex) ^ static_cast<uint32_t>(texStatus::LOADED))};
       func_ID[exist_emission](hash_textures.Emission_hash, textures_Data.emissive_data.key_texture);
       textures_Data.albedo_data.clear();
    }
@@ -1171,8 +1194,9 @@ namespace manage_texturesCooker
    packPBR_texData loadTextures_PBR(aiMaterial* material, const std::string& nameModel_Path, const std::string& directory, const aiScene* scene, std::string& prefixName, combine_textures_D& texturesComb)
    {
       data_image dataOpacity{};
-      texStatus opacity_tex{processTexture_pixels(material, aiTextureType_OPACITY, scene, "", directory, dataOpacity, 4)};
-
+      texStatus opacity_tex{processTexture_pixels(material, aiTextureType_OPACITY, scene, prefixName, directory, dataOpacity, 4)};
+      dataOpacity.status_tex = opacity_tex;
+    
       //////HEIGHT MAP SECTION
       data_image dataHeight{};
       texStatus height_tex {processTexture_pixels(material, aiTextureType_HEIGHT, scene, prefixName, directory, dataHeight, 4)};
@@ -1183,49 +1207,50 @@ namespace manage_texturesCooker
       }
       dataHeight.status_tex = height_tex;
 
-         data_image dataAlbedo{};
-         texStatus albedo_tex {processTexture_pixels(material, aiTextureType_BASE_COLOR, scene, "", directory, dataAlbedo, 4)};
+      data_image dataAlbedo{};
+      texStatus albedo_tex {processTexture_pixels(material, aiTextureType_BASE_COLOR, scene, prefixName, directory, dataAlbedo, 4)};
+      dataAlbedo.status_tex = albedo_tex;
 
-         data_image dataNormalCamera{};
-         texStatus normalCamera_tex {processTexture_pixels(material, aiTextureType_NORMAL_CAMERA, scene, prefixName, directory, dataNormalCamera, 4)};
+      data_image dataNormalCamera{};
+      texStatus normalCamera_tex {processTexture_pixels(material, aiTextureType_NORMAL_CAMERA, scene, prefixName, directory, dataNormalCamera, 4)};
+      dataNormalCamera.status_tex = normalCamera_tex;
 
-         data_image dataEmission{};
-         texStatus emission_tex {processTexture_pixels(material, aiTextureType_EMISSION_COLOR, scene, prefixName, directory, dataEmission, 4)};
-         dataEmission.status_tex = emission_tex;
+      data_image dataEmission{};
+      texStatus emission_tex {processTexture_pixels(material, aiTextureType_EMISSION_COLOR, scene, prefixName, directory, dataEmission, 4)};
+      dataEmission.status_tex = emission_tex;
 
-         data_image dataMetalness{};
-         texStatus metalness_tex {processTexture_pixels(material, aiTextureType_METALNESS, scene, "", directory, dataMetalness, 4)};
-         dataMetalness.status_tex = metalness_tex;
+      data_image dataMetalness{};
+      texStatus metalness_tex {processTexture_pixels(material, aiTextureType_METALNESS, scene, prefixName, directory, dataMetalness, 4)};
+      dataMetalness.status_tex = metalness_tex;
 
-         data_image dataDiffuseRoughness{};
-         texStatus diffuseRoughness_tex {processTexture_pixels(material, aiTextureType_DIFFUSE_ROUGHNESS, scene, "", directory, dataDiffuseRoughness, 4)};
+      data_image dataDiffuseRoughness{};
+      texStatus diffuseRoughness_tex {processTexture_pixels(material, aiTextureType_DIFFUSE_ROUGHNESS, scene, prefixName, directory, dataDiffuseRoughness, 4)};
+      dataDiffuseRoughness.status_tex = diffuseRoughness_tex;
 
-         data_image dataAO{};
-         texStatus ao_tex {processTexture_pixels(material, aiTextureType_AMBIENT_OCCLUSION, scene, "", directory, dataAO, 4)};
+      data_image dataAO{};
+      texStatus ao_tex {processTexture_pixels(material, aiTextureType_AMBIENT_OCCLUSION, scene, prefixName, directory, dataAO, 4)};
+      dataAO.status_tex = ao_tex;
 
-      ////THIS TO IDENTIFY IF RMA EXISTS
-      std::string nameRMA {"RMA_" + dataMetalness.nameTex + "_" + dataDiffuseRoughness.nameTex + "_" + dataAO.nameTex + "_" + nameModel_Path};
-      customFiles::standard_textureNameKTX(nameRMA);
-      // uint32_t FNV_nameRMA{FNV::str_to_hash(nameRMA)};
-      std::string str_keyTexture_RMA {directory + nameModel_Path + "_textures" + "/" + nameRMA + ".ktx2"};
-      uint64_t FNV_nameRMA{ FNV::hash_1a(str_keyTexture_RMA)};
-
-      std::string nameAlbedo{"Albedo_" + dataAlbedo.nameTex + "_" + dataOpacity.nameTex + "_" + prefixName};
-      customFiles::standard_textureNameKTX(nameAlbedo);
-      std::string str_keyTexture_Albedo {directory + nameModel_Path + "_textures" + "/" + nameAlbedo + ".ktx2"};
-      uint64_t FNV_nameAlbedo{FNV::hash_1a(str_keyTexture_Albedo)};
 
       data_image dataRMA{};
       data_image dataAlbedoOpa{};
 
-      //auto find_RMA {std::binary_search(textures_saved.begin(), textures_saved.end(), FNV_nameRMA)};
-      auto find_RMA {search_algorithms::binary_search_OP_int<uint64_t>(textures_saved, FNV_nameRMA)};
-      auto find_Albedo {search_algorithms::binary_search_OP_int<uint64_t>(textures_saved, FNV_nameAlbedo)};
+     int exist_RMA { 
+         (dataMetalness.status_tex != texStatus::NOT_EXISTS ||
+         dataDiffuseRoughness.status_tex != texStatus::NOT_EXISTS ||
+         dataAO.status_tex != texStatus::NOT_EXISTS) 
+         ? 1 : 0 
+     };
 
-      /////CONTINUE HERE
+     int exist_AlbedoOpa {
+         (dataAlbedo.status_tex != texStatus::NOT_EXISTS || 
+          dataOpacity.status_tex != texStatus::NOT_EXISTS) 
+         ? 1 : 0 
+     };
 
+     
       int maxSize_pixels{};
-      int totalPixels_RMA{};
+      int totalPixels{};
 
       int maxHeigth_convPBR{};
       int maxWidth_convPBR{};
@@ -1236,10 +1261,11 @@ namespace manage_texturesCooker
          maxWidth_convPBR = dataAlbedo.width;
 
          maxSize_pixels = dataAlbedo.width * dataAlbedo.height * 4;
-         totalPixels_RMA = dataAlbedo.width * dataAlbedo.height;
+
+         totalPixels = dataAlbedo.width * dataAlbedo.height;
       }
 
-      else if (albedo_tex == texStatus::NOT_EXISTS)  ///IF DIFFUSE NOT EXISTS
+      else if (albedo_tex == texStatus::NOT_EXISTS || exist_RMA == 1 || exist_AlbedoOpa == 1)  ///IF DIFFUSE NOT EXISTS
       {
          maxHeigth_convPBR = dataDiffuseRoughness.height >= dataMetalness.height ? dataDiffuseRoughness.height : dataMetalness.height;  ////THIS PREVENTS
          maxHeigth_convPBR = maxHeigth_convPBR >= dataOpacity.height ? maxHeigth_convPBR : dataOpacity.height;
@@ -1248,74 +1274,107 @@ namespace manage_texturesCooker
          maxWidth_convPBR = maxWidth_convPBR >= dataOpacity.width ? maxWidth_convPBR : dataOpacity.width;
 
          maxSize_pixels = maxWidth_convPBR * maxHeigth_convPBR * 4;
-         totalPixels_RMA = maxWidth_convPBR * maxHeigth_convPBR;
+         totalPixels = maxWidth_convPBR * maxHeigth_convPBR;
       }
 
       //auto find_TexRMA {textures_saved.find(FNV_nameRMA)};
-         if (find_RMA != -1)
-            {
+      if(exist_RMA == 1)
+   {
+          ////THIS TO IDENTIFY IF RMA EXISTS
+      std::string nameRMA {"RMA_" + dataMetalness.nameTex + "_" + dataDiffuseRoughness.nameTex + "_" + dataAO.nameTex + "_" + nameModel_Path};
+      customFiles::standard_textureNameKTX(nameRMA);
+      // uint32_t FNV_nameRMA{FNV::str_to_hash(nameRMA)};
+      std::string str_keyTexture_RMA {directory + nameModel_Path + "_textures" + "/" + nameRMA + ".ktx2"};
+      uint64_t FNV_nameRMA{ FNV::hash_1a(str_keyTexture_RMA)};
+
+      auto find_RMA {search_algorithms::binary_search_OP_int<uint64_t>(textures_saved, FNV_nameRMA)};
+
+      if (find_RMA == -1)
+         {
+
             std::vector<unsigned char> newDataMetalness{};
             newDataMetalness.resize(maxSize_pixels);  ////////ALWAYS 4
-            resizeTex(newDataMetalness, dataMetalness, metalness_tex, maxHeigth_convPBR, maxWidth_convPBR, resizeType::LINEAR);
+            resizeTex(newDataMetalness, dataMetalness, maxHeigth_convPBR, maxWidth_convPBR, resizeType::LINEAR);
 
             std::vector<unsigned char> newDataRoughness{};
             newDataRoughness.resize(maxSize_pixels);
-            resizeTex(newDataRoughness, dataDiffuseRoughness, diffuseRoughness_tex, maxHeigth_convPBR, maxWidth_convPBR, resizeType::LINEAR);
+            resizeTex(newDataRoughness, dataDiffuseRoughness, maxHeigth_convPBR, maxWidth_convPBR, resizeType::LINEAR);
 
             std::vector<unsigned char> newDataAO{};
             newDataAO.resize(maxSize_pixels);
-            resizeTex(newDataAO, dataAO, ao_tex, maxHeigth_convPBR, maxWidth_convPBR, resizeType::LINEAR);
+            resizeTex(newDataAO, dataAO, maxHeigth_convPBR, maxWidth_convPBR, resizeType::LINEAR);
 
-            convert_RMA(RMA_pbr, dataDiffuseRoughness.texturePixels, dataMetalness.texturePixels, dataAO.texturePixels, totalPixels_RMA);
+            convert_RMA(texturesComb.dataRMA, dataDiffuseRoughness.texturePixels, dataMetalness.texturePixels, dataAO.texturePixels, totalPixels);
             dataRMA.width = maxWidth_convPBR;
             dataRMA.height = maxHeigth_convPBR;
             dataRMA.nrChannels = 4;
             dataRMA.nameTex = nameRMA;
             dataRMA.key_texture = FNV_nameRMA;
-            dataRMA.texturePixels = RMA_pbr.data();
+            dataRMA.texturePixels = texturesComb.dataRMA.data();
+            dataRMA.status_tex = texStatus::NOT_LOADED;   
+            dataRMA.type_mem_image = manager_GD::memType::STACK_HEAP_ENGINE;
 
             dataDiffuseRoughness.clear();
             dataMetalness.clear();
             dataAO.clear();
             /////LIBERATE MEMORY OF ALL TEXTURES RMA OF EACH SEPARATED, BECAUSE I CREATE THE KTX2 TEXTURE
-         }
+          }
 
-         else
-         {
+          else
+          {
+            dataRMA.status_tex = texStatus::LOADED;
             dataRMA.key_texture = FNV_nameRMA;
-         }
+          }
+    }
 
-         if (find_Albedo != -1)
+   if(exist_AlbedoOpa == 1)
+   {
+      std::string nameAlbedo{"Albedo_" + dataAlbedo.nameTex + "_" + dataOpacity.nameTex + "_" + prefixName};
+      customFiles::standard_textureNameKTX(nameAlbedo);
+      std::string str_keyTexture_Albedo {directory + nameModel_Path + "_textures" + "/" + nameAlbedo + ".ktx2"};
+      uint64_t FNV_nameAlbedo{FNV::hash_1a(str_keyTexture_Albedo)};
+
+      auto find_Albedo {search_algorithms::binary_search_OP_int<uint64_t>(textures_saved, FNV_nameAlbedo)};
+
+        if (find_Albedo == -1)
          {
             if (opacity_tex != texStatus::NOT_EXISTS || albedo_tex != texStatus::NOT_EXISTS)
             {
-               int totalPixels_AlbedoOpa{dataAlbedo.height * dataAlbedo.width};
-               bool textureReSize {(totalPixels_AlbedoOpa > 0) && totalPixels_AlbedoOpa != (dataOpacity.width + dataOpacity.height) ? true : false};  ////CHECK IF FAILS
-
-               if (textureReSize)
-               {
-                  std::vector<unsigned char> newOpaData {};
-                  resizeTexture_stb(newOpaData, dataOpacity.texturePixels, dataOpacity.width, dataOpacity.height, dataAlbedo.width, dataAlbedo.height, dataOpacity.nrChannels, resizeType::LINEAR);
-
-                  freeMemoryImage(dataOpacity.type_mem_image, dataOpacity.texturePixels);
-
-                  dataOpacity.texturePixels = newOpaData.data();
-               }
-
-               std::vector<unsigned char> AlbedoOpa_pbr{};
-               combine_to_rgba(AlbedoOpa_pbr, dataAlbedo.texturePixels, dataOpacity.texturePixels, totalPixels_AlbedoOpa);
-
-               /////CONTINUE HERE TO SAVE ALL THE DATA AND DELETE THE INFORMATION OF EACH TEXTURE
-
-               dataAlbedoOpa.texturePixels = AlbedoOpa_pbr.data();
+             
+             std::vector<unsigned char> newDataOpacity{};
+             newDataOpacity.resize(maxSize_pixels);
+             resizeTex(texturesComb.dataAlbedo, dataAlbedoOpa, maxHeigth_convPBR, maxWidth_convPBR, resizeType::LINEAR);
+            
+             combine_to_rgba(texturesComb.dataAlbedo, dataAlbedo.texturePixels, dataOpacity.texturePixels, totalPixels); 
+             dataAlbedoOpa.texturePixels = texturesComb.dataAlbedo.data();
+             dataAlbedoOpa.width = maxWidth_convPBR;
+             dataAlbedoOpa.height = maxHeigth_convPBR;
+             dataAlbedoOpa.nrChannels = 4;
+             dataAlbedoOpa.nameTex = nameAlbedo;
+             dataAlbedoOpa.key_texture = FNV_nameAlbedo;
+             dataAlbedoOpa.status_tex = texStatus::NOT_LOADED;
+             dataAlbedoOpa.type_mem_image = manager_GD::memType::STACK_HEAP_ENGINE;
+             
+            dataAlbedo.clear();
+            dataOpacity.clear();
             }
          }
+       else
+         {
+          dataAlbedoOpa.status_tex = texStatus::LOADED;
+          dataAlbedoOpa.key_texture = FNV_nameAlbedo;
+         }
+    }
+
+     return packPBR_texData(dataAlbedoOpa, dataNormalCamera, dataRMA, dataEmission, dataHeight);
    }
+
    packPBR_texData loadTextures_notPBR(aiMaterial* material, const std::string& nameModel_Path, const std::string& directory, const aiScene* scene, std::string& prefixName, combine_textures_D& texturesComb)
    {
       data_image dataOpacity{};
       texStatus opacity_tex{processTexture_pixels(material, aiTextureType_OPACITY, scene, prefixName, directory, dataOpacity, 4)};
-
+      dataOpacity.status_tex = opacity_tex;
+    
       //////HEIGHT MAP SECTION
       data_image dataHeight{};
       texStatus height_tex {processTexture_pixels(material, aiTextureType_HEIGHT, scene, prefixName, directory, dataHeight, 4)};
@@ -1333,12 +1392,15 @@ namespace manage_texturesCooker
 
       data_image dataDiffuse{};
       texStatus diffuse_tex = processTexture_pixels(material, aiTextureType_DIFFUSE, scene, prefixName, directory, dataDiffuse, 4);
-
+      dataDiffuse.status_tex = diffuse_tex;
+    
       data_image dataSpecular{};
       texStatus specular_tex = processTexture_pixels(material, aiTextureType_SPECULAR, scene, prefixName, directory, dataSpecular, 4);
+      dataSpecular.status_tex = specular_tex;
 
       data_image dataShininess{};
       texStatus shininess_tex = processTexture_pixels(material, aiTextureType_SHININESS, scene, prefixName, directory, dataShininess, 4);
+      dataShininess.status_tex = shininess_tex;
 
       data_image dataNormals{};
       texStatus normals_tex = processTexture_pixels(material, aiTextureType_NORMALS, scene, prefixName, directory, dataNormals, 4);
@@ -1361,10 +1423,11 @@ namespace manage_texturesCooker
       std::string str_keyTexture_Albedo {directory + nameModel_Path + "_textures" + "/" + nameAlbedo + ".ktx2"};
       uint64_t FNV_nameAlbedo{FNV::hash_1a(str_keyTexture_Albedo)};
 
+
       //auto find_RMA {textures_saved.find(FNV_nameRMA)};
       //auto find_Albedo {textures_saved.find(FNV_nameAlbedo)};
       bool find_RMA {std::binary_search(textures_saved.begin(), textures_saved.end(), FNV_nameRMA)};
-      bool find_Albedo {std::binary_search(textures_saved.begin(), textures_saved.end(), FNV_nameAlbedo)};
+      bool find_Albedo {std::binary_search(textures_saved.begin(), textures_saved.end(), FNV_nameAlbedo)};  ////CHANGE THIS BINARY SEARCH
 
       if (find_RMA == false || find_Albedo == false)
       {
@@ -1405,11 +1468,11 @@ namespace manage_texturesCooker
 
          std::vector<unsigned char> texRS_Spec{};
          texRS_Spec.resize(maxSize_pixels);
-         resizeTex(texRS_Spec, dataSpecular, specular_tex, maxHeigth_convPBR, maxWidth_convPBR, resizeType::LINEAR);
+         resizeTex(texRS_Spec, dataSpecular, maxHeigth_convPBR, maxWidth_convPBR, resizeType::LINEAR);
 
          std::vector<unsigned char> texRS_Shininess{};
          texRS_Shininess.resize(maxSize_pixels);
-         resizeTex(texRS_Shininess, dataShininess, shininess_tex, maxHeigth_convPBR, maxWidth_convPBR, resizeType::LINEAR);
+         resizeTex(texRS_Shininess, dataShininess, maxHeigth_convPBR, maxWidth_convPBR, resizeType::LINEAR);
 
          combine_to_rgba(texRS_specShininess, dataSpecular.texturePixels, dataShininess.texturePixels, totalPixels_RMA);
 
@@ -1417,7 +1480,7 @@ namespace manage_texturesCooker
 
          std::vector<unsigned char> texRS_Opa{};
          texRS_Opa.resize(maxSize_pixels);
-         resizeTex(texRS_Opa, dataOpacity, opacity_tex, maxHeigth_convPBR, maxWidth_convPBR, resizeType::LINEAR);
+         resizeTex(texRS_Opa, dataOpacity, maxHeigth_convPBR, maxWidth_convPBR, resizeType::LINEAR);
 
          combine_to_rgba(texRS_albedoOpa, dataDiffuse.texturePixels, dataOpacity.texturePixels, totalPixels_RMA);
 
@@ -1441,7 +1504,7 @@ namespace manage_texturesCooker
 
          else if (!texturesComb.dataAlbedo.empty() && find_Albedo == true)
          {
-       //     dataAlbedo_convPBR = textures_saved[FNV_nameAlbedo];
+            dataAlbedo_convPBR.key_texture = FNV_nameAlbedo;
             dataAlbedo_convPBR.status_tex = texStatus::LOADED;
          }
 
@@ -1459,12 +1522,11 @@ namespace manage_texturesCooker
 
          else if (!texturesComb.dataRMA.empty() && find_RMA == true)
          {
-        //    dataRMA_convPBR = textures_saved[FNV_nameRMA];
+            dataRMA_convPBR.key_texture = FNV_nameRMA;
             dataRMA_convPBR.status_tex = texStatus::LOADED;
          }
 
-      }
-
+       }
       else if (find_RMA == true && find_Albedo == true)
       {
       // dataAlbedo_convPBR = textures_saved[FNV_nameAlbedo];
@@ -1492,7 +1554,6 @@ namespace manage_texturesCooker
       {
          case material_Status::MATERIAL_PBR :
          {
-            //////CONTINUE HERE  ---- RESOLVE this function
            packPBR_texData pT {loadTextures_PBR(material, nameModel_Path, directory, scene, prefix_name, texturesComb)};
            textures_Data << pT;
          }
@@ -1505,8 +1566,6 @@ namespace manage_texturesCooker
 
          case material_Status::NOT_TEXTURES_MATERIAL :
          {
-
-
             return;
            ///HERE TO SAVE ONLY THE TEXTURES OPACITY OR HEIGHT
          }
@@ -1548,37 +1607,169 @@ namespace manage_texturesCooker
 
 }
 
+namespace manage_materialCooker
+{
+   material_D::material_D() = default;
+   material_D::material_D(material_LeoHeader& dataHeader_Mat, std::vector<matPack_data_register>& materials) :  dataHeader_Mat(dataHeader_Mat), materials(materials) 
+   {
+     for(int i = 0; i < static_cast<int>(materials.size()); i++)
+    {
+     pos_by_ID.emplace(materials[i].materialID, i);
+
+     auto find_p {std::lower_bound(ID_materials.begin(), ID_materials.end(), materials[i].materialID)};
+     ID_materials.emplace(find_p, materials[i].materialID); 
+    }
+     
+   };
+
+
+   material_D::material_D(material_D&& matC) noexcept
+   {  
+    dataHeader_Mat = matC.dataHeader_Mat;
+    materials = matC.materials;
+    pos_by_ID = matC.pos_by_ID;
+    ID_materials = matC.ID_materials;
+      ///COMPLETE HERE WITH VECTOR ID'S
+   }
+   material_D::material_D(material_D& matC)
+   {
+    dataHeader_Mat = matC.dataHeader_Mat;
+    materials = matC.materials;
+    pos_by_ID = matC.pos_by_ID;  
+    ID_materials = matC.ID_materials; 
+     ///COMPLETE HERE WITH VECTOR ID'S
+   }
+
+   const uint64_t& material_D::get_matBin_ID()
+   { 
+     return dataHeader_Mat.material_bin_ID;
+   }
+
+   uint32_t material_D::mat_contains(uint64_t ID)
+   {
+     return search_algorithms::binary_search_contains<uint64_t>(ID_materials, ID); 
+   }
+
+   matPack_data_register& material_D::get_mat_directly(uint64_t ID)
+   {
+    return materials[pos_by_ID[ID]];
+   }
+   
+   const material_LeoHeader& material_D::get_const_header()
+   {
+    return dataHeader_Mat;
+   }
+
+   uint32_t material_D::packBinary(const std::string& outDir)
+   {
+    return pack_binMaterial(dataHeader_Mat, materials, outDir);
+   }
+
+
+
+   entity_MaterialManager::entity_MaterialManager() = default;
+   
+   void entity_MaterialManager::insertMat(material_D& mat)
+   {  
+      pos_by_ID.emplace(mat.get_matBin_ID(), static_cast<uint64_t>(mat_data.size()));
+      mat_data.emplace_back(mat);
+      
+      
+   }
+
+   data_MatCore::matPack_ptr entity_MaterialManager::get_mat_by_ID(uint64_t ID)
+   {
+     data_MatCore::matPack_ptr ptr_matPack{nullptr};
+     uint32_t mContain{};
+     
+     for(auto& matBin : mat_data)
+      { 
+        mContain = matBin.mat_contains(ID);
+        
+        if(mContain == 1)
+        {
+           ptr_matPack = &matBin.get_mat_directly(ID);
+        }
+      }
+
+     return ptr_matPack;
+   }
+
+   void entity_MaterialManager::upload_AllMat_bin(const std::string& directory)
+   { 
+    std::cout << "UPLOAD ALL MATERIALS TO BINARY\n";
+      for(auto& matBin : mat_data)
+     { 
+       uint32_t matSave {matBin.packBinary(directory)};
+       if(matSave == 0)
+       {       
+         //////HERE FIND THE MESHES THAT HAVE THIS MATERIAL OF ID
+         ///SUBSTITUDE THE ID FOR A THE ID OF STANDARD MATERIAL
+         ///IF THE STANDARD MATERIAL NOT EXISTS, PUT THAT IT NOT HAVE MATERIAL TO UPLOAD ONLY THE COLORES NEEDED FOR TEXTURES
+       }
+     }
+   }
+
+   void entity_MaterialManager::upload_selectMat_bin(const std::string& directory, uint64_t matBin_ID)
+   {
+     uint32_t find_matBin {search_algorithms::binary_search_contains<uint64_t>(ID_matBin, matBin_ID)};
+     
+     if(find_matBin == 1)
+     {
+      mat_data[pos_by_ID[matBin_ID]].packBinary(directory);
+     }
+     
+   }
+
+   uint64_t proccess_nameMaterial(std::string& nameMat, const std::string& nameModel_path, const unsigned int& index)
+   { 
+
+    auto nameExists = [](std::string& nMat, const std::string& nameModelPath, const unsigned int& idx) -> void
+      {
+         nMat = nameModelPath + "_" + nMat + "_" + std::to_string(idx);
+      };
+    auto nameNotExists = [](std::string& nMat, const std::string& nameModelPath, const unsigned int& idx)  -> void
+      {
+         nMat = nameModelPath + "_" + std::to_string(idx); ////this is the index of the material.
+      };
+        
+   std::vector<funcPtr::func_Double_str_constUint> func_NM{};
+   func_NM.resize(2);
+   func_NM[0] = nameExists;
+   func_NM[1] = nameNotExists;
+
+   ////CHANGE THE FNV_MATERIAL<C-F6>
+   int selectFunc {nameMat.empty() == true ? 1 : 0 };
+
+   func_NM[selectFunc](nameMat, nameModel_path, index);
+
+    uint64_t ID_material_FNV {FNV::hash_1a(nameMat)};
+    return ID_material_FNV;
+   }
+  
+ 
+
+}
+
+namespace data_utilities
+{
+  std::optional<manage_materialCooker::entity_MaterialManager> mat_D;
+ 
+}
+
+
+
 namespace data_leoBinary
 {
-   std::vector<manager_AssimpData::entity_MateriaManager> materials_D{};
+//   std::vector<manager_AssimpData::entity_MateriaManager> materials_D{};
    std::vector<manager_AssimpData::entity_ModelManager> models_D{};
    Assimp::Importer assimpImporter{};
-   uint32_t ID_defaultMaterial{};
 
    void load_Settings_Cooker()
    {
-     ID_defaultMaterial = FNV::str_to_hash("DefaultMaterial");
+     //ID_defaultMaterial = FNV::str_to_hash("DefaultMaterial");
    }
 
-   uint32_t proccess_nameMaterial(std::string& nameMat, const std::string& nameModel_path, const unsigned int& index)
-   {
-
-      uint32_t ID_material_FNV { FNV::str_to_hash(nameMat) };
-
-      if (nameMat.empty() || ID_material_FNV == ID_defaultMaterial)
-      {
-         nameMat = nameModel_path + "_" + std::to_string(index); ////this is the index of the material.
-         ID_material_FNV = FNV::str_to_hash(nameMat);
-      }
-
-      else
-      {
-         nameMat = nameModel_path + "_" + nameMat;
-         ID_material_FNV = FNV::str_to_hash(nameMat);
-      }
-
-      return ID_material_FNV;
-   }
 
    void loadModel(std::string nameModel, std::string path, unsigned int aiProcessFlags, uint32_t version)
    {
@@ -1607,7 +1798,6 @@ namespace data_leoBinary
 
       processMaterials(scene, nameModel_path, directory);
 
-
      /////////LOAD MODEL AND MESHES PROCESS//////////// THIS SAVE MATERIALS ID WITH THE NAME
       manager_AssimpData::entity_ModelManager model{};
 
@@ -1635,7 +1825,6 @@ namespace data_leoBinary
 
    void processNode(manager_AssimpData::entity_ModelManager& model, aiNode* node, const aiScene* scene, int& meshesCounter,uint32_t& version)
    {
-
       aiMatrix4x4 aiModelMat {node->mTransformation}; ///TRANSFORM THIS MODEL MATRIX TO NORMAL GLM::MATRIX
 
       std::array<float, 16> array_ModelMat4 {convert_dataTypes::aiMat4_to_arrayFloat16(aiModelMat)}; ///GET THE MODEL MATRIX FROM THE NODE
@@ -1745,10 +1934,9 @@ namespace data_leoBinary
         nameMat = nameModel_path + "mat" + std::to_string(i);
        }
 
-       uint32_t ID_material_FNV { proccess_nameMaterial(nameMat, nameModel_path, i) };
-       headerMat.materialID = ID_material_FNV;
+        headerMat.materialID = manage_materialCooker::proccess_nameMaterial(nameMat, nameModel_path, i);
 
-       uint8_t signVerf {static_cast<uint8_t>(manager_GD::signBin::MATERIAL)};
+       uint32_t signVerf {static_cast<uint32_t>(manager_GD::signBin::MATERIAL)};
        std::array<char, 4>& verfNum {manager_GD::verifiedNumbers_D[signVerf]};
 
        headerMat.verifiedNumber[0] = verfNum[0];
@@ -1760,9 +1948,7 @@ namespace data_leoBinary
 
        manager_AssimpData::textures_MaterialManager str_tex{};
        manage_texturesCooker::loadTextures(material, str_tex, nameModel_path, directory, scene);
-
-       //
-
+        ///////CONTINUE HERE
      }
 
           /////CONTINUAR CON LOS MATERIALES

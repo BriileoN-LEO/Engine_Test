@@ -1,0 +1,27 @@
+_deps/sdl3-build/CMakeFiles/SDL3-shared.dir/src/render/software/SDL_render_sw.c.o: \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/software/SDL_render_sw.c \
+ /usr/include/stdc-predef.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/SDL_internal.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/software/../SDL_sysrender.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/software/../../video/SDL_surface_c.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/software/../../video/SDL_blit.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/software/../SDL_yuv_sw_c.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/software/SDL_render_sw_c.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/software/SDL_draw.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/software/../../video/SDL_surface_c.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/software/SDL_blendfillrect.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/software/SDL_blendline.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/software/SDL_blendpoint.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/software/SDL_drawline.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/software/SDL_drawpoint.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/software/SDL_triangle.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/software/../../video/SDL_pixels_c.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/software/../../video/SDL_rotate.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/software/../../video/SDL_sysvideo.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/include/SDL3/SDL_vulkan.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/include/SDL3/SDL_stdinc.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/include/SDL3/SDL_error.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/include/SDL3/SDL_video.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/include/SDL3/SDL_begin_code.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/include/SDL3/SDL_close_code.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/software/../../video/SDL_surface_c.h

@@ -26,7 +26,7 @@ namespace RenderData_Set
 
 	std::optional<resourceManager::manager_PointLights> pointLights_D;
 	//std::optional<utilities_Lights::scene_pointLights> pointLights_Scene_D;
-    std::optional<shadowsManager::omnidirectional_ShadowMap_PL> omL_shadows_D;
+        std::optional<shadowsManager::omnidirectional_ShadowMap_PL> omL_shadows_D;
 
 
 	std::vector<ObjCreation::ModelCreation> MeshLights_MCD{};
@@ -34,12 +34,12 @@ namespace RenderData_Set
 	//std::vector<light::light1> pointLights_D{};
 	std::optional<resourceManager::manager_DirectionalLights> directionalLights_PBR_D;
 	std::vector<light::DirectionalLight> directionalLights_D{};
-    std::optional<shadowsManager::directional_shadowMap_dL> dL_shadows_D;
+        std::optional<shadowsManager::directional_shadowMap_dL> dL_shadows_D;
 
-    std::optional<resourceManager::manager_SpotLights> spotLights_PBR_D;
+        std::optional<resourceManager::manager_SpotLights> spotLights_PBR_D;
 	std::map<std::string, light::SpotLight> spotLights_D{};
 
-    std::optional<utilities_Lights::scene_LightsManager> lightsScene_D;
+        std::optional<utilities_Lights::scene_LightsManager> lightsScene_D;
 
 	std::vector<screenUI::pointerScreen> pointUI_D{};
 	std::vector<individualComp::Multiple_AssimpMesh>multi_AssimpModel{};

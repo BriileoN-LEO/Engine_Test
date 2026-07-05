@@ -40,6 +40,7 @@ namespace FNV
 
    return hash;
  }
+
  inline constexpr uint32_t str_to_hash(std::string_view str)
  {
   std::string_view str_clean {trim_str(str)}; //////////CONTINUE HERE, SEE WHY THROW ME DIFERENT ID WITH THE SAME STRING

@@ -3,6 +3,7 @@ cmake_minimum_required (VERSION 3.21)
 project (briiCore)
 
 add_executable(briiCore
+ "main_core.cpp"
  "mesh_binFormat.h"
  "material_binFormat.h"
  "model_binFormat.h"
@@ -39,11 +40,13 @@ add_library(brii_CORE INTERFACE
 target_link_libraries(brii_CORE INTERFACE
 assimp::assimp
 glm::glm
+ktx
 )
 
 target_link_libraries(briiCore PUBLIC
 assimp::assimp
 glm::glm
+ktx
 )
 
 target_include_directories(brii_CORE INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})

@@ -1,0 +1,22 @@
+_deps/sdl3-build/CMakeFiles/SDL3-shared.dir/src/render/gpu/SDL_render_gpu.c.o: \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/gpu/SDL_render_gpu.c \
+ /usr/include/stdc-predef.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/SDL_internal.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/gpu/../../events/SDL_windowevents_c.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/gpu/../../video/SDL_pixels_c.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/gpu/../../video/SDL_blit.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/gpu/../../video/SDL_sysvideo.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/include/SDL3/SDL_vulkan.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/include/SDL3/SDL_stdinc.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/include/SDL3/SDL_error.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/include/SDL3/SDL_video.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/include/SDL3/SDL_begin_code.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/include/SDL3/SDL_close_code.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/gpu/../../video/SDL_surface_c.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/gpu/../SDL_d3dmath.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/gpu/../SDL_sysrender.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/gpu/../../video/SDL_surface_c.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/gpu/../SDL_yuv_sw_c.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/gpu/SDL_gpu_util.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/gpu/SDL_pipeline_gpu.h \
+ /home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-src/src/render/gpu/SDL_shaders_gpu.h

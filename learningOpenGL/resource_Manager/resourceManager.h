@@ -23,8 +23,8 @@ namespace Assimp_D
     struct ModelData_loadCPU;
   }
 
- class mesh;
- class model;
+ class Mesh;
+ class Model;
 
 }
 

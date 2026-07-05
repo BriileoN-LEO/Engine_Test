@@ -161,6 +161,10 @@ GIT_REPOSITORY https://github.com/nothings/stb
 GIT_TAG master
 )
 
+if(UNIX)
+include_directories(/usr/include/minizip)
+endif()
+
 FetchContent_MakeAvailable(
 SDL3
 ktx

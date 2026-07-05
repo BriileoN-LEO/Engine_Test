@@ -8,18 +8,19 @@
 
 #pragma pack(push, 1)
 
+constexpr size_t MAX_SIZE_STR_BIN_MESH = 512;
+
 struct mesh_LeoHeader
 {
  char verifiedNumber[4]{};  ///LEOM [HEADER]
  uint32_t version{};
 
- uint32_t meshID{};
- uint32_t mesh_nameLenght{};
- ////nameMesh  ---STRING
+ uint64_t meshID{};
+ char nameMesh[MAX_SIZE_STR_BIN_MESH] {};
 
- uint32_t vertexCount{};
- uint32_t indexCount{};
- uint32_t materialID{};
+ uint64_t vertexCount{};
+ uint64_t indexCount{};
+ uint64_t material_ID{};
 
  float mesh_transformation[16]{};
 };

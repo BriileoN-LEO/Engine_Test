@@ -34,6 +34,20 @@ const char *arch_ARM64EC = "INFO<ARM64EC=" ARCH_ARM64EC ">";
 #endif
 const char *arch_LOONGARCH64 = "INFO<LOONGARCH64=" ARCH_LOONGARCH64 ">";
 
+#if (defined(__mips__) && !defined(__mips64))
+#define ARCH_MIPS32 "1"
+#else
+#define ARCH_MIPS32 "0"
+#endif
+const char *arch_MIPS32 = "INFO<MIPS32=" ARCH_MIPS32 ">";
+
+#if (defined(__mips__) && defined(__mips64))
+#define ARCH_MIPS64 "1"
+#else
+#define ARCH_MIPS64 "0"
+#endif
+const char *arch_MIPS64 = "INFO<MIPS64=" ARCH_MIPS64 ">";
+
 #if (defined(__PPC__) || defined(__powerpc__)) && !defined(__powerpc64__)
 #define ARCH_POWERPC32 "1"
 #else
@@ -85,6 +99,8 @@ int main(int argc, char *argv[]) {
   result += arch_ARM64[argc];
   result += arch_ARM64EC[argc];
   result += arch_LOONGARCH64[argc];
+  result += arch_MIPS32[argc];
+  result += arch_MIPS64[argc];
   result += arch_POWERPC32[argc];
   result += arch_POWERPC64[argc];
   result += arch_RISCV32[argc];

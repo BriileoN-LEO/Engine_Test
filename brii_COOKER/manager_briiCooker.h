@@ -15,7 +15,7 @@
 #include "dataManager/dataTypes_brii.h"
 #include <ktx.h> ///NUEVA LIBRERIA PARA CARGAR IMAGENES
 #include <KHR/khr_df.h>
-#include "cmake-build-debug/_deps/ktx_software-src/lib/vkformat_enum.h" /////CHANGE THIS FOR A WAY TO REMPLACE THIS
+//#include "cmake-build-debug/_deps/ktx_software-src/lib/vkformat_enum.h" /////CHANGE THIS FOR A WAY TO REMPLACE THIS
 #include <iostream>
 #include <string>
 #include <vector>
@@ -36,7 +36,7 @@ namespace manager_GD
    NOT_MEM = 3
   };
 
-  enum class signBin : uint8_t
+  enum class signBin : uint32_t
   {
     MODEL = 0,
     MESH = 1,
@@ -102,20 +102,8 @@ namespace manager_AssimpData
 
   };
 
-  class entity_MateriaManager
-  {
-  private:
-    material_LeoHeader dataMaterial{};
-    textures_MaterialManager str_pathTextures{};
-    std::string nameMaterial{};
-
-  public:
-    entity_MateriaManager();
-    entity_MateriaManager(material_LeoHeader& dataMaterial, textures_MaterialManager& str_pathTextures);
-
-
-  };
-
+  ////CREATE NEW ONE
+   
   class entity_ModelManager
   {
   private:
@@ -141,6 +129,8 @@ namespace manager_AssimpData
 
 }
 
+//==========HERE SAVE ALL THE CONTAINERS==============  //////CONTINUE HERE namespace data_utilities
+
 namespace manage_texturesCooker
 {
   enum class resizeType : uint8_t
@@ -149,7 +139,7 @@ namespace manage_texturesCooker
     SRGB = 1,
   };
 
-  enum class texStatus : uint8_t
+  enum class texStatus : uint32_t
   {
     NOT_LOADED = 0, ////IF TEXTURE NOT LOADED IN THE UNORDERED_MAP textures_saved
     LOADED = 1,  ////IF TEXTURE NOT LOADED IN THE UNORDERED_MAP textures_saved
@@ -164,7 +154,6 @@ namespace manage_texturesCooker
     MATERIAL_LEGACY = 1,
     NOT_TEXTURES_MATERIAL = 2
   };
-
 
 
   struct data_image
@@ -229,7 +218,8 @@ namespace manage_texturesCooker
 
    void combine_to_rgba(std::vector<unsigned char> outAlbedoOpa, unsigned char* albedoPixels, unsigned char* opacityPixels, const int& totalPixels_notChannels);
    void convert_RMA(std::vector<unsigned char>& RMA, unsigned char* roughnessData, unsigned char* metallicData, unsigned char* ambientOclussionData, const int& totalPixels);
-   void resizeTexture_stb(std::vector<unsigned char>& resize_Texture, unsigned char* texture, const int& width_old, const int& height_old, const int& width_new, const int& height_new, const int& numChannels, resizeType resT);
+
+   void resizeTexture_stb(std::vector<unsigned char>& resize_Texture, unsigned char* texture, const int& width_old, const int& height_old, const int& width_new,const int& height_new, const int& numChannels, resizeType resT);
 
   using pixel_colorArray = void(*)(const unsigned char*, float[4], int);
 
@@ -265,26 +255,79 @@ namespace manage_texturesCooker
    loadTexture_Memory packTexKTX2_memory(data_image& tex_data);
    void packTextures_KTX2_bin(packPBR_texData& textures_Data, const std::string& directory);
 
-   void resizeTex(std::vector<unsigned char>& newDataImage, data_image& texData, texStatus& status, const int& maxHeight, const int& maxWidth, resizeType rT);
+   void resizeTex(std::vector<unsigned char>& newDataImage, data_image& texData, const int& maxHeight, const int& maxWidth, resizeType rT);
    void assign_texturesID(manager_AssimpData::textures_MaterialManager& hash_textures, packPBR_texData& textures_Data);
 
    packPBR_texData loadTextures_PBR(aiMaterial* material, const std::string& nameModel_Path, const std::string& directory, const aiScene* scene, std::string& prefixName, combine_textures_D& texturesComb);
+
    packPBR_texData loadTextures_notPBR(aiMaterial* material, const std::string& nameModel_Path, const std::string& directory, const aiScene* scene, std::string& prefixName, combine_textures_D& texturesComb);
+
    void loadTextures(aiMaterial* material, manager_AssimpData::textures_MaterialManager& hash_textures, const std::string& nameModel_Path, const std::string& directory, const aiScene* scene);
+}
+
+namespace manage_materialCooker
+{
+
+  class material_D
+  {
+  private:
+    material_LeoHeader dataHeader_Mat{};
+   
+    std::vector<uint64_t> ID_materials{}; ///IN ORDER TO MADE BINARY SEARCH
+    std::unordered_map<uint64_t, uint64_t> pos_by_ID{};
+    std::vector<matPack_data_register> materials{};
+      
+  public:
+    material_D();
+    material_D(material_LeoHeader& dataMaterial, std::vector<matPack_data_register>& str_pathTextures);
+    material_D(material_D&& matC) noexcept;
+    material_D(material_D& matC);
+
+    const uint64_t& get_matBin_ID();
+    uint32_t mat_contains(uint64_t ID); ///BINARY_SEARCH
+    matPack_data_register& get_mat_directly(uint64_t ID); //KNOW'S EXACTLY THAT THE MATERIAL EXISTS WITH THE ID
+    const material_LeoHeader& get_const_header();
+
+    uint32_t packBinary(const std::string& outDir);
+
+  };
+
+ class entity_MaterialManager
+  {
+   private:
+   std::vector<uint64_t> ID_matBin{}; ///IN ORDER TO MADE BINARY SEARCH
+   std::unordered_map<uint64_t, uint64_t> pos_by_ID{}; ///ID'S for matBin
+   std::vector<material_D> mat_data{};
+
+   public: 
+   entity_MaterialManager();
+   
+   void insertMat(material_D& mat);///INSERT IN ORDER
+   data_MatCore::matPack_ptr get_mat_by_ID(uint64_t ID);
+   void upload_AllMat_bin(const std::string& directory);
+   void upload_selectMat_bin(const std::string& directory, uint64_t matBin_ID);
+   
+   ///CONTINUE HERE
+  };
+
+  uint64_t proccess_nameMaterial(std::string& nameMat, const std::string& nameModel_path, const unsigned int& index);
 
 }
+
+namespace data_utilities
+{
+  extern std::optional<manage_materialCooker::entity_MaterialManager> mat_D;
+}
+
 
 namespace data_leoBinary
 {
 
-  extern std::vector<manager_AssimpData::entity_MateriaManager> materials_D;
-  extern std::vector<manager_AssimpData::entity_ModelManager> models_D;
-  extern Assimp::Importer assimpImporter;
-  extern uint32_t ID_defaultMaterial;
+//  extern std::vector<manager_AssimpData::entity_MateriaManager> materials_D;
+ extern std::vector<manager_AssimpData::entity_ModelManager> models_D;
+ extern Assimp::Importer assimpImporter;
 
  void load_Settings_Cooker();
-
- uint32_t proccess_nameMaterial(std::string& nameMat, const std::string& nameModel_path, const unsigned int& index);
 
  void loadModel(std::string nameModel, std::string path, unsigned int aiProcessFlags, uint32_t version);
  void processNode(manager_AssimpData::entity_ModelManager& model, aiNode* node, const aiScene* scene, int& meshesCounter, uint32_t& version);

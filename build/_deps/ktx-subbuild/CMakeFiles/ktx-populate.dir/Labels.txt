@@ -1,0 +1,14 @@
+# Target labels
+ ktx-populate
+# Source files and their labels
+/home/brii/CPP_proyects/Engine_Test/build/_deps/ktx-subbuild/CMakeFiles/ktx-populate
+/home/brii/CPP_proyects/Engine_Test/build/_deps/ktx-subbuild/CMakeFiles/ktx-populate.rule
+/home/brii/CPP_proyects/Engine_Test/build/_deps/ktx-subbuild/CMakeFiles/ktx-populate-complete.rule
+/home/brii/CPP_proyects/Engine_Test/build/_deps/ktx-subbuild/ktx-populate-prefix/src/ktx-populate-stamp/ktx-populate-build.rule
+/home/brii/CPP_proyects/Engine_Test/build/_deps/ktx-subbuild/ktx-populate-prefix/src/ktx-populate-stamp/ktx-populate-configure.rule
+/home/brii/CPP_proyects/Engine_Test/build/_deps/ktx-subbuild/ktx-populate-prefix/src/ktx-populate-stamp/ktx-populate-download.rule
+/home/brii/CPP_proyects/Engine_Test/build/_deps/ktx-subbuild/ktx-populate-prefix/src/ktx-populate-stamp/ktx-populate-install.rule
+/home/brii/CPP_proyects/Engine_Test/build/_deps/ktx-subbuild/ktx-populate-prefix/src/ktx-populate-stamp/ktx-populate-mkdir.rule
+/home/brii/CPP_proyects/Engine_Test/build/_deps/ktx-subbuild/ktx-populate-prefix/src/ktx-populate-stamp/ktx-populate-patch.rule
+/home/brii/CPP_proyects/Engine_Test/build/_deps/ktx-subbuild/ktx-populate-prefix/src/ktx-populate-stamp/ktx-populate-test.rule
+/home/brii/CPP_proyects/Engine_Test/build/_deps/ktx-subbuild/ktx-populate-prefix/src/ktx-populate-stamp/ktx-populate-update.rule

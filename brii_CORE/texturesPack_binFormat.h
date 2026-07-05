@@ -6,7 +6,7 @@
 #define TEXTURESPACK_BINFORMAT_H
 #include <ktx.h> ///NUEVA LIBRERIA PARA CARGAR IMAGENES
 #include <KHR/khr_df.h>
-#include "cmake-build-debug/_deps/ktx_software-src/lib/vkformat_enum.h" /////CHANGE THIS FOR A WAY TO REMPLACE THIS
+//#include "cmake-build-debug/_deps/ktx_software-src/lib/vkformat_enum.h" /////CHANGE THIS FOR A WAY TO REMPLACE THIS
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -184,6 +184,7 @@ inline uint32_t pack_binTextures_KTX2(std::vector<loadTexture_Memory>& texKTX2, 
 
     uint64_t offset_state { sizeof(texPack_LeoHeader) + (posTex.size() * sizeof(texPack_data_register)) };
 
+     /////MATCH OFFSET BINARY 
     for (auto& num : posTex)
     {
         texKTX2[num].dataTex.offset_texBin = offset_state;  /// BEGGINS WITH THE DATA IN BINARY FILE
@@ -222,7 +223,7 @@ inline uint32_t pack_binTextures_KTX2(std::vector<loadTexture_Memory>& texKTX2, 
     ////REVIEW THIS FUNCTION
 
   binTex.close();
-  std::cout << "BINARY SUCCESSFULLY CREATED:: FILE ---> " << outDir << "\n";
+  std::cout << "BINARY TEXTURES SUCCESSFULLY CREATED:: FILE ---> " << outDir << "\n";
   return 1;
 }
 

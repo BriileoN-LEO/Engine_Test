@@ -1,0 +1,3 @@
+/home/brii/CPP_proyects/Engine_Test/build/_deps/stb-subbuild/CMakeFiles/stb-populate.dir
+/home/brii/CPP_proyects/Engine_Test/build/_deps/stb-subbuild/CMakeFiles/edit_cache.dir
+/home/brii/CPP_proyects/Engine_Test/build/_deps/stb-subbuild/CMakeFiles/rebuild_cache.dir

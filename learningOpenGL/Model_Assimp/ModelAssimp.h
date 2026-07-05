@@ -75,10 +75,10 @@ namespace Assimp_D
 	};
     enum class shader_type : Uint8
 	{
-	   standard_Shader = 0,
-       viewNormals_Shader = 1,
-       depthMapShadow_Shader = 2
-    };
+	  standard_Shader = 0,
+          viewNormals_Shader = 1,
+          depthMapShadow_Shader = 2
+       };
 	extern Uint8 size_shaderType;
 
 	struct excluded_Obj
@@ -119,7 +119,7 @@ namespace Assimp_D
 		bool operator!=(structModelName& sModelName);
 		bool operator==(structModelName&& sModelName) noexcept;
 		bool operator==(structModelName& sModelName);
-        structModelName operator=(structModelName&& sModelName) noexcept;
+                structModelName operator=(structModelName&& sModelName) noexcept;
 		structModelName operator=(structModelName& sModelName);
 
 		void reset();
@@ -378,7 +378,7 @@ namespace individualComp
 		std::vector<Assimp_D::vertexD> vertex{};
 		//texture::textureBuild texture{}; //OLD WAY TO LOAD TEXTURES TO TRIANGLE
 		textureCache::texture_Data texture{};
-        std::string shaderName{};
+                std::string shaderName{};
 		//shading::shader shader{};
 		transformation_basics::basics_Model3D MeshCoord{};
 		glm::vec3 centroidTriangle{};
@@ -414,7 +414,7 @@ namespace individualComp
 		Multiple_AssimpMesh(Assimp_D::structModelName meshToCopy, std::vector<glm::vec3> quantityMesh);
 		Multiple_AssimpMesh(Multiple_AssimpMesh&& mAssimp_copy) noexcept;
 		Multiple_AssimpMesh(Multiple_AssimpMesh& mAssimp_copy);
-        ~Multiple_AssimpMesh();
+                ~Multiple_AssimpMesh();
 
 		Multiple_AssimpMesh operator=(Multiple_AssimpMesh&& mAssimp_copy) noexcept;
 		Multiple_AssimpMesh operator=(Multiple_AssimpMesh& mAssimp_copy);

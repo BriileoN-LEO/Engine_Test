@@ -1,0 +1,60 @@
+#version 460 core
+
+layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+
+uniform sampler2D depthMap;
+
+shared uint minDepthInt;
+shared uint maxDepthInt;
+
+struct TilesB
+{
+ float minDepth;
+ float maxDepth;
+ vec2 pad;
+};
+
+layout (std430, binding = 3) buffer tilesBoundBuffer
+{
+ TilesB tiles[];
+};
+
+
+void main()
+{
+
+ uint localThread_ID = gl_LocalInvocationIndex;
+
+ uint tileIndex = gl_WorkGroupID.y * gl_NumWorkGroups.x + gl_WorkGroupID.x;
+
+ if(localThread_ID == 0)
+ {
+   minDepthInt = 0xFFFFFFFF;
+   maxDepthInt = 0;
+ }
+
+ barrier();
+
+ ivec2 pixelCoord = ivec2(gl_GlobalInvocationID.xy);
+ ivec2 texSize = textureSize(depthMap, 0);
+
+ if(pixelCoord.x < texSize.x && pixelCoord.y < texSize.y)
+ {
+  float depth = texelFetch(depthMap, pixelCoord, 0).r;
+
+  uint depth_Uint = floatBitsToUint(depth);
+
+  atomicMin(minDepthInt, depth_Uint);
+  atomicMax(maxDepthInt, depth_Uint);
+ }
+
+ barrier();
+
+ if(localThread_ID == 0)
+ {
+  tiles[tileIndex].minDepth = uintBitsToFloat(minDepthInt);
+  tiles[tileIndex].maxDepth = uintBitsToFloat(maxDepthInt);
+
+ }
+
+}

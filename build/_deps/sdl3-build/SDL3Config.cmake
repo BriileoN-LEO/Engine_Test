@@ -11,7 +11,7 @@ set_package_properties(SDL3 PROPERTIES
 ####### Any changes to this file will be overwritten by the next CMake run ####
 ####### The input file was SDL3Config.cmake.in                            ########
 
-get_filename_component(PACKAGE_PREFIX_DIR "${CMAKE_CURRENT_LIST_DIR}/../" ABSOLUTE)
+get_filename_component(PACKAGE_PREFIX_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../" ABSOLUTE)
 
 macro(check_required_components _NAME)
   foreach(comp ${${_NAME}_FIND_COMPONENTS})
@@ -87,7 +87,15 @@ if(_sdl3_framework)
 else()
   if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/SDL3testTargets.cmake")
     set(SDL3_SDL3_test_FOUND TRUE)
-
+  find_package(PkgConfig)
+  if(PkgConfig_FOUND)
+    pkg_check_modules(PC_LIBUNWIND QUIET IMPORTED_TARGET libunwind libunwind-generic)
+    if(NOT PC_LIBUNWIND_FOUND)
+      set(SDL3_SDL3_test_FOUND OFF)
+    endif()
+  else()
+    set(SDL3_SDL3_test_FOUND OFF)
+  endif()
     if(SDL3_SDL3_test_FOUND)
       include("${CMAKE_CURRENT_LIST_DIR}/SDL3testTargets.cmake")
     endif()

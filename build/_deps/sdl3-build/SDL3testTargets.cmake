@@ -7,7 +7,7 @@ if(CMAKE_VERSION VERSION_LESS "2.8.3")
    message(FATAL_ERROR "CMake >= 2.8.3 required")
 endif()
 cmake_policy(PUSH)
-cmake_policy(VERSION 2.8.3...3.31)
+cmake_policy(VERSION 2.8.3...4.1)
 #----------------------------------------------------------------
 # Generated CMake target import file.
 #----------------------------------------------------------------
@@ -51,36 +51,15 @@ add_library(SDL3::SDL3_test STATIC IMPORTED)
 
 set_target_properties(SDL3::SDL3_test PROPERTIES
   COMPATIBLE_INTERFACE_STRING "SDL_VERSION"
-  INTERFACE_LINK_LIBRARIES "SDL3::Headers"
+  INTERFACE_LINK_LIBRARIES "\$<LINK_ONLY:PkgConfig::PC_LIBUNWIND>;SDL3::Headers"
   INTERFACE_SDL_VERSION "SDL3"
 )
-
-# Import target "SDL3::SDL3_test" for configuration "Debug"
-set_property(TARGET SDL3::SDL3_test APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
-set_target_properties(SDL3::SDL3_test PROPERTIES
-  IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "C"
-  IMPORTED_LOCATION_DEBUG "C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/sdl3-build/Debug/SDL3_test.lib"
-  )
 
 # Import target "SDL3::SDL3_test" for configuration "Release"
 set_property(TARGET SDL3::SDL3_test APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(SDL3::SDL3_test PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "C"
-  IMPORTED_LOCATION_RELEASE "C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/sdl3-build/Release/SDL3_test.lib"
-  )
-
-# Import target "SDL3::SDL3_test" for configuration "MinSizeRel"
-set_property(TARGET SDL3::SDL3_test APPEND PROPERTY IMPORTED_CONFIGURATIONS MINSIZEREL)
-set_target_properties(SDL3::SDL3_test PROPERTIES
-  IMPORTED_LINK_INTERFACE_LANGUAGES_MINSIZEREL "C"
-  IMPORTED_LOCATION_MINSIZEREL "C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/sdl3-build/MinSizeRel/SDL3_test.lib"
-  )
-
-# Import target "SDL3::SDL3_test" for configuration "RelWithDebInfo"
-set_property(TARGET SDL3::SDL3_test APPEND PROPERTY IMPORTED_CONFIGURATIONS RELWITHDEBINFO)
-set_target_properties(SDL3::SDL3_test PROPERTIES
-  IMPORTED_LINK_INTERFACE_LANGUAGES_RELWITHDEBINFO "C"
-  IMPORTED_LOCATION_RELWITHDEBINFO "C:/Users/DiegoYael/source/repos/BriileoN-LEO/Engine_Test/build/_deps/sdl3-build/RelWithDebInfo/SDL3_test.lib"
+  IMPORTED_LOCATION_RELEASE "/home/brii/CPP_proyects/Engine_Test/build/_deps/sdl3-build/libSDL3_test.a"
   )
 
 # Make sure the targets which have been exported in some other

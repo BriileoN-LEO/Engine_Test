@@ -1,0 +1,14 @@
+# Target labels
+ stb-populate
+# Source files and their labels
+/home/brii/CPP_proyects/Engine_Test/build/_deps/stb-subbuild/CMakeFiles/stb-populate
+/home/brii/CPP_proyects/Engine_Test/build/_deps/stb-subbuild/CMakeFiles/stb-populate.rule
+/home/brii/CPP_proyects/Engine_Test/build/_deps/stb-subbuild/CMakeFiles/stb-populate-complete.rule
+/home/brii/CPP_proyects/Engine_Test/build/_deps/stb-subbuild/stb-populate-prefix/src/stb-populate-stamp/stb-populate-build.rule
+/home/brii/CPP_proyects/Engine_Test/build/_deps/stb-subbuild/stb-populate-prefix/src/stb-populate-stamp/stb-populate-configure.rule
+/home/brii/CPP_proyects/Engine_Test/build/_deps/stb-subbuild/stb-populate-prefix/src/stb-populate-stamp/stb-populate-download.rule
+/home/brii/CPP_proyects/Engine_Test/build/_deps/stb-subbuild/stb-populate-prefix/src/stb-populate-stamp/stb-populate-install.rule
+/home/brii/CPP_proyects/Engine_Test/build/_deps/stb-subbuild/stb-populate-prefix/src/stb-populate-stamp/stb-populate-mkdir.rule
+/home/brii/CPP_proyects/Engine_Test/build/_deps/stb-subbuild/stb-populate-prefix/src/stb-populate-stamp/stb-populate-patch.rule
+/home/brii/CPP_proyects/Engine_Test/build/_deps/stb-subbuild/stb-populate-prefix/src/stb-populate-stamp/stb-populate-test.rule
+/home/brii/CPP_proyects/Engine_Test/build/_deps/stb-subbuild/stb-populate-prefix/src/stb-populate-stamp/stb-populate-update.rule

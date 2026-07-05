@@ -73,6 +73,13 @@ namespace search_algorithms
 
    return funcBin[func_p](container.data(), container.size(), target);
   }
+
+  template <typename T_arg>
+  uint32_t binary_search_contains(std::vector<T_arg>& container, T_arg& target)
+  {
+   return (binary_search_OP_int(container, target)) != -1 ? 1 : 0;
+  }
+
 }
 
 

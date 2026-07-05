@@ -42,6 +42,8 @@ namespace briT
 namespace funcPtr
 {
     using funcDouble_uint64_t = void(*)(uint64_t&, uint64_t&);
+    using func_Double_str_constUint = void(*)(std::string&, const std::string&, const unsigned int&);
+   // using func_lambdaFunc_void = void(*)(void(*)(void*), void*); /// (function, data) --> void    ///////////USE IN THE FUTURE
 }
 
 

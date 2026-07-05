@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -DNDEBUG -O3 -Wl,--dependency-file=CMakeFiles/texturetests.dir/link.d CMakeFiles/texturetests.dir/texturetests/texturetests.cc.o -o ../../../Release/texturetests  -Wl,-rpath,"\$ORIGIN:\$ORIGIN/../lib" gtest/libgtest.a ../../../Release/libktx.so.5.0.0
