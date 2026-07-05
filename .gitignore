@@ -3,6 +3,30 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# 1. Archivos de Compilación de C++ (NUNCA se suben)
+build/
+build-debug/
+build-release/
+*.o
+*.out
+*.exe
+*.dll
+*.so
+*.a
+
+# 2. Archivos de Configuración Locales (CMake / LSP)
+compile_commands.json
+CMakeCache.txt
+CMakeFiles/
+
+# 3. Archivos de Neovim / Sistema Operativo
+LOCALAPPDATA/
+.cache/
+.DS_Store
+*.swp
+*~
+
+
 # User-specific files
 *.rsuser
 *.suo
