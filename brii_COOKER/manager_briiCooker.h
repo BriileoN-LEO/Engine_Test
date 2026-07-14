@@ -13,6 +13,7 @@
 #include "material_binFormat.h"
 #include "texturesPack_binFormat.h"
 #include "dataManager/dataTypes_brii.h"
+#include "dataManager/containerTypes_manager.h"
 #include <ktx.h> ///NUEVA LIBRERIA PARA CARGAR IMAGENES
 #include <KHR/khr_df.h>
 //#include "cmake-build-debug/_deps/ktx_software-src/lib/vkformat_enum.h" /////CHANGE THIS FOR A WAY TO REMPLACE THIS
@@ -54,43 +55,102 @@ namespace manager_GD
 
 namespace manager_AssimpData
 {
-  class entity_MeshManager
+
+//==================    MESH SET BINARY    =======================
+
+  class mesh_D
   {
   private:
-    mesh_LeoHeader headerMesh{};
-    std::string nameMesh{};
     std::vector<vertex_D> dataVertex{};
     std::vector<unsigned int> dataIndices{};
+    meshPack_Register mesh_info{}; //////CHANGE NAME
 
   public:
-    entity_MeshManager();
-    entity_MeshManager(mesh_LeoHeader& headerMesh, std::vector<vertex_D>& dataVertex);
-    entity_MeshManager(entity_MeshManager&& mesh_D) noexcept;
-    entity_MeshManager(entity_MeshManager& mesh_D);
-    ~entity_MeshManager();
+    mesh_D();
+    mesh_D(meshPack_Register& mesh_info, std::vector<vertex_D>& dataVertex, std::vector<unsigned int>& dataIndices);
+    mesh_D(mesh_D&& mesh_D) noexcept;
+    mesh_D(mesh_D& mesh_D);
+    mesh_D(const mesh_D& mesh_D);
 
-    void insert_nameMesh(std::string& nameMesh_D);
-    void insert_verifiedNumber(std::array<char, 4>& verifiedNum);
-    void insert_version(uint32_t& version);
+    ~mesh_D();
+    
+    mesh_D operator=(mesh_D&& mD) noexcept;  ///REMEMBER noexcept is use to test in functions that not throw any exception, std::terminate throw (0) ant rfinal return (1)
+    mesh_D operator=(mesh_D& mD);
+    mesh_D operator=(const mesh_D& mD);
 
+    void insert_headerMesh(meshPack_Register& hM);
+  
     void insert_vertexD(float position[3], float normal[3], float uv[2]);
+    void setSize_VertexContainer(int size);
     void update_size_vertexD();
 
     void insert_Indice(unsigned int indice);
+    void setSize_IndicesContainer(int size);
     void update_size_indices();
 
     void insert_mat4Transformation(std::array<float, 16>& mat4_array);
 
-
-    mesh_LeoHeader& get_headerMesh();
+    const uint64_t& get_meshID();
+    meshPack_Register& get_meshPackRegister();
     std::vector<vertex_D>& get_dataVertex();
     std::vector<unsigned int>& get_dataIndices();
 
-    //entity_MeshManager operator=(entity_MeshManager&& mesh_D) noexcept;
-    //entity_MeshManager operator=(entity_MeshManager& mesh_D);
-
     void destroy();
   };
+
+  ///////////CONTINUE HERE, MAKE THIS FUNCTION OF THE CLASS (meshesBin_D)
+  
+   class meshesBin_D
+  { 
+   private:
+   std::vector<uint64_t> ID_mesh{}; ///IN ORDER TO MADE BINARY SEARCH
+   std::unordered_map<uint64_t, uint64_t> pos_by_ID{}; ///ID'S FOR SEARCH BY ID THE POSICION
+   std::vector<mesh_D> meshes_data{}; 
+   mesh_LeoHeader headerMesh{};
+
+   public:
+   meshesBin_D();
+   meshesBin_D(const meshesBin_D&& mBD) noexcept;
+   meshesBin_D(const meshesBin_D& mBD);
+
+   void insert_Mesh(mesh_D& mD); 
+   void upload_AllMesh_bin();
+   //void upload_SelectedMesh_byID(uint64_t ID_mesh);   ///DON'T WORRIED IF THE HEADER IS THE SAME, IS THE PURPOSE 
+  };
+
+  class entity_MeshManager
+  { 
+    private:
+    std::vector<meshesBin_D> meshesBin_data{};
+    
+    public:
+
+    //void 
+  };
+ ////////CONTINUE HERE  
+
+ //==================================================================================================================
+ //==================================================================================================================
+
+  class model_D
+  {
+  private:
+    model_LeoHeader headerModel{};
+    std::vector<uint64_t> meshesRegister_LeoMesh{};//BINARY ORDER 
+   // std::vector<entity_MeshManager> meshes_D{};
+
+  public:
+    model_D();
+    model_D(const model_D&& mD) noexcept;
+    model_D(const model_D& mD);
+    //entity_ModelManager(entity_ModelManager&& entity_modelM) noexcept;
+    //entity_ModelManager(entity_ModelManager& entity_modelM);
+    void insert_headerModel(model_LeoHeader& headerModel);
+    void insert_MeshID(uint64_t& mesh_ID);
+   
+    void destroy();
+  };
+
 
   struct textures_MaterialManager
   {
@@ -102,30 +162,6 @@ namespace manager_AssimpData
 
   };
 
-  ////CREATE NEW ONE
-   
-  class entity_ModelManager
-  {
-  private:
-    model_LeoHeader headerModel{};
-    std::string modelName{};
-    std::string directory{};  ///directory of the binary file
-    std::vector<meshAsset_register> meshesRegister_LeoMesh{};
-    std::vector<entity_MeshManager> meshes_D{};
-
-  public:
-    entity_ModelManager();
-    //entity_ModelManager(entity_ModelManager&& entity_modelM) noexcept;
-    //entity_ModelManager(entity_ModelManager& entity_modelM);
-
-    void insertMesh(entity_MeshManager& mesh);
-    void insertHeader(model_LeoHeader& header);
-    void insertModelName(std::string modelName);
-    void insertDirectory(std::string directory);
-    std::vector<entity_MeshManager>& outMeshes();
-
-    void destroy();
-  };
 
 }
 
@@ -288,7 +324,7 @@ namespace manage_materialCooker
     matPack_data_register& get_mat_directly(uint64_t ID); //KNOW'S EXACTLY THAT THE MATERIAL EXISTS WITH THE ID
     const material_LeoHeader& get_const_header();
 
-    uint32_t packBinary(const std::string& outDir);
+    uint32_t packBinary(const std::string& outDir, file_OP::writeFlags& fileT);
 
   };
 
@@ -304,11 +340,10 @@ namespace manage_materialCooker
    
    void insertMat(material_D& mat);///INSERT IN ORDER
    data_MatCore::matPack_ptr get_mat_by_ID(uint64_t ID);
-   void upload_AllMat_bin(const std::string& directory);
-   void upload_selectMat_bin(const std::string& directory, uint64_t matBin_ID);
+   void upload_AllMat_bin(const std::string& directory, file_OP::writeFlags& fileT);
+   void upload_selectMat_bin(const std::string& directory, uint64_t matBin_ID, file_OP::writeFlags& fileT);
    
-   ///CONTINUE HERE
-  };
+     };
 
   uint64_t proccess_nameMaterial(std::string& nameMat, const std::string& nameModel_path, const unsigned int& index);
 
@@ -327,17 +362,15 @@ namespace data_leoBinary
  extern std::vector<manager_AssimpData::entity_ModelManager> models_D;
  extern Assimp::Importer assimpImporter;
 
- void load_Settings_Cooker();
+ void init_dataUtilities_Cooker();
 
  void loadModel(std::string nameModel, std::string path, unsigned int aiProcessFlags, uint32_t version);
  void processNode(manager_AssimpData::entity_ModelManager& model, aiNode* node, const aiScene* scene, int& meshesCounter, uint32_t& version);
  void processMesh_data(manager_AssimpData::entity_MeshManager& meshManager, aiMesh* mesh, std::array<float, 16>& meshTransMatrix, uint32_t& version);
-
+ 
+ void insert_TexturesID(matPack_data_register& matP, manager_AssimpData::textures_MaterialManager& textures_ID);
  void processMaterials(const aiScene* scene, const std::string& nameModel_path, const std::string& directory);
 
 }
-
-
-
 
 #endif //LEARNING_MANAGER_BRIICOOKER_H

@@ -10,6 +10,8 @@ add_executable(briiCore
  "glm_lib.h"
  "dataManager/convertion_DataManager.cpp"
  "dataManager/convertion_DataManager.h"
+ "dataManager/containerTypes_manager.h"
+ "dataManager/containerTypes_manager.cpp"
  "files_CoreManager/files_Core.cpp"
  "files_CoreManager/files_Core.h"
  "dataManager/dataTypes_brii.cpp"
@@ -18,6 +20,7 @@ add_executable(briiCore
  "dataManager/algorithms_brii.cpp"
  "dataManager/algorithms_brii.h"
  "libs_in_CORE.h"
+ "systemManager/platform_Manager.h"
 )
 
 add_library(brii_CORE INTERFACE
@@ -27,6 +30,8 @@ add_library(brii_CORE INTERFACE
  "glm_lib.h"
  "dataManager/convertion_DataManager.cpp"
  "dataManager/convertion_DataManager.h"
+ "dataManager/containerTypes_manager.h"
+ "dataManager/containerTypes_manager.cpp"
  "files_CoreManager/files_Core.cpp"
  "files_CoreManager/files_Core.h"
  "dataManager/dataTypes_brii.cpp"
@@ -35,6 +40,7 @@ add_library(brii_CORE INTERFACE
  "dataManager/algorithms_brii.cpp"
  "dataManager/algorithms_brii.h"
  "libs_in_CORE.h"
+ "systemManager/platform_Manager.h"
 )
 
 target_link_libraries(brii_CORE INTERFACE

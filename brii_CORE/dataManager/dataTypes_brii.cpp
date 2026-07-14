@@ -31,3 +31,11 @@ namespace briT
         data[3] = op.data[3];
     }
 }
+
+namespace funcPtr
+{
+   void empty_func::str_constStrAmp(std::string f1, const std::string& f2)
+   {
+     f1 = f2;
+   }
+}

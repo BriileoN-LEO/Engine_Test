@@ -19,15 +19,12 @@ struct model_LeoHeader
     char modelName[MAX_SIZE_STR_BIN_MODEL]{};
     
     uint64_t meshesCount{};
-
 };
-
+//struct meshAsset_register 
+//{ 
+ //   uint64_t meshID{}; ////ALL THE ID MESHES IN SEQUENCE
+//};
 #pragma pack(pop)
-
-struct meshAsset_register
-{
-    uint32_t meshID{};
-};
 
 
 #endif

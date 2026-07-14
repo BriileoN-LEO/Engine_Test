@@ -1518,7 +1518,7 @@ namespace RenderData_Set
 
 		pointLights_D.emplace();
 		//pointLights_Scene_D.emplace();
-        spotLights_PBR_D.emplace();
+                spotLights_PBR_D.emplace();
 
 		dL_shadows_D.emplace();
 		omL_shadows_D.emplace();

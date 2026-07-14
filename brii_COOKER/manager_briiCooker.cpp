@@ -34,85 +34,150 @@ namespace manager_GD
 
 namespace manager_AssimpData
 {
-   entity_MeshManager::entity_MeshManager() = default;
-   entity_MeshManager::entity_MeshManager(mesh_LeoHeader& headerMesh, std::vector<vertex_D>& dataVertex) : headerMesh(headerMesh), dataVertex(dataVertex){};
-   entity_MeshManager::entity_MeshManager(entity_MeshManager&& mesh_D) noexcept
+   mesh_D::mesh_D() = default;
+   mesh_D::mesh_D(meshPack_Register& mesh_info, std::vector<vertex_D>& dataVertex, std::vector<unsigned int>& dataIndices) :  dataVertex(dataVertex), dataIndices(dataIndices), mesh_info(mesh_info){};
+   mesh_D::mesh_D(mesh_D&& mesh_D) noexcept
    {
-      headerMesh = mesh_D.get_headerMesh();
+      mesh_info = mesh_D.get_meshPackRegister();
       dataVertex = mesh_D.get_dataVertex();
       dataIndices = mesh_D.get_dataIndices();
-   }
-   entity_MeshManager::entity_MeshManager(entity_MeshManager& mesh_D)
+   } 
+   mesh_D::mesh_D(mesh_D& mesh_D)
    {
-      headerMesh = mesh_D.get_headerMesh();
+      mesh_info = mesh_D.get_meshPackRegister();
       dataVertex = mesh_D.get_dataVertex();
       dataIndices = mesh_D.get_dataIndices();
-
+      
    }
-   entity_MeshManager::~entity_MeshManager() { destroy(); };
-
-   void entity_MeshManager::insert_nameMesh(std::string& nameMesh_D)
+    mesh_D::mesh_D(const mesh_D& mesh_D)
    {
-   //   headerMesh.mesh_nameLenght = sizeof(nameMesh);
-      nameMesh = nameMesh_D;
+     mesh_info = mesh_D.mesh_info;
+     dataVertex = mesh_D.dataVertex;
+     dataIndices = mesh_D.dataIndices;
+      
    }
 
-   void entity_MeshManager::insert_verifiedNumber(std::array<char, 4>& verifiedNum)
+
+   mesh_D::~mesh_D() { destroy(); };
+
+
+   mesh_D mesh_D::operator=(mesh_D&& mD) noexcept
    {
-       for (unsigned int i = 0; i < 4; ++i)
-       {
-          headerMesh.verifiedNumber[i] = verifiedNum[i];
-       }
+     mesh_info = mD.get_meshPackRegister();
+     dataVertex = mD.get_dataVertex();
+     dataIndices = mD.get_dataIndices();
+
+    return *this;
    }
-   void entity_MeshManager::insert_version(uint32_t& version)
+   mesh_D mesh_D::operator=(mesh_D& mD)
    {
-      headerMesh.version = version;
+     mesh_info = mD.get_meshPackRegister();
+     dataVertex = mD.get_dataVertex();
+     dataIndices = mD.get_dataIndices();
+    return *this;
+   }
+   mesh_D mesh_D::operator=(const mesh_D& mD)
+{
+     mesh_info = mD.mesh_info;
+     dataVertex = mD.dataVertex;
+     dataIndices = mD.dataIndices;
+    return *this;
+}
+
+
+   void mesh_D::insert_headerMesh(meshPack_Register& hM)
+   { 
+    mesh_info = hM;
    }
 
-   void entity_MeshManager::insert_vertexD(float position[3], float normal[3], float uv[2])
+   void mesh_D::insert_vertexD(float position[3], float normal[3], float uv[2])
    {
       dataVertex.emplace_back(position, normal, uv);
    }
-   void entity_MeshManager::update_size_vertexD()
+   void mesh_D::setSize_VertexContainer(int size)
    {
-      headerMesh.vertexCount = dataVertex.size();
+    dataVertex.resize(size);
+   }
+
+   void mesh_D::update_size_vertexD()
+   {
+      mesh_info.vertexCount = dataVertex.size();
    };
 
-   void entity_MeshManager::insert_Indice(unsigned int indice)
+   void mesh_D::insert_Indice(unsigned int indice)
    {
       dataIndices.emplace_back(indice);
    }
-   void entity_MeshManager::update_size_indices()
+   void mesh_D::setSize_IndicesContainer(int size)
    {
-     headerMesh.indexCount = dataIndices.size();
+     dataIndices.resize(size);
+   }
+   void mesh_D::update_size_indices()
+   {
+     mesh_info.indexCount = dataIndices.size();
    }
 
-   void entity_MeshManager::insert_mat4Transformation(std::array<float, 16>& mat4_array)
+   void mesh_D::insert_mat4Transformation(std::array<float, 16>& mat4_array)
    {
      for (unsigned int i = 0; i < 16; ++i)
      {
-        headerMesh.mesh_transformation[i] = mat4_array[i];
+        mesh_info.mesh_transformation[i] = mat4_array[i];
      }
    }
 
-   void entity_MeshManager::destroy()
+  const uint64_t& mesh_D::get_meshID()
+  {
+   return mesh_info.meshID;
+  }
+
+  meshPack_Register& mesh_D::get_meshPackRegister()   
+  {
+      return mesh_info;
+  }
+  std::vector<vertex_D>& mesh_D::get_dataVertex()
+   {
+     return dataVertex;
+   }
+  std::vector<unsigned int>& mesh_D::get_dataIndices()
+   {
+     return dataIndices;
+   }
+
+   void mesh_D::destroy()
    {
       dataVertex.clear();
       dataIndices.clear();
    }
 
-   mesh_LeoHeader& entity_MeshManager::get_headerMesh()
+   meshesBin_D::meshesBin_D() = default;
+   meshesBin_D::meshesBin_D(const meshesBin_D&& mBD) noexcept
    {
-      return headerMesh;
+    headerMesh = mBD.headerMesh;
+    ID_mesh = mBD.ID_mesh;
+    pos_by_ID = mBD.pos_by_ID;
+    meshes_data = mBD.meshes_data; 
    }
-   std::vector<vertex_D>& entity_MeshManager::get_dataVertex()
+
+   meshesBin_D::meshesBin_D(const meshesBin_D& mBD)
    {
-     return dataVertex;
+    headerMesh = mBD.headerMesh;
+    ID_mesh = mBD.ID_mesh;
+    pos_by_ID = mBD.pos_by_ID;
+    meshes_data = mBD.meshes_data; 
+   } 
+
+   void meshesBin_D::insert_Mesh(mesh_D& mD)
+   { 
+      std_vectorManager::insert_sorted_order<uint64_t>(ID_mesh, mD.get_meshID());
    }
-   std::vector<unsigned int>& entity_MeshManager::get_dataIndices()
+   void meshesBin_D::upload_AllMesh_bin()
    {
-     return dataIndices;
+
    }
+
+   void meshesBin_D::upload_SelectedMesh_byID(uint64_t ID_mesh);   ///DON'T WORRIED IF THE HEADER IS THE SAME, IS THE PURPOSE 
+
+
 
 /*
    entity_MeshManager entity_MeshManager::operator=(entity_MeshManager&& mesh_D) noexcept
@@ -135,7 +200,17 @@ namespace manager_AssimpData
 */
  
 
-   entity_ModelManager::entity_ModelManager() = default;
+   model_D::model_D() = default;
+   model_D::model_D(const model_D&& mD) noexcept
+   {
+    headerModel = mD.headerModel;
+    meshesRegister_LeoMesh = mD.meshesRegister_LeoMesh;
+   }
+   model_D::model_D(const model_D& mD)
+   {
+    headerModel = mD.headerModel;
+    meshesRegister_LeoMesh = mD.meshesRegister_LeoMesh;
+   }
 
    /*
    entity_ModelManager::entity_ModelManager(entity_ModelManager&& entity_modelM) noexcept
@@ -151,19 +226,19 @@ namespace manager_AssimpData
       entity_modelM.destroy();
    }
 */
-   void entity_ModelManager::insertMesh(entity_MeshManager& mesh)
+   void model_D::insert_headerModel(model_LeoHeader& headerModel)
    {
-      meshes_D.emplace_back(mesh);
+     this->headerModel = headerModel;
    }
 
-   std::vector<entity_MeshManager>& entity_ModelManager::outMeshes()
+   void model_D::insert_MeshID(uint64_t& mesh_ID)
    {
-     return meshes_D;
+      meshesRegister_LeoMesh.emplace_back(mesh_ID);
    }
 
-   void entity_ModelManager::destroy()
+   void model_D::destroy()
    {
-      meshes_D.clear();
+      meshesRegister_LeoMesh.clear();
    }
 }
 
@@ -1612,12 +1687,15 @@ namespace manage_materialCooker
    material_D::material_D() = default;
    material_D::material_D(material_LeoHeader& dataHeader_Mat, std::vector<matPack_data_register>& materials) :  dataHeader_Mat(dataHeader_Mat), materials(materials) 
    {
+
+     this->dataHeader_Mat = dataHeader_Mat;
      for(int i = 0; i < static_cast<int>(materials.size()); i++)
     {
      pos_by_ID.emplace(materials[i].materialID, i);
 
-     auto find_p {std::lower_bound(ID_materials.begin(), ID_materials.end(), materials[i].materialID)};
-     ID_materials.emplace(find_p, materials[i].materialID); 
+     std_vectorManager::insert_sorted_order<uint64_t>(ID_materials, materials[i].materialID);
+     //auto find_p {std::lower_bound(ID_materials.begin(), ID_materials.end(), materials[i].materialID)};
+     //ID_materials.emplace(find_p, materials[i].materialID); 
     }
      
    };
@@ -1660,12 +1738,10 @@ namespace manage_materialCooker
     return dataHeader_Mat;
    }
 
-   uint32_t material_D::packBinary(const std::string& outDir)
+   uint32_t material_D::packBinary(const std::string& outDir, file_OP::writeFlags& fileT)
    {
-    return pack_binMaterial(dataHeader_Mat, materials, outDir);
+    return writeFile_binMaterial(dataHeader_Mat, materials, outDir, fileT) ;
    }
-
-
 
    entity_MaterialManager::entity_MaterialManager() = default;
    
@@ -1673,8 +1749,7 @@ namespace manage_materialCooker
    {  
       pos_by_ID.emplace(mat.get_matBin_ID(), static_cast<uint64_t>(mat_data.size()));
       mat_data.emplace_back(mat);
-      
-      
+      std_vectorManager::insert_sorted_order<uint64_t>(ID_matBin, mat.get_matBin_ID()); 
    }
 
    data_MatCore::matPack_ptr entity_MaterialManager::get_mat_by_ID(uint64_t ID)
@@ -1695,28 +1770,26 @@ namespace manage_materialCooker
      return ptr_matPack;
    }
 
-   void entity_MaterialManager::upload_AllMat_bin(const std::string& directory)
+   void entity_MaterialManager::upload_AllMat_bin(const std::string& directory, file_OP::writeFlags& fileT)
    { 
-    std::cout << "UPLOAD ALL MATERIALS TO BINARY\n";
+
+    ///HERE FIND THE MESHES THAT HAVE THIS MATERIAL OF ID
+    ///SUBSTITUDE THE ID FOR A THE ID OF STANDARD MATERIAL
+    ///IF THE STANDARD MATERIAL NOT EXISTS, PUT THAT IT NOT HAVE MATERIAL TO UPLOAD ONLY THE COLORES NEEDED FOR TEXTURES
+      std::cout << "=====UPLOAD ALL MATERIALS TO BINARY=====\n";
       for(auto& matBin : mat_data)
      { 
-       uint32_t matSave {matBin.packBinary(directory)};
-       if(matSave == 0)
-       {       
-         //////HERE FIND THE MESHES THAT HAVE THIS MATERIAL OF ID
-         ///SUBSTITUDE THE ID FOR A THE ID OF STANDARD MATERIAL
-         ///IF THE STANDARD MATERIAL NOT EXISTS, PUT THAT IT NOT HAVE MATERIAL TO UPLOAD ONLY THE COLORES NEEDED FOR TEXTURES
-       }
+       matBin.packBinary(directory, fileT);
      }
    }
 
-   void entity_MaterialManager::upload_selectMat_bin(const std::string& directory, uint64_t matBin_ID)
+   void entity_MaterialManager::upload_selectMat_bin(const std::string& directory, uint64_t matBin_ID, file_OP::writeFlags& fileT)
    {
-     uint32_t find_matBin {search_algorithms::binary_search_contains<uint64_t>(ID_matBin, matBin_ID)};
+     uint32_t find_matBin {search_algorithms::binary_search_contains<uint64_t>(ID_matBin, matBin_ID)}; //FIND IF EXISTS MAT
      
      if(find_matBin == 1)
      {
-      mat_data[pos_by_ID[matBin_ID]].packBinary(directory);
+      mat_data[pos_by_ID[matBin_ID]].packBinary(directory, fileT);
      }
      
    }
@@ -1730,7 +1803,7 @@ namespace manage_materialCooker
       };
     auto nameNotExists = [](std::string& nMat, const std::string& nameModelPath, const unsigned int& idx)  -> void
       {
-         nMat = nameModelPath + "_" + std::to_string(idx); ////this is the index of the material.
+         nMat = nameModelPath + "_mat_" + std::to_string(idx); ////this is the index of the material.
       };
         
    std::vector<funcPtr::func_Double_str_constUint> func_NM{};
@@ -1743,6 +1816,11 @@ namespace manage_materialCooker
 
    func_NM[selectFunc](nameMat, nameModel_path, index);
 
+   if(nameMat.size() > MAX_SIZE_STR_BIN_MATERIAL)
+   {
+     nameMat = nameMat.substr(0, MAX_SIZE_STR_BIN_MATERIAL-1);
+   }
+
     uint64_t ID_material_FNV {FNV::hash_1a(nameMat)};
     return ID_material_FNV;
    }
@@ -1754,7 +1832,6 @@ namespace manage_materialCooker
 namespace data_utilities
 {
   std::optional<manage_materialCooker::entity_MaterialManager> mat_D;
- 
 }
 
 
@@ -1765,8 +1842,10 @@ namespace data_leoBinary
    std::vector<manager_AssimpData::entity_ModelManager> models_D{};
    Assimp::Importer assimpImporter{};
 
-   void load_Settings_Cooker()
+   void init_dataUtilities_Cooker()
    {
+   data_utilities::mat_D.emplace();
+
      //ID_defaultMaterial = FNV::str_to_hash("DefaultMaterial");
    }
 
@@ -1820,7 +1899,7 @@ namespace data_leoBinary
 
       int meshesCounter{};
       processNode(model, scene->mRootNode, scene, meshesCounter, version);
-
+    
    }
 
    void processNode(manager_AssimpData::entity_ModelManager& model, aiNode* node, const aiScene* scene, int& meshesCounter,uint32_t& version)
@@ -1910,15 +1989,49 @@ namespace data_leoBinary
          }
       }
 
-      meshManager.update_size_indices();
+      meshManager.update_size_indices(); 
+   }
 
+ 
+   void insert_TexturesID(matPack_data_register& matP, manager_AssimpData::textures_MaterialManager& textures_ID)
+   {
+     matP.albedo_hash = textures_ID.Albedo_hash;
+     matP.normals_hash = textures_ID.Normals_hash;
+     matP.RMA_hash = textures_ID.RMA_hash;
+     matP.height_hash = textures_ID.Height_hash;
+     matP.emission_hash = textures_ID.Emission_hash;
    }
 
    void processMaterials(const aiScene* scene, const std::string& nameModel_path, const std::string& directory)
    {
+     material_LeoHeader headerMat{};
+     
+     std::array<char, 4>& verfNum {manager_GD::verifiedNumbers_D[static_cast<uint32_t>(manager_GD::signBin::MATERIAL)]};
+
+     headerMat.verifiedNumber[0] = verfNum[0];
+     headerMat.verifiedNumber[1] = verfNum[1];
+     headerMat.verifiedNumber[2] = verfNum[2];
+     headerMat.verifiedNumber[3] = verfNum[3];
+    
+     headerMat.version = 1;
+
+     std::string name_matBin {"matBin_" + nameModel_path};
+     customFiles::quit_double_underscore_txt(name_matBin);
+
+     if(name_matBin.size() > MAX_SIZE_STR_BIN_MATERIAL)
+     {
+      name_matBin = name_matBin.substr(0, MAX_SIZE_STR_BIN_MATERIAL-1);
+     }
+
+     std::strcpy(headerMat.nameMaterial_Header, name_matBin.c_str());
+     headerMat.material_bin_ID = FNV::hash_1a(name_matBin);
+     headerMat.materialCount = scene->mNumMaterials; 
+
+     std::vector<matPack_data_register> materials_packing{};
+
      for (unsigned int i = 0; i < scene->mNumMaterials; ++i)
      {
-       material_LeoHeader headerMat{};
+       matPack_data_register matP{};
 
        aiMaterial* material { scene->mMaterials[i] };
 
@@ -1929,28 +2042,27 @@ namespace data_leoBinary
        {
         nameMat = matName.C_Str();
        }
-       else
-       {
-        nameMat = nameModel_path + "mat" + std::to_string(i);
-       }
+    //   else
+    //   {
+   //     nameMat = nameModel_path + "Mat" + std::to_string(i);
+      /// }
 
-        headerMat.materialID = manage_materialCooker::proccess_nameMaterial(nameMat, nameModel_path, i);
-
-       uint32_t signVerf {static_cast<uint32_t>(manager_GD::signBin::MATERIAL)};
-       std::array<char, 4>& verfNum {manager_GD::verifiedNumbers_D[signVerf]};
-
-       headerMat.verifiedNumber[0] = verfNum[0];
-       headerMat.verifiedNumber[1] = verfNum[1];
-       headerMat.verifiedNumber[2] = verfNum[2];
-       headerMat.verifiedNumber[3] = verfNum[3];
+       matP.materialID = manage_materialCooker::proccess_nameMaterial(nameMat, nameModel_path, i);  ////ASSING MATERIAL ID
+       std::strcpy(matP.nameMaterial, nameMat.c_str()); ////ASSIGN NAME MATERIAL
 
        std::cout << "LOADING::MATERIAL:: NAME -> " << nameMat << std::endl;
 
+      ///LOAD ALL TEXTURES OF MATERIAL
        manager_AssimpData::textures_MaterialManager str_tex{};
-       manage_texturesCooker::loadTextures(material, str_tex, nameModel_path, directory, scene);
-        ///////CONTINUE HERE
+       manage_texturesCooker::loadTextures(material, str_tex, nameModel_path, directory, scene); //GET THE ID OF ALL TEXTURES LOADED
+       insert_TexturesID(matP, str_tex); ////ASSING TEXTURES ID
+      
+       materials_packing.emplace_back(matP);
      }
 
+    manage_materialCooker::material_D mat_data{headerMat, materials_packing}; 
+     
+    data_utilities::mat_D->insertMat(mat_data);
           /////CONTINUAR CON LOS MATERIALES
    }
 

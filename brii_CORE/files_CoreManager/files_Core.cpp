@@ -26,6 +26,14 @@ namespace filesystem_manager
      std::cout << "FILESYSTEM::DIRECTORY EXISTS" << std::endl;
 
     }
+
+  void delete_file_sentence(std::string fileName, const std::string& filePath)
+  {
+    std::cout << "deleting file = " << fileName;
+  
+    std::filesystem::path pt {filePath};
+    std::filesystem::remove(pt);
+  }
 }
 
 namespace customFiles
@@ -60,7 +68,8 @@ namespace customFiles
       while (!success) {
         size_t find_pos{f_name.find_first_of("_")};
 
-        if (find_pos != std::string::npos) {
+        if (find_pos != std::string::npos) 
+        {
 
           size_t find_pCopy{find_pos + 1};
           new_name += f_name.substr(0, find_pos);
@@ -87,4 +96,61 @@ namespace customFiles
      nameTexture = new_name;
     }
 
+ void quit_double_underscore_txt(std::string& txt) 
+ { 
+      std::string f_name {txt};
+      std::string new_name {};
+
+      bool success{};
+      while (!success) {
+        size_t find_pos{f_name.find_first_of("_")};
+
+        if (find_pos != std::string::npos) 
+        {
+
+          size_t find_pCopy{find_pos + 1};
+          new_name += f_name.substr(0, find_pos);
+
+          if (f_name[find_pCopy] == '_')
+          {
+            f_name = f_name.substr(find_pCopy + 1);
+          }
+
+          else
+          {
+            f_name = f_name.substr(find_pCopy);
+          }
+        }
+
+        else if (find_pos == std::string::npos)
+        {
+          new_name += f_name.substr(0);
+          success = true;
+        }
+
+      }
+
+     txt = new_name;
+
+ }
+
 }
+
+#if defined(__linux__) && defined(__unix) || defined(__unix) && defined(__MACH__)
+
+   uint32_t fileManager_POSIX::pwriting_handlingError(ssize_t bytes_writing, size_t size_bytes_file, const std::string& dir)
+  { 
+  if(bytes_writing < 0)
+  {
+   std::cerr << "ERROR POSIX::WRITING IN FILE::DIRECTION ---> " << dir << "\n";
+   return 0;
+  }
+  else if(bytes_writing != size_bytes_file)
+  {
+   std::cerr << "ERROR POSIX::MEMORY IS FULL OF SPACE BEFORE WRITING IN FILE::LIBERATE SPACE:: ERROR DIRECTION ---> " << dir << "\n";
+   return 0;
+  }
+ 
+  return 1;
+  }
+#endif 
