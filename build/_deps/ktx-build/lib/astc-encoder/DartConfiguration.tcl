@@ -76,7 +76,7 @@ CudaSanitizerCommand:
 CudaSanitizerCommandOptions: 
 MemoryCheckType: 
 MemoryCheckSanitizerOptions: 
-MemoryCheckCommand: MEMORYCHECK_COMMAND-NOTFOUND
+MemoryCheckCommand: /opt/cuda/bin/compute-sanitizer
 MemoryCheckCommandOptions: 
 MemoryCheckSuppressionFile: 
 
@@ -107,3 +107,8 @@ CurlOptions:
 # specify behavior for retrying the submission
 CTestSubmitRetryDelay: 5
 CTestSubmitRetryCount: 3
+
+# Invoke each test with environment variables configuring tool's collection.
+CTestTestCoverageTool: 
+CTestTestCoverageMergeExecutable: 
+CTestTestCoverageDataExecutable: 

@@ -21,6 +21,8 @@ add_executable(briiCore
  "dataManager/algorithms_brii.h"
  "libs_in_CORE.h"
  "systemManager/platform_Manager.h"
+ "systemManager/logger.h"          #////===MULTIPLATFORM LIBRARY====
+ "systemManager/logger.cpp"       
 )
 
 add_library(brii_CORE INTERFACE
@@ -41,6 +43,9 @@ add_library(brii_CORE INTERFACE
  "dataManager/algorithms_brii.h"
  "libs_in_CORE.h"
  "systemManager/platform_Manager.h"
+ "systemManager/logger.h"
+ "systemManager/logger.cpp"
+
 )
 
 target_link_libraries(brii_CORE INTERFACE

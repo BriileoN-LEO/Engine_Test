@@ -2,7 +2,7 @@
 # If you choose not to use CMake, this file may be hand configured, by
 # filling in the required variables.
 
-cmake_minimum_required(VERSION 4.3.4)
+cmake_minimum_required(VERSION 4.4.0)
 
 # CTest Start Step
 set(CTEST_SOURCE_DIRECTORY "/home/brii/CPP_proyects/Engine_Test/build/_deps/ktx-src")
@@ -48,13 +48,14 @@ set(CTEST_USE_LAUNCHERS "")
 set(CTEST_RESOURCE_SPEC_FILE "")
 set(CTEST_TEST_LOAD "")
 set(CTEST_TEST_TIMEOUT "1500")
+set(CTEST_TEST_COVERAGE_TOOL ""
 
 # CTest Coverage Step
 set(CTEST_COVERAGE_COMMAND "/usr/bin/gcov")
 set(CTEST_COVERAGE_EXTRA_FLAGS "-l")
 
 # CTest MemCheck Step
-set(CTEST_MEMORYCHECK_COMMAND "MEMORYCHECK_COMMAND-NOTFOUND")
+set(CTEST_MEMORYCHECK_COMMAND "/opt/cuda/bin/compute-sanitizer")
 set(CTEST_MEMORYCHECK_COMMAND_OPTIONS "")
 set(CTEST_MEMORYCHECK_TYPE "")
 set(CTEST_MEMORYCHECK_SANITIZER_OPTIONS "")

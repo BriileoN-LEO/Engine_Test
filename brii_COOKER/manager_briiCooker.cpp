@@ -77,22 +77,38 @@ namespace manager_AssimpData
     return *this;
    }
    mesh_D mesh_D::operator=(const mesh_D& mD)
-{
+   {
      mesh_info = mD.mesh_info;
      dataVertex = mD.dataVertex;
      dataIndices = mD.dataIndices;
-    return *this;
-}
-
+     return *this;
+   }
 
    void mesh_D::insert_headerMesh(meshPack_Register& hM)
    { 
     mesh_info = hM;
    }
+   
+   void mesh_D::insert_nameMesh(std::string& nameMesh)
+   {
+     constexpr size_t size_nameMesh{data_meshCore::get_maxSize_nameMeshArray()};
+     char (&array_nameMesh)[size_nameMesh] = mesh_info.get_nameMesh();
+     convert_str::conv_str_to_rawArray<size_nameMesh>(nameMesh, array_nameMesh);
+   }
+ 
+   void mesh_D::insert_meshID(uint64_t& meshID)
+   {
+    mesh_info.meshID = meshID;
+   }
+   void mesh_D::insert_materialID(uint64_t& material_ID)
+   {
+     mesh_info.material_ID = material_ID;
+   }
 
    void mesh_D::insert_vertexD(float position[3], float normal[3], float uv[2])
    {
-      dataVertex.emplace_back(position, normal, uv);
+     dataVertex.emplace_back(position, normal, uv);
+     mesh_info.vertexCount++;
    }
    void mesh_D::setSize_VertexContainer(int size)
    {
@@ -107,6 +123,7 @@ namespace manager_AssimpData
    void mesh_D::insert_Indice(unsigned int indice)
    {
       dataIndices.emplace_back(indice);
+      mesh_info.indexCount++;
    }
    void mesh_D::setSize_IndicesContainer(int size)
    {
@@ -117,12 +134,9 @@ namespace manager_AssimpData
      mesh_info.indexCount = dataIndices.size();
    }
 
-   void mesh_D::insert_mat4Transformation(std::array<float, 16>& mat4_array)
+   void mesh_D::insert_mat4Transformation(float (&mat4_array)[16])
    {
-     for (unsigned int i = 0; i < 16; ++i)
-     {
-        mesh_info.mesh_transformation[i] = mat4_array[i];
-     }
+      convert_dataTypes::copy_rawArrayData<float, 16>(mat4_array, mesh_info.mesh_transformation);
    }
 
   const uint64_t& mesh_D::get_meshID()
@@ -166,18 +180,64 @@ namespace manager_AssimpData
     meshes_data = mBD.meshes_data; 
    } 
 
+   void meshesBin_D::insert_nameMeshBin(std::string& nameMesh)
+   {
+     ////implement here conv_str_to_rawArray
+    constexpr size_t size_nameHeaderMesh { data_meshCore::get_maxSize_meshHeaderArray() };
+    char (&mesh_nameHeader)[size_nameHeaderMesh] = headerMesh.get_nameMeshBin();
+    convert_str::conv_str_to_rawArray<size_nameHeaderMesh>(nameMesh, mesh_nameHeader); 
+   }
+   void meshesBin_D::insert_version(uint32_t version)
+   {
+    headerMesh.version = version; 
+   }
+   void meshesBin_D::update_meshesCount()
+   {
+    headerMesh.meshesCount = meshes_data.size();
+   }
+
+   float (&meshesBin_D::get_generalMatrixTrans()) [16]
+   {   
+    return headerMesh.get_generalMatTrans();
+   }
+
    void meshesBin_D::insert_Mesh(mesh_D& mD)
    { 
-      std_vectorManager::insert_sorted_order<uint64_t>(ID_mesh, mD.get_meshID());
+     uint64_t meshID {mD.get_meshID()};
+    
+     std_vectorManager::insert_sorted_order<uint64_t>(ID_mesh, mD.get_meshID());
+     pos_by_ID.emplace(meshID, meshes_data.size());
+     meshes_data.emplace_back(mD); 
+     headerMesh.meshesCount++;
+     ////
+
    }
-   void meshesBin_D::upload_AllMesh_bin()
+   void meshesBin_D::upload_Meshes_bin(const std::string& directory, file_OP::writeFlags& fileT)
    {
+    std::vector<data_meshF> mD{};
+    mD.resize(headerMesh.meshesCount);
+    
+    for(uint64_t i = 0; i < headerMesh.meshesCount; i++)
+    {
+     mD[i].insert_NewData_ptr
+      (
+      meshes_data[i].get_dataVertex(),
+      meshes_data[i].get_dataIndices(),
+      meshes_data[i].get_meshPackRegister()
+      );
+    } 
 
+    writeFile_MeshMaterial(headerMesh, mD, directory, fileT); ///CHECK FOR IMPLEMENTATION 
+
+    for(auto& meshD : mD)
+    {
+     meshD.destroy();
+    }
+    mD.clear();  ///////REVISIT THIS if not cause anything 
+    
    }
 
-   void meshesBin_D::upload_SelectedMesh_byID(uint64_t ID_mesh);   ///DON'T WORRIED IF THE HEADER IS THE SAME, IS THE PURPOSE 
-
-
+   //void meshesBin_D::upload_SelectedMesh_byID(uint64_t ID_mesh);   ///DON'T WORRIED IF THE HEADER IS THE SAME, IS THE PURPOSE 
 
 /*
    entity_MeshManager entity_MeshManager::operator=(entity_MeshManager&& mesh_D) noexcept
@@ -198,7 +258,20 @@ namespace manager_AssimpData
       return *this;
    }
 */
- 
+
+   entity_MeshManager::entity_MeshManager(){};
+   void entity_MeshManager::insert_MeshBinD_ref(meshesBin_D& meshBinD)
+   {
+    meshesBin_D newMesh(meshBinD);
+    meshesBin_data.emplace_back(newMesh);
+   }
+   void entity_MeshManager::upload_allMeshesBin(const std::string& directory, file_OP::writeFlags& fileT)
+   {
+    for(int i = 0; i < static_cast<int>(meshesBin_data.size()); i++)
+    {
+     meshesBin_data[i].upload_Meshes_bin(directory, fileT); 
+    }
+   }
 
    model_D::model_D() = default;
    model_D::model_D(const model_D&& mD) noexcept
@@ -231,18 +304,46 @@ namespace manager_AssimpData
      this->headerModel = headerModel;
    }
 
+   void model_D::insert_nameHeader(std::string& nameHeader) ///THE FIRST SPACE [0], DOESNT HAVE '\0' AN EMPTY SPACE
+   {
+    constexpr size_t size_nameModel { data_modelCore::get_maxSize_nameModelArray() };
+    char (&name_HeaderModel)[size_nameModel] = headerModel.get_modelName();
+    convert_str::conv_str_to_rawArray<size_nameModel>(nameHeader, name_HeaderModel);
+   }
+   void model_D::insert_version(uint32_t version)
+   {
+    headerModel.version = version;
+   }
    void model_D::insert_MeshID(uint64_t& mesh_ID)
    {
-      meshesRegister_LeoMesh.emplace_back(mesh_ID);
+     meshesRegister_LeoMesh.emplace_back(mesh_ID);
+   }
+   void model_D::update_MeshCounter()
+   {
+    headerModel.meshesCount = meshesRegister_LeoMesh.size();
    }
 
+   std::string model_D::get_nameModel_str()
+   {
+    std::string name(headerModel.get_modelName());
+    return name; 
+   }
    void model_D::destroy()
    {
-      meshesRegister_LeoMesh.clear();
+     meshesRegister_LeoMesh.clear();
    }
+
+   entity_ModelManager::entity_ModelManager(){};
+   void entity_ModelManager::insert_ModelBinD_ref(model_D& model)
+   {
+    modelsBin_data.emplace_back(model);
+   }
+   void entity_ModelManager::upload_allModelBin()
+   {
+     
+   }
+
 }
-
-
 
 namespace manage_texturesCooker
 {
@@ -1770,6 +1871,20 @@ namespace manage_materialCooker
      return ptr_matPack;
    }
 
+   uint32_t entity_MaterialManager::contain_mat_by_ID(uint64_t& ID)
+   {  
+     uint32_t mContain{};
+     size_t size_MaterialHeader {ID_matBin.size()};
+     size_t counter{};
+     while(mContain != 1 || counter < size_MaterialHeader)
+     { 
+        mContain = mat_data[counter].mat_contains(ID);
+        counter++;
+     }
+
+    return mContain;
+   }
+
    void entity_MaterialManager::upload_AllMat_bin(const std::string& directory, file_OP::writeFlags& fileT)
    { 
 
@@ -1831,10 +1946,10 @@ namespace manage_materialCooker
 
 namespace data_utilities
 {
+  std::optional<manager_AssimpData::entity_ModelManager> model_D;
+  std::optional<manager_AssimpData::entity_MeshManager> mesh_D;
   std::optional<manage_materialCooker::entity_MaterialManager> mat_D;
 }
-
-
 
 namespace data_leoBinary
 {
@@ -1844,21 +1959,24 @@ namespace data_leoBinary
 
    void init_dataUtilities_Cooker()
    {
-   data_utilities::mat_D.emplace();
-
+    data_utilities::mesh_D.emplace();
+    data_utilities::mat_D.emplace();
      //ID_defaultMaterial = FNV::str_to_hash("DefaultMaterial");
    }
 
 
-   void loadModel(std::string nameModel, std::string path, unsigned int aiProcessFlags, uint32_t version)
+   void loadModel(std::string path, unsigned int aiProcessFlags, uint32_t version)
    {
+     log_System::modelCooker_logger.info("loading model... | path = " + path); 
+
       std::filesystem::path modelPath {path};
       const aiScene* scene = assimpImporter.ReadFile(modelPath.string(), aiProcessFlags);
 
       if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
       {
-         std::cout << "ERROR::ASSIMP::" << assimpImporter.GetErrorString() << '\n';
-         return;
+        std::string error_assimp {assimpImporter.GetErrorString()};
+        log_System::assimp_logger.error(error_assimp + "\n");
+        return;
       }
 
       std::string directory {path};
@@ -1875,73 +1993,76 @@ namespace data_leoBinary
 
       customFiles::clear_spaceKey(nameModel_path);
 
-      processMaterials(scene, nameModel_path, directory);
+    //////////////===PROCESSING MATERIALS===//////////////////////
+      log_System::modelCooker_logger.info("importing materials from model | path = " + path);
+      processMaterials(scene, nameModel_path, directory, 1);
 
      /////////LOAD MODEL AND MESHES PROCESS//////////// THIS SAVE MATERIALS ID WITH THE NAME
-      manager_AssimpData::entity_ModelManager model{};
-
-      model.insertModelName(nameModel);
-
-      model_LeoHeader header{};
-
-      uint8_t signVerf {static_cast<uint8_t>(manager_GD::signBin::MODEL)};
-      std::array<char, 4>& verfNum {manager_GD::verifiedNumbers_D[signVerf]};
-
-      header.verifiedNumber[0] = verfNum[0];
-      header.verifiedNumber[1] = verfNum[1];
-      header.verifiedNumber[2] = verfNum[2];
-      header.verifiedNumber[3] = verfNum[3];
-
-      uint32_t modelID { FNV::str_to_hash(nameModel) };  /////CONTINUE HERE
-      header.modelID = modelID;
-
-      header.version = version;
-
+      manager_AssimpData::model_D modelD{};
+      modelD.insert_nameHeader(nameModel_path);
+      modelD.insert_version(version);
+   
       int meshesCounter{};
-      processNode(model, scene->mRootNode, scene, meshesCounter, version);
-    
+      manager_AssimpData::meshesBin_D meshes_Bin{};
+  
+      log_System::modelCooker_logger.info("importing meshes from model | path = " + path);
+      processNode(modelD, meshes_Bin, scene->mRootNode, scene, meshesCounter, version);
+     
+      ///UPDATE AFTER PROCESS ALL THE MESHES
+      modelD.update_MeshCounter();
+       
+      data_utilities::mesh_D->insert_MeshBinD_ref(meshes_Bin);
+      data_utilities::model_D->insert_ModelBinD_ref(modelD);
    }
 
-   void processNode(manager_AssimpData::entity_ModelManager& model, aiNode* node, const aiScene* scene, int& meshesCounter,uint32_t& version)
+   void processNode(manager_AssimpData::model_D& model, manager_AssimpData::meshesBin_D& meshes_Bin, aiNode* node, const aiScene* scene, int& meshesCounter,uint32_t& version)
    {
       aiMatrix4x4 aiModelMat {node->mTransformation}; ///TRANSFORM THIS MODEL MATRIX TO NORMAL GLM::MATRIX
+      float (&mat_GeneralMeshes)[16] {meshes_Bin.get_generalMatrixTrans()};   
+      convert_dataTypes::aiMat4_to_rawArrayFloat16(aiModelMat, mat_GeneralMeshes);
+      meshes_Bin.insert_version(version);
 
-      std::array<float, 16> array_ModelMat4 {convert_dataTypes::aiMat4_to_arrayFloat16(aiModelMat)}; ///GET THE MODEL MATRIX FROM THE NODE
+      std::string nameModel {model.get_nameModel_str()};
+      /// std::array<float, 16> array_ModelMat4 {convert_dataTypes::aiMat4_to_arrayFloat16(aiModelMat)}; ///GET THE MODEL MATRIX FROM THE NODE                 
 
       for (unsigned int i = 0; i < node->mNumMeshes; i++)
       {
-         manager_AssimpData::entity_MeshManager mesh_D{};
+         manager_AssimpData::mesh_D mesh_data{};
          aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 
          std::string meshName { mesh->mName.C_Str() };
-         size_t pos_BC{};
+         size_t pos_BC{}; 
          if (convert_str::find_badCharacters_filePath(meshName, pos_BC))
          {
             meshName = scene->mRootNode->mName.C_Str();
             meshName += "_" + std::to_string(meshesCounter);
          }
+         meshName = nameModel + "_" + meshName; ///THIS IF EXISTS OTHER MESH WITH THE SAME NAME
 
-         mesh_D.insert_nameMesh(meshName);   ////INSERT THE NAME OF THE MESH
+         log_System::meshCooker_logger.info("loading mesh... | mesh name = " + meshName);
+         ////1. INSERT THE NAME OF THE MESH
+         mesh_data.insert_nameMesh(meshName);
 
-         processMesh_data(mesh_D, mesh, array_ModelMat4, version);
+         ////2. INSERT THE ID OF MESH 
+         uint64_t meshID {FNV::hash_1a(meshName)};
+         mesh_data.insert_meshID(meshID);
+        
+         processMesh_data(mesh_data, mesh, scene, nameModel, mat_GeneralMeshes);
 
-         model.insertMesh(mesh_D);
+         meshes_Bin.insert_Mesh(mesh_data);
+         model.insert_MeshID(meshID);
+         //model.insertMesh(mesh_D);
          meshesCounter++;
          //SDL_Log(nameMesh.c_str());
       }
 
       for (unsigned int i = 0; i < node->mNumChildren; i++)
       {
-         processNode(model, node->mChildren[i], scene, meshesCounter, version);
+         processNode(model, meshes_Bin, node->mChildren[i], scene, meshesCounter, version);
       }
    }
-   void processMesh_data(manager_AssimpData::entity_MeshManager& meshManager, aiMesh* mesh, std::array<float, 16>& meshTransMatrix, uint32_t& version)
+   void processMesh_data(manager_AssimpData::mesh_D& meshManager, aiMesh* mesh, const aiScene* scene,  const std::string& nameModel, float (&meshTransMatrix)[16])
    {
-      uint8_t signVerf {static_cast<uint8_t>(manager_GD::signBin::MESH)};
-      std::array<char, 4>& verfNum {manager_GD::verifiedNumbers_D[signVerf]};
-      meshManager.insert_verifiedNumber(verfNum);
-      meshManager.insert_version(version);
-
       meshManager.insert_mat4Transformation(meshTransMatrix);
 
       for (unsigned int i = 0; i < mesh->mNumVertices; i++)
@@ -1971,7 +2092,7 @@ namespace data_leoBinary
          {
             uv[0] = 0.0f;
             uv[1] = 0.0f;
-            std::cout << "ERROR::NOT::TEXCOORDS";
+          //  std::cout << "ERROR::NOT::TEXCOORDS";
          }
 
          meshManager.insert_vertexD(position, normal, uv);
@@ -1989,10 +2110,34 @@ namespace data_leoBinary
          }
       }
 
-      meshManager.update_size_indices(); 
+      if(mesh->mMaterialIndex >= 0)
+     { 
+       aiMaterial* material { scene->mMaterials[mesh->mMaterialIndex] };
+
+       aiString matName {};
+       std::string nameMat {};
+
+       if (material->Get(AI_MATKEY_NAME, matName) == AI_SUCCESS)
+       {
+        nameMat = matName.C_Str();
+       }
+   
+       uint64_t matID {manage_materialCooker::proccess_nameMaterial(nameMat, nameModel, mesh->mMaterialIndex)}; ///CONTINUE HERE 
+       
+       if(data_utilities::mat_D->contain_mat_by_ID(matID) == 1)  ////FIND IF MATERIAL ID EXISTS
+       {
+        meshManager.insert_materialID(matID);
+       }
+       
+       else
+       {
+         log_System::meshCooker_logger.error("not find material with the ID created");
+       }
+
+     }
+
    }
 
- 
    void insert_TexturesID(matPack_data_register& matP, manager_AssimpData::textures_MaterialManager& textures_ID)
    {
      matP.albedo_hash = textures_ID.Albedo_hash;
@@ -2002,20 +2147,13 @@ namespace data_leoBinary
      matP.emission_hash = textures_ID.Emission_hash;
    }
 
-   void processMaterials(const aiScene* scene, const std::string& nameModel_path, const std::string& directory)
+   void processMaterials(const aiScene* scene, const std::string& nameModel_path, const std::string& directory, uint32_t version)
    {
      material_LeoHeader headerMat{};
-     
-     std::array<char, 4>& verfNum {manager_GD::verifiedNumbers_D[static_cast<uint32_t>(manager_GD::signBin::MATERIAL)]};
+         
+     headerMat.version = version;
 
-     headerMat.verifiedNumber[0] = verfNum[0];
-     headerMat.verifiedNumber[1] = verfNum[1];
-     headerMat.verifiedNumber[2] = verfNum[2];
-     headerMat.verifiedNumber[3] = verfNum[3];
-    
-     headerMat.version = 1;
-
-     std::string name_matBin {"matBin_" + nameModel_path};
+     std::string name_matBin {data_MatCore::prefix_headerNameMat + nameModel_path};
      customFiles::quit_double_underscore_txt(name_matBin);
 
      if(name_matBin.size() > MAX_SIZE_STR_BIN_MATERIAL)
@@ -2050,9 +2188,10 @@ namespace data_leoBinary
        matP.materialID = manage_materialCooker::proccess_nameMaterial(nameMat, nameModel_path, i);  ////ASSING MATERIAL ID
        std::strcpy(matP.nameMaterial, nameMat.c_str()); ////ASSIGN NAME MATERIAL
 
-       std::cout << "LOADING::MATERIAL:: NAME -> " << nameMat << std::endl;
+       log_System::materialCooker_logger.info("loading material... | mat name = " + nameMat);
+       //std::cout << "LOADING::MATERIAL:: NAME -> " << nameMat << std::endl;
 
-      ///LOAD ALL TEXTURES OF MATERIAL
+       ///LOAD ALL TEXTURES OF MATERIAL
        manager_AssimpData::textures_MaterialManager str_tex{};
        manage_texturesCooker::loadTextures(material, str_tex, nameModel_path, directory, scene); //GET THE ID OF ALL TEXTURES LOADED
        insert_TexturesID(matP, str_tex); ////ASSING TEXTURES ID
@@ -2061,8 +2200,8 @@ namespace data_leoBinary
      }
 
     manage_materialCooker::material_D mat_data{headerMat, materials_packing}; 
-     
     data_utilities::mat_D->insertMat(mat_data);
+
           /////CONTINUAR CON LOS MATERIALES
    }
 

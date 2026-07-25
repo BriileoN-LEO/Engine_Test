@@ -29,6 +29,7 @@ namespace briT
         data[1] = op.data[1];
         data[2] = op.data[2];
         data[3] = op.data[3];
+     return *this;
     }
 }
 

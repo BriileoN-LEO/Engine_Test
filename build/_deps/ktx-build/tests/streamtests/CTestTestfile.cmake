@@ -4,4 +4,4 @@
 # 
 # This file includes the relevant testing commands required for 
 # testing this directory and lists subdirectories to be tested as well.
-include("/home/brii/CPP_proyects/Engine_Test/build/_deps/ktx-build/tests/streamtests/streamtests[1]_include.cmake")
+include("/home/brii/CPP_proyects/Engine_Test/build/_deps/ktx-build/tests/streamtests/streamtests_c7069200_include.cmake")

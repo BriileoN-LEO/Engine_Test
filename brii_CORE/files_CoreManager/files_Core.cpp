@@ -34,6 +34,22 @@ namespace filesystem_manager
     std::filesystem::path pt {filePath};
     std::filesystem::remove(pt);
   }
+
+   uint32_t exist_filePath(const std::string& path)
+  {
+
+  #if defined(__linux__) && defined(__unix) || defined(__unix) && defined(__MACH__)
+
+   return (access(path.c_str(), F_OK) == 0) ? 1 : 0;
+
+  #elif defined(_WIN32)
+
+   return std::filesystem::exists(path) ? 1 : 0;
+
+  #endif
+  }
+
+
 }
 
 namespace customFiles
@@ -59,8 +75,8 @@ namespace customFiles
 
   }
 
-      void standard_textureNameKTX(std::string& nameTexture)
-    {
+   void standard_textureNameKTX(std::string& nameTexture)
+   {
       std::string f_name {nameTexture};
       std::string new_name {};
 
@@ -96,7 +112,7 @@ namespace customFiles
      nameTexture = new_name;
     }
 
- void quit_double_underscore_txt(std::string& txt) 
+  void quit_double_underscore_txt(std::string& txt) 
  { 
       std::string f_name {txt};
       std::string new_name {};
@@ -133,6 +149,54 @@ namespace customFiles
      txt = new_name;
 
  }
+
+  void rename_fileExisting(std::string& dirOrigin)
+ {
+  
+   if(filesystem_manager::exist_filePath(dirOrigin) == 1)  // 1 = EXISTS | 0 = NOT EXISTS 
+  { 
+   size_t pos_maxName {dirOrigin.find_last_of('.')};
+   size_t pos_minName {dirOrigin.find_last_of('/')};
+
+   if((pos_maxName == std::string::npos) || (pos_minName == std::string::npos))
+   {
+     std::cerr << "ERROR::FILE_CORE:: not rename file existing:: cause = not path\n";
+    return;
+   }
+
+   size_t dirO_size { dirOrigin.size() - 1};
+
+   ///name size = 10;  -- range = 6 - 8 -- range_pos = 5 - 7
+   //pos_minName = 5;
+   //pos_maxName = 7;
+   //(9 - (9-7)) - (5+1) = 1
+  
+    //name size = 20; -- range = 14 - 17 --- range pos = 13 - 16
+    //(19 - (19 - 16)) - (13 + 1) = 2
+   
+   size_t size_nameFile { (dirO_size - (dirO_size - pos_maxName)) - (pos_minName + 1)};
+
+   std::string nameFile { dirOrigin.substr((pos_minName + 1), size_nameFile) };
+   std::string vefNumT { dirOrigin.substr(pos_maxName) };
+   std::string originDir { dirOrigin.substr(0, pos_minName + 1) };
+
+   std::string newDir{};
+   uint32_t access_out{};
+
+   uint32_t val_count{};
+   while(access_out == 1) ////CHANGE name adding number to test if file exists 
+   {
+     newDir = originDir + nameFile + std::to_string(val_count) + vefNumT;
+     access_out = filesystem_manager::exist_filePath(newDir);  
+     val_count++;
+   }
+
+   dirOrigin = newDir;
+   return;
+ }
+
+ }
+
 
 }
 

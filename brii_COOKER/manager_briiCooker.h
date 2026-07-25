@@ -19,6 +19,7 @@
 //#include "cmake-build-debug/_deps/ktx_software-src/lib/vkformat_enum.h" /////CHANGE THIS FOR A WAY TO REMPLACE THIS
 #include <iostream>
 #include <string>
+#include <cstring> 
 #include <vector>
 #include <sstream>
 #include <cmath>
@@ -79,6 +80,9 @@ namespace manager_AssimpData
     mesh_D operator=(const mesh_D& mD);
 
     void insert_headerMesh(meshPack_Register& hM);
+    void insert_nameMesh(std::string& nameMesh);
+    void insert_meshID(uint64_t& meshID);
+    void insert_materialID(uint64_t& material_ID);
   
     void insert_vertexD(float position[3], float normal[3], float uv[2]);
     void setSize_VertexContainer(int size);
@@ -88,7 +92,7 @@ namespace manager_AssimpData
     void setSize_IndicesContainer(int size);
     void update_size_indices();
 
-    void insert_mat4Transformation(std::array<float, 16>& mat4_array);
+    void insert_mat4Transformation(float (&mat4_array)[16]);
 
     const uint64_t& get_meshID();
     meshPack_Register& get_meshPackRegister();
@@ -98,14 +102,12 @@ namespace manager_AssimpData
     void destroy();
   };
 
-  ///////////CONTINUE HERE, MAKE THIS FUNCTION OF THE CLASS (meshesBin_D)
-  
-   class meshesBin_D
+    class meshesBin_D
   { 
    private:
    std::vector<uint64_t> ID_mesh{}; ///IN ORDER TO MADE BINARY SEARCH
    std::unordered_map<uint64_t, uint64_t> pos_by_ID{}; ///ID'S FOR SEARCH BY ID THE POSICION
-   std::vector<mesh_D> meshes_data{}; 
+   std::vector<mesh_D> meshes_data{};
    mesh_LeoHeader headerMesh{};
 
    public:
@@ -113,8 +115,13 @@ namespace manager_AssimpData
    meshesBin_D(const meshesBin_D&& mBD) noexcept;
    meshesBin_D(const meshesBin_D& mBD);
 
+   void insert_nameMeshBin(std::string& nameMesh);  ///COMPLETE
+   void insert_version(uint32_t version);
+   void update_meshesCount();
+   float (&get_generalMatrixTrans()) [16];
+
    void insert_Mesh(mesh_D& mD); 
-   void upload_AllMesh_bin();
+   void upload_Meshes_bin(const std::string& directory, file_OP::writeFlags& fileT);
    //void upload_SelectedMesh_byID(uint64_t ID_mesh);   ///DON'T WORRIED IF THE HEADER IS THE SAME, IS THE PURPOSE 
   };
 
@@ -124,10 +131,11 @@ namespace manager_AssimpData
     std::vector<meshesBin_D> meshesBin_data{};
     
     public:
-
-    //void 
-  };
- ////////CONTINUE HERE  
+    entity_MeshManager();
+    void insert_MeshBinD_ref(meshesBin_D& meshBinD);
+    void upload_allMeshesBin(const std::string& directory, file_OP::writeFlags& fileT);
+    
+  };  
 
  //==================================================================================================================
  //==================================================================================================================
@@ -146,11 +154,26 @@ namespace manager_AssimpData
     //entity_ModelManager(entity_ModelManager&& entity_modelM) noexcept;
     //entity_ModelManager(entity_ModelManager& entity_modelM);
     void insert_headerModel(model_LeoHeader& headerModel);
+    void insert_nameHeader(std::string& nameHeader);
+    void insert_version(uint32_t version);
     void insert_MeshID(uint64_t& mesh_ID);
-   
+    void update_MeshCounter();
+
+    std::string get_nameModel_str();
     void destroy();
   };
 
+  class entity_ModelManager
+  {
+   private: 
+   std::vector<model_D> modelsBin_data{};
+
+   public: 
+   entity_ModelManager();
+   
+   void insert_ModelBinD_ref(model_D& model);
+   void upload_allModelBin();
+  };
 
   struct textures_MaterialManager
   {
@@ -318,7 +341,7 @@ namespace manage_materialCooker
     material_D(material_LeoHeader& dataMaterial, std::vector<matPack_data_register>& str_pathTextures);
     material_D(material_D&& matC) noexcept;
     material_D(material_D& matC);
-
+   
     const uint64_t& get_matBin_ID();
     uint32_t mat_contains(uint64_t ID); ///BINARY_SEARCH
     matPack_data_register& get_mat_directly(uint64_t ID); //KNOW'S EXACTLY THAT THE MATERIAL EXISTS WITH THE ID
@@ -340,10 +363,11 @@ namespace manage_materialCooker
    
    void insertMat(material_D& mat);///INSERT IN ORDER
    data_MatCore::matPack_ptr get_mat_by_ID(uint64_t ID);
+   uint32_t contain_mat_by_ID(uint64_t& ID);
    void upload_AllMat_bin(const std::string& directory, file_OP::writeFlags& fileT);
    void upload_selectMat_bin(const std::string& directory, uint64_t matBin_ID, file_OP::writeFlags& fileT);
    
-     };
+   };
 
   uint64_t proccess_nameMaterial(std::string& nameMat, const std::string& nameModel_path, const unsigned int& index);
 
@@ -351,25 +375,26 @@ namespace manage_materialCooker
 
 namespace data_utilities
 {
+  extern std::optional<manager_AssimpData::entity_ModelManager> model_D;
+  extern std::optional<manager_AssimpData::entity_MeshManager> mesh_D;
   extern std::optional<manage_materialCooker::entity_MaterialManager> mat_D;
 }
 
 
 namespace data_leoBinary
 {
-
 //  extern std::vector<manager_AssimpData::entity_MateriaManager> materials_D;
  extern std::vector<manager_AssimpData::entity_ModelManager> models_D;
  extern Assimp::Importer assimpImporter;
 
  void init_dataUtilities_Cooker();
 
- void loadModel(std::string nameModel, std::string path, unsigned int aiProcessFlags, uint32_t version);
- void processNode(manager_AssimpData::entity_ModelManager& model, aiNode* node, const aiScene* scene, int& meshesCounter, uint32_t& version);
- void processMesh_data(manager_AssimpData::entity_MeshManager& meshManager, aiMesh* mesh, std::array<float, 16>& meshTransMatrix, uint32_t& version);
+ void loadModel(std::string path, unsigned int aiProcessFlags, uint32_t version);
+ void processNode(manager_AssimpData::model_D& model, manager_AssimpData::meshesBin_D& meshes_Bin, aiNode* node, const aiScene* scene, int& meshesCounter, uint32_t& version);
+ void processMesh_data(manager_AssimpData::mesh_D& meshManager, aiMesh* mesh, const aiScene* scene, const std::string& nameModel, float (&meshTransMatrix)[16]);
  
  void insert_TexturesID(matPack_data_register& matP, manager_AssimpData::textures_MaterialManager& textures_ID);
- void processMaterials(const aiScene* scene, const std::string& nameModel_path, const std::string& directory);
+ void processMaterials(const aiScene* scene, const std::string& nameModel_path, const std::string& directory, uint32_t version);
 
 }
 

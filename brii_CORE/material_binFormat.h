@@ -2,6 +2,7 @@
 #define MATERIAL_BINFORMAT_h
 #include "systemManager/platform_Manager.h"
 #include "files_CoreManager/files_Core.h"
+#include "systemManager/logger.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -13,15 +14,16 @@
 #pragma pack(push, 1)
 
 constexpr size_t MAX_SIZE_STR_BIN_MATERIAL = 256;
+constexpr char vN_LEOA[4] {'L', 'E', 'O', 'A'};
 
 struct material_LeoHeader
 {
   char nameMaterial_Header[MAX_SIZE_STR_BIN_MATERIAL] {}; //256 bytes
   uint64_t material_bin_ID{}; //8 bytes
-  char verifiedNumber[4]{};  ///LEOA || //4 bytes
+  size_t materialCount{}; //8 bytes
+  char verifiedNumber[4]{vN_LEOA[0], vN_LEOA[1], vN_LEOA[2], vN_LEOA[3]};  ///LEOA || //4 bytes
   uint32_t version{}; //4 bytes
-  uint32_t materialCount{}; //4 bytes
- };
+   };
 
 //// IN ORDER TO OPTIMIZED
 struct matPack_data_register
@@ -60,6 +62,7 @@ namespace standardMat_base
 namespace data_MatCore
 { 
   using matPack_ptr = matPack_data_register*;
+  const std::string prefix_headerNameMat{"matBin_"};
   const std::string vefNum {"leoa"};
   const std::string temp_verfCreationFileDir {"tempBinMat"};
 }
@@ -130,7 +133,7 @@ if(access(outDir.c_str(), F_OK) == 0)
 {
  std::filesystem::remove(outDir); ///REMOVE THE EXISTING FILE THAT WILL BE OVERWRITE
 }
-   std::filesystem::rename(temp_creationFileDir, outDir); ////RENAME FILE WITH THE NAME THAT OVERWRITES THE FILE 
+   std::filesystem::rename(temp_creationFileDir, outDir); ////RENAME FILE WITH THE NAME THAT OVERWRITES THE FILE
   /*
   if(access(outDir.c_str(), F_OK) != 0)
  {
@@ -154,7 +157,6 @@ if(access(outDir.c_str(), F_OK) == 0)
     std::filesystem::remove(outDir);
   }
 */
-
   //CONTINUE HERE============
 
   return 1;
@@ -162,7 +164,10 @@ if(access(outDir.c_str(), F_OK) == 0)
 
 inline uint32_t pack_binMaterial_posix_newFile(const material_LeoHeader& mat_header, const std::vector<matPack_data_register>& mat_pack, const std::string outDir, const std::string& dir_origin)
 {
+  std::string newDir { outDir };
+  customFiles::rename_fileExisting(newDir);
 
+  /*
  std::string newDir {outDir}; 
 
   if(access(outDir.c_str(), F_OK) == 0)  ////THIS FUNCTION REVIEW IF FILE EXISTS | 0 = file exists
@@ -177,6 +182,7 @@ inline uint32_t pack_binMaterial_posix_newFile(const material_LeoHeader& mat_hea
     val_count++;
   } 
  }
+ */
  
  return pack_binMaterial_posix_overwrite(mat_header, mat_pack, newDir, dir_origin);
 }
@@ -198,7 +204,9 @@ inline uint32_t pack_binMaterial(const material_LeoHeader& mat_header, const std
  
   if(!binMat.is_open() == true)
   {
-   std::cerr << "ERROR::OPEN FILE::DIRECTION ---> " << outDir << "\n";
+    std::string error_fDir {"open file in direction ---> " + outDir};
+    log::fileLogger.error(error_fDir);
+   //std::cerr << "ERROR::OPEN FILE::DIRECTION ---> " << outDir << "\n";
    return 0;
   }
 
@@ -220,7 +228,7 @@ inline uint32_t pack_binMaterial(const material_LeoHeader& mat_header, const std
   return 1;
 }
 
-inline uint32_t writeFile_binMaterial(const material_LeoHeader& mat_header, const std::vector<matPack_data_register>& mat_pack, const std::string& outDir, file_OP::writeFlags& fileT)
+inline uint32_t writeFile_binMaterial(const material_LeoHeader& mat_header, const std::vector<matPack_data_register>& mat_pack, const std::string& dirOrigin, file_OP::writeFlags fileT)
 {
   std::array<std::string, 2> sen_t{};
   sen_t[0] = "==UNSUCCESSFULL WRITING==\n";
@@ -230,7 +238,7 @@ inline uint32_t writeFile_binMaterial(const material_LeoHeader& mat_header, cons
 
   std::string nameMat {mat_header.nameMaterial_Header};
   nameMat += "." + data_MatCore::vefNum;
-  std::string dir_create = outDir + "/" + nameMat; ///origin/name.leoa --- DIRECTION LEO MATERIAL
+  std::string dir_create = dirOrigin + "/" + nameMat; ///origin/name.leoa --- DIRECTION LEO MATERIAL
   
   std::cout << "CREATING MATERIAL BINARY::MATBIN ---> " << mat_header.nameMaterial_Header << "\n";
 
@@ -239,14 +247,14 @@ inline uint32_t writeFile_binMaterial(const material_LeoHeader& mat_header, cons
   using typeWriteFlags = std::underlying_type_t<file_OP::writeFlags>;
    if(static_cast<typeWriteFlags>(fileT & file_OP::writeFlags::OVERWRITE))
   {
-    w_test = pack_binMaterial_posix_overwrite(mat_header, mat_pack, dir_create, outDir);
+    w_test = pack_binMaterial_posix_overwrite(mat_header, mat_pack, dir_create, dirOrigin);
     std::cout << sen_t[w_test];
     return w_test;
   }
 
    if(static_cast<typeWriteFlags>(fileT & file_OP::writeFlags::NEW_FILE))
   {
-    w_test = pack_binMaterial_posix_newFile(mat_header, mat_pack, dir_create, outDir);
+    w_test = pack_binMaterial_posix_newFile(mat_header, mat_pack, dir_create, dirOrigin);
     std::cout << sen_t[w_test];
     return w_test;
   }

@@ -7,7 +7,7 @@ if(CMAKE_VERSION VERSION_LESS "2.8.3")
    message(FATAL_ERROR "CMake >= 2.8.3 required")
 endif()
 cmake_policy(PUSH)
-cmake_policy(VERSION 2.8.3...4.1)
+cmake_policy(VERSION 2.8.3...4.2)
 #----------------------------------------------------------------
 # Generated CMake target import file.
 #----------------------------------------------------------------
@@ -72,6 +72,7 @@ if(NOT CMAKE_VERSION VERSION_LESS "3.23.0")
       BASE_DIRS "${_IMPORT_PREFIX}/include"
       FILES "${_IMPORT_PREFIX}/include/ktx.h" "${_IMPORT_PREFIX}/include/ktxvulkan.h" "${_IMPORT_PREFIX}/include/KHR/khr_df.h"
   )
+
 else()
   set_property(TARGET KTX::ktx
     APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES

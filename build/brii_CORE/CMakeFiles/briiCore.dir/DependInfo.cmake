@@ -9,10 +9,12 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/brii/CPP_proyects/Engine_Test/brii_CORE/dataManager/algorithms_brii.cpp" "brii_CORE/CMakeFiles/briiCore.dir/dataManager/algorithms_brii.cpp.o" "gcc" "brii_CORE/CMakeFiles/briiCore.dir/dataManager/algorithms_brii.cpp.o.d"
+  "/home/brii/CPP_proyects/Engine_Test/brii_CORE/dataManager/containerTypes_manager.cpp" "brii_CORE/CMakeFiles/briiCore.dir/dataManager/containerTypes_manager.cpp.o" "gcc" "brii_CORE/CMakeFiles/briiCore.dir/dataManager/containerTypes_manager.cpp.o.d"
   "/home/brii/CPP_proyects/Engine_Test/brii_CORE/dataManager/convertion_DataManager.cpp" "brii_CORE/CMakeFiles/briiCore.dir/dataManager/convertion_DataManager.cpp.o" "gcc" "brii_CORE/CMakeFiles/briiCore.dir/dataManager/convertion_DataManager.cpp.o.d"
   "/home/brii/CPP_proyects/Engine_Test/brii_CORE/dataManager/dataTypes_brii.cpp" "brii_CORE/CMakeFiles/briiCore.dir/dataManager/dataTypes_brii.cpp.o" "gcc" "brii_CORE/CMakeFiles/briiCore.dir/dataManager/dataTypes_brii.cpp.o.d"
   "/home/brii/CPP_proyects/Engine_Test/brii_CORE/files_CoreManager/files_Core.cpp" "brii_CORE/CMakeFiles/briiCore.dir/files_CoreManager/files_Core.cpp.o" "gcc" "brii_CORE/CMakeFiles/briiCore.dir/files_CoreManager/files_Core.cpp.o.d"
   "/home/brii/CPP_proyects/Engine_Test/brii_CORE/main_core.cpp" "brii_CORE/CMakeFiles/briiCore.dir/main_core.cpp.o" "gcc" "brii_CORE/CMakeFiles/briiCore.dir/main_core.cpp.o.d"
+  "/home/brii/CPP_proyects/Engine_Test/brii_CORE/systemManager/logger.cpp" "brii_CORE/CMakeFiles/briiCore.dir/systemManager/logger.cpp.o" "gcc" "brii_CORE/CMakeFiles/briiCore.dir/systemManager/logger.cpp.o.d"
   "" "brii_CORE/briiCore" "gcc" "brii_CORE/CMakeFiles/briiCore.dir/link.d"
   )
 

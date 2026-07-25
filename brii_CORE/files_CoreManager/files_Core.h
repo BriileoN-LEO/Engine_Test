@@ -22,11 +22,12 @@ namespace file_OP
 
 template<> inline constexpr bool is_bitmask_flag<file_OP::writeFlags> = true;
 
-
 namespace filesystem_manager
 {
   void create_DirectoryFile(const std::string& filePath, bool& directoryExist);
-  void delete_file_sentence(std::string sentence, const std::string& filePath); 
+  void delete_file_sentence(std::string sentence, const std::string& filePath);
+ 
+  uint32_t exist_filePath(const std::string& path); /// return 1 = exist file  ||  return 0 = not exist
 }
 
 namespace customFiles
@@ -34,7 +35,10 @@ namespace customFiles
  void clear_spaceKey(std::string& str);
  void standard_textureNameKTX(std::string& nameTexture); 
  void quit_double_underscore_txt(std::string& txt);
+
+ void rename_fileExisting(std::string& dirOrigin);  ///nameFile with type file === example: file.txt
 }
+
 
 
 

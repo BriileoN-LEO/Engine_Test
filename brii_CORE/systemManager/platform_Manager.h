@@ -1,5 +1,7 @@
 #ifndef PLATFORM_MANAGER_H
-#define PLATFORM_MANAGER_H
+#define PLATFORM_MANAGER_H 
+
+#include "logger.h"
 
  #if defined(_WIN32)
 

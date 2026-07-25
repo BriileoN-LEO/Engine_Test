@@ -499,6 +499,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/SDL3-shared.dir/src/video/wayland/SDL_waylanddyn.c.o.d"
   "CMakeFiles/SDL3-shared.dir/src/video/wayland/SDL_waylandevents.c.o"
   "CMakeFiles/SDL3-shared.dir/src/video/wayland/SDL_waylandevents.c.o.d"
+  "CMakeFiles/SDL3-shared.dir/src/video/wayland/SDL_waylandeventthread.c.o"
+  "CMakeFiles/SDL3-shared.dir/src/video/wayland/SDL_waylandeventthread.c.o.d"
   "CMakeFiles/SDL3-shared.dir/src/video/wayland/SDL_waylandkeyboard.c.o"
   "CMakeFiles/SDL3-shared.dir/src/video/wayland/SDL_waylandkeyboard.c.o.d"
   "CMakeFiles/SDL3-shared.dir/src/video/wayland/SDL_waylandmessagebox.c.o"

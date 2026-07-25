@@ -17,6 +17,13 @@ namespace convert_dataTypes
 
        return matArray;
     }
+    void aiMat4_to_rawArrayFloat16(aiMatrix4x4& aiMat, float (&matArray)[16])
+    {
+       matArray[0] = aiMat.a1; matArray[1] = aiMat.a2; matArray[2] = aiMat.a3; matArray[3] = aiMat.a4;
+       matArray[4] = aiMat.b1; matArray[5] = aiMat.b2; matArray[6] = aiMat.b3; matArray[7] = aiMat.b4;
+       matArray[8] = aiMat.c1; matArray[9] = aiMat.c2; matArray[10] = aiMat.c3; matArray[11] = aiMat.c4;
+       matArray[12] = aiMat.d1; matArray[13] = aiMat.d2; matArray[14] = aiMat.d3; matArray[15] = aiMat.d4;
+    }
 
     glm::mat4 arrayFloat16_to_glmMat4(std::array<float, 16>& arrayFloat16)
     {
@@ -26,8 +33,16 @@ namespace convert_dataTypes
         mat4_D[0][1] = arrayFloat16[4]; mat4_D[1][1] = arrayFloat16[5]; mat4_D[2][1] = arrayFloat16[6]; mat4_D[3][1] = arrayFloat16[7];
         mat4_D[0][2] = arrayFloat16[8]; mat4_D[1][2] = arrayFloat16[9]; mat4_D[2][2] = arrayFloat16[10]; mat4_D[3][2] = arrayFloat16[11];
         mat4_D[0][3] = arrayFloat16[12]; mat4_D[1][3] = arrayFloat16[13]; mat4_D[2][3] = arrayFloat16[14]; mat4_D[3][3] = arrayFloat16[15];
-
+     
+     return mat4_D;
     }
+
+   template<typename T, size_t sT>
+   void copy_rawArrayData(T (&dataIN)[sT], T (&dataOUT)[sT])
+   {
+    std::copy(dataIN, dataIN + sT, dataOUT);
+   }
+
 }
 
 namespace convert_str
@@ -46,5 +61,38 @@ namespace convert_str
 
         return false;
     }
+
+   void quit_first_End_Spaces_str(std::string& str)
+   {
+    //make this algorithm in the future
+    //INSTRUCTIONS:
+    //*quit all the spaces ('\0') in string before the first character.
+    //*quit all the spaces ('\0') ins string after the last character.
+    /*
+     for(int i = 0; i < static_cast<int>(str); i++)
+     {
+      size_t posFirst { str.find_first_of('\0')};
+      size_t posLast { str.find_last_of('\0')};
+    
+      if(pos_First
+        ////CONTINUE HERE TO QUIT SPACE STARTED AND TO THE END OF THE MAXIMUM AND MINIMUM CHARACTERS IN STRING
+     }
+    */
+   }
+
+  uint32_t contains_characters_str(std::string& str)
+  {
+    for(int i = 0; i < static_cast<int>(str.size()); i++)
+    {
+      if(static_cast<int>(str[i] ^ '\0') != 0)
+      {
+       return 1;
+      }
+    }
+
+    return 0;
+  }
+
+
 
 }

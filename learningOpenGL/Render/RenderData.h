@@ -212,7 +212,7 @@ namespace RenderData_Set
 
 namespace control_models
 {
-	void update_discardModels();
+    void update_discardModels();
     void update_posRenderModels();
 }
 

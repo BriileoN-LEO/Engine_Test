@@ -2,6 +2,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/briiCore.dir/link.d"
   "CMakeFiles/briiCore.dir/dataManager/algorithms_brii.cpp.o"
   "CMakeFiles/briiCore.dir/dataManager/algorithms_brii.cpp.o.d"
+  "CMakeFiles/briiCore.dir/dataManager/containerTypes_manager.cpp.o"
+  "CMakeFiles/briiCore.dir/dataManager/containerTypes_manager.cpp.o.d"
   "CMakeFiles/briiCore.dir/dataManager/convertion_DataManager.cpp.o"
   "CMakeFiles/briiCore.dir/dataManager/convertion_DataManager.cpp.o.d"
   "CMakeFiles/briiCore.dir/dataManager/dataTypes_brii.cpp.o"
@@ -10,6 +12,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/briiCore.dir/files_CoreManager/files_Core.cpp.o.d"
   "CMakeFiles/briiCore.dir/main_core.cpp.o"
   "CMakeFiles/briiCore.dir/main_core.cpp.o.d"
+  "CMakeFiles/briiCore.dir/systemManager/logger.cpp.o"
+  "CMakeFiles/briiCore.dir/systemManager/logger.cpp.o.d"
   "briiCore"
   "briiCore.pdb"
 )
