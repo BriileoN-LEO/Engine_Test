@@ -92,6 +92,47 @@ namespace convert_str
 
     return 0;
   }
+ 
+void remplace_char_in_str(std::string& txt, std::string char_t, size_t position, uint32_t expand_str, uint32_t deleteRepetition)
+{ ////CONTINUE HERE 
+  auto delete_repetition = [&](size_t minPos_newChar, size_t maxPos_newChar)
+    { 
+      if(minPos_newChar > 0)
+      {
+       int test_min {(txt[minPos_newChar - 1] == txt[minPos_newChar]) ? 1 : 0};  
+       txt.erase(minPos_newChar, test_min);
+       maxPos_newChar -= test_min;
+      }
+
+      if(maxPos_newChar < (txt.size() - 1))
+      {
+       int test_max {(txt[maxPos_newChar + 1] == txt[maxPos_newChar]) ? 1 : 0};
+       txt.erase(maxPos_newChar, test_max); ///test if i put (0), doesnt eliminate nothing
+      }
+       
+    };
+
+  if(expand_str == 1)
+  {    
+    txt.insert(position, char_t);
+  }
+
+  else if(expand_str == 0)
+  {  
+   size_t total_size_new {(position + 1) + char_t.size()};
+   size_t size_txt_new{ total_size_new > txt.size() ? total_size_new : txt.size()};
+   txt.resize(size_txt_new);
+   txt.replace(position, char_t.size(), char_t);
+  }
+
+  if(deleteRepetition == 1)
+  {
+   size_t max_sizePos {position + (char_t.size() - 1)};  
+   delete_repetition(position, max_sizePos);
+  }
+
+}
+
 
 
 

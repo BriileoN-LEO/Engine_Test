@@ -346,14 +346,14 @@ namespace RenderData_Set
 		std::vector<Assimp_D::shader_SetType> shaders{};
 		shaders.emplace_back("shaderT1", Assimp_D::shader_type::standard_Shader);
 		shaders.emplace_back("normals_shaderT1", Assimp_D::shader_type::viewNormals_Shader);
-        shaders.emplace_back("shadow_shader_v1", Assimp_D::shader_type::depthMapShadow_Shader);
+                shaders.emplace_back("shadow_shader_v1", Assimp_D::shader_type::depthMapShadow_Shader);
 
 	//	std::filesystem::path pathBackpack{ backpack_Model };
 
 		Assimp_D::loadToCPU::insertProcessModel Sponza_model
 		{
 		 "sponza_model",
-	     sponza_2_model,
+	         sponza_2_model,
 		 shaders,
 		 aiProcessFlags
 

@@ -16,6 +16,8 @@
 #include "dataManager/containerTypes_manager.h"
 #include <ktx.h> ///NUEVA LIBRERIA PARA CARGAR IMAGENES
 #include <KHR/khr_df.h>
+#include <vulkan/vulkan.h>
+#include <ktxvulkan.h>
 //#include "cmake-build-debug/_deps/ktx_software-src/lib/vkformat_enum.h" /////CHANGE THIS FOR A WAY TO REMPLACE THIS
 #include <iostream>
 #include <string>
@@ -50,6 +52,7 @@ namespace manager_GD
   extern const std::string pathMaterials;
   extern const std::string pathTextures;
   extern const std::string pathModels;
+  extern const std::string pathMeshes; 
 
   extern const std::string texture_binSign;
 }
@@ -158,7 +161,9 @@ namespace manager_AssimpData
     void insert_version(uint32_t version);
     void insert_MeshID(uint64_t& mesh_ID);
     void update_MeshCounter();
+    void upload_ModelBin(const std::string& directory, file_OP::writeFlags& fileT);
 
+    const size_t& get_meshesCount();
     std::string get_nameModel_str();
     void destroy();
   };
@@ -172,7 +177,7 @@ namespace manager_AssimpData
    entity_ModelManager();
    
    void insert_ModelBinD_ref(model_D& model);
-   void upload_allModelBin();
+   void upload_allModelBin(const std::string& directory, file_OP::writeFlags& fileT);
   };
 
   struct textures_MaterialManager
@@ -326,7 +331,6 @@ namespace manage_texturesCooker
 
 namespace manage_materialCooker
 {
-
   class material_D
   {
   private:
@@ -390,12 +394,17 @@ namespace data_leoBinary
  void init_dataUtilities_Cooker();
 
  void loadModel(std::string path, unsigned int aiProcessFlags, uint32_t version);
- void processNode(manager_AssimpData::model_D& model, manager_AssimpData::meshesBin_D& meshes_Bin, aiNode* node, const aiScene* scene, int& meshesCounter, uint32_t& version);
+ void processNode(manager_AssimpData::model_D& model, manager_AssimpData::meshesBin_D& meshes_Bin, aiNode* node, const aiScene* scene, uint32_t& version);
  void processMesh_data(manager_AssimpData::mesh_D& meshManager, aiMesh* mesh, const aiScene* scene, const std::string& nameModel, float (&meshTransMatrix)[16]);
  
  void insert_TexturesID(matPack_data_register& matP, manager_AssimpData::textures_MaterialManager& textures_ID);
  void processMaterials(const aiScene* scene, const std::string& nameModel_path, const std::string& directory, uint32_t version);
 
+ void create_ModelBinaries(const std::string& directory, file_OP::writeFlags& fileT);
+ void create_MeshBinaries(const std::string& directory, file_OP::writeFlags& fileT);
+ void create_MaterialBinaries(const std::string& directory, file_OP::writeFlags& fileT);
+ 
 }
+
 
 #endif //LEARNING_MANAGER_BRIICOOKER_H

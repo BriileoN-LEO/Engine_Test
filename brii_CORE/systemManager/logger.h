@@ -27,6 +27,7 @@ namespace log_System
 {
 extern logger fileLogger;
 extern logger dataLogger;
+extern logger texturesCooker_logger;
 extern logger materialCooker_logger;
 extern logger meshCooker_logger;
 extern logger modelCooker_logger;

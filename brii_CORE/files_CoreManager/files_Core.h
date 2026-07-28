@@ -6,6 +6,7 @@
 #define THIRDPARTY_LIBS_FILES_CORE_H
 
 #include "systemManager/platform_Manager.h"
+//#include "systemManager/logger.h"
 #include "dataManager/dataTypes_brii.h"
 #include <iostream>
 #include <filesystem>
@@ -24,7 +25,7 @@ template<> inline constexpr bool is_bitmask_flag<file_OP::writeFlags> = true;
 
 namespace filesystem_manager
 {
-  void create_DirectoryFile(const std::string& filePath, bool& directoryExist);
+  void create_DirectoryFile(const std::string& filePath, uint32_t& directoryExist);
   void delete_file_sentence(std::string sentence, const std::string& filePath);
  
   uint32_t exist_filePath(const std::string& path); /// return 1 = exist file  ||  return 0 = not exist

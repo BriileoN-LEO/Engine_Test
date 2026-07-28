@@ -7,24 +7,24 @@
 namespace filesystem_manager
 {
     namespace fs = std::filesystem;
-    void create_DirectoryFile(const std::string& filePath, bool& directoryExist)
+    void create_DirectoryFile(const std::string& filePath, uint32_t& directoryExist)
     {
      fs::path finalPath {filePath};
      fs::path directoryFather {finalPath.parent_path()};
 
      if (!directoryFather.empty() && fs::exists(directoryFather))
      {
-       std::cout << "FILESYSTEM::DIRECTORY NOT EXISTS::CREATING DIRECTORY FILE -----> " + filePath << std::endl;
+       log_System::fileLogger.warning("directory not exists | creating directory file = " + filePath);
+       //std::cout << "FILESYSTEM::DIRECTORY NOT EXISTS::CREATING DIRECTORY FILE -----> " + filePath << std::endl;
 
        fs::create_directories(directoryFather);
-       directoryExist = false;
+       directoryExist = 0;
 
        return;
      }
 
-     directoryExist = true;
-     std::cout << "FILESYSTEM::DIRECTORY EXISTS" << std::endl;
-
+     directoryExist = 1;
+     log_System::fileLogger.info("directory exists | stop creating directory = " + filePath);
     }
 
   void delete_file_sentence(std::string fileName, const std::string& filePath)
@@ -149,6 +149,7 @@ namespace customFiles
      txt = new_name;
 
  }
+
 
   void rename_fileExisting(std::string& dirOrigin)
  {

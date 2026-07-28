@@ -205,7 +205,7 @@ inline uint32_t pack_binMaterial(const material_LeoHeader& mat_header, const std
   if(!binMat.is_open() == true)
   {
     std::string error_fDir {"open file in direction ---> " + outDir};
-    log::fileLogger.error(error_fDir);
+    log_System::fileLogger.error(error_fDir);
    //std::cerr << "ERROR::OPEN FILE::DIRECTION ---> " << outDir << "\n";
    return 0;
   }

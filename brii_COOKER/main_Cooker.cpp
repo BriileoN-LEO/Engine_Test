@@ -1,15 +1,12 @@
 #include "manager_briiCooker.h"
 #include "files_CoreManager/files_Core.h"
+#include "dataCooker.h"
 
 int main()
 {
- //=======INIT THE DATA UTILITIES======= --- THE CLASES OF CONTAINERS OF ALL DATA TO BINAR}Y
- data_leoBinary::init_dataUtilities_Cooker();
-
- /////////CREATION FILES/////
- bool dirE_tex{};
- filesystem_manager::create_DirectoryFile(manager_GD::pathTextures, dirE_tex);
-
+ dataCooker_start::create_directoriesCooker();
+ dataCooker_start::insert_ModelsCooker();
+ dataCooker_start::create_Binaries();
 
  return 0;
 }

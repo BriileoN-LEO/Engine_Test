@@ -25,9 +25,10 @@ namespace manager_GD
     }
    };
 
-   const std::string pathMaterials {"assets_engine/binMaterials"};
+   const std::string pathModels {"assets_engine/bin_Models"};
+   const std::string pathMeshes {"assets_engine/bin_Meshes"};
+   const std::string pathMaterials {"assets_engine/bin_Materials"};
    const std::string pathTextures {"assets_engine/KTX_binTextures"};
-   const std::string pathModels {"assets_engine/bin_Models_Meshes"};
 
    const std::string texture_binSign {".leotex"};
 }
@@ -227,7 +228,7 @@ namespace manager_AssimpData
       );
     } 
 
-    writeFile_MeshMaterial(headerMesh, mD, directory, fileT); ///CHECK FOR IMPLEMENTATION 
+    writeFile_MeshBinary(headerMesh, mD, directory, fileT); ///CHECK FOR IMPLEMENTATION 
 
     for(auto& meshD : mD)
     {
@@ -312,17 +313,26 @@ namespace manager_AssimpData
    }
    void model_D::insert_version(uint32_t version)
    {
-    headerModel.version = version;
+     headerModel.version = version;
    }
    void model_D::insert_MeshID(uint64_t& mesh_ID)
    {
      meshesRegister_LeoMesh.emplace_back(mesh_ID);
+     headerModel.meshesCount++;
    }
    void model_D::update_MeshCounter()
    {
     headerModel.meshesCount = meshesRegister_LeoMesh.size();
    }
+   void model_D::upload_ModelBin(const std::string& directory, file_OP::writeFlags& fileT)
+   {
+     writeFile_ModelBinary(headerModel, meshesRegister_LeoMesh, directory, fileT);
+   } 
 
+   const size_t& model_D::get_meshesCount()
+   {
+    return headerModel.meshesCount;
+   }
    std::string model_D::get_nameModel_str()
    {
     std::string name(headerModel.get_modelName());
@@ -338,11 +348,13 @@ namespace manager_AssimpData
    {
     modelsBin_data.emplace_back(model);
    }
-   void entity_ModelManager::upload_allModelBin()
+   void entity_ModelManager::upload_allModelBin(const std::string& directory, file_OP::writeFlags& fileT)
    {
-     
+    for(auto& model : modelsBin_data)
+    {
+     model.upload_ModelBin(directory, fileT);    
+    }
    }
-
 }
 
 namespace manage_texturesCooker
@@ -533,8 +545,8 @@ namespace manage_texturesCooker
    }
    void statePixelColor_NULL(std::vector<unsigned char>& texData, int idxData, unsigned char* value, int idxValue) {
       texData[idxData] = static_cast<unsigned char>(255.0f);
-      unsigned char* val = value;
-      int idxVal { idxValue };
+      [[maybe_unused]]unsigned char* val = value;
+      [[maybe_unused]]int idxVal { idxValue };
    }
 
    void combine_to_rgba(std::vector<unsigned char> outAlbedoOpa, unsigned char* rgbPixels, unsigned char* aPixels, const int& totalPixels_notChannels)
@@ -893,11 +905,11 @@ namespace manage_texturesCooker
 
       void conv_NULL_RMA(std::vector<unsigned char>& outNULL, std::vector<unsigned char>& inNUll, briT::br_4& spec, float& metallic_v, int& idx)
       {
-         std::vector<unsigned char>& o = outNULL;
-         std::vector<unsigned char>& i = inNUll;
+         [[maybe_unused]] std::vector<unsigned char>& o = outNULL;
+         [[maybe_unused]] std::vector<unsigned char>& i = inNUll;
 
          spec = briT::br_4(0.5f);
-         float roughness_v { std::max(0.0f, std::min(1.0f, 1.0f - spec.a))};
+         [[maybe_unused]] float roughness_v { std::max(0.0f, std::min(1.0f, 1.0f - spec.a))};
 
          float specLuma { (0.2126f * spec.r) + (0.7152f * spec.g) + (0.0722f * spec.b) };
 
@@ -911,16 +923,16 @@ namespace manage_texturesCooker
          {
             metallic_v = 0;
          }
-         int& id = idx;
+         [[maybe_unused]] int idx_copy = idx;
       }
 
       void conv_NULL_Albedo(std::vector<unsigned char>& outNULL, std::vector<unsigned char>& inNULL, briT::br_4& spec, float& metallic_v, int& idx)
       {
-         std::vector<unsigned char>& oN = outNULL;
-         std::vector<unsigned char>& iN = inNULL;
-         briT::br_4& s = spec;
-         float& m = metallic_v;
-         int& i = idx;
+         [[maybe_unused]] std::vector<unsigned char>& oN = outNULL;
+         [[maybe_unused]] std::vector<unsigned char>& iN = inNULL;
+         [[maybe_unused]] briT::br_4& s = spec;
+         [[maybe_unused]] float& m = metallic_v;
+         [[maybe_unused]] int& i = idx;
       }
 
       void convertTextures(std::vector<unsigned char>& pixelsDiffuseOpa, std::vector<unsigned char>& pixelsSpecShinness,
@@ -2002,11 +2014,18 @@ namespace data_leoBinary
       modelD.insert_nameHeader(nameModel_path);
       modelD.insert_version(version);
    
-      int meshesCounter{};
       manager_AssimpData::meshesBin_D meshes_Bin{};
+      std::string nameMesh_Bin{nameModel_path + "_meshes"};
+      meshes_Bin.insert_version(1);
+      meshes_Bin.insert_nameMeshBin(nameMesh_Bin);
+      /////ADD THE MATRIX CONFIGURATION IN THE GENERAL MATRIX OF THE MESHESIX CONFIGURATION IN THE GENERAL MATRIX OF THE MESHES
+      aiMatrix4x4 aiModelMat {scene->mRootNode->mTransformation}; ///TRANSFORM THIS MODEL MATRIX TO NORMAL GLM::MATRIX
+      float (&mat_GeneralMeshes)[16] {meshes_Bin.get_generalMatrixTrans()};   
+      convert_dataTypes::aiMat4_to_rawArrayFloat16(aiModelMat, mat_GeneralMeshes);
+
   
       log_System::modelCooker_logger.info("importing meshes from model | path = " + path);
-      processNode(modelD, meshes_Bin, scene->mRootNode, scene, meshesCounter, version);
+      processNode(modelD, meshes_Bin, scene->mRootNode, scene, version);
      
       ///UPDATE AFTER PROCESS ALL THE MESHES
       modelD.update_MeshCounter();
@@ -2015,16 +2034,12 @@ namespace data_leoBinary
       data_utilities::model_D->insert_ModelBinD_ref(modelD);
    }
 
-   void processNode(manager_AssimpData::model_D& model, manager_AssimpData::meshesBin_D& meshes_Bin, aiNode* node, const aiScene* scene, int& meshesCounter,uint32_t& version)
-   {
-      aiMatrix4x4 aiModelMat {node->mTransformation}; ///TRANSFORM THIS MODEL MATRIX TO NORMAL GLM::MATRIX
-      float (&mat_GeneralMeshes)[16] {meshes_Bin.get_generalMatrixTrans()};   
-      convert_dataTypes::aiMat4_to_rawArrayFloat16(aiModelMat, mat_GeneralMeshes);
-      meshes_Bin.insert_version(version);
-
+   void processNode(manager_AssimpData::model_D& model, manager_AssimpData::meshesBin_D& meshes_Bin, aiNode* node, const aiScene* scene, uint32_t& version)
+   {     
       std::string nameModel {model.get_nameModel_str()};
+      float (&mat_GeneralMeshes)[16] {meshes_Bin.get_generalMatrixTrans()};
       /// std::array<float, 16> array_ModelMat4 {convert_dataTypes::aiMat4_to_arrayFloat16(aiModelMat)}; ///GET THE MODEL MATRIX FROM THE NODE                 
-
+   
       for (unsigned int i = 0; i < node->mNumMeshes; i++)
       {
          manager_AssimpData::mesh_D mesh_data{};
@@ -2035,7 +2050,7 @@ namespace data_leoBinary
          if (convert_str::find_badCharacters_filePath(meshName, pos_BC))
          {
             meshName = scene->mRootNode->mName.C_Str();
-            meshName += "_" + std::to_string(meshesCounter);
+            meshName += "_" + std::to_string(model.get_meshesCount());
          }
          meshName = nameModel + "_" + meshName; ///THIS IF EXISTS OTHER MESH WITH THE SAME NAME
 
@@ -2051,14 +2066,11 @@ namespace data_leoBinary
 
          meshes_Bin.insert_Mesh(mesh_data);
          model.insert_MeshID(meshID);
-         //model.insertMesh(mesh_D);
-         meshesCounter++;
-         //SDL_Log(nameMesh.c_str());
       }
 
       for (unsigned int i = 0; i < node->mNumChildren; i++)
       {
-         processNode(model, meshes_Bin, node->mChildren[i], scene, meshesCounter, version);
+         processNode(model, meshes_Bin, node->mChildren[i], scene, version);
       }
    }
    void processMesh_data(manager_AssimpData::mesh_D& meshManager, aiMesh* mesh, const aiScene* scene,  const std::string& nameModel, float (&meshTransMatrix)[16])
@@ -2193,6 +2205,7 @@ namespace data_leoBinary
 
        ///LOAD ALL TEXTURES OF MATERIAL
        manager_AssimpData::textures_MaterialManager str_tex{};
+       log_System::materialCooker_logger.info("loading textures of material... | mat name = " + nameMat);
        manage_texturesCooker::loadTextures(material, str_tex, nameModel_path, directory, scene); //GET THE ID OF ALL TEXTURES LOADED
        insert_TexturesID(matP, str_tex); ////ASSING TEXTURES ID
       
@@ -2204,5 +2217,18 @@ namespace data_leoBinary
 
           /////CONTINUAR CON LOS MATERIALES
    }
+
+ void create_ModelBinaries(const std::string& directory, file_OP::writeFlags& fileT)
+ {
+  data_utilities::model_D->upload_allModelBin(directory, fileT);
+ }
+ void create_MeshBinaries(const std::string& directory, file_OP::writeFlags& fileT)
+ {
+  data_utilities::mesh_D->upload_allMeshesBin(directory, fileT);
+ }
+ void create_MaterialBinaries(const std::string& directory, file_OP::writeFlags& fileT)
+ {
+  data_utilities::mat_D->upload_AllMat_bin(directory, fileT);
+ }
 
 }

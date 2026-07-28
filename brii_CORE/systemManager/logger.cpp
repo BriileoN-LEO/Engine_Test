@@ -28,6 +28,7 @@ namespace log_System
 {
  logger fileLogger{"FILE_LOGGER"};
  logger dataLogger{"DATA_LOGGER"};
+ logger texturesCooker_logger{"TEXTURES_COOKER_LOGGER"};
  logger materialCooker_logger{"MATERIAL_COOKER_LOGGER"};
  logger meshCooker_logger{"MESH_COOKER_LOGGER"};
  logger modelCooker_logger{"MODEL_COOKER_LOGGER"};

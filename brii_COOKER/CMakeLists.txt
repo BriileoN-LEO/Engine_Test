@@ -5,6 +5,8 @@ project(brii_COOKER)
 add_executable(brii_COOKER "main_Cooker.cpp"
         "manager_briiCooker.cpp"
         "manager_briiCooker.h"
+        "dataCooker.cpp"
+        "dataCooker.h"
 )
 
 target_include_directories(brii_COOKER PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

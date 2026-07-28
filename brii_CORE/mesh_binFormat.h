@@ -103,7 +103,7 @@ struct vertex_D //[VERTICES]
 
 namespace data_meshCore
 {
-  const std::string vefNum {"leom"};
+  const std::string vefNum {".leom"};
   const std::string temp_verfCreationFileDir {"tempBinMesh"};
  
  constexpr size_t get_maxSize_meshHeaderArray()
@@ -172,7 +172,7 @@ struct data_meshF
 
 #if defined(__unix__) || defined(__unix) && defined(__MACH__)
 
-inline uint32_t pack_binMesh_posix_overwrite(const mesh_LeoHeader& headerMesh, std::vector<data_meshF>& data_meshes, const std::string outDir, const std::string& dir_origin)
+inline uint32_t pack_binMesh_posix_overwrite(const mesh_LeoHeader& headerMesh, std::vector<data_meshF>& data_meshes, const std::string& outDir, const std::string&dir_origin)
 { 
 
   std::string temp_creationFileDir {headerMesh.nameMeshBin + data_meshCore::temp_verfCreationFileDir};
@@ -182,7 +182,7 @@ inline uint32_t pack_binMesh_posix_overwrite(const mesh_LeoHeader& headerMesh, s
 
   if(binMesh < 0)
   {
-   std::cerr << "ERROR::OPEN FILE::DIRECTION ---> " << temp_creationFileDir << "\n";
+   log_System::fileLogger.error("erro open file | file = " + temp_creationFileDir);
    return 0;
   }
 
@@ -313,13 +313,13 @@ inline uint32_t pack_binMesh_posix_newFile(const mesh_LeoHeader& headerMesh, std
 
 #endif
 
-inline uint32_t writeFile_MeshMaterial(const mesh_LeoHeader& headerMesh, std::vector<data_meshF>& data_meshes, const std::string dirOrigin, file_OP::writeFlags fileT)
+inline uint32_t writeFile_MeshBinary(const mesh_LeoHeader& headerMesh, std::vector<data_meshF>& data_meshes, const std::string dirOrigin, file_OP::writeFlags fileT)
 {
   std::string nameMesh {headerMesh.nameMeshBin};
 
   uint32_t w_test {};
 
-  nameMesh += "." + data_meshCore::vefNum;
+  nameMesh += data_meshCore::vefNum;
   std::string dir_create = dirOrigin + "/" + nameMesh; ///origin/name.leoa --- DIRECTION LEO MATERIAL
  
   log_System::fileLogger.info("CREATING MATERIAL BINARY | " + nameMesh); 
