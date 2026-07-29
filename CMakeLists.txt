@@ -50,6 +50,8 @@ set(DATA_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/shaders/shader_v_v1.vs"
 )
 
 #if(WIN32)
+set(SOURCE_DIR_ENGINE "${CMAKE_CURRENT_SOURCE_DIR}/")
+
 set(ASSETS_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/assets_engine"
 "${CMAKE_CURRENT_SOURCE_DIR}/Images"
 "${CMAKE_CURRENT_SOURCE_DIR}/shaders")
@@ -174,7 +176,6 @@ imgui
 stb
 )
 
-project (thirdParty_Libs)
 
 add_library(thirdParty_Libs INTERFACE
 "${CMAKE_CURRENT_SOURCE_DIR}/ThirdPartyLibs/stb_image.h"
@@ -183,6 +184,7 @@ add_library(thirdParty_Libs INTERFACE
 
 target_include_directories(thirdParty_Libs INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(thirdParty_Libs INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/ThirdPartyLibs/stb-master")
+target_include_directories(thirdParty_Libs INTERFACE ${stb_SOURCE_DIR})
 
 add_subdirectory(brii_CORE)
 add_subdirectory(brii_COOKER)

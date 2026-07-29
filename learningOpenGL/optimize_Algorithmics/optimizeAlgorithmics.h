@@ -57,6 +57,7 @@ namespace FNV
  }
  constexpr uint32_t operator""_FNV_hash(const char* str, size_t len)
  {
+  [[maybe_unused]] size_t lee {len};
   return str_to_hash(std::string(str));
  }
 

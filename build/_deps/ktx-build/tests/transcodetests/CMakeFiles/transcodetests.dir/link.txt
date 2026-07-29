@@ -1,1 +1,0 @@
-/usr/bin/c++ -O3 -DNDEBUG -O3 -Wl,--dependency-file=CMakeFiles/transcodetests.dir/link.d CMakeFiles/transcodetests.dir/transcodetests.cc.o -o ../../../../Release/transcodetests  -Wl,-rpath,"\$ORIGIN:\$ORIGIN/../lib" ../gtest/libgtest.a ../../../../Release/libktx.so.5.0.0 ../../interface/basisu_c_binding/libobj_basisu_cbind.a ../../lib/basisu-encoder/libbasisu_encoder.a -lm

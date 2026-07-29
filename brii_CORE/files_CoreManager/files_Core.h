@@ -6,7 +6,7 @@
 #define THIRDPARTY_LIBS_FILES_CORE_H
 
 #include "systemManager/platform_Manager.h"
-//#include "systemManager/logger.h"
+#include "systemManager/logger.h"
 #include "dataManager/dataTypes_brii.h"
 #include <iostream>
 #include <filesystem>

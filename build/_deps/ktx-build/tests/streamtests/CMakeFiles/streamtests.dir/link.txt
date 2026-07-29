@@ -1,1 +1,0 @@
-/usr/bin/c++ -O3 -DNDEBUG -O3 -Wl,--dependency-file=CMakeFiles/streamtests.dir/link.d CMakeFiles/streamtests.dir/streamtests.cc.o -o ../../../../Release/streamtests  -Wl,-rpath,"\$ORIGIN:\$ORIGIN/../lib" ../gtest/libgtest.a ../../../../Release/libktx.so.5.0.0

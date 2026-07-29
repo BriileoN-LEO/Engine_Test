@@ -37,12 +37,7 @@ namespace convert_dataTypes
      return mat4_D;
     }
 
-   template<typename T, size_t sT>
-   void copy_rawArrayData(T (&dataIN)[sT], T (&dataOUT)[sT])
-   {
-    std::copy(dataIN, dataIN + sT, dataOUT);
-   }
-
+  
 }
 
 namespace convert_str

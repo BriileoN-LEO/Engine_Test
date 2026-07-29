@@ -11,6 +11,10 @@ add_executable(brii_COOKER "main_Cooker.cpp"
 
 target_include_directories(brii_COOKER PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
+target_compile_definitions(brii_COOKER PRIVATE 
+SOURCE_DIR_ENGINE_B="${SOURCE_DIR_ENGINE}"
+)
+ 
 target_link_libraries(brii_COOKER PRIVATE
 Learning_lib
 brii_CORE
@@ -31,7 +35,6 @@ if(UNIX AND NOT APPLE)
             pthread
             dl
     )
-
 
     target_compile_options(brii_COOKER PRIVATE
             -Wall

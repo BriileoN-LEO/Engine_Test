@@ -25,7 +25,10 @@ add_executable(briiCore
  "systemManager/logger.cpp"       
 )
 
-add_library(brii_CORE INTERFACE
+add_library(brii_CORE STATIC
+ "systemManager/platform_Manager.h"
+ "systemManager/logger.h"
+ "systemManager/logger.cpp"
  "mesh_binFormat.h"
  "material_binFormat.h"
  "model_binFormat.h"
@@ -42,13 +45,9 @@ add_library(brii_CORE INTERFACE
  "dataManager/algorithms_brii.cpp"
  "dataManager/algorithms_brii.h"
  "libs_in_CORE.h"
- "systemManager/platform_Manager.h"
- "systemManager/logger.h"
- "systemManager/logger.cpp"
-
 )
 
-target_link_libraries(brii_CORE INTERFACE
+target_link_libraries(brii_CORE PRIVATE
 assimp::assimp
 glm::glm
 ktx
@@ -60,7 +59,8 @@ glm::glm
 ktx
 )
 
-target_include_directories(brii_CORE INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(brii_CORE PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(brii_CORE PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/brii_CORE")
 
 target_include_directories(briiCore PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/brii_CORE")
 target_include_directories(briiCore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

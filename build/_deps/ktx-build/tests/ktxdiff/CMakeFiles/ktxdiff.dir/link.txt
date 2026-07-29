@@ -1,1 +1,0 @@
-/usr/bin/c++ -O3 -DNDEBUG -O3 -Wl,--dependency-file=CMakeFiles/ktxdiff.dir/link.d CMakeFiles/ktxdiff.dir/ktxdiff_main.cpp.o -o ../../../../Release/ktxdiff  -Wl,-rpath,"\$ORIGIN:\$ORIGIN/../lib" ../../../../Release/libktx.so.5.0.0 ../../external/fmt/libfmt.a ../../libobjUtil.a

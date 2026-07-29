@@ -32,7 +32,7 @@ add_executable(Learning "learningOpenGL.cpp" "learningOpenGL.h"
 "Model_Assimp/Assimp_lib.h"  "Model_Assimp/Assimp_lib.cpp"
 "shadows_manager/shadows_D.h"  "shadows_manager/shadows_D.cpp"
 "STB_IMAGE_IMPLEMENT.cpp"
-        "Model_Assimp/Assimp_lib.h" "Model_Assimp/Assimp_lib.cpp"
+"Model_Assimp/Assimp_lib.h" "Model_Assimp/Assimp_lib.cpp"
 "2D_geo/basic_geometry_D.cpp" "2D_geo/basic_geometry_D.h"
 "log_Errors/log_error_General.cpp" "log_Errors/log_error_General.h"
 "libCust_openGL/lib_openGL.cpp" "libCust_openGL/lib_openGL.h"
@@ -43,11 +43,17 @@ add_executable(Learning "learningOpenGL.cpp" "learningOpenGL.h"
 
 )
 
-add_library(Learning_lib INTERFACE
+add_library(Learning_lib STATIC
 "optimize_Algorithmics/optimizeAlgorithmics.h"
+"optimize_Algorithmics/optimizeAlgorithmics.cpp"
+"STB_IMAGE_IMPLEMENT.cpp"
+"Render/configFilesTXT.h"
 )
 
-target_include_directories(Learning_lib INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(Learning_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(Learning_lib PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/learningOpenGL")
+target_include_directories(Learning_lib PRIVATE ${stb_SOURCE_DIR})
+
 
 target_sources(Learning PRIVATE
 ${imgui_SOURCE_DIR}/imgui.cpp
@@ -76,7 +82,8 @@ target_include_directories(Learning PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}/learningOpenGL/optimize_Algorithmics"
         "${CMAKE_CURRENT_SOURCE_DIR}/learningOpenGL/Model_Assimp"
 )
-target_include_directories(Learning PUBLIC ${stb_SOURCE_DIR})
+
+target_include_directories(Learning PRIVATE ${stb_SOURCE_DIR})
 
 target_link_libraries(Learning PRIVATE
 brii_CORE
@@ -86,6 +93,7 @@ OpenGL::GL
 assimp::assimp
 glm::glm
 ktx
+thirdParty_Libs
 )
 
 target_include_directories(Learning PUBLIC ${glm_SOURCE_DIR})

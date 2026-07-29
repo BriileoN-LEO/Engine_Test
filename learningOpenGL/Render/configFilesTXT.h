@@ -94,8 +94,13 @@ const std::string solid_black_texture = "Images/black_Solid.jpg";
 //IMAGES UI EDIT MODER
 const std::string LeftArrow_editModeUI = "Images/left_arrow_editModeUI.png";
 
-///PATH MODEL 
+//DIRECTORIES BINARIES
+const std::string pathModels_bin {"assets_engine/bin_Models"};
+const std::string pathMeshes_bin {"assets_engine/bin_Meshes"};
+const std::string pathMaterials_bin {"assets_engine/bin_Materials"};
+const std::string pathTextures_ktx {"assets_engine/KTX_binTextures"};
 
+///PATH MODEL 
 const std::string backpack_Model = "assets_engine/backpack/backpack.obj";
 const std::string floor_Model = "assets_engine/Floor/Floor.obj";
 const std::string floor2_Model = "assets_engine/Floor_2/Floor2.obj";
@@ -107,5 +112,11 @@ const std::string campo_01 = "assets_engine/Campo/Campo_Floor.obj";
 const std::string vegetacion_01 = "assets_engine/vegetacion_01/vegetacion_01.obj";
 
 const std::string sponza_2_model = "assets_engine/Sponza_2/Sponza_2.gltf";
+
+
+
+
+
+
 
 

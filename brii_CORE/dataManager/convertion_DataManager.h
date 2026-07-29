@@ -23,7 +23,11 @@ namespace convert_dataTypes
   glm::mat4 arrayFloat16_to_glmMat4(std::array<float, 16>& arrayFloat16);
 
   template<typename T, size_t sT>
-  void copy_rawArrayData(T (&dataIN)[sT], T (&dataOUT)[sT]);
+  void copy_rawArrayData(T (&dataIN)[sT], T (&dataOUT)[sT]) /////COPY RAW ARRAY TO ANOTHER RAW ARRAY WITH THE SAME TYPE AND SIZE
+  {
+    std::copy(dataIN, dataIN + sT, dataOUT);
+  } 
+
 }
 
 namespace convert_str

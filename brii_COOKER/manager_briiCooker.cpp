@@ -8,8 +8,9 @@
 #include "optimize_Algorithmics/optimizeAlgorithmics.h"
 #include "dataManager/algorithms_brii.h"
 #include <stdlib.h>
-#include "stb_image.h"
-#include "stb_image_resize2.h"
+#include "learningOpenGL/STB_IMAGE_IMPLEMENT.cpp"
+//#include "stb_image.h"
+//#include "stb_image_resize2.h"
 #include "files_CoreManager/files_Core.h"
 
 namespace manager_GD
@@ -25,10 +26,11 @@ namespace manager_GD
     }
    };
 
-   const std::string pathModels {"assets_engine/bin_Models"};
-   const std::string pathMeshes {"assets_engine/bin_Meshes"};
-   const std::string pathMaterials {"assets_engine/bin_Materials"};
-   const std::string pathTextures {"assets_engine/KTX_binTextures"};
+ 
+   const std::string pathModels {std::string(SOURCE_DIR_ENGINE_B) + "assets_engine/bin_Models"};
+   const std::string pathMeshes {std::string(SOURCE_DIR_ENGINE_B) + "assets_engine/bin_Meshes"};
+   const std::string pathMaterials {std::string(SOURCE_DIR_ENGINE_B) + "assets_engine/bin_Materials"};
+   const std::string pathTextures {std::string(SOURCE_DIR_ENGINE_B) + "assets_engine/KTX_binTextures"};
 
    const std::string texture_binSign {".leotex"};
 }
@@ -1744,18 +1746,22 @@ namespace manage_texturesCooker
          {
            packPBR_texData pT {loadTextures_PBR(material, nameModel_Path, directory, scene, prefix_name, texturesComb)};
            textures_Data << pT;
+           break;
          }
 
          case material_Status::MATERIAL_LEGACY :
          {
            packPBR_texData pT_L {loadTextures_notPBR(material, nameModel_Path, directory, scene, prefix_name, texturesComb)};
            textures_Data << pT_L;
+           break;
          }
 
          case material_Status::NOT_TEXTURES_MATERIAL :
          {
-            return;
-           ///HERE TO SAVE ONLY THE TEXTURES OPACITY OR HEIGHT
+
+        ///HERE TO SAVE ONLY THE TEXTURES OPACITY OR HEIGHT
+
+          return;
          }
       }
 
@@ -2122,8 +2128,8 @@ namespace data_leoBinary
          }
       }
 
-      if(mesh->mMaterialIndex >= 0)
-     { 
+//      if(mesh->mMaterialIndex >= 0)
+   //  { 
        aiMaterial* material { scene->mMaterials[mesh->mMaterialIndex] };
 
        aiString matName {};
@@ -2146,7 +2152,7 @@ namespace data_leoBinary
          log_System::meshCooker_logger.error("not find material with the ID created");
        }
 
-     }
+//     }
 
    }
 
