@@ -4,7 +4,6 @@
 
 int main()
 {
-
  
  dataCooker_start::create_directoriesCooker();
  dataCooker_start::insert_ModelsCooker();

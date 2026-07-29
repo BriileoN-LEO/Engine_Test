@@ -10,14 +10,14 @@ namespace filesystem_manager
     void create_DirectoryFile(const std::string& filePath, uint32_t& directoryExist)
     {
      fs::path finalPath {filePath};
-     fs::path directoryFather {finalPath.parent_path()};
+    // fs::path directoryFather {finalPath.parent_path()};
 
-     if (!directoryFather.empty() && fs::exists(directoryFather))
+     if (!filePath.empty() && !fs::exists(finalPath))
      {
        log_System::fileLogger.warning("directory not exists | creating directory file = " + filePath);
        //std::cout << "FILESYSTEM::DIRECTORY NOT EXISTS::CREATING DIRECTORY FILE -----> " + filePath << std::endl;
 
-       fs::create_directories(directoryFather);
+       fs::create_directory(finalPath);
        directoryExist = 0;
 
        return;
@@ -79,6 +79,8 @@ namespace customFiles
    {
       std::string f_name {nameTexture};
       std::string new_name {};
+    
+      //////////RESOLVE THIS TO PREVENT INFINITE LOOP IN WHILE 
 
       bool success{};
       while (!success) {
@@ -86,29 +88,32 @@ namespace customFiles
 
         if (find_pos != std::string::npos) 
         {
+          uint32_t findCopy{};
+         if((find_pos + 1) < f_name.size())
+        {
+          findCopy = (f_name[find_pos] ^ f_name[find_pos + 1]) == 0 ? 1 : 0;
+          f_name.erase(find_pos, findCopy);
+        }
 
-          size_t find_pCopy{find_pos + 1};
-          new_name += f_name.substr(0, find_pos);
+         new_name += f_name.substr(0, find_pos);
 
-          if (f_name[find_pCopy] == '_')
-          {
-            f_name = f_name.substr(find_pCopy + 1);
-          }
-
-          else
-          {
-            f_name = f_name.substr(find_pCopy);
-          }
+         std::string nF { f_name.substr(find_pos + findCopy) };
+         f_name = nF;
         }
 
         else if (find_pos == std::string::npos)
         {
+          if(f_name.size() > 1) ///this because if nF gets the last posicion of f_name, new_name get it before, because there are not "_"
+         {
           new_name += f_name.substr(0);
+         }
           success = true;
         }
-
+       std::cout << "AAAAAA\n";
       }
 
+     std::cout << "FINISH NAMING KTX RULE\n";;
+    
      nameTexture = new_name;
     }
 

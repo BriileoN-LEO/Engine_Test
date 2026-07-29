@@ -273,6 +273,7 @@ namespace manage_texturesCooker
   };
 
    extern std::unordered_map<aiTextureType, std::string> nameTextures;
+   const std::string& get_nameTextureType(aiTextureType texType);
    //extern std::unordered_map<uint64_t, uint64_t> textures_saved; ///THIS IS A CONTAINER THAT SAVES ALL THE TEXTURES THAT ARE UPLOADED ----> [NAME TEXTURE ID FNV], [PATH OF TEXTURE KTX CONVERTER
    extern std::vector<uint64_t> textures_saved;
 

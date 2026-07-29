@@ -27,10 +27,10 @@ namespace manager_GD
    };
 
  
-   const std::string pathModels {std::string(SOURCE_DIR_ENGINE_B) + "assets_engine/bin_Models"};
-   const std::string pathMeshes {std::string(SOURCE_DIR_ENGINE_B) + "assets_engine/bin_Meshes"};
-   const std::string pathMaterials {std::string(SOURCE_DIR_ENGINE_B) + "assets_engine/bin_Materials"};
-   const std::string pathTextures {std::string(SOURCE_DIR_ENGINE_B) + "assets_engine/KTX_binTextures"};
+   const std::string pathModels {std::string(SOURCE_DIR_ENGINE_B) + "assets_engine/bin_Models/"};
+   const std::string pathMeshes {std::string(SOURCE_DIR_ENGINE_B) + "assets_engine/bin_Meshes/"};
+   const std::string pathMaterials {std::string(SOURCE_DIR_ENGINE_B) + "assets_engine/bin_Materials/"};
+   const std::string pathTextures {std::string(SOURCE_DIR_ENGINE_B) + "assets_engine/KTX_binTextures/"};
 
    const std::string texture_binSign {".leotex"};
 }
@@ -535,8 +535,35 @@ namespace manage_texturesCooker
     std::unordered_map<aiTextureType, std::string> nameTextures
    {
      {aiTextureType_BASE_COLOR, "ALBEDO"},
-     {aiTextureType_DIFFUSE, "DIFFUSE"}
+     {aiTextureType_DIFFUSE, "DIFFUSE"},
+     {aiTextureType_AMBIENT, "AMBIENT"},
+     {aiTextureType_DIFFUSE_ROUGHNESS, "DIFFUSE_ROUGHNESS"},
+     {aiTextureType_METALNESS, "METALNESS"},
+     {aiTextureType_OPACITY, "OPACITY"},
+     {aiTextureType_HEIGHT, "HEIGHT"},
+     {aiTextureType_DISPLACEMENT, "DISPLACEMENT"},
+     {aiTextureType_NORMAL_CAMERA, "NORMAL_CAMERA"},
+     {aiTextureType_EMISSION_COLOR, "EMISSION_COLOR"},
+     {aiTextureType_AMBIENT_OCCLUSION, "AMBIENT_OCCLUSSION"},
+     {aiTextureType_SPECULAR, "SPECULAR"},
+     {aiTextureType_NORMALS, "NORMALS"},
+     {aiTextureType_EMISSIVE, "EMISSIVE"},
+     {aiTextureType_SHININESS, "SHININESS"},
+     {aiTextureType_UNKNOWN, "UNKNOWN_TEXTURE"}
    };
+
+   const std::string& get_nameTextureType(aiTextureType texType)
+   {
+    auto find_it {nameTextures.find(texType)};
+
+     if(find_it != nameTextures.end())
+    {
+     return find_it->second;
+    }
+
+    return nameTextures[aiTextureType_UNKNOWN];
+   }
+
 
  //  std::unordered_map<uint64_t, uint64_t> textures_saved{};
    std::vector<uint64_t> textures_saved{};
@@ -599,6 +626,8 @@ namespace manage_texturesCooker
 
    void convert_RMA(std::vector<unsigned char>& RMA, unsigned char* roughnessData, unsigned char* metallicData, unsigned char* ambientOclussionData, const int& totalPixels)
    {
+      log_System::texturesCooker_logger.info("combining textures to make RMA texture");
+    
       RMA.resize(totalPixels * 4);
 
       int index{};
@@ -636,6 +665,7 @@ namespace manage_texturesCooker
         //RMA[index + 2] = ambientOclussionData ? ambientOclussionData[i] : static_cast<unsigned char>(255.0f);
      }
 
+     log_System::texturesCooker_logger.success("RMA texture converted");
    }
 
    void resizeTexture_stb(std::vector<unsigned char>& resize_Texture, unsigned char* texture, const int& width_old, const int& height_old, const int& width_new, const int& height_new, const int& numChannels, resizeType resT) {
@@ -1017,7 +1047,7 @@ namespace manage_texturesCooker
    {
      if (texture->mHeight == 0) ///THE TEXTURE IS COMPRESS
      {
-      std::cout << "TEXTURE(" << nameTextures[matType] << ") EMBEDDED :: MODEL( " << nameModel_Path << "):: COMPRESS::" << data_Tex.nameTex << std::endl;
+      std::cout << "TEXTURE(" << get_nameTextureType(matType) << ") EMBEDDED :: MODEL( " << nameModel_Path << "):: COMPRESS::" << data_Tex.nameTex << std::endl;
 
       unsigned char* texPixels {
          stbi_load_from_memory(
@@ -1031,7 +1061,7 @@ namespace manage_texturesCooker
 
         if (texPixels)
         {
-          std::cout << "SUCCESS::LOAD_EMBEDDED_TEXTURE(" << nameTextures[matType] << ") :: MODEL( " << nameModel_Path << "):: COMPRESS::" << data_Tex.nameTex << std::endl;
+          std::cout << "SUCCESS::LOAD_EMBEDDED_TEXTURE(" << get_nameTextureType(matType) << ") :: MODEL( " << nameModel_Path << "):: COMPRESS::" << data_Tex.nameTex << std::endl;
           data_Tex.texturePixels = std::move(texPixels);
           texPixels = nullptr;  ////SEE IF I GETS ERROR HERE
           data_Tex.type_mem_image = manager_GD::memType::STBI_MEM;
@@ -1039,7 +1069,7 @@ namespace manage_texturesCooker
           return texStatus::EXISTS;
         }
 
-          std::cout << "ERROR::LOAD_EMBEDDED_TEXTURE(" << nameTextures[matType] << ") :: MODEL( " << nameModel_Path << "):: COMPRESS::" << data_Tex.nameTex << std::endl;
+          std::cout << "ERROR::LOAD_EMBEDDED_TEXTURE(" << get_nameTextureType(matType) << ") :: MODEL( " << nameModel_Path << "):: COMPRESS::" << data_Tex.nameTex << std::endl;
           std::cout << "REASON --> " << stbi_failure_reason() << std::endl;
           return texStatus::NOT_EXISTS;
 
@@ -1047,7 +1077,7 @@ namespace manage_texturesCooker
 
      else if (texture->mHeight > 0)  ///THE TEXTURE IS NOT COMPRESS
      {
-        std::cout << "TEXTURE(" << nameTextures[matType] << ") EMBEDDED :: MODEL( " << nameModel_Path << "):: RAW::" << data_Tex.nameTex << std::endl;
+        std::cout << "TEXTURE(" << get_nameTextureType(matType) << ") EMBEDDED :: MODEL( " << nameModel_Path << "):: RAW::" << data_Tex.nameTex << std::endl;
 
         data_Tex.type_mem_image = manager_GD::memType::HEAP_ENGINE;
 
@@ -1062,14 +1092,14 @@ namespace manage_texturesCooker
 
         if (texPixels)
         {
-           std::cout << "SUCCESS::LOAD_EMBEDDED_TEXTURE(" << nameTextures[matType] << ") :: MODEL( " << nameModel_Path << "):: RAW::" << data_Tex.nameTex << std::endl;
+           std::cout << "SUCCESS::LOAD_EMBEDDED_TEXTURE(" << get_nameTextureType(matType) << ") :: MODEL( " << nameModel_Path << "):: RAW::" << data_Tex.nameTex << std::endl;
            data_Tex.texturePixels = std::move(texPixels);
            texPixels = nullptr;  ////SEE IF I GETS ERROR HERE
 
            return texStatus::EXISTS;
         }
 
-           std::cout << "ERROR::LOAD_EMBEDDED_TEXTURE(" << nameTextures[matType] << ") :: MODEL( " << nameModel_Path << "):: RAW::" << data_Tex.nameTex << std::endl;
+           std::cout << "ERROR::LOAD_EMBEDDED_TEXTURE(" << get_nameTextureType(matType) << ") :: MODEL( " << nameModel_Path << "):: RAW::" << data_Tex.nameTex << std::endl;
            std::cout << "REASON --> " << stbi_failure_reason() << std::endl;
            return texStatus::NOT_EXISTS;
      }
@@ -1111,7 +1141,7 @@ namespace manage_texturesCooker
 
           if (!std::binary_search(textures_saved.begin(), textures_saved.end(), data_Tex.key_texture))
           {
-             std::cout << "PROCESS::DIRECTORY_TEXTURE:: NAME_MODEL(" << prefix_nameModel << ")" << " :: MATERIAL_TYPE(" << nameTextures[matType] << ")::" << std::filesystem::path(pathTex).stem().string() << std::endl;
+             std::cout << "PROCESS::DIRECTORY_TEXTURE:: NAME_MODEL(" << prefix_nameModel << ")" << " :: MATERIAL_TYPE(" << get_nameTextureType(matType) << ")::" << std::filesystem::path(pathTex).stem().string() << std::endl;
 
              std::string pathTexture{directory + pathTex};
              data_Tex.texturePixels = stbi_load(pathTexture.c_str(), &data_Tex.width, &data_Tex.height, &data_Tex.nrChannels, numChannels_obj);
@@ -1157,7 +1187,7 @@ namespace manage_texturesCooker
 
           if (!std::binary_search(textures_saved.begin(), textures_saved.end(), data_Tex.key_texture))
           {
-             std::cout << "PROCESS::EMBEDDED_TEXTURE:: NAME_MODEL(" << prefix_nameModel << ")" << " :: MATERIAL_TYPE(" << nameTextures[matType] << ")::" << std::filesystem::path(data_Tex.nameTex).stem().string() <<std::endl;
+             std::cout << "PROCESS::EMBEDDED_TEXTURE:: NAME_MODEL(" << prefix_nameModel << ")" << " :: MATERIAL_TYPE(" << get_nameTextureType(matType) << ")::" << std::filesystem::path(data_Tex.nameTex).stem().string() <<std::endl;
              texStatus status_emTex { process_EmbeddedTexture(embeddedTex, data_Tex, prefix_nameModel, matType, numChannels_obj) };
 
              return status_emTex == texStatus::EXISTS ? texStatus::NOT_LOADED : status_emTex;  ////FALSE IS --> texStatus::NOT_EXISTS
@@ -1333,7 +1363,8 @@ namespace manage_texturesCooker
         
          if (pass_tex == 0)
          {
-            std::cout << "RESIZING_TEXTURE::" + texData.nameTex + ":: new_Height = " + std::to_string(maxHeight) + " | new_Width = " + std::to_string(maxWidth) << std::endl;
+           log_System::texturesCooker_logger.info("RESIZING_TEXTURE::" + texData.nameTex + ":: new_Height = " + std::to_string(maxHeight) + " | new_Width = " + std::to_string(maxWidth));
+           // std::cout << "RESIZING_TEXTURE::" + texData.nameTex + ":: new_Height = " + std::to_string(maxHeight) + " | new_Width = " + std::to_string(maxWidth) << std::endl;
             resizeTexture_stb(newDataImage, texData.texturePixels, texData.width, texData.height, maxWidth, maxHeight, texData.nrChannels, rT);
 
             freeMemoryImage(texData.type_mem_image, texData.texturePixels);
@@ -1383,6 +1414,8 @@ namespace manage_texturesCooker
 
    packPBR_texData loadTextures_PBR(aiMaterial* material, const std::string& nameModel_Path, const std::string& directory, const aiScene* scene, std::string& prefixName, combine_textures_D& texturesComb)
    {
+      log_System::texturesCooker_logger.info("loading textures PBR | FASE 0 | extracting pixels from textures");  
+    
       data_image dataOpacity{};
       texStatus opacity_tex{processTexture_pixels(material, aiTextureType_OPACITY, scene, prefixName, directory, dataOpacity, 4)};
       dataOpacity.status_tex = opacity_tex;
@@ -1421,6 +1454,8 @@ namespace manage_texturesCooker
       texStatus ao_tex {processTexture_pixels(material, aiTextureType_AMBIENT_OCCLUSION, scene, prefixName, directory, dataAO, 4)};
       dataAO.status_tex = ao_tex;
 
+      log_System::texturesCooker_logger.success("loading textures PBR | FASE 0 | extracting pixels ready");  
+      log_System::texturesCooker_logger.info("loading textures PBR | FASE 1 | combining textures");  
 
       data_image dataRMA{};
       data_image dataAlbedoOpa{};
@@ -1469,8 +1504,8 @@ namespace manage_texturesCooker
 
       //auto find_TexRMA {textures_saved.find(FNV_nameRMA)};
       if(exist_RMA == 1)
-   {
-          ////THIS TO IDENTIFY IF RMA EXISTS
+    {
+      ////THIS TO IDENTIFY IF RMA EXISTS
       std::string nameRMA {"RMA_" + dataMetalness.nameTex + "_" + dataDiffuseRoughness.nameTex + "_" + dataAO.nameTex + "_" + nameModel_Path};
       customFiles::standard_textureNameKTX(nameRMA);
       // uint32_t FNV_nameRMA{FNV::str_to_hash(nameRMA)};
@@ -1481,7 +1516,6 @@ namespace manage_texturesCooker
 
       if (find_RMA == -1)
          {
-
             std::vector<unsigned char> newDataMetalness{};
             newDataMetalness.resize(maxSize_pixels);  ////////ALWAYS 4
             resizeTex(newDataMetalness, dataMetalness, maxHeigth_convPBR, maxWidth_convPBR, resizeType::LINEAR);
@@ -1678,6 +1712,7 @@ namespace manage_texturesCooker
 
          //std::vector<unsigned char> dataAlbedo{};
          //std::vector<unsigned char> dataRMA{}; combine_textures_D& texturesComb
+         log_System::texturesCooker_logger.info("converting legacy textures to PBR");
          convert_to_PBR::convertTextures(texRS_albedoOpa, texRS_specShininess, totalPixels_RMA, texturesComb.dataAlbedo, texturesComb.dataRMA);
 
          if (!texturesComb.dataAlbedo.empty() && find_Albedo == false)
@@ -1744,6 +1779,7 @@ namespace manage_texturesCooker
       {
          case material_Status::MATERIAL_PBR :
          {
+           log_System::texturesCooker_logger.info("processing PBR textures");
            packPBR_texData pT {loadTextures_PBR(material, nameModel_Path, directory, scene, prefix_name, texturesComb)};
            textures_Data << pT;
            break;
@@ -1751,6 +1787,7 @@ namespace manage_texturesCooker
 
          case material_Status::MATERIAL_LEGACY :
          {
+           log_System::texturesCooker_logger.info("processing textures LEGACY");
            packPBR_texData pT_L {loadTextures_notPBR(material, nameModel_Path, directory, scene, prefix_name, texturesComb)};
            textures_Data << pT_L;
            break;
