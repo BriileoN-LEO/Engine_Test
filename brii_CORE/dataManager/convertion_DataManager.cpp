@@ -44,7 +44,7 @@ namespace convert_str
 {
     bool find_badCharacters_filePath(std::string& str, size_t& pos_BC)
     {
-        constexpr std::string_view badCharacters{ "./"};
+        constexpr std::string_view badCharacters{ "./:"};
         size_t find_BC {str.find_first_of(badCharacters)};
 
         if (!str.empty() || find_BC != std::string::npos)
@@ -56,6 +56,47 @@ namespace convert_str
 
         return false;
     }
+   void quit_repetitive_char(std::string& str, char char_quit)
+   {
+      std::string f_name {str};
+      std::string new_name {str};
+    
+      int count_chars = std::count(str.begin(), str.end(), char_quit);
+
+      uint32_t last_pos{};
+      for(int i = 0; i < count_chars; i++)
+      {
+        size_t find_pos{f_name.find_first_of(char_quit)};
+
+        if (find_pos != std::string::npos) 
+        {
+          uint32_t findCopy{};
+         if((find_pos + 1) < f_name.size())
+        {
+          findCopy = static_cast<uint32_t>(!(f_name[find_pos] ^ f_name[find_pos + 1]));
+          new_name.erase(find_pos + i, findCopy);
+          f_name.erase(find_pos, findCopy);
+        }
+
+        // new_name += f_name.substr(last_pos, find_pos);
+         f_name.erase(find_pos, 1);
+         last_pos = find_pos;
+
+        }
+
+        else if (find_pos == std::string::npos)
+        {
+         break;
+        }
+      }
+
+     f_name.clear(); 
+    // std::cout << "final_name = " << new_name << '\n';
+    // std::cout << "FINISH NAMING KTX RULE\n";;
+    
+     str = new_name;
+    }
+
 
    void quit_first_End_Spaces_str(std::string& str)
    {

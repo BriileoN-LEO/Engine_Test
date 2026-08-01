@@ -3,6 +3,13 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# 0. quit archives binaries
+
+assets_engine/KTX_binTextures
+assets_engine/bin_Materials
+assets_engine/bin_Meshes
+assets_engine/bin_Models
+
 # 1. Archivos de Compilación de C++ (NUNCA se suben)
 build/
 build-debug/
@@ -385,3 +392,10 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+assets_engine/KTX_binTextures
+*.leom
+*.leor
+*.leoa
+*.leotex
+*.leot
+*.leot

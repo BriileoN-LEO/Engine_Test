@@ -71,30 +71,49 @@ namespace data_modelCore
  inline uint32_t pack_binModel_posix_overwrite(const model_LeoHeader& headerModel, const std::vector<uint64_t>& meshes_ID, const std::string& outDir,const std::string& dirOrigin)
  { 
   std::string dirOrigin_new {dirOrigin};
-  convert_str::remplace_char_in_str(dirOrigin_new, "/", dirOrigin_new.size(), 0, 1);
+  
+   //convert_str::remplace_char_in_str(dirOrigin_new, "/", dirOrigin_new.size(), 0, 1);
   
   std::string temp_modelFileDir {headerModel.modelName + data_modelCore::temp_verfCreationFileDir + data_modelCore::vefNum};
   temp_modelFileDir = dirOrigin + temp_modelFileDir;
+  convert_str::quit_repetitive_char(temp_modelFileDir, '/');
+
+  std::string outDir_re {outDir};
+  convert_str::quit_repetitive_char(outDir_re, '/');
 
   int binModel {open(temp_modelFileDir.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644)};
 
   if(binModel < 0)
   {
-   log_System::fileLogger.error("error open file | file = " + temp_modelFileDir);
+   log_System::fileLogger.error("error writing modelBin | not open modelBin | modelBin = " + temp_modelFileDir);
    return 0;
   }
   
   log_System::fileLogger.info("writing file | file = " + temp_modelFileDir);
 
-  size_t bytes_sizeHeader {sizeof(model_LeoHeader)};
-  size_t bytes_sizeMeshesID {sizeof(uint64_t)};
+  size_t bytes_sizeHeader {sizeof(headerModel)};
+  size_t bytes_sizeMeshesID {sizeof(uint64_t) * meshes_ID.size()};
 
-  size_t bytesRest_write {bytes_sizeHeader + (bytes_sizeMeshesID * meshes_ID.size())};
+  size_t bytesRest_write {bytes_sizeHeader + bytes_sizeMeshesID};
+
+   /////////SEE IF THERES IS SPACE TO ALLOCATE THE BINARY AND WRITE
+  int reserve_space = posix_fallocate(binModel, 0, bytesRest_write);
+  if(reserve_space != 0)
+  {
+   log_System::fileLogger.error("not enought space to write modelBin | modelBin = " + temp_modelFileDir);
+   close(binModel);
+   filesystem_manager::delete_file_sentence(headerModel.modelName, temp_modelFileDir);
+   return 0;
+  }
+  
   off_t offset_bin{};
 
   //FASE 1 == Model bin header
-  const char* buffer_header {reinterpret_cast<const char*>(&headerModel)};
-  ssize_t countBytes_HeaderWrite {pwrite(binModel, buffer_header, bytesRest_write, offset_bin)};
+  const void* buffer_header {reinterpret_cast<const void*>(&headerModel)};
+  ssize_t countBytes_HeaderWrite {pwrite(binModel, buffer_header, bytes_sizeHeader, offset_bin)};
+ 
+  std::cout << "BYTES WRITE FILE = " << countBytes_HeaderWrite << '\n';
+  std::cout << "BYTES HOPE TO WRITE = " << bytes_sizeHeader << '\n';
 
   if(fileManager_POSIX::pwriting_handlingError(countBytes_HeaderWrite, bytes_sizeHeader, temp_modelFileDir) == 0)
   {
@@ -104,13 +123,15 @@ namespace data_modelCore
   }
 
   offset_bin = bytes_sizeHeader;
-  bytesRest_write -= bytes_sizeHeader;
 
   //FASE 2 == Add meshes ID
-  const char* buffer_meshesID {reinterpret_cast<const char*>(meshes_ID.data())};
-  ssize_t countBytes_meshesID_write {pwrite(binModel, buffer_meshesID, bytesRest_write, offset_bin)};
+  const void* buffer_meshesID {reinterpret_cast<const void*>(meshes_ID.data())};
+  ssize_t countBytes_meshesID_write {pwrite(binModel, buffer_meshesID, bytes_sizeMeshesID, offset_bin)};
 
-  if(fileManager_POSIX::pwriting_handlingError(countBytes_meshesID_write, bytes_sizeMeshesID * meshes_ID.size(), temp_modelFileDir) == 0)
+  std::cout << "BYTES meshesID model WRITE FILE = " << countBytes_meshesID_write << '\n';
+  std::cout << "BYTES meshesID model HOPE TO WRITE = " <<  bytes_sizeMeshesID * meshes_ID.size() << '\n';
+
+   if(fileManager_POSIX::pwriting_handlingError(countBytes_meshesID_write, bytes_sizeMeshesID, temp_modelFileDir) == 0)
   {
    close(binModel);
    filesystem_manager::delete_file_sentence(headerModel.modelName, temp_modelFileDir);
@@ -119,13 +140,13 @@ namespace data_modelCore
   
   close(binModel);
 
-  if(access(outDir.c_str(), F_OK) == 0)
+  if(access(outDir_re.c_str(), F_OK) == 0)
   {
-   std::filesystem::remove(outDir); ///REMOVE THE EXISTING FILE THAT WILL BE OVERWRITE
+   std::filesystem::remove(outDir_re); ///REMOVE THE EXISTING FILE THAT WILL BE OVERWRITE
   }
-   std::filesystem::rename(temp_modelFileDir, outDir); ////RENAME FILE WITH THE NAME THAT OVERWRITES THE FILE  
+   std::filesystem::rename(temp_modelFileDir, outDir_re); ////RENAME FILE WITH THE NAME THAT OVERWRITES THE FILE  
 
-
+  log_System::modelCooker_logger.success("writing binary success | modelBin = " + outDir_re);
   return 1;
  }
 
@@ -143,30 +164,30 @@ inline uint32_t pack_binModel_posix_newFile(const model_LeoHeader& headerModel, 
  /////////////CONTINUE HERE TO IMPLEMENT THE SAVE OF THE BINARY MODEL
 inline uint32_t writeFile_ModelBinary(const model_LeoHeader& headerModel, const std::vector<uint64_t>& meshes_ID, const std::string& dirOrigin, file_OP::writeFlags fileT)
 {
+
   uint32_t w_test {};
-  std::string nameMesh(headerModel.modelName);
-
-  nameMesh += data_modelCore::vefNum;
+  std::string nameModel {headerModel.modelName};
+  nameModel += data_modelCore::vefNum;
   std::string dir_create {dirOrigin}; 
-  convert_str::remplace_char_in_str(dir_create, "/", dir_create.size(), 0, 1);
-  dir_create = dir_create + nameMesh;
-
-  log_System::fileLogger.info("creating model binary | name = " + nameMesh); 
+  //convert_str::remplace_char_in_str(dir_create, "/", dir_create.size(), 0, 1);
+  dir_create = dir_create + nameModel;
+  
+  log_System::modelCooker_logger.info("creating model binary | modelBin = " + nameModel); 
 
   #if defined(__unix__) || defined(__unix) && defined(__MACH__)
-
-  using typeWriteFlags = std::underlying_type_t<file_OP::writeFlags>;
-   if(static_cast<typeWriteFlags>(fileT & file_OP::writeFlags::OVERWRITE))
+  
+   using typeWriteFlags = std::underlying_type_t<file_OP::writeFlags>;
+   if(!static_cast<typeWriteFlags>(fileT & file_OP::writeFlags::OVERWRITE))
   {
+    log_System::modelCooker_logger.info("overwriting modelBin | modelBin = " + nameModel); 
     w_test = pack_binModel_posix_overwrite(headerModel, meshes_ID, dir_create, dirOrigin);
-    log_System::fileLogger.success("complete writing ModelBin | name = " + nameMesh);
     return w_test;
   }
 
-   if(static_cast<typeWriteFlags>(fileT & file_OP::writeFlags::NEW_FILE))
+   if(!static_cast<typeWriteFlags>(fileT & file_OP::writeFlags::NEW_FILE))
   {
+    log_System::modelCooker_logger.info("new file modelBin | modelBin = " + nameModel); 
     w_test = pack_binModel_posix_newFile(headerModel, meshes_ID, dir_create, dirOrigin);
-    log_System::fileLogger.error("incomplete writing ModelBin | name = " + nameMesh);
     return w_test;
   }
 

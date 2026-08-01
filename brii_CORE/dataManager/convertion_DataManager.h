@@ -33,6 +33,7 @@ namespace convert_dataTypes
 namespace convert_str
 {
  bool find_badCharacters_filePath(std::string& str, size_t& pos_BC);
+ void quit_repetitive_char(std::string& str, char char_quit);
  void quit_first_End_Spaces_str(std::string& str);
  uint32_t contains_characters_str(std::string& str);
  void remplace_char_in_str(std::string& txt, std::string char_t, size_t position, uint32_t expand_str, uint32_t deleteRepetition); ///expand_str = if the position is biggest thant the size of txt, it will be expand the txt with '\0' (empty spaces) if its declare with (1), if is (0) the last character of txt will be replaced by the char_t

@@ -2,6 +2,7 @@
 #define MATERIAL_BINFORMAT_h
 #include "systemManager/platform_Manager.h"
 #include "files_CoreManager/files_Core.h"
+#include "dataManager/convertion_DataManager.h"
 #include "systemManager/logger.h"
 #include <iostream>
 #include <string>
@@ -63,7 +64,7 @@ namespace data_MatCore
 { 
   using matPack_ptr = matPack_data_register*;
   const std::string prefix_headerNameMat{"matBin_"};
-  const std::string vefNum {"leoa"};
+  const std::string vefNum {".leoa"};
   const std::string temp_verfCreationFileDir {"tempBinMat"};
 }
 
@@ -81,7 +82,16 @@ inline uint32_t pack_binMaterial_posix_overwrite(const material_LeoHeader& mat_h
  // func_Delete[1] = &funcPtr::empty_func::str_constStrAmp; 
   ////WRITE IN EXTERNAL FILE
   std::string temp_creationFileDir {mat_header.nameMaterial_Header + data_MatCore::temp_verfCreationFileDir};
-  temp_creationFileDir = dir_origin + "/" + temp_creationFileDir + "." + data_MatCore::vefNum;
+  temp_creationFileDir = dir_origin + "/" + temp_creationFileDir + data_MatCore::vefNum;
+
+  convert_str::quit_repetitive_char(temp_creationFileDir, '/');
+
+  std::string outDir_re {outDir};
+  convert_str::quit_repetitive_char(outDir_re, '/');
+  
+  log_System::materialCooker_logger.info("creating material binary | dir matBin = " + outDir_re);
+
+  ////////CONTINUE HERE, EXPLORE THE ERRORS  30/07/2026
 
   int binMat {open(temp_creationFileDir.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644)};
   
@@ -129,11 +139,11 @@ inline uint32_t pack_binMaterial_posix_overwrite(const material_LeoHeader& mat_h
 
  close(binMat);
 
-if(access(outDir.c_str(), F_OK) == 0)
+if(access(outDir_re.c_str(), F_OK) == 0)
 {
- std::filesystem::remove(outDir); ///REMOVE THE EXISTING FILE THAT WILL BE OVERWRITE
+ std::filesystem::remove(outDir_re); ///REMOVE THE EXISTING FILE THAT WILL BE OVERWRITE
 }
-   std::filesystem::rename(temp_creationFileDir, outDir); ////RENAME FILE WITH THE NAME THAT OVERWRITES THE FILE
+   std::filesystem::rename(temp_creationFileDir, outDir_re); ////RENAME FILE WITH THE NAME THAT OVERWRITES THE FILE
   /*
   if(access(outDir.c_str(), F_OK) != 0)
  {
@@ -158,7 +168,7 @@ if(access(outDir.c_str(), F_OK) == 0)
   }
 */
   //CONTINUE HERE============
-
+ log_System::materialCooker_logger.success("writing binary success | matBin = " + outDir_re);
   return 1;
 }
 
@@ -230,32 +240,31 @@ inline uint32_t pack_binMaterial(const material_LeoHeader& mat_header, const std
 
 inline uint32_t writeFile_binMaterial(const material_LeoHeader& mat_header, const std::vector<matPack_data_register>& mat_pack, const std::string& dirOrigin, file_OP::writeFlags fileT)
 {
-  std::array<std::string, 2> sen_t{};
-  sen_t[0] = "==UNSUCCESSFULL WRITING==\n";
-  sen_t[1] = "==COMPLETE WRITING==\n"; 
 
   uint32_t w_test {};
 
   std::string nameMat {mat_header.nameMaterial_Header};
-  nameMat += "." + data_MatCore::vefNum;
-  std::string dir_create = dirOrigin + "/" + nameMat; ///origin/name.leoa --- DIRECTION LEO MATERIAL
+  nameMat += data_MatCore::vefNum;
+  std::string dir_create = dirOrigin + nameMat; ///origin/name.leoa --- DIRECTION LEO MATERIAL
   
-  std::cout << "CREATING MATERIAL BINARY::MATBIN ---> " << mat_header.nameMaterial_Header << "\n";
+  log_System::materialCooker_logger.info("creating material binary | matBin = " + nameMat); 
+  //std::cout << "CREATING MATERIAL BINARY::MATBIN ---> " << mat_header.nameMaterial_Header << "\n";
 
   #if defined(__unix__) || defined(__unix) && defined(__MACH__)
 
   using typeWriteFlags = std::underlying_type_t<file_OP::writeFlags>;
-   if(static_cast<typeWriteFlags>(fileT & file_OP::writeFlags::OVERWRITE))
+ // std::cout << static_cast<typeWriteFlags>(fileT & file_OP::writeFlags::OVERWRITE) << '\n';
+   if(!static_cast<typeWriteFlags>(fileT & file_OP::writeFlags::OVERWRITE))
   {
+    log_System::materialCooker_logger.info("overwriting matBin | matBin = " + nameMat); 
     w_test = pack_binMaterial_posix_overwrite(mat_header, mat_pack, dir_create, dirOrigin);
-    std::cout << sen_t[w_test];
     return w_test;
   }
 
-   if(static_cast<typeWriteFlags>(fileT & file_OP::writeFlags::NEW_FILE))
+   if(!static_cast<typeWriteFlags>(fileT & file_OP::writeFlags::NEW_FILE))
   {
+    log_System::materialCooker_logger.info("new file matBin | matBin = " + nameMat); 
     w_test = pack_binMaterial_posix_newFile(mat_header, mat_pack, dir_create, dirOrigin);
-    std::cout << sen_t[w_test];
     return w_test;
   }
  

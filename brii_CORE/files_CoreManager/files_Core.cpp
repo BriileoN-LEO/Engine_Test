@@ -3,6 +3,7 @@
 //
 
 #include "files_Core.h"
+#include <algorithm>
 
 namespace filesystem_manager
 {
@@ -78,12 +79,18 @@ namespace customFiles
    void standard_textureNameKTX(std::string& nameTexture)
    {
       std::string f_name {nameTexture};
-      std::string new_name {};
+      std::string new_name {nameTexture};
     
       //////////RESOLVE THIS TO PREVENT INFINITE LOOP IN WHILE 
 
-      bool success{};
-      while (!success) {
+      char characterF {'_'};
+      int count_chars = std::count(nameTexture.begin(), nameTexture.end(), characterF);
+  //    std::cout << "last_name = " << f_name << '\n';
+
+     
+      uint32_t last_pos{};
+      for(int i = 0; i < count_chars; i++)
+      {
         size_t find_pos{f_name.find_first_of("_")};
 
         if (find_pos != std::string::npos) 
@@ -91,28 +98,26 @@ namespace customFiles
           uint32_t findCopy{};
          if((find_pos + 1) < f_name.size())
         {
-          findCopy = (f_name[find_pos] ^ f_name[find_pos + 1]) == 0 ? 1 : 0;
+          findCopy = static_cast<uint32_t>(!(f_name[find_pos] ^ f_name[find_pos + 1]));
+          new_name.erase(find_pos + i, findCopy);
           f_name.erase(find_pos, findCopy);
         }
 
-         new_name += f_name.substr(0, find_pos);
+        // new_name += f_name.substr(last_pos, find_pos);
+         f_name.erase(find_pos, 1);
+         last_pos = find_pos;
 
-         std::string nF { f_name.substr(find_pos + findCopy) };
-         f_name = nF;
         }
 
         else if (find_pos == std::string::npos)
         {
-          if(f_name.size() > 1) ///this because if nF gets the last posicion of f_name, new_name get it before, because there are not "_"
-         {
-          new_name += f_name.substr(0);
-         }
-          success = true;
+         break;
         }
-       std::cout << "AAAAAA\n";
       }
 
-     std::cout << "FINISH NAMING KTX RULE\n";;
+     f_name.clear(); 
+    // std::cout << "final_name = " << new_name << '\n';
+    // std::cout << "FINISH NAMING KTX RULE\n";;
     
      nameTexture = new_name;
     }

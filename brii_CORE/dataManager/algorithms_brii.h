@@ -11,11 +11,13 @@
 namespace search_algorithms
 {
   template <typename T_arg>
-  int binary_search_branchless(const T_arg* container, int size_c, T_arg& target)
+  int binary_search_branchless(const T_arg* container, size_t size_c, T_arg& target)
   {
-      int base{};
-      int n {static_cast<int>(size_c)};
-
+   if(size_c > 0)
+   {
+    int base{};
+    int n {static_cast<int>(size_c)};
+ 
       while (n > 1)
       {
           int half {n / 2};
@@ -24,13 +26,16 @@ namespace search_algorithms
       }
 
       return (container[base] == target) ? base : -1;
+    }
+
+   return -1;
   }
 
   template <typename T_arg>
-  int binary_search_std(const T_arg* container, int size_c, T_arg& target)
+  int binary_search_std(const T_arg* container, size_t size_c, T_arg& target)
   {
      int low = 0;
-     int high = size_c - 1;
+     int high = static_cast<int>(size_c) - 1;
 
      while (low <= high)
      {
@@ -50,14 +55,13 @@ namespace search_algorithms
        {
         high = mid - 1;
        }
-
      }
 
     return -1;
   }
 
   template <typename T_arg>
-  using binSearch_func = int(*)(const T_arg*, int, T_arg&);
+  using binSearch_func = int(*)(const T_arg*, size_t, T_arg&);
 
   template <typename T_arg>
   auto binary_search_OP_int(std::vector<T_arg>& container, T_arg& target)
@@ -67,7 +71,8 @@ namespace search_algorithms
     funcBin[0] = &binary_search_branchless<T_arg>;
     funcBin[1] = &binary_search_std<T_arg>;
 
-   int size_E {static_cast<int>(container.size()) * static_cast<int>(sizeof(T_arg))};
+   //size_t size_E {container.size() * sizeof(T_arg)};
+   size_t size_E {container.size()};
 
    int func_p {(size_E <= 24000) ? 0 : 1};
 

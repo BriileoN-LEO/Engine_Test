@@ -4,6 +4,7 @@
 
 #ifndef TEXTURESPACK_BINFORMAT_H
 #define TEXTURESPACK_BINFORMAT_H
+#include "dataManager/convertion_DataManager.h"
 #include <ktx.h> ///NUEVA LIBRERIA PARA CARGAR IMAGENES
 #include <KHR/khr_df.h>
 //#include "cmake-build-debug/_deps/ktx_software-src/lib/vkformat_enum.h" /////CHANGE THIS FOR A WAY TO REMPLACE THIS
@@ -18,10 +19,11 @@
 #pragma pack(push, 1)
 
 constexpr size_t MAX_SIZE_STR_BIN_TEXTURE { 256 };
-
+constexpr char vN_LEOT[4] {'L', 'E', 'O', 'T'};
+ 
 struct texPack_LeoHeader
 {
-    char verifiedNumber[4]{};  ///LEOT
+    char verifiedNumber[4]{vN_LEOT[0], vN_LEOT[1], vN_LEOT[2], vN_LEOT[3]};  ///LEOT
     uint32_t version{};
 
   //  uint32_t texturesID{};
@@ -145,13 +147,19 @@ struct loadTexture_Memory
 
 };
 
+namespace data_texCore
+{
+ constexpr std::string vefNum {".leot"};
+
+}
+
 inline uint32_t pack_binTextures_KTX2(std::vector<loadTexture_Memory>& texKTX2, const std::string& outDir, uint32_t version, std::vector<int>& posTex)
 {
+    std::string outDir_re {outDir};
+    outDir_re += data_texCore::vefNum;
+    convert_str::quit_repetitive_char(outDir_re, '/');
+
     texPack_LeoHeader header{};
-    header.verifiedNumber[0] = 'L';
-    header.verifiedNumber[1] = 'E';
-    header.verifiedNumber[2] = 'O';
-    header.verifiedNumber[3] = 'T';
     header.version = version;
     ///ADD TE OFFSET  ////////CONTINUE HERE
 
@@ -193,9 +201,8 @@ inline uint32_t pack_binTextures_KTX2(std::vector<loadTexture_Memory>& texKTX2, 
 
     header.texturesCount = posTex.size();
 
-
     //////////////WRITING BINARY FILE/////////////////
-    std::ofstream binTex (outDir, std::ios::binary);
+    std::ofstream binTex (outDir_re, std::ios::binary);
     if (!binTex.is_open())
     {
       std::cerr << "ERROR::OPENING FILE --->" << outDir;
@@ -215,7 +222,7 @@ inline uint32_t pack_binTextures_KTX2(std::vector<loadTexture_Memory>& texKTX2, 
     for (auto& num : posTex)
     {
      std::cout << "WRITTING BYTES::TEXTURE BINARY::TEXTURE --->" << texKTX2[num].name << "\n";
-     binTex.write(reinterpret_cast<const char*>(texKTX2[num].ktx_Bytes),  texKTX2[num].dataTex.size_texBin);
+     binTex.write(reinterpret_cast<const char*>(&texKTX2[num].ktx_Bytes),  texKTX2[num].dataTex.size_texBin);
 
      texKTX2[num].clearDataMem();
     }
@@ -223,7 +230,7 @@ inline uint32_t pack_binTextures_KTX2(std::vector<loadTexture_Memory>& texKTX2, 
     ////REVIEW THIS FUNCTION
 
   binTex.close();
-  std::cout << "BINARY TEXTURES SUCCESSFULLY CREATED:: FILE ---> " << outDir << "\n";
+  std::cout << "BINARY TEXTURES SUCCESSFULLY CREATED:: FILE ---> " << outDir_re << "\n";
   return 1;
 }
 

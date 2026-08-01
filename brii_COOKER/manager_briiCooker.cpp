@@ -32,7 +32,8 @@ namespace manager_GD
    const std::string pathMaterials {std::string(SOURCE_DIR_ENGINE_B) + "assets_engine/bin_Materials/"};
    const std::string pathTextures {std::string(SOURCE_DIR_ENGINE_B) + "assets_engine/KTX_binTextures/"};
 
-   const std::string texture_binSign {".leotex"};
+   const std::string texture_binSign {".leot"};
+
 }
 
 namespace manager_AssimpData
@@ -1356,6 +1357,8 @@ namespace manage_texturesCooker
 
    void resizeTex(std::vector<unsigned char>& newDataImage, data_image& texData, const int& maxHeight, const int& maxWidth, resizeType rT)
    {
+     std::cout << "RESIZING_TEX" << '\n';
+    
       if (texData.status_tex == texStatus::NOT_LOADED)
       {
         int pass_tex { (maxHeight != 0) && (maxWidth != 0) ? 1 : 0 }; //// 0 == ANY EQUAL TO ZERO
@@ -1803,7 +1806,7 @@ namespace manage_texturesCooker
       }
 
       /////CREATE THE FILE OF BIN DIRECTORY OUT OF THE FUNCTION
-      std::string textures_binDirectory{ manager_GD::pathTextures + "/" + nameModel_Path + "_textures" + manager_GD::texture_binSign }; ///CREATE A BINARY DIRECTORY FROM THIS
+      std::string textures_binDirectory{ manager_GD::pathTextures + "/" + nameModel_Path + "_textures"}; ///CREATE A BINARY DIRECTORY FROM THIS
 
       ////directory for KTX2 textures  ---------- hash of the texture
       //const std::string directory_TexturesKTX2{directory + nameModel_Path + "_textures"};

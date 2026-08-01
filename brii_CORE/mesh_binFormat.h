@@ -2,6 +2,7 @@
 #define MESH_BINFORMAT_H
 #include "systemManager/platform_Manager.h"
 #include "files_CoreManager/files_Core.h"
+#include "dataManager/convertion_DataManager.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -27,7 +28,7 @@ struct mesh_LeoHeader
  {
   return nameMeshBin;
  }
- 
+
  auto& get_generalMatTrans()
  {
    return generalMesh_transformation;
@@ -176,7 +177,12 @@ inline uint32_t pack_binMesh_posix_overwrite(const mesh_LeoHeader& headerMesh, s
 { 
 
   std::string temp_creationFileDir {headerMesh.nameMeshBin + data_meshCore::temp_verfCreationFileDir};
-  temp_creationFileDir = dir_origin + "/" + temp_creationFileDir + "." + data_meshCore::vefNum;
+  temp_creationFileDir = dir_origin + temp_creationFileDir + data_meshCore::vefNum;
+ 
+  convert_str::quit_repetitive_char(temp_creationFileDir, '/'); 
+
+  std::string outDir_re{outDir};
+  convert_str::quit_repetitive_char(outDir_re, '/');
 
   int binMesh {open(temp_creationFileDir.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644)};
 
@@ -208,12 +214,24 @@ inline uint32_t pack_binMesh_posix_overwrite(const mesh_LeoHeader& headerMesh, s
    bytesRest_write += mesh_D.dataIndices->size() * bytes_sizeMeshIndices;	
   }
 
+  /////////SEE IF THERES IS SPACE TO ALLOCATE THE BINARY AND WRITE
+  int reserve_space = posix_fallocate(binMesh, 0, bytesRest_write);
+  if(reserve_space != 0)
+  {
+   log_System::fileLogger.error("not enought space to write modelBin | modelBin = " + temp_creationFileDir);
+   close(binMesh);
+   filesystem_manager::delete_file_sentence(headerMesh.nameMeshBin, temp_creationFileDir);
+   return 0;
+  }
+
   off_t offset_bin{};//STARTING OFFSET, CURRENT WRITING OFFSET
-  const char* buffer_header {reinterpret_cast<const char*>(&headerMesh)};
+  const void* buffer_header {reinterpret_cast<const void*>(&headerMesh)};
 
   //FASE 1 === ADD MESH BIN HEADER
   std::cout << "WRITING IN FILE ---> " << temp_creationFileDir << "\n";
-  ssize_t countBytes_HeaderWrite {pwrite(binMesh, buffer_header, bytesRest_write, offset_bin)};
+  ssize_t countBytes_HeaderWrite {pwrite(binMesh, buffer_header, bytes_sizeHeader, offset_bin)}; ///CORREGIR bytesRest_write
+
+  //////////////////CONTINUE HEREEE////////
 
   if(fileManager_POSIX::pwriting_handlingError(countBytes_HeaderWrite, bytes_sizeHeader, temp_creationFileDir) == 0)
   {
@@ -223,7 +241,7 @@ inline uint32_t pack_binMesh_posix_overwrite(const mesh_LeoHeader& headerMesh, s
   }
 
   offset_bin = countBytes_HeaderWrite;
-  bytesRest_write -= bytes_sizeHeader;
+//  bytesRest_write -= bytes_sizeHeader;
 
  ///FASE 2 === ADD MESHES PACK INFO REGISTER 
  for(auto& mesh_D : data_meshes)
@@ -236,8 +254,8 @@ inline uint32_t pack_binMesh_posix_overwrite(const mesh_LeoHeader& headerMesh, s
    mesh_D.mesh_info->offset_meshBin = vertex_D_offsets;
    mesh_D.mesh_info->offset_startIndices = vertex_D_offsets + size_dataVertexD;
   
-   const char* buffer_MeshR{reinterpret_cast<const char*>(mesh_D.mesh_info)};
-   ssize_t countBytes_registerMesh {pwrite(binMesh, buffer_MeshR, bytesRest_write, offset_bin)};
+   const void* buffer_MeshR{reinterpret_cast<const void*>(mesh_D.mesh_info)};
+   ssize_t countBytes_registerMesh {pwrite(binMesh, buffer_MeshR, bytes_sizeMeshPR, offset_bin)};
  
   if(fileManager_POSIX::pwriting_handlingError(countBytes_registerMesh, bytes_sizeMeshPR, temp_creationFileDir) == 0)
   {
@@ -247,10 +265,10 @@ inline uint32_t pack_binMesh_posix_overwrite(const mesh_LeoHeader& headerMesh, s
   }
 
    offset_bin += countBytes_registerMesh;
-   bytesRest_write -= countBytes_registerMesh;
+ //  bytesRest_write -= countBytes_registerMesh;
    vertex_D_offsets += meshD_size; // sum the sizeof bites
  } 
-
+  
   ///FASE 3 === ADD MESHES DATA (vertex, indices)
  for(auto& mesh_D : data_meshes)
  { 
@@ -258,8 +276,8 @@ inline uint32_t pack_binMesh_posix_overwrite(const mesh_LeoHeader& headerMesh, s
    size_t size_vertexArray_write {mesh_D.dataVertex->size() * bytes_sizeMeshVertex};
 
     ///FASE 3.1 === VERTEX	 
-    const char* buffer_vertex{reinterpret_cast<const char*>(mesh_D.dataVertex->data())};
-    ssize_t countBytes_rVertex{pwrite(binMesh, buffer_vertex, bytesRest_write, offset_bin)};
+    const void* buffer_vertex{reinterpret_cast<const void*>(mesh_D.dataVertex->data())};
+    ssize_t countBytes_rVertex{pwrite(binMesh, buffer_vertex, size_vertexArray_write, offset_bin)};
 
     if(fileManager_POSIX::pwriting_handlingError(countBytes_rVertex, size_vertexArray_write, temp_creationFileDir) == 0)
      {
@@ -269,12 +287,12 @@ inline uint32_t pack_binMesh_posix_overwrite(const mesh_LeoHeader& headerMesh, s
      }
 
    offset_bin += countBytes_rVertex;
-   bytesRest_write -= countBytes_rVertex; 
+   //bytesRest_write -= countBytes_rVertex; 
 
    size_t size_indicesArray_write {mesh_D.dataIndices->size() * bytes_sizeMeshIndices};
     ///FASE 3.2 === INDICES
-    const char* buffer_indices{reinterpret_cast<const char*>(mesh_D.dataIndices->data())};
-    ssize_t countBytes_indices{pwrite(binMesh, buffer_indices, bytesRest_write, offset_bin)};
+    const void* buffer_indices{reinterpret_cast<const void*>(mesh_D.dataIndices->data())};
+    ssize_t countBytes_indices{pwrite(binMesh, buffer_indices, size_indicesArray_write, offset_bin)};
 
     if(fileManager_POSIX::pwriting_handlingError(countBytes_indices, size_indicesArray_write, temp_creationFileDir) == 0)
      {
@@ -284,17 +302,18 @@ inline uint32_t pack_binMesh_posix_overwrite(const mesh_LeoHeader& headerMesh, s
      }
 
    offset_bin += countBytes_indices;
-   bytesRest_write -= countBytes_rVertex; 
+   //bytesRest_write -= countBytes_rVertex; 
  }
 
-close(binMesh);
+ close(binMesh);
 
-if(access(outDir.c_str(), F_OK) == 0)
+if(access(outDir_re.c_str(), F_OK) == 0)
 {
- std::filesystem::remove(outDir); ///REMOVE THE EXISTING FILE THAT WILL BE OVERWRITE
+ std::filesystem::remove(outDir_re); ///REMOVE THE EXISTING FILE THAT WILL BE OVERWRITE
 }
- std::filesystem::rename(temp_creationFileDir, outDir); ////RENAME FILE WITH THE NAME THAT OVERWRITES THE FILE  
+ std::filesystem::rename(temp_creationFileDir, outDir_re); ////RENAME FILE WITH THE NAME THAT OVERWRITES THE FILE  
 // std::cout << "SUCCESSFULLY complete writing MeshBin file:: file = " << headerMesh.nameMeshBin << "\n"; 
+  log_System::meshCooker_logger.success("writing binary success | meshBin = " + outDir_re);
  return 1;
 }
 
@@ -320,26 +339,26 @@ inline uint32_t writeFile_MeshBinary(const mesh_LeoHeader& headerMesh, std::vect
   uint32_t w_test {};
 
   nameMesh += data_meshCore::vefNum;
-  std::string dir_create = dirOrigin + "/" + nameMesh; ///origin/name.leoa --- DIRECTION LEO MATERIAL
- 
-  log_System::fileLogger.info("CREATING MATERIAL BINARY | " + nameMesh); 
+  std::string dir_create = dirOrigin + nameMesh; ///origin/name.leoa --- DIRECTION LEO MATERIAL
+
+  log_System::meshCooker_logger.info("creating mesh binary | meshBin = " + nameMesh); 
  // std::cout << "CREATING MATERIAL BINARY::MATBIN ---> " << headerMesh.nameMeshBin;
 
   #if defined(__unix__) || defined(__unix) && defined(__MACH__)
 
   using typeWriteFlags = std::underlying_type_t<file_OP::writeFlags>;
-   if(static_cast<typeWriteFlags>(fileT & file_OP::writeFlags::OVERWRITE))
+   if(!static_cast<typeWriteFlags>(fileT & file_OP::writeFlags::OVERWRITE))
   {
+    log_System::meshCooker_logger.info("overwriting meshBin | meshBin = " + nameMesh);
     w_test = pack_binMesh_posix_overwrite(headerMesh, data_meshes, dir_create, dirOrigin);
-    log_System::fileLogger.success("complete writing meshBin | " + nameMesh);
     return w_test;
   }
 
-   if(static_cast<typeWriteFlags>(fileT & file_OP::writeFlags::NEW_FILE))
+   if(!static_cast<typeWriteFlags>(fileT & file_OP::writeFlags::NEW_FILE))
   {
-    w_test = pack_binMesh_posix_newFile(headerMesh, data_meshes, dir_create, dirOrigin);
-    log_System::fileLogger.error("incomplete writing meshBin | " + nameMesh);
-    return w_test;
+   log_System::meshCooker_logger.info("new file meshBin | meshBin = " + nameMesh);
+   w_test = pack_binMesh_posix_newFile(headerMesh, data_meshes, dir_create, dirOrigin);
+   return w_test;
   }
 
  #elif defined(_WIN32)
