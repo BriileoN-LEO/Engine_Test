@@ -2278,3 +2278,156 @@ namespace data_leoBinary
  }
 
 }
+
+
+namespace testBin_Laboratory
+{
+  void test_readModelBin()
+ {
+   std::string dir_model {manager_GD::pathModels + "Sponza_2.leor"};
+
+   std::ifstream binModel(dir_model.c_str(), std::iostream::binary);
+   if(!binModel.is_open())
+   {
+    std::cout << "ERROR OPEN BINARY MODEL FILE\n";
+    return;
+   }
+
+   model_LeoHeader binM_s{};
+   //size_t binM_s{};
+   binModel.read(reinterpret_cast<char*>(&binM_s), sizeof(model_LeoHeader));
+   binM_s.print_info();
+
+   std::vector<uint64_t> meshes_ID{};
+   meshes_ID.resize(binM_s.get_meshesCount());
+ 
+   binModel.read(reinterpret_cast<char*>(meshes_ID.data()), meshes_ID.size() * sizeof(uint64_t));
+   /*
+   for(int i = 0; i < static_cast<int>(meshes_ID.size()); i++)
+   {
+    binModel.read(reinterpret_cast<char*>(&meshes_ID[i]), sizeof(uint64_t));
+   }
+   */
+
+   std::cout << "[MESHES MODEL]\n";
+   for(int i = 0; i < static_cast<int>(meshes_ID.size()); i++)
+   {
+    std::cout << std::to_string(i) << " = " << meshes_ID[i] << '\n'; 
+   }
+
+   meshes_ID.clear();
+   
+   binModel.close();
+ } 
+  
+  void test_readMeshBin()
+ {
+   std::string dir_mesh {manager_GD::pathMeshes + "Sponza_2_meshes.leom"};
+   
+   std::ifstream binMesh(dir_mesh.c_str(), std::iostream::binary);
+   if(!binMesh.is_open())
+   {
+    std::cout << "ERROR OPEN BINARY MESH FILE\n";
+    return;
+   }
+
+   mesh_LeoHeader binM_s{};  
+ 
+   binMesh.read(reinterpret_cast<char*>(&binM_s), sizeof(mesh_LeoHeader));
+
+   const auto& meshesCount {binM_s.get_meshesCount()};
+
+   std::vector<meshPack_Register> pack_meshes{};
+   pack_meshes.resize(meshesCount);
+   
+   binMesh.read(reinterpret_cast<char*>(pack_meshes.data()), meshesCount * sizeof(meshPack_Register));
+
+   std::vector<data_meshCore::mesh_info> meshes_info{};
+   meshes_info.resize(meshesCount);
+
+   constexpr size_t vertexD_s {sizeof(vertex_D)};
+   constexpr size_t uint_s {sizeof(unsigned int)};
+
+   for(int i = 0; i < static_cast<int>(meshesCount); i++)
+   {
+    size_t sizeVertex_bits {pack_meshes[i].offset_startIndices - pack_meshes[i].offset_meshBin};
+    size_t sizeIndices_bits {pack_meshes[i].size_meshBin - sizeVertex_bits};
+
+    size_t vertexVec_s {sizeVertex_bits / vertexD_s};
+    size_t indicesVec_s {sizeIndices_bits / uint_s};
+  
+    std::vector<vertex_D>& vertex_info{meshes_info[i].vertex};
+    std::vector<unsigned int>& indices_info{meshes_info[i].indices};
+   
+    vertex_info.resize(vertexVec_s);
+    indices_info.resize(indicesVec_s);
+   
+    binMesh.read(reinterpret_cast<char*>(vertex_info.data()), sizeVertex_bits);
+    binMesh.read(reinterpret_cast<char*>(indices_info.data()), sizeIndices_bits);
+   }
+
+
+   binMesh.close();
+
+   binM_s.print_info();
+
+   int count{1};
+   int start{};
+   for(auto& mesh : pack_meshes)
+   {
+    if(start == count)
+    {
+      break;
+    }
+
+    std::cout << "meshID[" + std::to_string(start) + "] = " << mesh.nameMesh << '\n';
+    
+    for(int i = 0; i < static_cast<int>(meshes_info[start].vertex.size()); i++)
+    {
+    meshes_info[start].vertex[i].print_info();
+    }
+
+      /*
+    std::cout << "=====================\n";
+    std::cout << "[INDICES]\n";
+    for(int i = 0; i < static_cast<int>(meshes_info[start].indices.size()); i++)
+    {
+     std::cout << "[" << i << "] = " << meshes_info[start].indices[i] << '\n'; 
+    }
+     std::cout << "=====================\n";
+    */
+    start++;
+   }
+
+
+   /*
+   int count{5};
+   int start{};
+   for(auto& mesh : pack_meshes)
+   {
+    if(start == count)
+    {
+      break;
+    }
+
+    std::cout << "meshID[" + std::to_string(start) + "] = " << mesh.nameMesh << '\n';
+    meshes_info[start].vertex[1].print_info();
+    
+    std::cout << "=====================\n";
+    std::cout << "[INDICES]\n";
+    for(int i = 0; i < 2; i++)
+    {
+     std::cout << "[" << i << "] = " << meshes_info[start].indices[i] << '\n'; 
+    }
+     std::cout << "=====================\n";
+
+    start++;
+   }
+  */
+
+
+   ///////CONTINUE HERE WITH REVIEWING THE DATA THAT IS SAVED IN THE BINARY
+
+} 
+}
+

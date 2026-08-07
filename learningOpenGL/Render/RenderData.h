@@ -27,7 +27,7 @@ namespace RenderData_Set
 	extern std::map<std::string, ObjCreation::ModelCreation> ModelCreation_D;
 
     //extern std::map<std::string, Assimp_D::Model> AssimpModel_D; ///CHANGE THIS TO EDIT THEM LIKE A STD::MAP
-    extern std::optional<resourceManager::manager_Model> AssimpModel_D;
+        extern std::optional<resourceManager::manager_Model> AssimpModel_D;
 	extern std::optional<utilities::scene> ModelsScene_D;
 	extern std::optional<discard_objs::discard_objs_scenario> discardObj_D;
 
@@ -120,8 +120,8 @@ namespace RenderData_Set
 
 	}
 
-	const void loadCPU_Shader();
-	const void insertData_toShader();
+	void loadCPU_Shader();
+	void insertData_toShader();
 	template<typename shaderSet>
 	void running_LoadingShaders(std::function<shaderSet> functionShader)
 	{

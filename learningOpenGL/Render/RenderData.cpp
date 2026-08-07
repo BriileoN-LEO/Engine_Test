@@ -303,7 +303,7 @@ namespace RenderData_Set
 
 		shading::settings_LayoutUni.emplace(  /////RESOLVE WHY I QUIT THIS AND ALL CONVERTS TO INVICIBLE
 		shading::layoutType::SHADER_SETTINGS,
-	    std::pair<std::string, int>("shading_settings", 2)
+	        std::pair<std::string, int>("shading_settings", 2)
 		);
 
 	}
@@ -437,8 +437,8 @@ namespace RenderData_Set
 		std::thread loadThread_Models(Assimp_D::loadToCPU::loadModelsThread, models);
 		
 		loadThread_Models.detach();
-
 	}
+
 	const void insertData_toModel()
 	{
 		int actual_countSizeModel{ Assimp_D::loadToCPU::atomic_CounterModel.load() };
@@ -654,7 +654,7 @@ namespace RenderData_Set
 			//Assimp_D::loadToCPU::finishLoadModels = false;
 	}
 
-	const void loadCPU_Shader()
+	 void loadCPU_Shader()
 	{
 		std::vector <shading::layoutType> LB_01
 		{
@@ -717,7 +717,7 @@ namespace RenderData_Set
 
 		loadShader_Thread.detach();
 	}
-	const void insertData_toShader()
+	 void insertData_toShader()
 	{
 		int atomic_CounterShader{ shading::loadToCPU::atomic_CounterShader.load() };
 
@@ -1660,8 +1660,6 @@ namespace RenderData_Set
 		}
 
 		loadLayoutBuffer_shader();
-
-
 	}
 	
 }

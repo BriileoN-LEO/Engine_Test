@@ -4,6 +4,8 @@
 //#include "Model_Assimp/ModelAssimp.h"
 #include "learningOpenGL.h"
 #include "2D_geo/basic_geometry_D.h"
+#include <unordered_set>
+#include "Model_Assimp/ModelAssimp.h"
 
 namespace data_Manager
 {
@@ -18,6 +20,10 @@ namespace geo_2D
 
 namespace Assimp_D
 {
+  enum class shader_type : Uint8;
+  struct excluded_Obj;
+  struct shader_SetType;
+
   namespace loadToCPU
   {
     struct ModelData_loadCPU;
@@ -50,7 +56,7 @@ namespace lights_T
 }
 //using pGeo2D_raw = geo_2D::point_geo*;
 
-namespace discard_objs  ///////////CONTINUE WITH DISCARD SCENARIOS
+namespace discard_objs
 {
   class objs_Discard
   {

@@ -22,7 +22,9 @@ add_executable(briiCore
  "libs_in_CORE.h"
  "systemManager/platform_Manager.h"
  "systemManager/logger.h"          #////===MULTIPLATFORM LIBRARY====
- "systemManager/logger.cpp"       
+ "systemManager/logger.cpp"
+ "threadCore/thread_Manager.h"
+ "threadCore/thread_Manager.cpp"
 )
 
 add_library(brii_CORE STATIC
@@ -45,6 +47,8 @@ add_library(brii_CORE STATIC
  "dataManager/algorithms_brii.cpp"
  "dataManager/algorithms_brii.h"
  "libs_in_CORE.h"
+ "threadCore/thread_Manager.h"
+ "threadCore/thread_Manager.cpp"
 )
 
 target_link_libraries(brii_CORE PRIVATE

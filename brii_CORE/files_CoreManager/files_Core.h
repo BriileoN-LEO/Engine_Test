@@ -27,7 +27,6 @@ namespace filesystem_manager
 {
   void create_DirectoryFile(const std::string& filePath, uint32_t& directoryExist);
   void delete_file_sentence(std::string sentence, const std::string& filePath);
- 
   uint32_t exist_filePath(const std::string& path); /// return 1 = exist file  ||  return 0 = not exist
 }
 

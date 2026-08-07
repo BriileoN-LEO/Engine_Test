@@ -6,6 +6,7 @@
 #define LIBS_DATATYPES_BRII_H
 #include <iostream>
 #include <type_traits>
+#include <concepts>
 
 //namespace flags_T
 //{
@@ -66,12 +67,21 @@ namespace funcPtr
   {
    void str_constStrAmp(std::string f1, const std::string& f2);
   }
- 
-    using funcDouble_uint64_t = void(*)(uint64_t&, uint64_t&);
-    using func_Double_str_constUint = void(*)(std::string&, const std::string&, const unsigned int&);
 
-    using func_str_constStrAmp = void(*) (std::string, const std::string&);
-    using func_strDoubleAmp_strAmp = void(*)(std::string&&, const std::string&);
+  ///NEEDS TO SATISFY THAT THE TYPE IS FUNCTION POINTER
+  template <typename T>
+  constexpr bool is_func_ptr = std::is_pointer<T>::value && std::is_function<typename std::remove_pointer<T>::type>::value;
+  
+  //USED TO DETERMINADE IF THE TEMPLATE OF FUNCTION OR CLASS IS DETERMINATED VALUE TYPE, IN THIS CASE NEEDS TO BE A FUNCTION POINTER
+  template <typename T>
+  concept ptr_func_only = is_func_ptr<T>;  
+
+
+  using funcDouble_uint64_t = void(*)(uint64_t&, uint64_t&);
+  using func_Double_str_constUint = void(*)(std::string&, const std::string&, const unsigned int&);
+
+  using func_str_constStrAmp = void(*) (std::string, const std::string&);
+  using func_strDoubleAmp_strAmp = void(*)(std::string&&, const std::string&);
    // using func_lambdaFunc_void = void(*)(void(*)(void*), void*); /// (function, data) --> void    ///////////USE IN THE FUTURE
 }
 

@@ -42,7 +42,16 @@ struct model_LeoHeader
   return version;
  }
 
-
+ void print_info()
+ {
+  std::cout << "======================\n";
+  std::cout << "[INFO MODEL BINARY]\n";
+  std::cout << "name = " << modelName << '\n';
+  std::cout << "meshes count = " << meshesCount << '\n';
+  std::cout << "vef number = " << verifiedNumber[0] <<  verifiedNumber[1] <<  verifiedNumber[2] <<  verifiedNumber[3] << '\n';
+  std::cout << "version = " << version << '\n';
+  std::cout << "======================\n";
+}
    // uint64_t modelID{};
 };
 ///REGISTER NUMBER OF ID MESHES

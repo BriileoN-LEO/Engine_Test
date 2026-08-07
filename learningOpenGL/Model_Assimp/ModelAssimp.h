@@ -234,8 +234,6 @@ namespace Assimp_D
 		ModelData_loadCPU processModel(insertProcessModel dataModel);
 		void processNode(aiNode* node, const aiScene* scene, std::vector<MeshData_loadCPU>& meshes, std::string directory);
 		MeshData_loadCPU processMesh(aiMesh* mesh, const aiScene* scene, std::string directory, glm::mat4& model_matrix);
-
-
 	}
 
 	class Mesh {

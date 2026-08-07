@@ -28,7 +28,7 @@ struct mesh_LeoHeader
  {
   return nameMeshBin;
  }
-
+ 
  auto& get_generalMatTrans()
  {
    return generalMesh_transformation;
@@ -49,7 +49,18 @@ struct mesh_LeoHeader
   return version;
  }
  
-};
+ void print_info()
+ {
+  std::cout << "======================\n";
+  std::cout << "[INFO MESH BINARY]\n";
+  std::cout << "name = " << nameMeshBin << '\n';
+  std::cout << "meshes count = " << meshesCount << '\n';
+  std::cout << "vef number = " << verifiedNumber[0] <<  verifiedNumber[1] <<  verifiedNumber[2] <<  verifiedNumber[3] << '\n';
+  std::cout << "version = " << version << '\n';
+  std::cout << "======================\n";
+}
+
+} ;
 
 struct meshPack_Register
 {
@@ -94,6 +105,16 @@ struct vertex_D //[VERTICES]
     this->uv[1] = uv[1];
  } 
 
+  void print_info()
+ {
+  std::cout << "=========================\n";
+  std::cout << "[VERTEX DATA]\n";
+  std::cout << "position = {" << position[0] << ", " << position[1] << ", " << position[2] << "}\n";
+  std::cout << "normal = {" << normal[0] << ", " << normal[1] << ", " << normal[2] << "}\n";
+  std::cout << "uv = {" << uv[0] << ", " << uv[1] << "}\n";
+  std::cout << "=========================\n"; 
+ }
+
 };
 ////ALL INDICES IN THE BINARY [INDICES]
 ///extract the indices viewing the sizeof(unsigned int)
@@ -116,6 +137,13 @@ namespace data_meshCore
  {
   return MAX_SIZE_STR_BIN_MESH;
  }
+
+ struct mesh_info
+ {
+  std::vector<vertex_D> vertex{};
+  std::vector<unsigned int> indices{}; 
+ };
+ 
 }
 
 struct data_meshF

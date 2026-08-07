@@ -54,7 +54,6 @@ namespace manager_GD
   extern const std::string pathModels;
   extern const std::string pathMeshes; 
 
-  extern const std::string texture_binSign;
 }
 
 namespace manager_AssimpData
@@ -404,6 +403,15 @@ namespace data_leoBinary
  void create_ModelBinaries(const std::string& directory, file_OP::writeFlags& fileT);
  void create_MeshBinaries(const std::string& directory, file_OP::writeFlags& fileT);
  void create_MaterialBinaries(const std::string& directory, file_OP::writeFlags& fileT);
+ 
+}
+
+
+/////////TESTING IF THE BINARIES WORKS////////////////
+namespace testBin_Laboratory
+{
+ void test_readModelBin();
+ void test_readMeshBin();
  
 }
 
