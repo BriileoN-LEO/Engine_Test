@@ -1134,8 +1134,8 @@ namespace textureCache
 
           nameTexture = prefixTexture + texDataManager::typeTex_ClusteredShading_prePass[texMat.typeTex].textureInsert;
 
-		  shader.setInt(nameTexture, idx);
-		  glActiveTexture(GL_TEXTURE0 + idx);
+	      shader.setInt(nameTexture, idx);
+	      glActiveTexture(GL_TEXTURE0 + idx);
 	      glBindTexture(GL_TEXTURE_2D, textures[texMat.nameTexture].textureID);
 
 	      nameTexture = prefixTexture + texDataManager::typeTex_ClusteredShading_prePass[texMat.typeTex].textureBool;
@@ -1269,11 +1269,11 @@ namespace texLoad_Data
 
 	void set_dataImage_info()
 	{
-       dataImage_map_pos.emplace(GL_RGB, 0);
-	   dataImage_map_pos.emplace(GL_RGBA, 1);
+         dataImage_map_pos.emplace(GL_RGB, 0);
+	 dataImage_map_pos.emplace(GL_RGBA, 1);
 
-	   dataImage_BitsSize[0] = GL_RGB32F;
-	   dataImage_BitsSize[1] = GL_RGBA32F;
+	 dataImage_BitsSize[0] = GL_RGB32F;
+	 dataImage_BitsSize[1] = GL_RGBA32F;
 
 	}
 

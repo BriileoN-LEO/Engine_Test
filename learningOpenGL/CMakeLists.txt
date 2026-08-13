@@ -38,6 +38,12 @@ add_executable(Learning "learningOpenGL.cpp" "learningOpenGL.h"
 "libCust_openGL/lib_openGL.cpp" "libCust_openGL/lib_openGL.h"
 "Render/Clustered_Shading_Render.cpp" "Render/Clustered_Shading_Render.h"
 "files_manager/files_DataManager.cpp" "files_manager/files_DataManager.h"
+"resource_Manager/material_Manager.h" "resource_Manager/material_Manager.cpp" 
+"resource_Manager/shader_Manager.h" "resource_Manager/shader_Manager.cpp" 
+"resource_Manager/texture_Manager.h" "resource_Manager/texture_Manager.cpp" 
+"resource_Manager/bufferShader_Manager.h" "resource_Manager/bufferShader_Manager.cpp" 
+
+
 #"brii_CORE/Types_import.h"
         #"libs/SDL/lib/arm64"
 

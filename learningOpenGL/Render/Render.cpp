@@ -574,14 +574,13 @@ namespace openGL_render
      
 	void DRAW_RENDER()
 	{
-      if (RENDER_CS_OR_FS == false)
-      {
-      	render::renderPhase();  ///FOWARD RENDERING(LEGACY)
-      }
-
-	  else if(RENDER_CS_OR_FS == true)
+           if (RENDER_CS_OR_FS == false)
+          { 
+            render::renderPhase();  ///FOWARD RENDERING(LEGACY)
+          }
+	   else if(RENDER_CS_OR_FS == true)
 	  {
-	  	render_ClusteredShading::render_All_CS();   ///CLUSTERED SHADING RENDERING(NEW TECHNIQUE)
+	    render_ClusteredShading::render_All_CS();   ///CLUSTERED SHADING RENDERING(NEW TECHNIQUE)
 	  }
 	}
 

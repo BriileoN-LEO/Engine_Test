@@ -36,6 +36,7 @@ struct texPack_LeoHeader
 struct texPack_data_register
 {
     char textureName[MAX_SIZE_STR_BIN_TEXTURE]{};
+    size_t sizeNameTexture{};
     uint64_t textureID{};
    // uint64_t texture_nameLenght{};
     ///--name texture - STRING

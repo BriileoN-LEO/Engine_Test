@@ -18,7 +18,7 @@ constexpr char vN_LEOM[4] {'L', 'E', 'O', 'M'};
 ////EACH MODEL WILL HAVE ONE BINARY WITH ALL MESHES
 struct mesh_LeoHeader
 {
- char nameMeshBin[MAX_SIZE_STR_HEADER]{}; ////256 bytes 
+ char nameMeshBin[MAX_SIZE_STR_HEADER]{}; ////256 bytes
  float generalMesh_transformation[16]{};
  size_t meshesCount{}; // 8 bytes
  char verifiedNumber[4]{vN_LEOM[0], vN_LEOM[1], vN_LEOM[2], vN_LEOM[3]};  ///LEOM [HEADER] || 4 bytes
@@ -73,6 +73,8 @@ struct meshPack_Register
  size_t offset_meshBin{}; ///START OF CONTENT VERTEX_D
  size_t offset_startIndices{}; ///START OF CONTENT INDICES
  size_t size_meshBin{};
+ 
+ size_t sizeNameMesh{};//NEW
  
  float mesh_transformation[16]{};
 
@@ -144,6 +146,12 @@ namespace data_meshCore
   std::vector<unsigned int> indices{}; 
  };
  
+  struct import_meshBinary
+ {
+  meshPack_Register mesh_data{};
+  std::vector<vertex_D> vertex{};
+  std::vector<unsigned int> indices{};
+ };
 }
 
 struct data_meshF

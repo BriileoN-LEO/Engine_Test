@@ -89,7 +89,6 @@ namespace texDataManager
 		[[maybe_unused]] int width{};
 		[[maybe_unused]] int height{};
 		[[maybe_unused]] int nrChannels{};
-
 	};
 
 	struct textureD_info_contentUI

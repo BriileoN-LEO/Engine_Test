@@ -34,4 +34,11 @@ extern logger modelCooker_logger;
 extern logger assimp_logger;
 }
 
+namespace log_SystemEngine
+{
+extern logger meshEngine_log;
+extern logger modelEngine_log;
+
+}
+
 #endif

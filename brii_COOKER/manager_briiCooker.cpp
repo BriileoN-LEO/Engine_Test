@@ -98,6 +98,7 @@ namespace manager_AssimpData
      constexpr size_t size_nameMesh{data_meshCore::get_maxSize_nameMeshArray()};
      char (&array_nameMesh)[size_nameMesh] = mesh_info.get_nameMesh();
      convert_str::conv_str_to_rawArray<size_nameMesh>(nameMesh, array_nameMesh);
+     mesh_info.sizeNameMesh = nameMesh.size();
    }
  
    void mesh_D::insert_meshID(uint64_t& meshID)
@@ -189,7 +190,7 @@ namespace manager_AssimpData
      ////implement here conv_str_to_rawArray
     constexpr size_t size_nameHeaderMesh { data_meshCore::get_maxSize_meshHeaderArray() };
     char (&mesh_nameHeader)[size_nameHeaderMesh] = headerMesh.get_nameMeshBin();
-    convert_str::conv_str_to_rawArray<size_nameHeaderMesh>(nameMesh, mesh_nameHeader); 
+    convert_str::conv_str_to_rawArray<size_nameHeaderMesh>(nameMesh, mesh_nameHeader);
    }
    void meshesBin_D::insert_version(uint32_t version)
    {
@@ -313,6 +314,7 @@ namespace manager_AssimpData
     constexpr size_t size_nameModel { data_modelCore::get_maxSize_nameModelArray() };
     char (&name_HeaderModel)[size_nameModel] = headerModel.get_modelName();
     convert_str::conv_str_to_rawArray<size_nameModel>(nameHeader, name_HeaderModel);
+    headerModel.sizeNameModel = nameHeader.size(); 
    }
    void model_D::insert_version(uint32_t version)
    {
@@ -1279,6 +1281,9 @@ namespace manage_texturesCooker
       tex_data.texture_KTX2 = nullptr;
       std::strncpy(packT.dataTex.textureName, tex_data.nameTex.c_str(), MAX_SIZE_STR_BIN_TEXTURE - 1);
       packT.dataTex.textureName[MAX_SIZE_STR_BIN_TEXTURE - 1] = '\0';
+
+      packT.dataTex.sizeNameTexture = tex_data.nameTex.size();
+
       packT.dataTex.textureID = tex_data.key_texture;
       packT.dataTex.width = tex_data.width;
       packT.dataTex.height = tex_data.height;
@@ -2219,7 +2224,7 @@ namespace data_leoBinary
       name_matBin = name_matBin.substr(0, MAX_SIZE_STR_BIN_MATERIAL-1);
      }
 
-     std::strcpy(headerMat.nameMaterial_Header, name_matBin.c_str());
+     std::strcpy(headerMat.nameMaterial_Header, name_matBin.c_str());  ///ASSIGN NAME OF MATERIAL HEADER OF BINARY | NOT REQUIERED SIZE
      headerMat.material_bin_ID = FNV::hash_1a(name_matBin);
      headerMat.materialCount = scene->mNumMaterials; 
 
@@ -2245,6 +2250,7 @@ namespace data_leoBinary
 
        matP.materialID = manage_materialCooker::proccess_nameMaterial(nameMat, nameModel_path, i);  ////ASSING MATERIAL ID
        std::strcpy(matP.nameMaterial, nameMat.c_str()); ////ASSIGN NAME MATERIAL
+       matP.sizeNameMaterial = nameMat.size();
 
        log_System::materialCooker_logger.info("loading material... | mat name = " + nameMat);
        //std::cout << "LOADING::MATERIAL:: NAME -> " << nameMat << std::endl;

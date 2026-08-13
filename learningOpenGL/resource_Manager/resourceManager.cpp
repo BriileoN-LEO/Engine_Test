@@ -4,6 +4,9 @@
 #include "Render/RenderData.h"
 #include "2D_geo/basic_geometry_D.h"
 #include "LIGHTS_test.h"
+#include "dataManager/containerTypes_manager.h"
+#include "dataManager/algorithms_brii.h"
+#include "systemManager/logger.h"
 
 namespace data_Manager
 {
@@ -295,10 +298,77 @@ namespace discard_objs
 
 namespace resourceManager
 {
+  manager_Mesh::manager_Mesh() = default;
+  manager_Mesh::~manager_Mesh() {clean_data();};
+
+
+  void manager_Mesh::reserve_size(int size_r)
+  {
+   ID_meshes.reserve(size_r);
+   mesh_findByPos.reserve(size_r);
+   meshes_D.reserve(size_r);
+  }
+  void manager_Mesh::insertMesh(data_meshCore::import_meshBinary& mesh_bin)
+  {
+    uint64_t meshID_bin {mesh_bin.mesh_data.meshID};
+    std_vectorManager::insert_sorted_order<uint64_t>(ID_meshes, meshID_bin);
+    mesh_findByPos.emplace(meshID_bin, meshes_D.size());
+    
+    std::unique_ptr<Assimp_D::Mesh> mesh_uptr {std::make_unique<Assimp_D::Mesh>(mesh_bin)};
+    meshes_D.emplace_back(std::move(mesh_uptr));
+  }
+
+  Assimp_D::Mesh* manager_Mesh::mesh_by_ID(uint64_t ID)
+  {
+    if(search_algorithms::contains_vecBinarySearch(ID_meshes, ID))
+   {
+     return meshes_D[mesh_findByPos[ID]].get();
+   }
+  
+   log_SystemEngine::meshEngine_log.warning("[MESH_MANAGER] not find mesh with ID = " + std::to_string(ID));
+
+   return nullptr;
+  }
+
+  Assimp_D::Mesh* manager_Mesh::mesh_by_str(std::string str)
+  {
+   uint64_t ID {FNV::hash_1a(str)};
+   
+   if(search_algorithms::contains_vecBinarySearch(ID_meshes, ID))
+   {
+     return meshes_D[mesh_findByPos[ID]].get();
+   }
+
+   log_SystemEngine::meshEngine_log.warning("[MESH_MANAGER] not find mesh with name = " + str);
+
+   return nullptr;
+  }
+
+  Assimp_D::Mesh* manager_Mesh::mesh_by_pos(size_t pos)
+  {
+    if(pos < meshes_D.size())
+   {
+     return meshes_D[pos].get();
+   }
+
+   log_SystemEngine::meshEngine_log.warning("[MESH_MANAGER] not find mesh in position = " + std::to_string(pos));
+
+   return nullptr;
+  }
+   
+  void manager_Mesh::clean_data()
+  {
+   ID_meshes.clear(); 
+   mesh_findByPos.clear(); 
+   meshes_D.clear();
+  }
+
   manager_Model::manager_Model() = default;
+  manager_Model::~manager_Model(){clean_data();};
 
   void manager_Model::reserve_size(int size_r)
   {
+    ID_models.reserve(size_r);
     models_D.reserve(size_r);
     models_find_ID.reserve(size_r);
   }
@@ -647,7 +717,7 @@ namespace resourceManager
     std::string error_log {"NOT FIND POINT LIGHT IN POSICION:: POSICION = " + std::to_string(pos)};
     register_error_RM::register_error_withSentence(error_log.c_str());
 
-    nullptr;
+    return nullptr;
   }
 
   const uint32_t& manager_SpotLights::out_size()
@@ -667,8 +737,22 @@ namespace resourceManager
 }
 
 namespace utilities {
+   
+  entity_mesh::entity_mesh() = default;
+  entity_mesh::entity_mesh(Assimp_D::Mesh* mesh_entity) : mesh_entity(mesh_entity){};
+  entity_mesh::~entity_mesh()
+  {
+   mesh_entity = nullptr;
+   delete mesh_entity;
+  }
+
   entity::entity() = default;
-  entity::entity(Assimp_D::Model* model_entity) : model_entity(std::move(model_entity)){};
+  entity::entity(Assimp_D::Model* model_entity) : model_entity(model_entity){};
+  entity::~entity()
+  {
+   model_entity = nullptr; 
+   delete model_entity;
+  }
 
   scene::scene() = default;
 

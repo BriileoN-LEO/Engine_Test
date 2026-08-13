@@ -6,6 +6,9 @@
 #include "2D_geo/basic_geometry_D.h"
 #include <unordered_set>
 #include "Model_Assimp/ModelAssimp.h"
+#include "model_binFormat.h"
+#include "mesh_binFormat.h"
+#include "material_Manager.h"
 
 namespace data_Manager
 {
@@ -107,18 +110,41 @@ namespace discard_objs
 }
 
 namespace resourceManager
-{
+{ 
+   class manager_Mesh
+   {
+    private:
+    std::vector<uint64_t> ID_meshes{};  ////TO FIND IF THE MESH EXISTS 
+    //std::unordered_map<std::string, uinIND IF THE MESH EXISTS 
+    std::unordered_map<uint64_t, size_t> mesh_findByPos{}; 
+    std::vector<std::unique_ptr<Assimp_D::Mesh>> meshes_D{};
+    //std::unordered_map<uint64_t, std::unique_ptr<Assimp_D::Mesh>> meshes_D{};
+   
+    public:
+    manager_Mesh(); 
+    ~manager_Mesh();
+
+    void reserve_size(int size_r);
+    void insertMesh(data_meshCore::import_meshBinary& mesh_bin);
+    Assimp_D::Mesh* mesh_by_ID(uint64_t ID);
+    Assimp_D::Mesh* mesh_by_str(std::string str);
+    Assimp_D::Mesh* mesh_by_pos(size_t pos);
+   
+    void clean_data();
+   };
+   
     class manager_Model
     {
     private:
 
-        std::vector<uint32_t> ID_models{};
+        std::vector<uint32_t> ID_models{}; 
         std::unordered_map<std::string, uint32_t> models_find_ID {};
         std::unordered_map<uint32_t, std::unique_ptr<Assimp_D::Model>> models_D{};
 
     public:
 
         manager_Model();
+	~manager_Model();
 
         void reserve_size(int size_r);
 
@@ -231,18 +257,30 @@ namespace utilities
     uint32_t meshes_end{};
     double model_dist{};
   };
+  
+  struct entity_mesh
+  {
+   Assimp_D::Mesh* mesh_entity{nullptr};
+   material_Manager::material_Instance* material{};
+   transformation_basics::basics_Model3D entityMesh_transformation{}; ///TO CONTROL EACH MESH WITH THEIR OWN TRANSFORMATION
 
+   entity_mesh();
+   entity_mesh(Assimp_D::Mesh* mesh_entity);
+   ~entity_mesh();
+  };
+  
   struct entity
   {
     Assimp_D::Model* model_entity{nullptr};
 
     entity();
     entity(Assimp_D::Model* model_entity);
+    ~entity();
   };
 
   class scene
   {
-  private :
+   private :
     std::unordered_map<uint32_t, uint32_t> models_pos{};
     std::vector<uint32_t> pos_entities{};
     std::vector<entity> models_entities{};

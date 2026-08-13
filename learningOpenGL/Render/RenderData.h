@@ -27,12 +27,13 @@ namespace RenderData_Set
 	extern std::map<std::string, ObjCreation::ModelCreation> ModelCreation_D;
 
     //extern std::map<std::string, Assimp_D::Model> AssimpModel_D; ///CHANGE THIS TO EDIT THEM LIKE A STD::MAP
+        extern std::optional<resourceManager::manager_Mesh> Meshes_MD;
         extern std::optional<resourceManager::manager_Model> AssimpModel_D;
 	extern std::optional<utilities::scene> ModelsScene_D;
 	extern std::optional<discard_objs::discard_objs_scenario> discardObj_D;
 
 	extern std::optional<resourceManager::manager_PointLights> pointLights_D;
-	//extern std::optional<utilities_Lights::scene_pointLights> pointLights_Scene_D;
+	//extern std::optional<utilities_Lights::scene_pointLights> pointLights_Scene_Do;
 	extern std::optional<shadowsManager::omnidirectional_ShadowMap_PL> omL_shadows_D;
 
     ///extern std::unordered_map<std::string, std::unique_ptr<Assimp_D::Model>> AssimpModel_D;
@@ -52,7 +53,7 @@ namespace RenderData_Set
 	extern std::vector<screenUI::pointerScreen> pointUI_D;
 	extern std::vector<individualComp::Multiple_AssimpMesh> multi_AssimpModel;
 
-	extern std::map<std::string, shading::shader> shader_D;
+	extern std::map<std::string, shading::shader> shader_D; /////HERE SAVE ALL THE TYPES OF SHADER | REMPLACE THIS FOR A SHADER MANAGER
 
 	extern std::atomic<bool> finishLoadALL;
 	extern std::map<std::string, frameBuff::frameBuffer> frameBuffers_D;

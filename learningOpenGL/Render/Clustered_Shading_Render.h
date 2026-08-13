@@ -81,21 +81,21 @@ namespace Clustered_Shading
     {
     private:
 
-        unsigned int empty_VAO{};
+    unsigned int empty_VAO{};
 
-        dataSSBO_ClusteredShading dataSSBO_CS{};
-        data_Prepass Prepass_D{};
-        data_BeautyPass beautyPass_D{};
-        std::unordered_map<typeShader, std::string> shaders_ID{};
+    dataSSBO_ClusteredShading dataSSBO_CS{};
+    data_Prepass Prepass_D{};
+    data_BeautyPass beautyPass_D{};
+    std::unordered_map<typeShader, std::string> shaders_ID{};
 
-        int max_tileSize_Y{16};
-        int max_tileSize_X{9};
-        int max_tileSize_Z{24};
+    int max_tileSize_Y{16};
+    int max_tileSize_X{9};
+    int max_tileSize_Z{24};
 
-        int num_tiles_Y{};
-        int num_tiles_X{};
+    int num_tiles_Y{};
+    int num_tiles_X{};
 
-        int num_tiles_all{};
+    int num_tiles_all{};
 
 
     void destroy_zPrepass();

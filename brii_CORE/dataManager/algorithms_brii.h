@@ -85,8 +85,13 @@ namespace search_algorithms
    return (binary_search_OP_int(container, target)) != -1 ? 1 : 0;
   }
 
-}
+  template <typename T_arg>
+  bool contains_vecBinarySearch(std::vector<T_arg>& container, T_arg& target)
+  {
+   return (binary_search_OP_int(container, target) != -1) ? true : false;
+  }
 
+}
 
 
 

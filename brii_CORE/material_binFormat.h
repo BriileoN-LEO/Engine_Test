@@ -24,7 +24,7 @@ struct material_LeoHeader
   size_t materialCount{}; //8 bytes
   char verifiedNumber[4]{vN_LEOA[0], vN_LEOA[1], vN_LEOA[2], vN_LEOA[3]};  ///LEOA || //4 bytes
   uint32_t version{}; //4 bytes
-   };
+};
 
 //// IN ORDER TO OPTIMIZED
 struct matPack_data_register
@@ -32,6 +32,7 @@ struct matPack_data_register
  // uint64_t materialID{};
   
   char nameMaterial[MAX_SIZE_STR_BIN_MATERIAL]{};
+  size_t sizeNameMaterial{}; //NEW
 
   float albedo_base[4]{255.0f, 255.0f, 255.0f, 255.0f};
   float normals_base[4]{};

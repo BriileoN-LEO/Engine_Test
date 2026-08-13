@@ -20,6 +20,7 @@ namespace convert_dataTypes
 {
   std::array<float, 16> aiMat4_to_arrayFloat16(aiMatrix4x4& aiMat);
   void aiMat4_to_rawArrayFloat16(aiMatrix4x4& aiMat, float (&rawArray)[16]);
+  glm::mat4 rawArrayFloat16_to_glmMat4(float (&rawArray)[16]);  
   glm::mat4 arrayFloat16_to_glmMat4(std::array<float, 16>& arrayFloat16);
 
   template<typename T, size_t sT>
@@ -27,7 +28,47 @@ namespace convert_dataTypes
   {
     std::copy(dataIN, dataIN + sT, dataOUT);
   } 
+   
+  template<typename T, size_t sT>
+  glm::vec2 rawArray_to_GLMvec2(T rawArray[sT])
+  {
+    glm::vec2 conv{};
+    int max{ (sT < 2) ? sT : 2};
+    for(int i = 0; i < max; i++)
+   {
+    conv[i] = static_cast<float>(rawArray[i]);
+   }
+     
+   return conv;
+  }
 
+  template<typename T, size_t sT>
+  glm::vec3 rawArray_to_GLMvec3(T rawArray[sT])
+  {
+    glm::vec3 conv{};
+    int max{ (sT < 3) ? sT : 3};
+    for(int i = 0; i < max; i++)
+   {
+    conv[i] = static_cast<float>(rawArray[i]);
+   }
+     
+   return conv;
+  }
+
+  template<typename T, size_t sT>
+  glm::vec4 rawArray_to_GLMvec4(T rawArray[sT])
+  {
+    glm::vec4 conv{};
+    int max{ (sT < 4) ? sT : 4};
+    for(int i = 0; i < max; i++)
+   {
+    conv[i] = static_cast<float>(rawArray[i]);
+   }
+     
+   return conv;
+  }
+
+ 
 }
 
 namespace convert_str

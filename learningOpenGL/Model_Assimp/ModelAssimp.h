@@ -12,6 +12,25 @@
 #include <queue>
 #include <mutex>
 
+namespace utilities
+{
+ struct entity_mesh; 
+}
+
+namespace data_meshCore
+{
+  struct import_meshBinary;
+}
+
+namespace data_modelCore
+{
+ struct import_modelBinary;
+}
+
+namespace resourceManager
+{
+ class manager_Mesh;
+}
 
 namespace sky
 {
@@ -186,10 +205,10 @@ namespace Assimp_D
 
 		struct MeshData_loadCPU
 		{
-			std::vector<vertexD> vertices{};
-			std::vector<unsigned int> indices{};
-			std::vector<texDataManager::TextureData_File> textures{};   ///CHANGE FOR MATERIAL ID
-		    glm::mat4 model_matrix{};
+		 std::vector<vertexD> vertices{};
+		 std::vector<unsigned int> indices{};
+		 std::vector<texDataManager::TextureData_File> textures{};   ///CHANGE FOR MATERIAL ID
+		 glm::mat4 model_matrix{};
 		};
 
 		struct ModelData_loadCPU
@@ -239,6 +258,10 @@ namespace Assimp_D
 	class Mesh {
 	private:
 
+	        ///HERE PUT THE ENTITY MATERIAL
+	        uint64_t material_ID{}; //ONLY EXAMPLE, REMPLACE THIS FOR GET A POINTER OF THE MATERIAL ID
+	        //uint64_t linker_shader
+
 		unsigned int VAO{};
 		unsigned int VBO{};
 		unsigned int EBO{};
@@ -247,13 +270,13 @@ namespace Assimp_D
 
 	public:
 
-		uint32_t ID{};
-
+		uint64_t ID{}; //changed for uint64_t
+	 
 		std::string nameMesh{}; ///Este nombre servira para linkear con las acciones del bounding box
 		std::vector<vertexD> vertices{};
 		std::vector<unsigned int> indices{};
 		//texture::textureBuild textures{};
-		textureCache::texture_Data textures{};
+		textureCache::texture_Data textures{};  ////////////THIS NEEDS TO DELETE, CHANGE FOR MATERIAL 
 
 		transformation_basics::basics_Model3D MeshCoord{};
 		std::vector<glm::vec3> verticesPos{};
@@ -269,10 +292,20 @@ namespace Assimp_D
 		Mesh();
 		Mesh(std::vector<vertexD> ver, std::vector<unsigned int> indi, std::vector<textureD> texture);
 
-		Mesh(Assimp_D::loadToCPU::MeshData_loadCPU loadData);
+	        Mesh(data_meshCore::import_meshBinary& mesh_bin);
+		Mesh(Assimp_D::loadToCPU::MeshData_loadCPU loadData);  ///HERE IS THE SECTION OF INSERTION OF TEXTURES 
+
+
 		///CHECK IF I NEED ~Mesh when i delete the pointers of the mesh
 
+                void import_dataBinary(data_meshCore::import_meshBinary& mesh_bin);
+	 
+	        void link_EntityMaterial(/*here goes material to link*/);
+	        void updateLink_EntityMaterial();
+	 
 		void update_editMode();
+ 
+                const auto& get_ID();
 
 		void Draw_Normals(std::string& shader_ID); ///change this in the future to have only the ID of the string and pass to this
 		void Draw(camera::camera1 cam1, light::light1 light, shading::shader& shader, std::string& shaderNormals_ID);
@@ -293,16 +326,19 @@ namespace Assimp_D
 
 	class Model
 	{
-	private:
+	 private:
 
-		std::unordered_map<uint32_t, uint32_t> pos_find_secuencial{}; //SEE IF THIS IS BETTER
-		std::vector<uint32_t> pos_meshes{};  ///out mesh by posicion
-		std::vector<Mesh> meshes{};
+		std::unordered_map<uint64_t, uint64_t> pos_find_secuencial{}; //SEE IF THIS IS BETTER
+	//	std::vector<uint64_t> pos_meshes{};  ///out mesh by posicion  ////////DELETE THIS
+	        std::vector<uint64_t> meshes_inEntityContainer{}; ////to save if the mesh is saved in the meshes_entity
+	        std::vector<utilities::entity_mesh> meshes_entity{}; ///REMPLACE FOR meshes vector, to consult the meshe pointer
+	        std::vector<uint64_t> meshes_ID{};
+	//	std::vector<Mesh> meshes{};
 		int num_meshes_secuencial{};
 
-		std::string directory{};
-		std::vector<textureD> textures_Loaded{};
-		shading::shader shaders{};
+		std::string directory{}; 
+	//	std::vector<textureD> textures_Loaded{}; ///THIS DELETE
+	//	shading::shader shaders{}; ///THIS DELETE
 
 		void loadModel_CPU(Assimp_D::loadToCPU::ModelData_loadCPU model);
 		void loadModel(std::string path, const char* vertexPath, const char* fragmentPath, coordModel modelCoords, shaderSettings shaderSettings, unsigned int processFlags);
@@ -314,22 +350,29 @@ namespace Assimp_D
 
 		uint32_t ID{};
 		std::string nameModel{};
-		std::vector<shader_SetType> shaders_set{}; //Update if i save more
-		//std::string nameShader{};  ///LAST WAY TO LOAD SHADERS
-		//Nombre global del modelo
-		transformation_basics::basics_Model3D ModelCoord{};
+		std::vector<shader_SetType> shaders_set{}; // DELETE ////BE CAREFUL WITH THIS | I DON'T KNOW WHAT IT DOES
+	        transformation_basics::basics_Model3D ModelCoord{}; 
 		coordModel ModelGlobal_Coord{};
 
 
 		Model();
 		Model(std::string path, const char* vertexPath, const char* fragmentPath, coordModel modelCoords, shaderSettings shaderSettings, unsigned int processFlags);
-		Model(Assimp_D::loadToCPU::ModelData_loadCPU model);
+		Model(Assimp_D::loadToCPU::ModelData_loadCPU model); ///DELETE THIS
+                Model(data_modelCore::import_modelBinary& model_bin);//[_]
+	
+ ///////////////CONTINUE HERE TO IMPLEMENT THE FUNCTIONS TO MODEL
 		~Model();
 		
+	        void import_dataBinary(data_modelCore::import_modelBinary& model_bin);
+	        void insert_meshID(uint64_t meshID);//[_]   ///////insert only the ID
+	        void insert_utilityMesh(utilities::entity_mesh& entityMesh); //THIS UPDATES THE pos_find_sequencial and the pos meshes;
+	        void update_EntityMesh(resourceManager::manager_Mesh& meshManager, uint64_t meshID);//[_]   /////get the entity of the mesh in mesh manager, only if the mesh ID exists in the own container ID's of the model
+                void update_AllEntityMeshes(resourceManager::manager_Mesh& meshManager);//[_]  ////////updates all the entitys of meshes in mesh manager, get the ID's of the container of ID's and it search to get in the mesh manager
+
 		void setModelSettings(coordModel modelCoords, shaderSettings shaderSettings);
 		void Draw(camera::camera1 cam1, light::light1 light);
 		void Draw_WL();
-		void Draw_singleMesh_ID(uint32_t mesh_ID, int shaderOp);
+		void Draw_singleMesh_ID(uint32_t mesh_ID, int shaderOp); 
 		void DrawSingleMesh(std::string nameMesh, int shaderOp);
 		void DrawExcludeMesh(std::string nameMesh);
 		void Draw_DepthMapShadow(uint32_t mesh_ID, std::string* shader_ID);
@@ -350,13 +393,13 @@ namespace Assimp_D
 	
 		std::vector<Mesh>& outMeshes();
 		shading::shader& outShader();
-        const int& out_numSec_meshes();  ///THIS VALUE IS THE SIZE OF THE CONTAINER OF THE MESHES
+                const int& out_numSec_meshes();  ///THIS VALUE IS THE SIZE OF THE CONTAINER OF THE MESHES
 
 		Mesh& outSpecificMesh(uint32_t mesh_ID);  ///CHANGE THIS GET A POINTER OF Mesh
 		Mesh& out_MeshByPos(uint32_t pos);
 		uint32_t* out_MeshID_ByPos(uint32_t pos);
 		void insert_mesh(loadToCPU::MeshData_loadCPU mesh_D); //CHECK THIS FUNCTION IN THE FUTURE
-		void delete_mesh(uint32_t mesh_ID); //CHECK THIS FUNCTION IN THE FUTURE
+		void delete_mesh(uint32_t mesh_ID); //CHECK THIS FUNCTION IN THE FUTURE 
 
 		int numMeshes();
 		void refresh_ModelCoord();

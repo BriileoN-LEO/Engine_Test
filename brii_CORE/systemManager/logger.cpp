@@ -36,5 +36,13 @@ namespace log_System
 
 }
 
+namespace log_SystemEngine
+{
+logger meshEngine_log{"MESH_ENGINE_LOG"};
+logger modelEngine_log{"MODEL_ENGINE_LOG"};
+
+}
+
+
 
 

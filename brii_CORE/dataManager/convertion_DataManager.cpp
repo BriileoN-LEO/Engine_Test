@@ -24,6 +24,16 @@ namespace convert_dataTypes
        matArray[8] = aiMat.c1; matArray[9] = aiMat.c2; matArray[10] = aiMat.c3; matArray[11] = aiMat.c4;
        matArray[12] = aiMat.d1; matArray[13] = aiMat.d2; matArray[14] = aiMat.d3; matArray[15] = aiMat.d4;
     }
+    glm::mat4 rawArrayFloat16_to_glmMat4(float (&rawArray)[16])
+    {
+      glm::mat4 mat4_D {};
+      mat4_D[0][0] = rawArray[0]; mat4_D[1][0] = rawArray[1]; mat4_D[2][0] = rawArray[2]; mat4_D[3][0] = rawArray[3];
+      mat4_D[0][1] = rawArray[4]; mat4_D[1][1] = rawArray[5]; mat4_D[2][1] = rawArray[6]; mat4_D[3][1] = rawArray[7]; 
+      mat4_D[0][2] = rawArray[8]; mat4_D[1][2] = rawArray[9]; mat4_D[2][2] = rawArray[10]; mat4_D[3][2] = rawArray[11]; 
+      mat4_D[0][3] = rawArray[12]; mat4_D[1][3] = rawArray[13]; mat4_D[2][3] = rawArray[14]; mat4_D[3][3] = rawArray[15]; 
+
+     return mat4_D;
+    }
 
     glm::mat4 arrayFloat16_to_glmMat4(std::array<float, 16>& arrayFloat16)
     {

@@ -20,6 +20,7 @@ namespace RenderData_Set
 	std::map<std::string, ObjCreation::ModelCreation> ModelCreation_D{};
 
 	//std::map<std::string, Assimp_D::Model> AssimpModel_D{};  ////OFF FOR ONE MOMENT
+        std::optional<resourceManager::manager_Mesh> Meshes_MD;
 	std::optional<resourceManager::manager_Model> AssimpModel_D;
 	std::optional<utilities::scene> ModelsScene_D;
 	std::optional<discard_objs::discard_objs_scenario> discardObj_D;
@@ -493,6 +494,7 @@ namespace RenderData_Set
 		}
 
 	}
+
 	const void insertSetting_toModel()
 	{
 		Assimp_D::Model* model {nullptr};
@@ -1510,6 +1512,7 @@ namespace RenderData_Set
 
 	void init_managerResources()
 	{
+	        Meshes_MD.emplace();
 		AssimpModel_D.emplace();
 		ModelsScene_D.emplace();
 		discardObj_D.emplace();
@@ -1528,16 +1531,16 @@ namespace RenderData_Set
 
 	void setModels_to_scene()
 	{
-		int s_MD {AssimpModel_D->size_models_D()};  ///CHECK IF THIS IS CORRECT
+         int s_MD {AssimpModel_D->size_models_D()};  ///CHECK IF THIS IS CORRECT
 
-       for (int i = 0; i < s_MD; i++)
-       {
-       	Assimp_D::Model* model_ptr {AssimpModel_D->model_by_num(i)}; ///CHECK IF THIS IS CORRECT
-        ModelsScene_D->insert_entity_model(std::move(model_ptr));
+         for (int i = 0; i < s_MD; i++)
+         {
+       	  Assimp_D::Model* model_ptr {AssimpModel_D->model_by_num(i)}; ///CHECK IF THIS IS CORRECT
+          ModelsScene_D->insert_entity_model(std::move(model_ptr));
 
-       	model_ptr = nullptr;
+       	  model_ptr = nullptr;
 
-       }
+         }
 
 		ModelsScene_D->order_MeshesID();  //TO SET AND ORDER ALL THE MESHES
 
@@ -1584,7 +1587,7 @@ namespace RenderData_Set
 //		setAll_LightsManager();
 
 		directionalLights_D = setDirectionalLights();
-	    setDirectionalLight_Shadows();
+                setDirectionalLight_Shadows();
 
 		spotLights_D = setSpotLights();
 
@@ -1659,6 +1662,8 @@ namespace RenderData_Set
 
 		}
 
+        ///////////CONTINUE HERE
+	///-INVESTIGATE THE PROCESS OF THE CREATION OF SHADERS AND TEXTURES AND WHERE IT SAVED AND USED 10/08/2026 
 		loadLayoutBuffer_shader();
 	}
 	

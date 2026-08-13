@@ -7,7 +7,12 @@
 #include "optimize_Algorithmics/optimizeAlgorithmics.h"
 #include "Assimp_lib.h"
 #include "shadows_manager/shadows_D.h"
-//#include "resource_Manager/resourceManager.h"
+#include "resource_Manager/resourceManager.h"
+#include "mesh_binFormat.h"
+#include "model_binFormat.h"
+#include "dataManager/convertion_DataManager.h"
+#include "dataManager/containerTypes_manager.h"
+#include "dataManager/algorithms_brii.h"
 
 namespace sky 
 {
@@ -620,6 +625,11 @@ namespace Assimp_D {
 
 	}
 
+        Mesh::Mesh(data_meshCore::import_meshBinary& mesh_bin)
+        {
+          import_dataBinary(mesh_bin);	
+        };
+  
 	Mesh::Mesh(Assimp_D::loadToCPU::MeshData_loadCPU loadData)
 	{
 		//nameMesh = loadData.nameMesh;
@@ -630,7 +640,6 @@ namespace Assimp_D {
 		{
 			verticesPos.emplace_back(vertex.posicion);
 			normalsPos.emplace_back(vertex.posicion + vertex.Normal);
-
 		}
 
 		MeshCoord.posModel_Base = transformation_basics::calcCenterGeo(verticesPos);   ////PROBABLY ONE OF THE PROBLEMS OF BOUNDING BOX TO CALCULATE WHAT TRIANGLE IS INSERTING
@@ -757,6 +766,49 @@ namespace Assimp_D {
 
 	}
 
+        void Mesh::import_dataBinary(data_meshCore::import_meshBinary& mesh_bin)
+        {  
+          if(ID != 0)
+	 { 
+          destroyMesh();
+  	 }
+       
+         nameMesh = mesh_bin.mesh_data.get_nameMesh();
+
+	 vertices.reserve(mesh_bin.vertex.size());
+         for(auto& mesh_v : mesh_bin.vertex)
+	 {
+           vertexD vD{};
+
+	   vD.posicion = convert_dataTypes::rawArray_to_GLMvec3<float, 3>(mesh_v.position);
+           vD.Normal = convert_dataTypes::rawArray_to_GLMvec3<float, 3>(mesh_v.normal);
+           vD.TexCoord =  convert_dataTypes::rawArray_to_GLMvec2<float, 2>(mesh_v.uv);
+
+	   vertices.emplace_back(vD);
+	 }
+	 
+	 indices.reserve(mesh_bin.indices.size());
+	 for(auto& indices_v : mesh_bin.indices)
+	 { 
+          indices.emplace_back(indices_v);
+         }
+
+	for (auto& vertex : vertices)
+	{
+	 verticesPos.emplace_back(vertex.posicion);
+	 normalsPos.emplace_back(vertex.posicion + vertex.Normal);
+	}
+	 MeshCoord.posModel_Base = transformation_basics::calcCenterGeo(verticesPos);   ////PROBABLY ONE OF THE PROBLEMS OF BOUNDING BOX TO CALCULATE WHAT TRIANGLE IS INSERTING
+	 MeshCoord.posModel = MeshCoord.posModel_Base;
+
+         glm::mat4 meshMat4 {convert_dataTypes::rawArrayFloat16_to_glmMat4(mesh_bin.mesh_data.mesh_transformation)};
+	 MeshCoord.model = meshMat4 * MeshCoord.model;
+	 MeshCoord.modelCurrent = MeshCoord.model;
+	 MeshCoord.lastModel = MeshCoord.model;	
+         MeshCoord.setNormalModelMatrix();
+
+        }
+     
 	void Mesh::update_editMode() //CHANGE LATER IF I WILL USE THE SAME NAME OF THE MESH BUT IN OTHER MODEL
 	{
 
@@ -796,6 +848,12 @@ namespace Assimp_D {
 		}
 
 	}
+
+        const auto& Mesh::get_ID()
+        {
+         return ID;
+        }
+
 	void Mesh::Draw_Normals(std::string& shader_ID)  ////this need to set the shader for normals
 	{
 		if (edit_visualize::show_normals_active == true)
@@ -1863,6 +1921,13 @@ namespace Assimp_D {
 
 		loadModel_CPU(model);
 	}
+
+        Model::Model(data_modelCore::import_modelBinary& model_bin)
+        { 
+  	 import_dataBinary(model_bin); 
+	 
+        }
+
  	Model::~Model()
 	{
 	 std::string log_destroy {"DELETING MODEL | " + nameModel};
@@ -1872,6 +1937,91 @@ namespace Assimp_D {
 	 destroyModel();  ////SEE IF THIS DESTROYS
 
 	}
+
+        void Model::import_dataBinary(data_modelCore::import_modelBinary& model_bin)
+        {
+	  if(ID != 0)
+	 {
+           destroyModel();
+	 } 
+
+         std::string getName{model_bin.modelHeader.get_modelName(), model_bin.modelHeader.get_sizeNameModel()};
+	 nameModel = getName;
+	 
+         meshes_ID.reserve(model_bin.meshes_ID.size());
+	  
+	 for(auto& ID_mesh : model_bin.meshes_ID)
+	 {
+	  std_vectorManager::insert_sorted_order<uint64_t>(meshes_ID, ID_mesh);
+	 }
+        }
+
+        void Model::insert_meshID(uint64_t meshID)
+        {
+	 std_vectorManager::insert_sorted_order<uint64_t>(meshes_ID, meshID);
+        }
+
+        void Model::insert_utilityMesh(utilities::entity_mesh& entityMesh)
+        {
+          const auto& ID_m {entityMesh.mesh_entity->get_ID()};
+
+          pos_find_secuencial.emplace(ID_m, meshes_entity.size());
+          std_vectorManager::insert_sorted_order<uint64_t>(meshes_inEntityContainer, ID_m);
+	  meshes_entity.emplace_back(entityMesh);
+        }
+
+        void Model::update_EntityMesh(resourceManager::manager_Mesh& meshManager, uint64_t meshID)
+        {
+          bool put_mesh{search_algorithms::contains_vecBinarySearch<uint64_t>(meshes_ID, meshID)};
+          put_mesh = (!search_algorithms::contains_vecBinarySearch<uint64_t>(meshes_inEntityContainer, meshID) && put_mesh) ? true : false;
+          ///if the mesh ID exists in the meshes_inEntityContainer | False
+
+   	 if(put_mesh)
+         {  
+	  Assimp_D::Mesh* find_mesh {meshManager.mesh_by_ID(meshID)};
+	  
+	   if(find_mesh != nullptr)
+	  {
+           utilities::entity_mesh meshEntity{find_mesh}; 
+	   insert_utilityMesh(meshEntity);
+
+	   find_mesh = nullptr;
+	   delete find_mesh;
+
+           num_meshes_secuencial++;
+	   calculate_centerBoundingBox();
+	   return;
+	  }
+	 }
+        }
+
+        void Model::update_AllEntityMeshes(resourceManager::manager_Mesh& meshManager)
+        {
+          Assimp_D::Mesh* find_mesh{nullptr};
+
+	  for(auto& mesh_ID : meshes_ID)
+	 {
+	 
+	  if(!search_algorithms::contains_vecBinarySearch(meshes_inEntityContainer, mesh_ID))
+	  {
+	   find_mesh = meshManager.mesh_by_ID(mesh_ID);
+
+            if(find_mesh != nullptr)
+	   {
+            utilities::entity_mesh meshEntity{find_mesh}; 
+	    insert_utilityMesh(meshEntity);
+
+            num_meshes_secuencial++;
+	    find_mesh = nullptr;
+	   }
+
+	  }
+
+         }
+
+	  delete find_mesh;
+          calculate_centerBoundingBox();
+        }
 
 	void Model::setModelSettings(coordModel modelCoords, shaderSettings shaderSettings)
 	{
@@ -2010,6 +2160,7 @@ namespace Assimp_D {
 	  	register_error_RM::register_error_withSentence("ERROR::SHADER_ID == NULLPTR");
 	  }
 	}
+
 	void Model::Draw_PrePassCS(uint32_t mesh_ID, std::string* shader_ID)
 	{
 		if (shader_ID != nullptr)
@@ -2033,6 +2184,8 @@ namespace Assimp_D {
 
 	void Model::destroyModel()
 	{
+
+	 
 		for(int i = 0; i < static_cast<int>(meshes.size()); i++)
 		{
 			meshes[i].destroyMesh();

@@ -17,10 +17,11 @@ constexpr char vN_LEOR[4] {'L', 'E', 'O', 'R'};
 
 struct model_LeoHeader
 {
- char modelName[MAX_SIZE_STR_BIN_MODEL]{};
+ uint32_t version{};
+ size_t sizeNameModel{}; //NEW
  size_t meshesCount{};
  char verifiedNumber[4]{vN_LEOR[0], vN_LEOR[1], vN_LEOR[2], vN_LEOR[3]};  ///LEOR [HEADER]
- uint32_t version{};
+ char modelName[MAX_SIZE_STR_BIN_MODEL]{};
 
   auto& get_modelName()
  {
@@ -41,12 +42,18 @@ struct model_LeoHeader
  {
   return version;
  }
+  
+ auto& get_sizeNameModel()
+ {
+  return sizeNameModel;
+ }
 
  void print_info()
  {
   std::cout << "======================\n";
   std::cout << "[INFO MODEL BINARY]\n";
   std::cout << "name = " << modelName << '\n';
+  std::cout << "size name mesh = " << sizeNameModel << '\n';
   std::cout << "meshes count = " << meshesCount << '\n';
   std::cout << "vef number = " << verifiedNumber[0] <<  verifiedNumber[1] <<  verifiedNumber[2] <<  verifiedNumber[3] << '\n';
   std::cout << "version = " << version << '\n';
@@ -72,6 +79,13 @@ namespace data_modelCore
  { 
   return MAX_SIZE_STR_BIN_MODEL;
  }
+
+  struct import_modelBinary
+ {
+  model_LeoHeader modelHeader{};
+  std::vector<uint64_t> meshes_ID{};
+
+ };
 
 }
 

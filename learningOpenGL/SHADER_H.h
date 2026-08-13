@@ -4,7 +4,7 @@
 #include "data_save.h" 
 #include "GLM_test.h"
 #include "LIGHTS_test.h"
-
+#include "resource_Manager/bufferShader_Manager.h"
 #include <string>
 #include <fstream> 
 #include <sstream>
@@ -136,6 +136,7 @@ namespace shading
 	{
 	private:
 		std::vector<layoutType> data_Layout{};
+	        std::vector<buffersShader_manager::entity_BufferShader> entityBuffers{};
 		bool computeShader_P{ false };
 
 	public:
@@ -158,7 +159,6 @@ namespace shading
 		void use();
 		void use_computeShader_(uint32_t gridDim_X, uint32_t gridDim_Y, const char* file, int line);
 #define use_computeShader(gridDim_X, gridDim_Y) use_computeShader_(gridDim_X, gridDim_Y, __FILE__, __LINE__)
-
 
 		void setBool(const std::string& name, bool value) const;
 		void setInt(const std::string& name, int value) const;
