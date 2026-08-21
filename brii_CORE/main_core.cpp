@@ -6,5 +6,5 @@
 
 int main()
 {
- std::string haha{};
+
 }

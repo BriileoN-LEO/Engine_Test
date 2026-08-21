@@ -70,7 +70,6 @@ namespace data_MatCore
 }
 
 
-
 //USE OF POSIX TO WRITE FILES
 #if defined(__unix__) || defined(__unix) && defined(__MACH__)
 

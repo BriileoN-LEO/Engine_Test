@@ -13,6 +13,10 @@
  template<typename T>
  constexpr bool is_bitmask_flag = false;
 
+//WAY OF USE----------------------------------------------------------------- 
+//template<> constexpr bool is_bitmask_flag<[name_enumClass]> = true | false;
+//---------------------------------------------------------------------------
+
  template<typename T, typename = std::enable_if_t<is_bitmask_flag<T>>>
  constexpr T operator|(T f1, T f2)
  {

@@ -135,11 +135,11 @@ namespace shading
 	class shader
 	{
 	private:
-		std::vector<layoutType> data_Layout{};
-	        std::vector<buffersShader_manager::entity_BufferShader> entityBuffers{};
+		std::vector<layoutType> data_Layout{}; ///QUIT THIS | THE REMPLACE IS buffers_InShader
+	        std::vector<buffersShader_manager::entity_BufferShader> buffers_InShader{}; ///I THINK QUIT THIS
 		bool computeShader_P{ false };
 
-	public:
+	public: 
 
 		std::string name{};
 		unsigned int ID{};

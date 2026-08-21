@@ -14,10 +14,16 @@ namespace render_engine
   transformation_basics::basics_Model3D entityMesh_transformation{};
  };
 
+  struct renderOrder ////THIS RENDER ORDER UPDATES WHEN IN
+ {
+  uint64_t material_ID{};
+  uint64_t start_meshesVec{};
+  uint64_t end_meshesVec{};
+ };
+
   class render_queue
  {
   private:
-
   std::vector<renderCommand> renderQueue_pile{};
  //HERE CREATE class render_queue, all the vector of renderCommands(pile of meshes orderd by Material
  //-only update one time, if some meshes change the material reorder again 
@@ -28,11 +34,15 @@ namespace render_engine
   class render_Manager
  {
   private:
+    
   ///manage the order of the materials
 
   public: 
 
- }
+
+ 
+
+ };
 
 
 }

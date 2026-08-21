@@ -187,5 +187,7 @@ target_include_directories(thirdParty_Libs INTERFACE "${CMAKE_CURRENT_SOURCE_DIR
 target_include_directories(thirdParty_Libs INTERFACE ${stb_SOURCE_DIR})
 
 add_subdirectory(brii_CORE)
+add_subdirectory(Graphics)
 add_subdirectory(brii_COOKER)
 add_subdirectory(learningOpenGL)
+
