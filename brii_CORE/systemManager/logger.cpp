@@ -1,6 +1,11 @@
 
 #include "logger.h"
 
+  void logger::change_nameLogger(std::string nameLogger)
+  {
+   this->nameLogger = nameLogger;
+  }
+
   void logger::success(std::string_view success_message)
   {
     std::cout << "[" << nameLogger << "]" << "[SUCCESS]" << success_message << "\n";
@@ -40,8 +45,8 @@ namespace log_SystemEngine
 {
 logger meshEngine_log{"MESH_ENGINE_LOG"};
 logger modelEngine_log{"MODEL_ENGINE_LOG"};
-
 }
+
 
 
 

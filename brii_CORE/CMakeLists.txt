@@ -2,6 +2,12 @@ cmake_minimum_required (VERSION 3.21)
 
 project (briiCore)
 
+set(SETTINGS_ENGINE
+ Settings/Settings_BriiEngine.h
+
+)
+
+
 add_executable(briiCore
  "main_core.cpp"
  "mesh_binFormat.h"
@@ -25,6 +31,7 @@ add_executable(briiCore
  "systemManager/logger.cpp"
  "threadCore/thread_Manager.h"
  "threadCore/thread_Manager.cpp"
+ ${SETTINGS_ENGINE}
 )
 
 add_library(brii_CORE STATIC
@@ -49,6 +56,7 @@ add_library(brii_CORE STATIC
  "libs_in_CORE.h"
  "threadCore/thread_Manager.h"
  "threadCore/thread_Manager.cpp"
+ ${SETTINGS_ENGINE}
 )
 
 target_link_libraries(brii_CORE PRIVATE

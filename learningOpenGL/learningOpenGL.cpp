@@ -27,7 +27,7 @@
 #include <cassert>
 #include <filesystem>
 
-SDL_Renderer* gRender{ nullptr };
+//SDL_Renderer* gRender{ nullptr };
 SDL_GLContext contextOpenGl;
 SDL_Window* gWindow{ nullptr };
 SDL_Cursor* gCursor{ nullptr };

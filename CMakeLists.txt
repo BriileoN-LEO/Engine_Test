@@ -98,8 +98,11 @@ endif()
 #list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}libs/SDL")
 
 #//find_package(SDL3 REQUIRED)
-find_package(OpenGL REQUIRED)
 
+#CHANGES THIS LIKE THIS TO MAKE COMPATIBILITY WITH OPENGL AND THE VULKAN
+if(WIN32 OR UNIX)
+find_package(OpenGL REQUIRED)
+endif()
 add_library(glad_source STATIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glad/src/glad.c
 )
 
@@ -186,8 +189,9 @@ target_include_directories(thirdParty_Libs INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
 target_include_directories(thirdParty_Libs INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/ThirdPartyLibs/stb-master")
 target_include_directories(thirdParty_Libs INTERFACE ${stb_SOURCE_DIR})
 
-add_subdirectory(brii_CORE)
+add_subdirectory(Platform)
 add_subdirectory(Graphics)
+add_subdirectory(brii_CORE)
 add_subdirectory(brii_COOKER)
 add_subdirectory(learningOpenGL)
 
