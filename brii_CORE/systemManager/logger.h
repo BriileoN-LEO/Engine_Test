@@ -24,6 +24,7 @@ class BE_log
  ///Think more about how to implement this logger in a better way
  ///Change the logs from files:
  //-Platform/Private/Platform_SDL/SDL3_window.cpp 
+ 
 
  public:
 

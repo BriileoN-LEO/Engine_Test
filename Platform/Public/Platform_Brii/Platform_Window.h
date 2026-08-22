@@ -9,7 +9,7 @@
  brii_Platform_Window();
  ~brii_Platform_Window();
 
- void Initialize(brii_Renderer_API* API);
+ void Initialize(const brii_EngineSettings::Graphics_Settings* API_settings);
 
 
 };

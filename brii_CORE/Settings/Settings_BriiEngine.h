@@ -12,12 +12,35 @@ enum class brii_Renderer_API : uint8_t
 };
 
 
-class BriiEngine_Settings
+class brii_EngineSettings
 {
+public:
+
+ struct Graphics_Settings 
+ { 
+   brii_Renderer_API API{};
+
+   //work int OpenGL and Vulkan
+   int API_majorVersion{};
+   int API_minorVersion{};
+  
+ 
+ };
+
  private:
- brii_Renderer_API Graphics_API{};
+ 
+ Graphics_Settings Graphics_brii{};
 
  public:
+
+ brii_EngineSettings();
+ ~brii_EngineSettings();
+
+ const Graphics_Settings* get_GraphicsSet()
+ {
+  return &Graphics_brii;
+ }
+
 
 };
 
