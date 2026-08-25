@@ -8,8 +8,9 @@
 
  brii_Platform_Window();
  ~brii_Platform_Window();
-
+ 
  void Initialize(const brii_EngineSettings::Graphics_Settings* API_settings);
-
+ 
+ void* get_HandleWindow();
 
 };

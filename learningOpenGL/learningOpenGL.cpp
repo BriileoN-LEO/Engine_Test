@@ -35,7 +35,6 @@ bool correct_init{ true };
 
 void init()
 {
-
 	if (SDL_Init(SDL_INIT_VIDEO) == false)
 	{
 		SDL_Log("<zno se pudo abrir la ventana");

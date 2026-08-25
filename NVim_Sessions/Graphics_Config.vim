@@ -10,27 +10,43 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
 endif
 let s:shortmess_save = &shortmess
 set shortmess+=aoO
-badd +6 Graphics/Public/Graphics_Interface/IGraphics_brii.h
-badd +9 Graphics/Private/IG_OpenGL/IGraphics_OpenGL.h
-badd +6 Graphics/Private/IG_OpenGL/IGraphics_OpenGL.cpp
-badd +440 learningOpenGL/learningOpenGL.cpp
-badd +30 Graphics/CMakeLists.txt
-badd +24 Platform/CMakeLists.txt
-badd +161 CMakeLists.txt
-badd +254 term://~/CPP_proyects/Engine_Test//15733:/usr/bin/bash
-badd +4 brii_CORE/Settings/Settings_BriiEngine.h
-badd +8 Graphics/Public/RHI_Settings/RHI_Factory.cpp
-badd +17 Platform/Private/Platform_SDL/SDL3_window.cpp
-badd +15 Platform/Public/Platform_Brii/Platform_Window.h
+badd +13 Graphics/Public/Graphics_Interface/IGraphics_brii.h
+badd +21 Graphics/Private/IG_OpenGL/IGraphics_OpenGL.h
+badd +10 Graphics/Private/IG_OpenGL/IGraphics_OpenGL.cpp
+badd +37 learningOpenGL/learningOpenGL.cpp
+badd +10 brii_CORE/Settings/Settings_BriiEngine.h
+badd +14 Graphics/Public/RHI_Settings/RHI_Factory.cpp
+badd +18 Platform/Private/Platform_SDL/SDL3_window.cpp
+badd +16 Platform/Public/Platform_Brii/Platform_Window.h
 badd +11 brii_CORE/systemManager/platform_Manager.h
-badd +26 brii_CORE/systemManager/logger.h
+badd +8 brii_CORE/systemManager/logger.h
 badd +35 brii_CORE/systemManager/logger.cpp
+badd +4 Platform/Private/Platform_SDL/SDL3_libraries.h
+badd +8 Graphics/Public/RHI_Settings/RHI_Factory.h
+badd +38 brii_CORE/files_CoreManager/files_Core.h
+badd +10 brii_CORE/Application_Engine/Private/Application_PC.cpp
+badd +6 brii_CORE/Application_Engine/Public/Application.h
+badd +91 brii_CORE/CMakeLists.txt
+badd +5 Platform/Private/Platform_SDL/SDL3_Settings.h
+badd +1 Platform/Private/Platform_SDL/SDL3_Settings.cpp
+badd +19 Platform/Private/Platform_SDL/SDL3_WindowSettings.h
+badd +1 brii_CORE/material_binFormat.h
+badd +80 learningOpenGL/CMakeLists.txt
+badd +29 brii_COOKER/CMakeLists.txt
+badd +1 learningOpenGL/learningOpenGL.h
+badd +7 brii_CORE/texturesPack_binFormat.h
+badd +1 Platform/Private/Platform_SDL/SDL3_WindowDefinitions.h
+badd +109 Platform/Private/Platform_SDL/SDL3_WindowDefinitions.cpp
+badd +1 Platform/Private/Platform_SDL/SDL3_Input.cpp
+badd +39 Platform/Private/Platform_SDL/SDL3_Definitions/SDL3_WindowDefinitions.h
+badd +1 Platform/Private/Platform_SDL/SDL3_Definitions/SDL3_WindowDefinitions.cpp
+badd +2 Platform/Private/Platform_SDL/SDL3_Definitions/SDL3_libraries.h
 argglobal
 %argdel
-$argadd ./
-edit Platform/Private/Platform_SDL/SDL3_window.cpp
+$argadd ~/CPP_proyects/Engine_Test/
+edit Platform/Private/Platform_SDL/SDL3_Definitions/SDL3_WindowDefinitions.h
 argglobal
-balt brii_CORE/systemManager/logger.h
+balt Platform/Private/Platform_SDL/SDL3_window.cpp
 setlocal foldmethod=manual
 setlocal foldexpr=v:lua.vim.treesitter.foldexpr()
 setlocal foldmarker={{{,}}}
@@ -40,26 +56,18 @@ setlocal foldminlines=1
 setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
-sil! 3,6fold
-sil! 63,71fold
-sil! 50,72fold
-sil! 37,75fold
-sil! 14,77fold
-sil! 12,79fold
-sil! 82,85fold
-sil! 101,103fold
-sil! 105,106fold
-sil! 99,111fold
-sil! 113,117fold
-sil! 97,119fold
-sil! 133,136fold
+sil! 3,4fold
+sil! 7,9fold
+sil! 16,33fold
+sil! 41,48fold
+sil! 39,50fold
 let &fdl = &fdl
-let s:l = 11 - ((10 * winheight(0) + 23) / 47)
+let s:l = 37 - ((27 * winheight(0) + 23) / 47)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 11
-normal! 0
+keepjumps 37
+normal! 03|
 lcd ~/CPP_proyects/Engine_Test
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'

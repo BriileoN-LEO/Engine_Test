@@ -9,3 +9,10 @@ void createGlobal_API_RHI(brii_RHI* RHI, brii_Renderer_API* API)
  }
 }
 
+
+void temporal_example_initEngine()
+{
+
+}
+
+

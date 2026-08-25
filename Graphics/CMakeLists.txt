@@ -38,21 +38,22 @@ ${GRAPHICS_API}
 )
 
 if(WIN32 OR UNIX)
-target_link_libraries(Brii_GraphicsInterface 
+target_link_libraries(Brii_GraphicsInterface PRIVATE 
 glad_source
 OpenGL::GL
 )
 endif()
 
-target_link_libraries(Brii_GraphicsInterface
+target_link_libraries(Brii_GraphicsInterface PRIVATE
 brii_CORE
 )
 
 #set_common_target_properties(Brii_GraphicsInterface)
 
 
-target_include_directories(Brii_GraphicsInterface PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(Brii_GraphicsInterface PUBLIC
+target_include_directories(Brii_GraphicsInterface PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(Brii_GraphicsInterface PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/Graphics")
+target_include_directories(Brii_GraphicsInterface PRIVATE
 ${GRAPHICS_INTERFACE}
 )
 target_include_directories(Brii_GraphicsInterface PRIVATE 

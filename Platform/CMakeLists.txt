@@ -2,6 +2,7 @@ cmake_minimum_required (VERSION 3.21)
 
 project(Brii_Platform CXX)
 
+
 set(PLATFORM_BRII 
 Public/Platform_Brii/Platform_Window.h
 Public/Platform_Brii/Platform_Input.h
@@ -18,9 +19,12 @@ ${PLATFORM_BRII}
 if(TARGET_PLATFORM STREQUAL "PC")
 
 set(PLATFORM_PC
+Private/Platform_SDL/SDL3_Definitions/SDL3_WindowDefinitions.h
+Private/Platform_SDL/SDL3_Definitions/SDL3_WindowDefinitions.cpp 
+Private/Platform_SDL/SDL3_Definitions/SDL3_libraries.h
 Private/Platform_SDL/SDL3_window.cpp
 Private/Platform_SDL/SDL3_Input.cpp
-Private/Platform_SDL/SDL3_FileSystem.cpp 
+Private/Platform_SDL/SDL3_FileSystem.cpp
 )
 
 target_sources(Brii_Platform PRIVATE ${PLATFORM_PC})
@@ -34,8 +38,9 @@ endif()
 
 
 
-target_include_directories(Brii_Platform PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(Brii_Platform PUBLIC
+target_include_directories(Brii_Platform PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(Brii_Platform PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/Platform")
+target_include_directories(Brii_Platform PRIVATE 
 ${PLATFORM_BRII}
 #${PLATFORM_SDL}
 )

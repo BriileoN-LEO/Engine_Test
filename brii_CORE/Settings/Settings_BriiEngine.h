@@ -16,25 +16,38 @@ class brii_EngineSettings
 {
 public:
 
+ struct Window_Settings
+ {
+  int width_size{};
+  int height_size{};
+  
+ };
+
  struct Graphics_Settings 
  { 
-   brii_Renderer_API API{};
+  brii_Renderer_API API{};
 
-   //work int OpenGL and Vulkan
-   int API_majorVersion{};
-   int API_minorVersion{};
+   //work API version | OpenGL and Vulkan
+  int API_majorVersion{};
+  int API_minorVersion{};
+  
   
  
  };
 
  private:
  
+ Window_Settings Window_brii{};
  Graphics_Settings Graphics_brii{};
 
  public:
 
  brii_EngineSettings();
  ~brii_EngineSettings();
+
+ ////THIS
+ void insert_WindowSettings(Window_Settings wSet);  
+ void insert_GraphicsSettings(Graphics_Settings gSet);
 
  const Graphics_Settings* get_GraphicsSet()
  {
