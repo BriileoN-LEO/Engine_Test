@@ -1,11 +1,12 @@
 
 #include "SDL3_WindowDefinitions.h"
-
 //SDL_Window* gWindow{ nullptr };
 
 ///CONTINUE HERE TO MAKE THE IMPLEMENTATION of OpenGL to SDL
 
-void create_SDL_GL_Window(SDL_Window* Window)
+namespace SDL_WindowSets
+{
+void create_SDL_GL_Window(SDL_Window* Window, const Brii_WindowSettings* Window_Settings)
 {
  if (SDL_Init(SDL_INIT_VIDEO) == false)
  { 
@@ -24,7 +25,7 @@ void create_SDL_GL_Window(SDL_Window* Window)
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
   SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-
+ 
   SDL_WindowFlags windowFlag{ SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN | SDL_WINDOW_HIGH_PIXEL_DENSITY };
 
   Window = SDL_CreateWindow("LearningOpenGL", screenSettings::screen_w, screenSettings::screen_h, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE); //Creacion de la ventana
@@ -35,8 +36,7 @@ void create_SDL_GL_Window(SDL_Window* Window)
   {
    std::cout << "ERROR OpenGL | not init window\n";
    std::string errorGL {SDL_GetError()};
-   std::cout << errorGL << "\n";
-   assert(gWindow != nullptr);
+   std::cout << errorGL << "\n"; 
   }
 
    else
@@ -68,42 +68,4 @@ void create_SDL_GL_Window(SDL_Window* Window)
 
 }
 
-
-void create_SDL_Vulkan_Window(SDL_Window* Window)
-{ 
- //IN THE FUTURE CREATE THE CONTEXT HERE TO CREATE THE VULKAN WINDOW WITH SDL3
 }
-
-SDL_Window_Context::SDL_Window_Context(){};
-SDL_Window_Context::~SDL_Window_Context(){ destroy(); };
- 
-void SDL_Window_Context::createWindow(const brii_EngineSettings::Graphics_Settings* API_settings)
- {
-   switch (API_settings->API)
-  {
-   case(brii_Renderer_API::OpenGL) :
-   create_SDL_GL_Window(Window);
-   break;
-	
-   case(brii_Renderer_API::Vulkan) :
-   create_SDL_Vulkan_Window(Window);
- 
-   case(brii_Renderer_API::DirectX12) : 
-   std::cout << "ERROR API::DirectX12 not support yet\n";
-  
-   case(brii_Renderer_API::Metal) : 
-   std::cout << "ERROR API::Metal not support yet\n";
-  }  
- 
- } 
-SDL_Window* SDL_Window_Context::get_SDLWindow()
- {
-  return Window; 
- }
- 
-void SDL_Window_Context::destroy()
- {  
-  SDL_DestroyWindow(Window);
-  SDL_Quit();
- }
-

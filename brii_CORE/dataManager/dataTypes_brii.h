@@ -7,6 +7,57 @@
 #include <iostream>
 #include <type_traits>
 #include <concepts>
+#include <memory>
+#include <vector>
+#include <unordered_map>
+
+//DATA ALIAS BriiEngine -----------------------------------
+
+///POINTERS
+
+template<typename T>
+using BT_UniquePtr = std::unique_ptr<T>;
+
+template<typename T>
+using BT_SharePtr = std::shared_ptr<T>;
+
+//----------------------
+
+///CONTAINERS
+//template<typename T, size_t S>
+//using BR_RawArray = T[S];
+
+template<typename T, size_t S>
+using BT_Array = std::array<T, S>;
+
+template<typename T>
+using BT_Vector = std::vector<T>;
+
+template<typename IDX, typename T>
+using BT_UnorderedMap = std::unordered_map<IDX, T>;
+
+template<typename IDX, typename T>
+using BT_HashTable = std::unordered_map<IDX, T>;
+
+
+////string characters
+using BT_String = std::string;
+using BT_StringView = std::string_view;
+using BT_StringContID = std::wstring; ///wstring is used to save a wide range of strings characters, defined if in the future is change 
+
+///for string localitation types
+using BT_StringID_64 = uint64_t;
+using BT_StringID_32 = uint32_t;
+
+//SPECIFIC TYPES WINDOW
+using BT_WindowID = uint32_t;
+
+//COMPONENT FLAGS
+using BT_ComponentFlags32 = uint32_t;
+using BT_ComponentFlags64 = uint64_t;
+
+//----------------------------------------------------------
+
 
 //namespace flags_T
 //{
@@ -30,6 +81,28 @@
   using underlying_T = std::underlying_type_t<T>;
   return static_cast<T>(static_cast<underlying_T>(f1) & static_cast<underlying_T>(f2));
  }
+
+ template<typename T, typename = std::enable_if_t<is_bitmask_flag<T>>>
+ constexpr bool operator&&(T f1, T f2)
+ {
+  using underlying_T = std::underlying_type_t<T>;
+  return static_cast<bool>(static_cast<underlying_T>(f1) & static_cast<underlying_T>(f2));
+ }
+
+ template<typename T, typename = std::enable_if_t<is_bitmask_flag<T>>>
+ constexpr T operator ^=(T f1, T f2)
+{
+ using underlying_T = std::underlying_type_t<T>; 
+ return static_cast<T>(static_cast<underlying_T>(f1) ^ static_cast<underlying_T>(f2));
+}
+
+ template<typename T, typename = std::enable_if_t<is_bitmask_flag<T>>>
+ constexpr T operator |=(T f1, T f2)
+{
+ using underlying_T = std::underlying_type_t<T>; 
+ return static_cast<T>(static_cast<underlying_T>(f1) | static_cast<underlying_T>(f2));
+}
+ 
 //}
 
 namespace briT

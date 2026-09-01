@@ -11,6 +11,7 @@ add_executable(brii_COOKER "main_Cooker.cpp"
 
 target_include_directories(brii_COOKER PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
+#TO GET A STRING WITH THE DIRECTION OF THE ENGINE, IN THE ENGINE CONVERT THIS IN A STRING
 target_compile_definitions(brii_COOKER PRIVATE 
 SOURCE_DIR_ENGINE_B="${SOURCE_DIR_ENGINE}"
 )

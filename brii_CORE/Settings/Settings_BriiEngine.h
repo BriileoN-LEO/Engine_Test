@@ -1,61 +1,65 @@
 #pragma once
 
+#include "Settings_WindowEngine.h"
 #include <iostream>
 
-///SELECTION OF THE GRAPHICS API 
-enum class brii_Renderer_API : uint8_t
-{
- OpenGL = 0,
- Vulkan,
- DirectX12,
- Metal
-};
+///SELECTION OF THE GRAPHICS API
 
-
-class brii_EngineSettings
-{
-public:
-
- struct Window_Settings
+ enum class Brii_Renderer_API : uint8_t
  {
-  int width_size{};
-  int height_size{};
-  
+  OpenGL = 0,
+  Vulkan,
+  DirectX12,
+  Metal
  };
 
- struct Graphics_Settings 
+ struct Brii_GraphicsSettings 
  { 
-  brii_Renderer_API API{};
+   Brii_Renderer_API API{};
 
-   //work API version | OpenGL and Vulkan
-  int API_majorVersion{};
-  int API_minorVersion{};
-  
-  
+    //work API version | OpenGL and Vulkan
+   int API_majorVersion{};
+   int API_minorVersion{};
  
+   
  };
 
- private:
+
+////CONTINUE HERE 28/08/2026
+////SEE WHAT I WILL DO WITH THIS, is posible to make
+///Make a vector of window settings an the window will get a pointer of the Brii_WindowSettings
+///Update the window by only call the window update, and in this place only modify the windows_Setting, because all is link via the pointer 
+///Only have one Brii_GraphicsSettings
+class Brii_EngineSettings
+{
+  private:
  
- Window_Settings Window_brii{};
- Graphics_Settings Graphics_brii{};
+  Brii_WindowSettings Window_Settings{};
+  Brii_GraphicsSettings Graphics_Set{};
 
- public:
+  public:
 
- brii_EngineSettings();
- ~brii_EngineSettings();
+  Brii_EngineSettings();
+  ~Brii_EngineSettings();
 
- ////THIS
- void insert_WindowSettings(Window_Settings wSet);  
- void insert_GraphicsSettings(Graphics_Settings gSet);
+  ////THIS
+  void insert_WindowSettings(Brii_WindowSettings wSet);  
+  void insert_GraphicsSettings(Brii_GraphicsSettings gSet);
 
- const Graphics_Settings* get_GraphicsSet()
- {
-  return &Graphics_brii;
- }
+  const Brii_Renderer_API* get_RendererAPI() const
+  {
+   return &Graphics_Set.API;
+  }
 
-
-};
+  const Brii_GraphicsSettings* get_GraphicsSet()
+  {
+   return &Graphics_Set;
+  }
+  const Brii_WindowSettings* get_WindowSettings()
+  {
+   return &Window_Settings;
+  }
+ };
 
 //SEE WHERE I COULD SAVE THE SETTINGS THE CHANGE OF API CONTEXT 
 

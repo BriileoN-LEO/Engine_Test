@@ -6,8 +6,8 @@ project(Brii_GraphicsInterface CXX)
 
 set(GRAPHICS_INTERFACE
 Public/Graphics_Interface/IGraphics_brii.h
+Public/Graphics_Interface/IGraphics_brii.cpp
 Public/RHI_Settings/RHI_Factory.h
-Public/RHI_Settings/RHI_Factory.cpp
 )
 
 set(GRAPHICS_OPENGL
@@ -19,24 +19,47 @@ set(GRAPHICS_VULKAN
 #IN THE FUTURE IMPLEMENT THE API VULKAN 
 )
 
+set(GRAPHICS_DIRECTX12
+#IN THE FUTURE IMPLEMENT THE API DIRECTX12
+)
+
+set(RHI_LINUX
+Private/RHI_Settings_Linux/RHI_Factory_Linux.cpp
+)
+
+set(RHI_WINDOWS
+#IN THE FUTURE IMPLEMENT THE RHI FACTORY FOR WINDOWS
+)
+
+
 set(GRAPHICS_API)
 
 #IF WIN32 OR LINUX(UNIX)
 #API's = OpenGL | Vulkan
-if(WIN32 OR UNIX)
+if(UNIX)
 list(APPEND GRAPHICS_API 
 ${GRAPHICS_OPENGL}
 ${GRAPHICS_VULKAN}
+${RHI_LINUX}
 )
+
+else(WIN32)
+list(APPEND GRAPHICS_API
+{
+${GRAPHICS_OPENGL}
+${GRAPHICS_VULKAN}
+${GRAPHICS_DIRECTX12}
+${RHI_WINDOWS}
+)
+
 endif()
-
-
 
 add_library(Brii_GraphicsInterface STATIC  
 ${GRAPHICS_INTERFACE} 
 ${GRAPHICS_API}
 )
 
+#In the future change this for separate the Operating System
 if(WIN32 OR UNIX)
 target_link_libraries(Brii_GraphicsInterface PRIVATE 
 glad_source
